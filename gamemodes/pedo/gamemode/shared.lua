@@ -125,6 +125,10 @@ function GM:Initialize()
 		table.insert( GAMEMODE.Sounds.Death, Sound("pedo/death/"..v) )
 	end
 	
+	if !file.IsDir( "pedo", "DATA" ) then
+		file.CreateDir( "pedo" )
+	end
+	
 	if CLIENT then
 		
 		CreateClientConVar( "pedobear_cl_disablexpsc", 0, true, false )
@@ -134,7 +138,7 @@ function GM:Initialize()
 		CreateClientConVar( "pedobear_cl_music_enable", 1, true, false )
 		CreateClientConVar( "pedobear_cl_music_volume", 0.5, true, false )
 		CreateClientConVar( "pedobear_cl_music_allowexternal", 1, true, false )
-		CreateClientConVar( "pedobear_cl_music_visualizer", 0, true, false )
+		CreateClientConVar( "pedobear_cl_music_visualizer", 1, true, false )
 		
 		cvars.AddChangeCallback( "pedobear_cl_music_volume", function( convar_name, value_old, value_new )
 			if IsValid(GAMEMODE.Vars.Music) then
@@ -280,6 +284,56 @@ function GM:Log(str,tn,hardcore)
 		Msg( time..": ["..name.."] "..(str or "This was a log message, but something went wrong").."\n" )
 	else
 		Msg( "["..name.."] "..(str or "This was a log message, but something went wrong").."\n" )
+	end
+	
+end
+
+
+function GM:RetrieveXperidiaAccountRank(ply)
+	
+	if !SERVER then return end
+	
+	if !IsValid(ply) then return end
+	
+	if ply:IsBot() then return end
+	
+	if !ply.XperidiaRankLastTime or ply.XperidiaRankLastTime+3600<SysTime() then
+		
+		local steamid = ply:SteamID64()
+		
+		local XperidiaRanks = { "Premium", "Creator", "Administrator" }
+		
+		GAMEMODE:Log("Retrieving the Xperidia Rank for "..ply:GetName().."...",nil,true)
+		
+		http.Post( "https://www.xperidia.com/UCP/rank.php", { steamid = steamid },
+		function( responseText, contentLength, responseHeaders, statusCode )
+			
+			if !IsValid(ply) then return end
+			
+			if statusCode == 200 then
+				
+				local rank = tonumber(string.Right(responseText, contentLength-3))
+				ply.XperidiaRank = rank
+				ply:SetNWInt( "XperidiaRank", rank )
+				ply.XperidiaRankLastTime = SysTime()
+				
+				if XperidiaRanks[rank] then
+					GAMEMODE:Log("The Xperidia Rank for "..ply:GetName().." is "..XperidiaRanks[rank])
+				else
+					GAMEMODE:Log(ply:GetName().." doesn't have any Xperidia Rank...",nil,true)
+				end
+				
+			else
+				GAMEMODE:Log("Error while retriving Xperidia Rank for "..ply:GetName().." (HTTP "..(statusCode or "?")..")")
+			end
+			
+		end, 
+		function( errorMessage )
+			
+			GAMEMODE:Log(errorMessage)
+			
+		end )
+		
 	end
 	
 end

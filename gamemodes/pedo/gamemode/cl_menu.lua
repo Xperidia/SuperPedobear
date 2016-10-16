@@ -2,6 +2,12 @@ function GM:Menu()
 	
 	if !IsValid(pedobearMenuF) and !engine.IsPlayingDemo() then
 		
+		if IsValid(pedobearMenuBF) then
+			
+			pedobearMenuBF:Close()
+			
+		end
+		
 		pedobearMenuF = vgui.Create( "DFrame" )
 		pedobearMenuF:SetPos( ScrW()/2-320, ScrH()/2-240 )
 		pedobearMenuF:SetSize( 640, 480 )
@@ -79,10 +85,9 @@ function GM:Menu()
 		
 		local beginmenubtn = vgui.Create( "DButton" )
 		beginmenubtn:SetParent(pedobearMenuF.one)
-		beginmenubtn:SetText( "Beginner screen" )
-		beginmenubtn:SetPos( 160, 64 )
+		beginmenubtn:SetText( "Welcome screen" )
+		beginmenubtn:SetPos( 90, 145 )
 		beginmenubtn:SetSize( 125, 20 )
-		beginmenubtn:SetDisabled(true)
 		beginmenubtn.DoClick = function()
 			GAMEMODE:BeginMenu()
 			pedobearMenuF:Close()
@@ -105,13 +110,6 @@ function GM:Menu()
 		desclbl:SetPos( 20, 30 )
 		desclbl:SetDark( 1 )
 		desclbl:SizeToContents()
-		
-		local hflbl = vgui.Create( "DLabel" )
-		hflbl:SetParent(pedobearMenuF.one)
-		hflbl:SetText( "Have fun!" )
-		hflbl:SetPos( 130, 150 )
-		hflbl:SetDark( 1 )
-		hflbl:SizeToContents()
 		
 		
 		pedobearMenuF.config = vgui.Create( "DPanel" )
@@ -249,13 +247,12 @@ function GM:Menu()
 		
 		local playmusic = vgui.Create( "DButton" )
 		playmusic:SetParent(pedobearMenuF.Music)
-		playmusic:SetText( "Auto play" )
+		playmusic:SetText( "Auto play local file" )
 		playmusic:SetPos( 15, 190 )
 		playmusic:SetSize( 125, 20 )
 		playmusic:SetDisabled(!GAMEMODE.Vars.Round.PreStart and !GAMEMODE.Vars.Round.Start)
 		playmusic.DoClick = function()
 			GAMEMODE:Music("", GAMEMODE.Vars.Round.PreStart)
-			pedobearMenuF:Close()
 		end
 		
 		local musicmenu = vgui.Create( "DButton" )
@@ -313,6 +310,7 @@ end
 
 function pedobearSCLoaded()
 	if IsValid(pedobearMenuF) then xpsc_anim:Start(0.25) end
+	if IsValid(pedobearMenuBF) then xpsc_anim2:Start(0.25) end
 end
 
 function GM:BeginMenu()
@@ -331,6 +329,8 @@ function GM:BeginMenu()
 			draw.RoundedBox( 4, 0, 0, w, h, Color( 0, 0, 0, 128 ) )
 		end
 		pedobearMenuBF.Think = function(self)
+			
+			if xpsc_anim2 and xpsc_anim2:Active() then xpsc_anim2:Run() end
 			
 			local mousex = math.Clamp( gui.MouseX(), 1, ScrW()-1 )
 			local mousey = math.Clamp( gui.MouseY(), 1, ScrH()-1 )
@@ -379,7 +379,6 @@ function GM:BeginMenu()
 		xpucp:SetSize( 125, 20 )
 		xpucp.DoClick = function()
 			gui.OpenURL( "https://www.xperidia.com/UCP/" )
-			pedobearMenuBF:Close()
 		end
 		
 		local xpsteam = vgui.Create( "DButton" )
@@ -389,7 +388,6 @@ function GM:BeginMenu()
 		xpsteam:SetSize( 125, 20 )
 		xpsteam.DoClick = function()
 			gui.OpenURL( "https://xperi.link/XP-SteamGroup" )
-			pedobearMenuBF:Close()
 		end
 		
 		local onelbl = vgui.Create( "DLabel" )
@@ -401,7 +399,41 @@ function GM:BeginMenu()
 		
 		local desclbl = vgui.Create( "DLabel" )
 		desclbl:SetParent(pedobearMenuBF.one)
-		desclbl:SetText( "Some controls:\n\n"..GAMEMODE:CheckBind("gm_showhelp")..": This window\n"
+		desclbl:SetText( "So you're on the Pedobear Gamemode by Xperidia!\n\nWhat could possibly go wrong?\n\nBy default you're playing as a victim which need to \nescape from Pedobear(s)\n\nThe Pedobears are automatically chosen by the \ngamemode and it should be fair enough so everyone \ncan play as a Pedobear" )
+		desclbl:SetPos( 20, 30 )
+		desclbl:SetDark( 1 )
+		desclbl:SizeToContents()
+		
+		local hflbl = vgui.Create( "DLabel" )
+		hflbl:SetParent(pedobearMenuBF.one)
+		hflbl:SetText( "Have fun!" )
+		hflbl:SetPos( 130, 170 )
+		hflbl:SetDark( 1 )
+		hflbl:SizeToContents()
+		
+		
+		pedobearMenuBF.controls = vgui.Create( "DPanel" )
+		pedobearMenuBF.controls:SetParent(pedobearMenuBF)
+		pedobearMenuBF.controls:SetPos( 325, 30 )
+		pedobearMenuBF.controls:SetSize( 305, 215 )
+		
+		local controlslbl = vgui.Create( "DLabel" )
+		controlslbl:SetParent(pedobearMenuBF.controls)
+		controlslbl:SetText( "Basic controls" )
+		controlslbl:SetPos( 10, 5 )
+		controlslbl:SetDark( 1 )
+		controlslbl:SizeToContents()
+		
+		local desclbl = vgui.Create( "DLabel" )
+		desclbl:SetParent(pedobearMenuBF.controls)
+		desclbl:SetText( GAMEMODE:CheckBind("+forward")..": Forward\n"
+		..GAMEMODE:CheckBind("+moveleft")..": Left\n"
+		..GAMEMODE:CheckBind("+moveright")..": Right\n"
+		..GAMEMODE:CheckBind("+back")..": Back\n"
+		..GAMEMODE:CheckBind("+duck")..": Duck\n"
+		..GAMEMODE:CheckBind("+jump")..": Jump\n"
+		..GAMEMODE:CheckBind("+speed")..": Sprint\n"
+		..GAMEMODE:CheckBind("gm_showhelp")..": Gamemode menu\n"
 		..GAMEMODE:CheckBind("gm_showteam")..": Change team\n"
 		..GAMEMODE:CheckBind("gm_showspare1")..": Taunt menu\n"
 		.."1-9: Quick taunt\n"
@@ -410,12 +442,89 @@ function GM:BeginMenu()
 		desclbl:SetDark( 1 )
 		desclbl:SizeToContents()
 		
-		local hflbl = vgui.Create( "DLabel" )
-		hflbl:SetParent(pedobearMenuBF.one)
-		hflbl:SetText( "Have fun!" )
-		hflbl:SetPos( 130, 150 )
-		hflbl:SetDark( 1 )
-		hflbl:SizeToContents()
+		
+		pedobearMenuBF.changelog = vgui.Create( "DPanel" )
+		pedobearMenuBF.changelog:SetParent(pedobearMenuBF)
+		pedobearMenuBF.changelog:SetPos( 10, 255 )
+		pedobearMenuBF.changelog:SetSize( 305, 215 )
+		
+		local changeloglbl = vgui.Create( "DLabel" )
+		changeloglbl:SetParent(pedobearMenuBF.changelog)
+		changeloglbl:SetText( "Changelog" )
+		changeloglbl:SetPos( 10, 5 )
+		changeloglbl:SetDark( 1 )
+		changeloglbl:SizeToContents()
+		
+		local changelog = vgui.Create( "RichText", pedobearMenuBF.changelog )
+		changelog:SetPos( 0, 20 )
+		changelog:SetSize( 305, 195 )
+		function changelog:PerformLayout()
+			self:SetFontInternal( "XP_Pedo_HUDname" )
+			self:SetFGColor( Color( 0, 0, 0 ) )
+		end
+		changelog:AppendText( "> Complete music player overhaul\n" )
+		changelog:AppendText( "> New musics\n" )
+		changelog:AppendText( "> New sounds\n" )
+		changelog:AppendText( "> Added this window\n" )
+		changelog:AppendText( "> Some cvar updates\n" )
+		changelog:AppendText( "> Bug fixes as always\n" )
+		changelog:AppendText( "> And everything cool I've done but forgot\n" )
+		changelog:AppendText( "						VictorienXP" )
+		
+		local featuredbtn = vgui.Create( "DButton" )
+		featuredbtn:SetParent(pedobearMenuBF.changelog)
+		featuredbtn:SetText( "Check the last dev vlog" )
+		featuredbtn:SetPos( 90, 0 )
+		featuredbtn:SetSize( 125, 20 )
+		featuredbtn.DoClick = function()
+			gui.OpenURL( "https://youtu.be/zTsUFqlA90g" )
+		end
+		
+		
+		pedobearMenuBF.upcoming = vgui.Create( "DPanel" )
+		pedobearMenuBF.upcoming:SetParent(pedobearMenuBF)
+		pedobearMenuBF.upcoming:SetPos( 325, 255 )
+		pedobearMenuBF.upcoming:SetSize( 305, 215 )
+		
+		local upcominglbl = vgui.Create( "DLabel" )
+		upcominglbl:SetParent(pedobearMenuBF.upcoming)
+		upcominglbl:SetText( "Upcoming stuff" )
+		upcominglbl:SetPos( 10, 5 )
+		upcominglbl:SetDark( 1 )
+		upcominglbl:SizeToContents()
+		
+		local upcoming = vgui.Create( "RichText", pedobearMenuBF.upcoming )
+		upcoming:SetPos( 0, 20 )
+		upcoming:SetSize( 305, 195 )
+		function upcoming:PerformLayout()
+			self:SetFontInternal( "XP_Pedo_HUDname" )
+			self:SetFGColor( Color( 0, 0, 0 ) )
+		end
+		upcoming:AppendText( "> Syncplay and playlist for the music player\n" )
+		upcoming:AppendText( "> And everything cool I will done but forget\n" )
+		upcoming:AppendText( "\n" )
+		upcoming:AppendText( "\n" )
+		upcoming:AppendText( "\n" )
+		upcoming:AppendText( "\n" )
+		upcoming:AppendText( "						VictorienXP" )
+		
+		
+		
+		if !GetConVar("pedobear_cl_disablexpsc"):GetBool() then
+			
+			local xpsc = vgui.Create( "DHTML" )
+			xpsc:SetParent(pedobearMenuBF)
+			xpsc:SetPos( 10, 480 )
+			xpsc:SetSize( 620, 128 )
+			xpsc:SetAllowLua(true)
+			xpsc:OpenURL( "https://xperidia.com/Showcase/?sys=pedobearMenu&zone="..tostring(GAMEMODE.Name).."&lang="..tostring(GetConVarString("gmod_language") or "en") )
+			xpsc:SetScrollbars(false)
+			
+			xpsc_anim2 = Derma_Anim( "xpsc_anim2", pedobearMenuBF, function( pnl, anim, delta, data )
+				pnl:SetSize( 640, 138*delta+480 )
+			end)
+			
+		end
 		
 	end
 	

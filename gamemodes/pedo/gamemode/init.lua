@@ -30,6 +30,8 @@ util.AddNetworkString( "XP_Pedo_AFK" )
 
 function GM:PlayerInitialSpawn(ply)
 	
+	GAMEMODE:RetrieveXperidiaAccountRank(ply)
+	
 	if ply:IsBot() then
 		ply:SetTeam(TEAM_VICTIMS)
 		ply:SetNWFloat("XP_Pedo_PedoChance", 0)

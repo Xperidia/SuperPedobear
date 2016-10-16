@@ -133,7 +133,9 @@ hook.Add("HUDShouldDraw", "HideHUD", function( name )
 		CHudWeaponSelection = true,
 		CHudZoom = true
 	}
-	if ( HUDhide[ name ] ) then
+	if name=="CHudCrosshair" and LocalPlayer():Team()==TEAM_UNASSIGNED then
+		return false
+	elseif ( HUDhide[ name ] ) then
 		return false
 	end
 	
@@ -246,11 +248,19 @@ function GM:HUDPaint()
 		
 	end
 	
-	
 	if GAMEMODE.Vars.welding and ply:Alive() and ply:Team()==TEAM_VICTIMS then
 		
 		draw.RoundedBox( 8, ScrW()/2-150, ScrH()/2+100, 300, 26, Color( 0, 0, 0, 200 ) )
 		draw.DrawText( "Click another prop or world", "XP_Pedo_HT", ScrW()/2, ScrH()/2+100, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
+		
+	end
+	
+	if ply:Team()==TEAM_UNASSIGNED then
+		
+		local function yay(a) return (math.sin(CurTime()*6)+1)/2*a end
+		
+		draw.RoundedBox( 8, ScrW()/2-160, ScrH()/2-20, 320, 40, Color( 0, 0, 0, yay(200) ) )
+		draw.DrawText( "Press any key to join!", "XP_Pedo_TXT", ScrW()/2, ScrH()/2-20, Color( 255, 255, 255, yay(255) ), TEXT_ALIGN_CENTER )
 		
 	end
 	
@@ -951,39 +961,6 @@ function GM:Music(src, pre)
 	
 end
 
-function GM:SaveStats()
-	
-	if !file.IsDir("pedo", "DATA") then
-		file.CreateDir( "pedo" )
-	end
-	
-	file.Write( "pedo/stats.txt", util.TableToJSON( GAMEMODE.Stats ) )
-	
-end
-
-function GM:LoadStats()
-	
-	local filep = file.Read( "pedo/stats.txt" )
-	
-	if ( filep ) then
-	
-		local tab = util.JSONToTable( filep )
-		if ( tab ) then
-			GAMEMODE.Stats = tab
-		end
-		
-	else
-		
-		if !file.IsDir("pedo", "DATA") then
-			file.CreateDir( "pedo" )
-		end
-		
-		file.Write( "pedo/stats.txt", util.TableToJSON( GAMEMODE.Stats ) )
-		
-	end
-	
-end
-
 function GM:StartChat( teamsay )
 	
 	GAMEMODE.ChatOpen = true
@@ -1038,6 +1015,35 @@ function GM:Stats()
 		
 	end
 	
+	local function welcomehandle()
+		
+		GAMEMODE:BeginMenu()
+		
+		local tab = {}
+		
+		tab.LastVersion = GAMEMODE.Version
+		
+		file.Write( "pedo/info.txt", util.TableToJSON( tab ) )
+		
+	end
+	
+	local info = file.Read( "pedo/info.txt" )
+	
+	if info then
+	
+		local tab = util.JSONToTable(info)
+		if !tab or (tab.LastVersion and tab.LastVersion < GAMEMODE.Version) then
+			
+			welcomehandle()
+			
+		end
+		
+	else
+		
+		welcomehandle()
+		
+	end
+	
 end
 
 function GM:ContextMenuOpen()
@@ -1085,4 +1091,47 @@ function GM:CheckBind(cmd)
 		return string.upper(input.LookupBinding( cmd, true ))
 	end	
 	return "N/A"
+end
+
+function GM:OnPlayerChat( player, strText, bTeamOnly, bPlayerIsDead )
+	
+	local tab = {}
+	
+	if bPlayerIsDead then
+		table.insert( tab, Color( 255, 30, 40 ) )
+		table.insert( tab, "*DEAD* " )
+	end
+	
+	if bTeamOnly then
+		table.insert( tab, Color( 30, 160, 40 ) )
+		table.insert( tab, "(TEAM) " )
+	end
+ 
+	if IsValid( player ) then
+		if player:GetNWInt( "XperidiaRank", 0 )==3 then
+			table.insert( tab, Color( 85, 255, 255 ) )
+			table.insert( tab, "{Xperidia Admin} " )
+		elseif player:GetNWInt( "XperidiaRank", 0 )==2 then
+			table.insert( tab, Color( 170, 0, 170 ) )
+			table.insert( tab, "{Xperidia Creator} " )
+		elseif player:GetNWInt( "XperidiaRank", 0 )==1 then
+			table.insert( tab, Color( 255, 170, 0 ) )
+			table.insert( tab, "{Xperidia Premium} " )
+		end
+		if player:GetUserGroup()!="user" then
+			table.insert( tab, Color( 255, 255, 255 ) )
+			table.insert( tab, "["..string.upper( string.sub(player:GetUserGroup(), 1, 1) )..string.sub(player:GetUserGroup(), 2).."] " )
+		end
+		table.insert( tab, player )
+	else
+		table.insert( tab, "Console" )
+	end
+	
+	table.insert( tab, Color( 255, 255, 255 ) )
+	table.insert( tab, ": "..strText )
+	
+	chat.AddText( unpack(tab) )
+	
+	return true
+	
 end

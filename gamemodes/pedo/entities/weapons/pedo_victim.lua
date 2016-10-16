@@ -1,0 +1,110 @@
+AddCSLuaFile()
+
+SWEP.PrintName = "Victim"			
+SWEP.Author = "Xperidia"
+SWEP.Spawnable = false
+
+SWEP.Primary.ClipSize		= -1
+SWEP.Primary.DefaultClip	= -1
+SWEP.Primary.Automatic		= false
+SWEP.Primary.Ammo		= "none"
+
+SWEP.Secondary.ClipSize		= -1
+SWEP.Secondary.DefaultClip	= -1
+SWEP.Secondary.Automatic	= true
+SWEP.Secondary.Ammo		= "none"
+
+SWEP.Weight			= 9
+SWEP.AutoSwitchTo		= true
+SWEP.AutoSwitchFrom		= false
+
+SWEP.Slot			= 0
+SWEP.SlotPos			= 0
+SWEP.DrawAmmo			= false
+SWEP.BounceWeaponIcon = false
+
+SWEP.ViewModel			= "models/weapons/c_arms.mdl"
+SWEP.WorldModel			= ""
+
+function SWEP:Initialize()
+	self:SetHoldType("normal")
+end
+
+function SWEP:PrimaryAttack()
+	
+	local tr = util.GetPlayerTrace( self.Owner )
+	
+	local trace = util.TraceLine( tr )
+	
+	if (!trace.Hit) then return end
+	
+	if ( IsValid( trace.Entity ) && trace.Entity:IsPlayer() ) then return end
+	
+	if ( SERVER && !util.IsValidPhysicsObject( trace.Entity, trace.PhysicsBone ) ) then return end
+
+	local Phys = trace.Entity:GetPhysicsObjectNum( trace.PhysicsBone )
+	
+	if !self.laste then
+		
+		self.laste = { trace.Entity, trace.HitPos, Phys, trace.PhysicsBone, trace.HitNormal }
+		
+	else
+		
+		if SERVER then
+			
+			local Ent1, Ent2 = self.laste[1], trace.Entity
+			local Bone1, Bone2 = self.laste[4], trace.PhysicsBone
+			
+			constraint.Weld( Ent1, Ent2, Bone1, Bone2, 2147483647, false, false )
+			
+		end
+		
+		self.laste = nil
+		
+	end
+	
+	if CLIENT then GAMEMODE.Vars.welding = self.laste end
+	
+end
+ 
+function SWEP:SecondaryAttack()
+	
+	if SERVER then
+		
+		local tr = util.GetPlayerTrace( self.Owner )
+		
+		local trace = util.TraceLine( tr )
+		
+		if (!trace.Hit) then return end
+		
+		if (!trace.HitNonWorld) then return end
+		
+		constraint.RemoveConstraints( trace.Entity, "Weld" )
+		
+	end
+	
+end
+
+function SWEP:Reload()
+	if SERVER then
+		GAMEMODE:CreateDummy(self.Owner)
+	end
+end
+
+function SWEP:OnRemove()
+	if CLIENT then GAMEMODE.Vars.welding = nil end
+end
+
+function SWEP:ShouldDropOnDie()
+	return false
+end
+
+function SWEP:OnDrop()
+	if CLIENT then GAMEMODE.Vars.welding = nil end
+	self:Remove()
+end
+
+function SWEP:Think()
+	
+end
+

@@ -1,0 +1,16 @@
+{
+	"title"		:	"Pedobear Gamemode",
+	"type"		:	"gamemode",
+	"tags"		:	[ "fun" ],
+	"ignore"	:
+	[
+		"*.psd",
+		"*.vcproj",
+		"*.svn*",
+		"*.git*",
+		"*.fgd",
+		"desktop.ini",
+		"Thumbs.db",
+		"README.md"
+	]
+}

@@ -1,0 +1,14 @@
+"UnlitGeneric"
+{
+	"$basetexture" "pedo/pedoscare"
+
+	"Proxies" 
+	{ 
+		"AnimatedTexture" 
+		{
+			"animatedTextureVar" "$basetexture" 
+			"animatedTextureFrameNumVar" "$frame" 
+			"animatedTextureFrameRate" "30"
+		 } 
+	} 
+}

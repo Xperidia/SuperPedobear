@@ -11,7 +11,7 @@ function GM:Menu()
 		pedobearMenuF = vgui.Create( "DFrame" )
 		pedobearMenuF:SetPos( ScrW()/2-320, ScrH()/2-240 )
 		pedobearMenuF:SetSize( 640, 480 )
-		pedobearMenuF:SetTitle((GAMEMODE.Name or "?").." Gamemode V"..(GAMEMODE.Version or "?")..GAMEMODE:SeasonalEventStr())
+		pedobearMenuF:SetTitle((GAMEMODE.Name or "?").." Gamemode V"..(GAMEMODE.Version or "?")..GAMEMODE:SeasonalEventStr().." | By "..(GAMEMODE.Author or "?"))
 		pedobearMenuF:SetVisible(true)
 		pedobearMenuF:SetDraggable(true)
 		pedobearMenuF:ShowCloseButton(true)
@@ -63,6 +63,13 @@ function GM:Menu()
 		pedobearMenuF.one:SetPos( 10, 30 )
 		pedobearMenuF.one:SetSize( 305, 215 )
 		
+		local onelbl = vgui.Create( "DLabel" )
+		onelbl:SetParent(pedobearMenuF.one)
+		onelbl:SetText( "Welcome to the "..(GAMEMODE.Name or "?").." Gamemode" )
+		onelbl:SetPos( 10, 5 )
+		onelbl:SetDark( 1 )
+		onelbl:SizeToContents()
+		
 		local xpucp = vgui.Create( "DButton" )
 		xpucp:SetParent(pedobearMenuF.one)
 		xpucp:SetText( "Xperidia Account" )
@@ -83,22 +90,34 @@ function GM:Menu()
 			pedobearMenuF:Close()
 		end
 		
+		local add = 0
+		
+		if ConVarExists( "sv_playermodel_selector_gamemodes" ) then
+			
+			local playermodelselection = vgui.Create( "DButton" )
+			playermodelselection:SetParent(pedobearMenuF.one)
+			playermodelselection:SetText("Select a playermodel")
+			playermodelselection:SetPos( 90, 165 )
+			playermodelselection:SetSize( 125, 20 )
+			playermodelselection:SetEnabled( GetConVar( "sv_playermodel_selector_gamemodes" ):GetBool() or LocalPlayer():IsAdmin() or LocalPlayer():IsUserGroup( "premium" ) )
+			playermodelselection.DoClick = function()
+				RunConsoleCommand( "playermodel_selector" )
+				pedobearMenuF:Close()
+			end
+			
+			add = 5
+			
+		end
+		
 		local beginmenubtn = vgui.Create( "DButton" )
 		beginmenubtn:SetParent(pedobearMenuF.one)
 		beginmenubtn:SetText( "Welcome screen" )
-		beginmenubtn:SetPos( 90, 145 )
+		beginmenubtn:SetPos( 90, 145-add )
 		beginmenubtn:SetSize( 125, 20 )
 		beginmenubtn.DoClick = function()
 			GAMEMODE:BeginMenu()
 			pedobearMenuF:Close()
 		end
-		
-		local onelbl = vgui.Create( "DLabel" )
-		onelbl:SetParent(pedobearMenuF.one)
-		onelbl:SetText( "Welcome to the Pedobear Gamemode" )
-		onelbl:SetPos( 10, 5 )
-		onelbl:SetDark( 1 )
-		onelbl:SizeToContents()
 		
 		local desclbl = vgui.Create( "DLabel" )
 		desclbl:SetParent(pedobearMenuF.one)
@@ -149,6 +168,7 @@ function GM:Menu()
 		jumpscare:SetDark( 1 )
 		jumpscare:SetConVar( "pedobear_cl_jumpscare" )
 		jumpscare:SetValue( GetConVar("pedobear_cl_jumpscare"):GetBool() )
+		jumpscare:SetDisabled( GAMEMODE:IsSeasonalEvent("Halloween") )
 		jumpscare:SizeToContents()
 		
 		local hud = vgui.Create( "DCheckBoxLabel" )
@@ -175,33 +195,54 @@ function GM:Menu()
 		pedobearMenuF.stats:SetPos( 10, 255 )
 		pedobearMenuF.stats:SetSize( 305, 215 )
 		
+		local pre = GAMEMODE.Vars.Round.PreStart
+		
 		local statslbl = vgui.Create( "DLabel" )
 		statslbl:SetParent(pedobearMenuF.stats)
-		statslbl:SetText( "Chance to be a pedobear" )
+		statslbl:SetText( Either(GAMEMODE:IsSeasonalEvent("AprilFool"), "PedoRadio™", "Music").." list"..Either( pre, " (Pre Round Musics)", "" ) )
 		statslbl:SetPos( 10, 5 )
 		statslbl:SetDark( 1 )
 		statslbl:SizeToContents()
 		
-		local PedoChance = vgui.Create( "DListView", pedobearMenuF.stats )
-		PedoChance:SetPos( 0, 20 )
-		PedoChance:SetSize( 305, 195 )
-		PedoChance:SetMultiSelect( false )
-		PedoChance:AddColumn( "Player" )
-		local who = PedoChance:AddColumn( "Chance" )
-		who:SetMinWidth(40)
-		who:SetMaxWidth(40)
+		local MusicList = vgui.Create( "DListView", pedobearMenuF.stats )
+		MusicList:SetPos( 0, 20 )
+		MusicList:SetSize( 305, 195 )
+		MusicList:SetMultiSelect( false )
+		MusicList:AddColumn( "Music" )
+		local loc = MusicList:AddColumn( "Local" )
+		loc:SetMinWidth(30)
+		loc:SetMaxWidth(30)
+		local serv = MusicList:AddColumn( "Serv" )
+		serv:SetMinWidth(30)
+		serv:SetMaxWidth(30)
 		
-		local playerlist = {}
+		local localmusics = file.Find( "sound/pedo/"..Either( pre, "premusics", "musics" ).."/*", "GAME" )
 		
-		for k, v in pairs(player.GetAll()) do
+		local musiclist = {}
+		
+		for k, v in pairs(localmusics) do
 			
-			playerlist[k] = { name = v:GetName(), chance = math.ceil((v:GetNWFloat("XP_Pedo_PedoChance", 0) * 100)) }
+			musiclist[v] = { true, nil }
 			
 		end
 		
-		for k, v in SortedPairsByMemberValue(playerlist, "chance", true) do
+		if Either(pre, GAMEMODE.Musics.premusics, GAMEMODE.Musics.musics) then
 			
-			PedoChance:AddLine( v.name, v.chance.."%" )
+			for k, v in pairs( Either(pre, GAMEMODE.Musics.premusics, GAMEMODE.Musics.musics) ) do
+				
+				if musiclist[v] then
+					musiclist[v] = { true, true }
+				else
+					musiclist[v] = { false, true }
+				end
+				
+			end
+			
+		end
+		
+		for k, v in SortedPairs(musiclist) do
+			
+			MusicList:AddLine( GAMEMODE:PrettyMusicName(k), Either(v[1], "✓", "❌"), Either(v[2], "✓", "❌") )
 			
 		end
 		
@@ -213,7 +254,7 @@ function GM:Menu()
 		
 		local musicmenulbl = vgui.Create( "DLabel" )
 		musicmenulbl:SetParent(pedobearMenuF.Music)
-		musicmenulbl:SetText( Either(GAMEMODE:IsSeasonalEvent("AprilFool"), "PedoRadio™", "Music") )
+		musicmenulbl:SetText( Either(GAMEMODE:IsSeasonalEvent("AprilFool"), "PedoRadio™", "Music").." configuration" )
 		musicmenulbl:SetPos( 10, 5 )
 		musicmenulbl:SetDark( 1 )
 		musicmenulbl:SizeToContents()
@@ -248,22 +289,11 @@ function GM:Menu()
 		local playmusic = vgui.Create( "DButton" )
 		playmusic:SetParent(pedobearMenuF.Music)
 		playmusic:SetText( "Auto play local file" )
-		playmusic:SetPos( 15, 190 )
+		playmusic:SetPos( 90, 190 )
 		playmusic:SetSize( 125, 20 )
 		playmusic:SetDisabled(!GAMEMODE.Vars.Round.PreStart and !GAMEMODE.Vars.Round.Start)
 		playmusic.DoClick = function()
 			GAMEMODE:Music("", GAMEMODE.Vars.Round.PreStart)
-		end
-		
-		local musicmenu = vgui.Create( "DButton" )
-		musicmenu:SetParent(pedobearMenuF.Music)
-		musicmenu:SetText( "Mounted music list" )
-		musicmenu:SetPos( 160, 190 )
-		musicmenu:SetSize( 125, 20 )
-		musicmenu:SetDisabled(true)
-		musicmenu.DoClick = function()
-			
-			pedobearMenuF:Close()
 		end
 		
 		local vollbl = vgui.Create( "DLabel" )
@@ -320,7 +350,7 @@ function GM:BeginMenu()
 		pedobearMenuBF = vgui.Create( "DFrame" )
 		pedobearMenuBF:SetPos( ScrW()/2-320, ScrH()/2-240 )
 		pedobearMenuBF:SetSize( 640, 480 )
-		pedobearMenuBF:SetTitle("Welcome to the "..(GAMEMODE.Name or "?").." Gamemode V"..(GAMEMODE.Version or "?")..GAMEMODE:SeasonalEventStr())
+		pedobearMenuBF:SetTitle("Welcome to the "..(GAMEMODE.Name or "?").." Gamemode V"..(GAMEMODE.Version or "?")..GAMEMODE:SeasonalEventStr().." | By "..(GAMEMODE.Author or "?"))
 		pedobearMenuBF:SetVisible(true)
 		pedobearMenuBF:SetDraggable(true)
 		pedobearMenuBF:ShowCloseButton(true)
@@ -392,7 +422,7 @@ function GM:BeginMenu()
 		
 		local onelbl = vgui.Create( "DLabel" )
 		onelbl:SetParent(pedobearMenuBF.one)
-		onelbl:SetText( "Welcome to the Pedobear Gamemode" )
+		onelbl:SetText( "Welcome to the "..(GAMEMODE.Name or "?").." Gamemode" )
 		onelbl:SetPos( 10, 5 )
 		onelbl:SetDark( 1 )
 		onelbl:SizeToContents()
@@ -462,14 +492,12 @@ function GM:BeginMenu()
 			self:SetFontInternal( "XP_Pedo_HUDname" )
 			self:SetFGColor( Color( 0, 0, 0 ) )
 		end
-		changelog:AppendText( "> Complete music player overhaul\n" )
-		changelog:AppendText( "> New musics\n" )
-		changelog:AppendText( "> New sounds\n" )
-		changelog:AppendText( "> Added this window\n" )
-		changelog:AppendText( "> Some cvar updates\n" )
-		changelog:AppendText( "> Bug fixes as always\n" )
-		changelog:AppendText( "> And everything cool I've done but forgot\n" )
-		changelog:AppendText( "						VictorienXP" )
+		changelog:AppendText( "/!\\ This is a dev build! /!\\\n" )
+		changelog:AppendText( "> Pedobear tips\n" )
+		changelog:AppendText( "> Music list\n" )
+		changelog:AppendText( "> Death notices\n" )
+		changelog:AppendText( "> Playing music is now the same for all player\n" )
+		--changelog:AppendText( "> And everything cool I've done but forgot\n" )
 		
 		local featuredbtn = vgui.Create( "DButton" )
 		featuredbtn:SetParent(pedobearMenuBF.changelog)
@@ -477,7 +505,7 @@ function GM:BeginMenu()
 		featuredbtn:SetPos( 90, 0 )
 		featuredbtn:SetSize( 125, 20 )
 		featuredbtn.DoClick = function()
-			gui.OpenURL( "https://youtu.be/zTsUFqlA90g" )
+			gui.OpenURL( "https://youtu.be/4DdNqhu0pew" )
 		end
 		
 		
@@ -500,14 +528,8 @@ function GM:BeginMenu()
 			self:SetFontInternal( "XP_Pedo_HUDname" )
 			self:SetFGColor( Color( 0, 0, 0 ) )
 		end
-		upcoming:AppendText( "> Syncplay and playlist for the music player\n" )
+		upcoming:AppendText( "> Music playlist\n" )
 		upcoming:AppendText( "> And everything cool I will done but forget\n" )
-		upcoming:AppendText( "\n" )
-		upcoming:AppendText( "\n" )
-		upcoming:AppendText( "\n" )
-		upcoming:AppendText( "\n" )
-		upcoming:AppendText( "						VictorienXP" )
-		
 		
 		
 		if !GetConVar("pedobear_cl_disablexpsc"):GetBool() then

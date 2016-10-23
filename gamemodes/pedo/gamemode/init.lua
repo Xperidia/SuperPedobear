@@ -11,6 +11,7 @@ AddCSLuaFile( "cl_scoreboard.lua" )
 AddCSLuaFile( "cl_menu.lua" )
 AddCSLuaFile( "cl_tauntmenu.lua" )
 AddCSLuaFile( "cl_voice.lua" )
+AddCSLuaFile( "cl_deathnotice.lua" )
 
 include( 'shared.lua' )
 
@@ -27,6 +28,7 @@ util.AddNetworkString( "XP_Pedo_Notif" )
 util.AddNetworkString( "XP_Pedo_Taunt" )
 util.AddNetworkString( "XP_Pedo_Music" )
 util.AddNetworkString( "XP_Pedo_AFK" )
+util.AddNetworkString( "XP_Pedo_MusicList" )
 
 function GM:PlayerInitialSpawn(ply)
 	
@@ -40,9 +42,9 @@ function GM:PlayerInitialSpawn(ply)
 		GAMEMODE:LoadChances(ply)
 	end
 	
-	if GAMEMODE.Vars.Round.Start or GAMEMODE.Vars.Round.PreStart then
+	if (GAMEMODE.Vars.Round.Start or GAMEMODE.Vars.Round.PreStart) and GAMEMODE.Vars.CurrentMusic then
 		
-		GAMEMODE:PedoMusic("", GAMEMODE.Vars.Round.PreStart, ply)
+		GAMEMODE:PedoMusic(GAMEMODE.Vars.CurrentMusic, GAMEMODE.Vars.Round.PreStart, ply)
 		
 	end
 	
@@ -53,6 +55,7 @@ function GM:PlayerInitialSpawn(ply)
 	end
 	
 	GAMEMODE:PedoVars(ply)
+	GAMEMODE:SendMusicIndex(ply)
 	
 end
 
@@ -120,6 +123,8 @@ function GM:PostPlayerDeath( ply )
 	end)
 	
 	GAMEMODE:PlayerStats()
+	
+	GAMEMODE:RetrieveXperidiaAccountRank(ply)
 	
 end
 
@@ -344,6 +349,7 @@ function GM:Think()
 				end
 				
 				v:SetNWInt( "SprintV", v.SprintV )
+				v:SetNWInt( "SprintLock", v.SprintLock )
 				
 			end
 			
@@ -360,19 +366,25 @@ function GM:Think()
 	
 	GAMEMODE:RoundThink()
 	
+	if GAMEMODE:IsSeasonalEvent("AprilFool") then
+		physenv.SetGravity( Vector(math.Rand(-4096, 4096), math.Rand(-4096, 4096), math.Rand(-4096, 4096)) )
+	end
+	
 end
 
 function GM:RoundThink()
 	
 	if !GAMEMODE.Vars.Round.Start and !GAMEMODE.Vars.Round.PreStart then -- PreRound
 		
-		if GAMEMODE.Vars.victims and GAMEMODE.Vars.victims>=2 then
+		if GAMEMODE.Vars.victims and GAMEMODE.Vars.victims>=2 and (!MapVote or (MapVote and !MapVote.Allow) ) then
 			
 			GAMEMODE.Vars.Round.PreStart = true
 			
 			GAMEMODE.Vars.Round.PreStartTime = CurTime() + pedobear_round_pretime:GetFloat()
 			
-			GAMEMODE:PedoMusic("", true)
+			GAMEMODE.Vars.CurrentMusic = "sound/pedo/premusics/"..GAMEMODE.Musics.premusics[math.random(1,#GAMEMODE.Musics.premusics)]
+			
+			GAMEMODE:PedoMusic(GAMEMODE.Vars.CurrentMusic, true)
 			
 			GAMEMODE:PedoVars()
 			
@@ -395,12 +407,20 @@ function GM:RoundThink()
 			local PedoIndex = 1
 			local tw = "the"
 			
-			if GAMEMODE.Vars.victims>=128 then
-				WantedPedos = 4
-			elseif GAMEMODE.Vars.victims>=64 then
-				WantedPedos = 3
-			elseif GAMEMODE.Vars.victims>=32 then
-				WantedPedos = 2
+			if GAMEMODE:IsSeasonalEvent("PedobearDay") then
+				
+				WantedPedos = math.Clamp(#team.GetPlayers(TEAM_VICTIMS)-2, 1, 128)
+				
+			else
+				
+				if GAMEMODE.Vars.victims>=64 then
+					WantedPedos = 4
+				elseif GAMEMODE.Vars.victims>=32 then
+					WantedPedos = 3
+				elseif GAMEMODE.Vars.victims>=24 then
+					WantedPedos = 2
+				end
+				
 			end
 			
 			GAMEMODE:Log(WantedPedos.." pedobear(s) will be selected", nil, true)
@@ -411,7 +431,7 @@ function GM:RoundThink()
 				
 				for k, v in RandomPairs(plys) do
 					
-					if !Pedos[PedoIndex] or (IsValid(Pedos[PedoIndex]) and (Pedos[PedoIndex]:GetNWFloat("XP_Pedo_PedoChance", 0) < v:GetNWFloat("XP_Pedo_PedoChance", 0) or Pedos[PedoIndex].IsAFK)) then
+					if !Pedos[PedoIndex] or (IsValid(Pedos[PedoIndex]) and (Pedos[PedoIndex]:GetNWFloat("XP_Pedo_PedoChance", 0) < v:GetNWFloat("XP_Pedo_PedoChance", 0))) then
 						Pedos[PedoIndex] = v
 					end
 					
@@ -436,15 +456,17 @@ function GM:RoundThink()
 			
 			for k, v in pairs(Pedos) do
 				
-				--PrintMessage( HUD_PRINTTALK, v:GetName().." is "..tw.." pedobear!" )
+				--PrintMessage( HUD_PRINTTALK, v:Nick().." is "..tw.." pedobear!" )
 				v:SendLua([[LocalPlayer():EmitSound("pedo_yourethepedo") system.FlashWindow()]])
 				GAMEMODE:PedoAFKCare(v)
 				
 			end
 			
+			GAMEMODE.Vars.CurrentMusic = "sound/pedo/musics/"..GAMEMODE.Musics.musics[math.random(1,#GAMEMODE.Musics.musics)]
+			
 			timer.Create( "XP_Pedo_TempoStart", 0.2, 1, function()
 				
-				GAMEMODE:PedoMusic("")
+				GAMEMODE:PedoMusic(GAMEMODE.Vars.CurrentMusic)
 				
 				GAMEMODE:PlayerStats()
 				
@@ -530,13 +552,15 @@ function GM:RoundThink()
 				GAMEMODE.Vars.Round.TempEnd = false
 				GAMEMODE.Vars.downvictims = 0
 				
+				GAMEMODE.Vars.CurrentMusic = nil
+				
 				GAMEMODE:PedoMusic("stop")
 				
 				game.CleanUpMap()
 				
 				for k, v in pairs(team.GetPlayers(TEAM_VICTIMS)) do
 					if !v:Alive() then v:Spawn() end
-					if !v:IsBot() then v:SetNWFloat("XP_Pedo_PedoChance", v:GetNWFloat("XP_Pedo_PedoChance", 0) + 0.01) end
+					if !v:IsBot() and !v.IsAFK then v:SetNWFloat("XP_Pedo_PedoChance", v:GetNWFloat("XP_Pedo_PedoChance", 0) + 0.01) end
 				end
 				
 				for k, v in pairs(team.GetPlayers(TEAM_PEDOBEAR)) do
@@ -574,7 +598,19 @@ function GM:OnPlayerChangedTeam( ply, oldteam, newteam )
 		
 	end
 	
-	PrintMessage( HUD_PRINTTALK, Format( "%s joined '%s'", ply:Nick(), team.GetName( newteam ) ) )
+	if oldteam == TEAM_PEDOBEAR then
+		
+		PrintMessage( HUD_PRINTTALK, Format( "%s left the Pedobear role!", ply:Nick() ) )
+		
+	elseif newteam == TEAM_VICTIMS then
+		
+		PrintMessage( HUD_PRINTTALK, Format( "%s joined the game!", ply:Nick() ) )
+		
+	else
+		
+		PrintMessage( HUD_PRINTTALK, Format( "%s joined '%s'", ply:Nick(), team.GetName( newteam ) ) )
+		
+	end
 	
 end
 
@@ -596,7 +632,6 @@ function GM:DoPlayerDeath( ply, attacker, dmginfo )
 	
 		if attacker != ply and attacker:Team()==TEAM_PEDOBEAR then
 			attacker:AddFrags( 1 )
-			attacker:PrintMessage(HUD_PRINTTALK, "You captured "..ply:GetName())
 			if GAMEMODE:IsSeasonalEvent("Halloween") or ply:GetInfoNum("pedobear_cl_jumpscare", 0)==1 then
 				if attacker:SteamID()=="STEAM_0:0:73872777" then
 					ply:ConCommand( "pp_mat_overlay "..tostring(GAMEMODE.Materials.PepperDeath) )
@@ -604,7 +639,6 @@ function GM:DoPlayerDeath( ply, attacker, dmginfo )
 					ply:ConCommand( "pp_mat_overlay "..tostring(GAMEMODE.Materials.Death) )
 				end
 			end
-			ply:PrintMessage(HUD_PRINTTALK, "Pedobear ("..attacker:GetName()..") captured you!")
 			GAMEMODE.Vars.downvictims = (GAMEMODE.Vars.downvictims or 0) + 1
 		end
 	
@@ -679,7 +713,7 @@ function GM:Taunt( ply, taunt, tauntid )
 			ply:SetNWInt( "TauntCooldown", ply.TauntCooldown )
 			ply:SetNWInt( "TauntCooldownF", cd )
 			
-			if GAMEMODE.Vars.Round.Start and !GAMEMODE.Vars.Round.End and !GAMEMODE.Vars.Round.TempEnd and ply:Team()!=TEAM_PEDOBEAR then
+			if PS and GAMEMODE.Vars.Round.Start and !GAMEMODE.Vars.Round.End and !GAMEMODE.Vars.Round.TempEnd and ply:Team()!=TEAM_PEDOBEAR then
 				local points = 10
 				ply:PS_GivePoints(points)
 				ply:PS_Notify("You've been given "..points.." "..PS.Config.PointsName.." for taunting!")
@@ -771,7 +805,7 @@ function GM:AFKThink(ply, ucmd)
 		
 			ply.IsAFK = false
 			
-			GAMEMODE:Log(ply:GetName().." is no longer afk!")
+			GAMEMODE:Log(ply:GetName().." is no longer afk!", nil, true)
 			
 			net.Start("XP_Pedo_AFK")
 				net.WriteFloat(0)
@@ -786,7 +820,7 @@ function GM:AFKThink(ply, ucmd)
 	if !ply.IsAFK and ply.afkcheck != nil and ply.afkcheck < CurTime() - pedobear_afk_time:GetInt() then
 		
 		ply.IsAFK = true
-		GAMEMODE:Log(ply:GetName().." is afk!")
+		GAMEMODE:Log(ply:GetName().." is afk!", nil, true)
 		
 		GAMEMODE:PedoAFKCare(ply)
 	
@@ -804,7 +838,7 @@ function GM:PedoAFKCare(ply)
 		
 		local userid = ply:UserID()
 		timer.Create( "XP_Pedo_AFK"..userid, pedobear_afk_action:GetInt(), 1, function()
-			if IsValid(ply) and ply.IsAFK then GAMEMODE:PlayerJoinTeam( ply, TEAM_VICTIMS ) end
+			if IsValid(ply) and ply.IsAFK and ply:Alive() and ply:Team()==TEAM_PEDOBEAR then GAMEMODE:PlayerJoinTeam( ply, TEAM_VICTIMS ) end
 			timer.Remove("XP_Pedo_AFK"..userid)
 		end)
 		
@@ -834,5 +868,23 @@ function GM:EntityTakeDamage( target, dmg )
 		end
 		
 	end
+	
+end
+
+function GM:BuildMusicIndex()
+	
+	GAMEMODE.Musics.musics = file.Find( "sound/pedo/musics/*", "GAME" )
+	GAMEMODE.Musics.premusics = file.Find( "sound/pedo/premusics/*", "GAME" )
+	
+	GAMEMODE:SendMusicIndex()
+	
+end
+
+function GM:SendMusicIndex(ply)
+	
+	net.Start("XP_Pedo_MusicList")
+		net.WriteTable(GAMEMODE.Musics.musics)
+		net.WriteTable(GAMEMODE.Musics.premusics)
+	if IsValid(ply) then net.Send(ply) else net.Broadcast() end
 	
 end

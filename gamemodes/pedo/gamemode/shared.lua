@@ -8,7 +8,7 @@ GM.ShortName 	= "Pedo"
 GM.Author 	= "VictorienXP@Xperidia"
 GM.Email 	= "contact@Xperidia.com"
 GM.Website 	= "steamcommunity.com/sharedfiles/filedetails/?id=628449407"
-GM.Version 	= 0.21
+GM.Version 	= 0.212
 GM.TeamBased = true
 
 TEAM_VICTIMS = 1
@@ -37,12 +37,25 @@ GM.Materials.PepperDeath = Material("pedo/pepperscare")
 GM.Vars = GM.Vars or {}
 GM.Vars.Round = GM.Vars.Round or {}
 GM.Bots = GM.Bots or {}
+GM.Musics = GM.Musics or {}
 
 GM.SeasonalEvents = {
-	{"AprilFool", " - April Fool", "01/04"},
-	{"Halloween", " - Halloween", "31/10"},
-	{"Christmas", " - Christmas", "24/12", "25/12"}
+	{"AprilFool", "April Fool", "01/04"},
+	{"Halloween", "Halloween", "31/10"},
+	{"Christmas", "Christmas", "24/12", "25/12"},
+	{"PedobearDay", "Pedobear Anniversary", "10/02"},
+	{"LennyFaceDay", "Lenny Face Anniversary", "18/11"}
 }
+
+GM.PlayerMeta = GM.PlayerMeta or FindMetaTable( "Player" )
+
+GM.PlayerMeta.RealNick = GM.PlayerMeta.RealNick or GM.PlayerMeta.Nick
+
+function GM.PlayerMeta:Nick()
+	if GAMEMODE:IsSeasonalEvent("LennyFaceDay") then return "( ͡° ͜ʖ ͡°)" end
+	return self:RealNick()
+end
+
 
 function GM:IsSeasonalEvent(str)
 	
@@ -82,7 +95,7 @@ function GM:SeasonalEventStr()
 		while v[3+i] do
 			
 			if (os.date("%d/%m", Timestamp) == v[3+i]) then
-				return v[2]
+				return " - "..v[2]
 			end
 			
 			i = i + 1
@@ -111,7 +124,6 @@ function GM:Initialize()
 	pedobear_afk_time = CreateConVar( "pedobear_afk_time", 30, { FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE }, "Time needed for a player to be consired afk." )
 	pedobear_afk_action = CreateConVar( "pedobear_afk_action", 30, { FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE }, "Time needed for a player to be kick out of pedobear when afk." )
 	pedobear_save_chances = CreateConVar( "pedobear_save_chances", 1, { FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE }, "Set if we should save the chances to be Pedobear." )
-	pedobear_save_score = CreateConVar( "pedobear_save_score", 1, { FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE }, "Set if we should save the scores." )
 	
 	local damagesnd = file.Find( "sound/pedo/damage/*.ogg", "GAME" )
 	
@@ -146,11 +158,24 @@ function GM:Initialize()
 			end
 		end)
 		cvars.AddChangeCallback( "pedobear_cl_music_enable", function( convar_name, value_old, value_new )
-			if IsValid(GAMEMODE.Vars.Music) and !GetConVar( "pedobear_cl_music_enable" ):GetBool() then
+			value_new = GetConVar( "pedobear_cl_music_enable" ):GetBool()
+			if IsValid(GAMEMODE.Vars.Music) and !value_new then
 				GAMEMODE.Vars.Music:Stop()
 				GAMEMODE.Vars.Music = nil
+			elseif value_new and (GAMEMODE.Vars.Round.Start or GAMEMODE.Vars.Round.PreStart) then
+				GAMEMODE:Music(GAMEMODE.Vars.CurrentMusic or "", GAMEMODE.Vars.Round.PreStart)
 			end
 		end)
+		
+	end
+	
+	if SERVER then
+		
+		if Pinion and Pinion.GamemodesSupportingInterrupt then
+			table.insert(Pinion.GamemodesSupportingInterrupt, "pedo")
+		end
+		
+		GAMEMODE:BuildMusicIndex()
 		
 	end
 	

@@ -3,6 +3,7 @@ include( 'cl_scoreboard.lua' )
 include( 'cl_menu.lua' )
 include( 'cl_tauntmenu.lua' )
 include( 'cl_voice.lua' )
+include( 'cl_deathnotice.lua' )
 
 DEFINE_BASECLASS( "gamemode_base" )
 
@@ -124,6 +125,13 @@ net.Receive("XP_Pedo_AFK", function( len )
 	
 end)
 
+net.Receive("XP_Pedo_MusicList", function( len )
+	
+	GAMEMODE.Musics.musics = net.ReadTable()
+	GAMEMODE.Musics.premusics = net.ReadTable()
+	
+end)
+
 hook.Add("HUDShouldDraw", "HideHUD", function( name )
 	
 	local HUDhide = {
@@ -152,7 +160,7 @@ function GM:FormatTime(time)
 	elseif timet.m >= 1 then
 		return string.format("%02i:%02i", timet.m, timet.s)
 	else
-		return string.format("%02i:%02i", timet.s, math.Clamp(timet.ms, 0, 99))
+		return string.format("%02i.%02i", timet.s, math.Clamp(timet.ms, 0, 99))
 	end
 	
 end
@@ -161,12 +169,16 @@ function GM:FormatTimeTri(time)
 	
 	local timet = string.FormattedTime( time )
 	
-	return string.format("%02i:%02i:%02i", timet.h, timet.m, timet.s)
+	if timet.h > 0 then
+		return string.format("%02i:%02i:%02i", timet.h, timet.m, timet.s)
+	end
+	
+	return string.format("%02i:%02i", timet.m, timet.s)
 	
 end
 
 function GM:PrettyMusicName(snd)
-	local str = string.StripExtension(string.GetFileFromFilename(snd:GetFileName()))
+	local str = string.StripExtension(snd)
 	str = string.Replace(str, "_", " ")
 	str = string.Replace(str, "%20", " ")
 	return string.gsub(str, "(%a)([%w_']*)", function( first, rest ) return first:upper()..rest:lower() end)
@@ -177,7 +189,9 @@ function GM:HUDPaint()
 	if ( GetConVarNumber( "cl_drawhud" ) == 0 ) then return end
 	
 	hook.Run( "HUDDrawTargetID" )
+	hook.Run( "DrawDeathNotice", 0.85, 0.04 )
 	
+	local function yay(a) return (math.sin(CurTime()*6)+1)/2*a end
 	local ply = LocalPlayer()
 	local sply = ply:GetObserverTarget() or ply
 	if !sply:IsPlayer() then
@@ -215,7 +229,7 @@ function GM:HUDPaint()
 		timestr = GAMEMODE:FormatTime(GAMEMODE.Vars.Round.Time - CurTime())
 	elseif GAMEMODE.Vars.Round.End or GAMEMODE.Vars.Round.TempEnd then
 		timestr = GAMEMODE:FormatTime(GAMEMODE.Vars.Round.LastTime)
-	elseif !GAMEMODE.Vars.Round.Start then
+	elseif !GAMEMODE.Vars.Round.Start and !GAMEMODE.Vars.Round.PreStart then
 		timestr = GAMEMODE:FormatTime(pedobear_round_pretime:GetFloat())
 	end
 	
@@ -223,7 +237,7 @@ function GM:HUDPaint()
 	
 	draw.DrawText( rnd, "XP_Pedo_RND", ScrW()/2, 60, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
 	
-	if !GAMEMODE.Vars.Round.Start and !GAMEMODE.Vars.Round.PreStart then
+	if !GAMEMODE.Vars.Round.Start and !GAMEMODE.Vars.Round.PreStart and GAMEMODE.Vars.victims<2 then
 		
 		draw.RoundedBox( 16, ScrW()/2-200, 110, 400, 55, Color( 0, 0, 0, 200 ) )
 		draw.DrawText( "Waiting for players", "XP_Pedo_RND", ScrW()/2, 110, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
@@ -237,7 +251,7 @@ function GM:HUDPaint()
 	
 	if GAMEMODE.Vars.AfkTime and GAMEMODE.Vars.AfkTime - CurTime() >= 0 then
 		draw.RoundedBox( 16, ScrW()/2-300, 165, 600, 210, Color( 0, 0, 0, 200 ) )
-		draw.DrawText( "Hey you're kind of afk!\nIf you're still afk in "..GAMEMODE:FormatTime(GAMEMODE.Vars.AfkTime - CurTime()).."\nYou will be kicked out\n of the role of Pedobear", "XP_Pedo_RND", ScrW()/2, 165, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
+		draw.DrawText( "Hey you're kind of afk!\nIf you're still afk in "..GAMEMODE:FormatTime(GAMEMODE.Vars.AfkTime - CurTime()).."\nYou will be kicked out\n of the role of Pedobear", "XP_Pedo_RND", ScrW()/2, 165, Color( 255, yay(255), yay(255), 255 ), TEXT_ALIGN_CENTER )
 	end
 	
 	if ply:Alive() and !GAMEMODE.Vars.Round.Start and ply:Team()==TEAM_VICTIMS then
@@ -246,21 +260,30 @@ function GM:HUDPaint()
 		if GAMEMODE:IsSeasonalEvent("AprilFool") then draw.DrawText("PedoTips™", "DermaDefault", ScrW()/2-270, ScrH()-90, Color(255, 255, 255, 64), TEXT_ALIGN_LEFT) end
 		draw.DrawText( GAMEMODE:CheckBind("+attack").." to weld a prop to another\n"..GAMEMODE:CheckBind("+attack2").." to unweld a prop\n"..GAMEMODE:CheckBind("+reload").." to create a clone (Only one clone at the same time)", "XP_Pedo_HT", ScrW()/2, ScrH()-90, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
 		
+	elseif ply:Alive() and ply:Team()==TEAM_PEDOBEAR then
+		
+		draw.RoundedBox( 8, ScrW()/2-180, ScrH()-90, 360, 75, Color( 0, 0, 0, 200 ) )
+		if GAMEMODE:IsSeasonalEvent("AprilFool") then draw.DrawText("PedoTips™", "DermaDefault", ScrW()/2-180, ScrH()-90, Color(255, 255, 255, 64), TEXT_ALIGN_LEFT) end
+		draw.DrawText( "You're a Pedobear!\n"..GAMEMODE:CheckBind("+attack").." to break props\nNow start chasing some little girls! ( ͡° ͜ʖ ͡°)", "XP_Pedo_HT", ScrW()/2, ScrH()-90, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
+		
 	end
 	
 	if GAMEMODE.Vars.welding and ply:Alive() and ply:Team()==TEAM_VICTIMS then
 		
-		draw.RoundedBox( 8, ScrW()/2-150, ScrH()/2+100, 300, 26, Color( 0, 0, 0, 200 ) )
-		draw.DrawText( "Click another prop or world", "XP_Pedo_HT", ScrW()/2, ScrH()/2+100, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
+		draw.RoundedBox( 8, ScrW()/2-150, ScrH()/2+100, 300, 26, Color( 0, 0, 0, yay(200) ) )
+		draw.DrawText( "Click another prop or world", "XP_Pedo_HT", ScrW()/2, ScrH()/2+100, Color( 255, 255, 255, yay(255) ), TEXT_ALIGN_CENTER )
 		
 	end
 	
 	if ply:Team()==TEAM_UNASSIGNED then
 		
-		local function yay(a) return (math.sin(CurTime()*6)+1)/2*a end
-		
 		draw.RoundedBox( 8, ScrW()/2-160, ScrH()/2-20, 320, 40, Color( 0, 0, 0, yay(200) ) )
 		draw.DrawText( "Press any key to join!", "XP_Pedo_TXT", ScrW()/2, ScrH()/2-20, Color( 255, 255, 255, yay(255) ), TEXT_ALIGN_CENTER )
+		
+	elseif ply:Team()==TEAM_VICTIMS and !GAMEMODE.Vars.Round.Start and !ply:Alive() then
+		
+		draw.RoundedBox( 8, ScrW()/2-200, ScrH()/2-20, 400, 40, Color( 0, 0, 0, yay(200) ) )
+		draw.DrawText( "Press any key to respawn!", "XP_Pedo_TXT", ScrW()/2, ScrH()/2-20, Color( 255, 255, 255, yay(255) ), TEXT_ALIGN_CENTER )
 		
 	end
 	
@@ -279,8 +302,8 @@ function GM:HUDPaint()
 	draw.DrawText( str4, "XP_Pedo_TXT", ScrW()/2, ScrH()/2-80, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
 	
 	if ply:Team()!=TEAM_UNASSIGNED and sply:Team()!=TEAM_SPECTATOR then
-		draw.DrawText( sply:GetName(), "XP_Pedo_HUDname", 100+1, ScrH()-200+1, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER )
-		draw.DrawText( sply:GetName(), "XP_Pedo_HUDname", 100, ScrH()-200, col, TEXT_ALIGN_CENTER )
+		draw.DrawText( sply:Nick(), "XP_Pedo_HUDname", 100+1, ScrH()-200+1, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER )
+		draw.DrawText( sply:Nick(), "XP_Pedo_HUDname", 100, ScrH()-200, col, TEXT_ALIGN_CENTER )
 	end
 	
 	if IsValid(GAMEMODE.Vars.Music) then
@@ -301,7 +324,7 @@ function GM:HUDPaint()
 		
 		draw.RoundedBoxEx( 16, ScrW()-256, ScrH()-100+visspace, 256, 100-visspace, Color( 0, 0, 0, 200 ), true, false, false, false )
 		
-		local title = "♪ "..GAMEMODE:PrettyMusicName(GAMEMODE.Vars.Music).." ♪"
+		local title = "♪ "..GAMEMODE:PrettyMusicName(string.GetFileFromFilename(GAMEMODE.Vars.Music:GetFileName())).." ♪"
 		draw.DrawText( title, "XP_Pedo_HUDname", ScrW()-127, ScrH()-99+visspace, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER )
 		draw.DrawText( title, "XP_Pedo_HUDname", ScrW()-128, ScrH()-100+visspace, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER )
 		
@@ -361,9 +384,11 @@ function GM:HUDPaintBackground()
 		local stamina = 200
 		local propheal = 200
 		local taunt = 200
+		local sprintlock = ply.SprintLock
 		
 		if ply != sply and sply:Alive() and sply:Team() == TEAM_VICTIMS then
 			stamina = math.Remap(sply:GetNWInt( "SprintV", 100 ), 0, 100, 1, 200)
+			sprintlock = sply:GetNWInt( "SprintLock", false )
 		elseif ply:Alive() and ply.SprintV and ply.SprintV < 100 and ply:Team() == TEAM_VICTIMS then
 			stamina = math.Remap(ply.SprintV, 0, 100, 1, 200)
 		end
@@ -895,6 +920,8 @@ function GM:StartTaunt(sel)
 end
 
 function GM:Music(src, pre)
+	
+	GAMEMODE.Vars.CurrentMusic = src
 	
 	if IsValid(GAMEMODE.Vars.Music) and src == "play" then
 		GAMEMODE.Vars.Music:Play()

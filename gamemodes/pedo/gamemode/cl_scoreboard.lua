@@ -46,6 +46,13 @@ local PLAYER_LINE = {
 		self.Ping:SetTextColor( Color( 255, 255, 255 ) )
 		self.Ping:SetContentAlignment( 5 )
 
+		self.Deaths = self:Add( "DLabel" )
+		self.Deaths:Dock( RIGHT )
+		self.Deaths:SetWidth( 50 )
+		self.Deaths:SetFont( "ScoreboardDefault" )
+		self.Deaths:SetTextColor( Color( 255, 255, 255 ) )
+		self.Deaths:SetContentAlignment( 5 )
+
 		self.Kills = self:Add( "DLabel" )
 		self.Kills:Dock( RIGHT )
 		self.Kills:SetWidth( 50 )
@@ -60,6 +67,13 @@ local PLAYER_LINE = {
 		self.Group:SetTextColor( Color( 255, 255, 255 ) )
 		self.Group:SetContentAlignment( 5 )
 		self.Group:SetText( "" )
+
+		self.PedoChance = self:Add( "DLabel" )
+		self.PedoChance:Dock( RIGHT )
+		self.PedoChance:SetWidth( 50 )
+		self.PedoChance:SetFont( "ScoreboardDefault" )
+		self.PedoChance:SetTextColor( Color( 255, 255, 255 ) )
+		self.PedoChance:SetContentAlignment( 5 )
 
 		self:Dock( TOP )
 		self:DockPadding( 3, 3, 3, 3 )
@@ -78,6 +92,7 @@ local PLAYER_LINE = {
 			self.Player.EntIndex = function() return self.Player.userid end
 			self.Player.Ping = function() return "" end
 			self.Player.Frags = function() return "" end
+			self.Player.Deaths = function() return "" end
 			self.Player.GetUserGroup = function() return "" end
 			local steamid = util.SteamIDTo64(self.Player.networkid)
 			self.Avatar:SetSteamID(steamid)
@@ -144,6 +159,19 @@ local PLAYER_LINE = {
 		if ( self.NumKills == nil || self.NumKills != self.Player:Frags() ) then
 			self.NumKills = self.Player:Frags()
 			self.Kills:SetText( self.NumKills )
+		end
+
+		if ( self.NumDeaths == nil || self.NumDeaths != self.Player:Deaths() ) then
+			self.NumDeaths = self.Player:Deaths()
+			self.Deaths:SetText( self.NumDeaths )
+		end
+		
+		if IsValid(self.Player) and ( self.PedoChanceTxt == nil || self.PedoChanceTxt != math.ceil((self.Player:GetNWFloat("XP_Pedo_PedoChance", 0) * 100)).."%" ) then
+			self.PedoChanceTxt = math.ceil((self.Player:GetNWFloat("XP_Pedo_PedoChance", 0) * 100)).."%"
+			self.PedoChance:SetText( self.PedoChanceTxt )
+		elseif !IsValid(self.Player) and self.PedoChanceTxt != "" then
+			self.PedoChanceTxt = ""
+			self.PedoChance:SetText(self.PedoChanceTxt)
 		end
 
 		if ( self.NumPing == nil || ( self.NumPing != self.Player:Ping() and self.NumPing != "BOT" and self.NumPing != "HOST" and self.NumPing != "..." ) ) then

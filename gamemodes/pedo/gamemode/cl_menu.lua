@@ -189,78 +189,96 @@ function GM:Menu()
 		disablehalo:SetValue( GetConVar("pedobear_cl_disablehalos"):GetBool() )
 		disablehalo:SizeToContents()
 		
+		local censorwords = vgui.Create( "DCheckBoxLabel" )
+		censorwords:SetParent(pedobearMenuF.config)
+		censorwords:SetText("Word censoring")
+		censorwords:SetPos( 15, 130 )
+		censorwords:SetDark( 1 )
+		censorwords:SetConVar( "pedobear_cl_censorwords" )
+		censorwords:SetValue( GetConVar("pedobear_cl_censorwords"):GetBool() )
+		censorwords:SetDisabled(string.match( GetHostName(), "Ollie's Mod" ))
+		censorwords:SizeToContents()
 		
-		pedobearMenuF.stats = vgui.Create( "DPanel" )
-		pedobearMenuF.stats:SetParent(pedobearMenuF)
-		pedobearMenuF.stats:SetPos( 10, 255 )
-		pedobearMenuF.stats:SetSize( 305, 215 )
+		
+		pedobearMenuF.MusicL = vgui.Create( "DPanel" )
+		pedobearMenuF.MusicL:SetParent(pedobearMenuF)
+		pedobearMenuF.MusicL:SetPos( 10, 255 )
+		pedobearMenuF.MusicL:SetSize( 305, 215 )
 		
 		local pre = GAMEMODE.Vars.Round.PreStart
 		
-		local statslbl = vgui.Create( "DLabel" )
-		statslbl:SetParent(pedobearMenuF.stats)
-		statslbl:SetText( Either(GAMEMODE:IsSeasonalEvent("AprilFool"), "PedoRadio™", "Music").." list"..Either( pre, " (Pre Round Musics)", "" ) )
-		statslbl:SetPos( 10, 5 )
-		statslbl:SetDark( 1 )
-		statslbl:SizeToContents()
-		
-		local MusicList = vgui.Create( "DListView", pedobearMenuF.stats )
-		MusicList:SetPos( 0, 20 )
-		MusicList:SetSize( 305, 195 )
-		MusicList:SetMultiSelect( false )
-		MusicList:AddColumn( "Music" )
-		local loc = MusicList:AddColumn( "Local" )
-		loc:SetMinWidth(30)
-		loc:SetMaxWidth(30)
-		local serv = MusicList:AddColumn( "Serv" )
-		serv:SetMinWidth(30)
-		serv:SetMaxWidth(30)
-		
-		local localmusics = file.Find( "sound/pedo/"..Either( pre, "premusics", "musics" ).."/*", "GAME" )
-		
-		local musiclist = {}
-		
-		for k, v in pairs(localmusics) do
+		local function CreateMusicList(pre)
 			
-			musiclist[v] = { true, nil }
+			pedobearMenuF.MusicL.lbl = vgui.Create( "DLabel" )
+			pedobearMenuF.MusicL.lbl:SetParent(pedobearMenuF.MusicL)
+			pedobearMenuF.MusicL.lbl:SetText( Either(GAMEMODE:IsSeasonalEvent("AprilFool"), "PedoRadio™", "Music").." list"..Either( pre, " (Pre Round Musics)", "" ) )
+			pedobearMenuF.MusicL.lbl:SetPos( 10, 5 )
+			pedobearMenuF.MusicL.lbl:SetDark( 1 )
+			pedobearMenuF.MusicL.lbl:SizeToContents()
 			
-		end
-		
-		if Either(pre, GAMEMODE.Musics.premusics, GAMEMODE.Musics.musics) then
+			pedobearMenuF.MusicL.List = vgui.Create( "DListView", pedobearMenuF.MusicL )
+			pedobearMenuF.MusicL.List:SetPos( 0, 20 )
+			pedobearMenuF.MusicL.List:SetSize( 305, 195 )
+			pedobearMenuF.MusicL.List:SetMultiSelect( false )
+			local name = pedobearMenuF.MusicL.List:AddColumn( "Music" )
+			name:SetMinWidth(150)
+			local mp = pedobearMenuF.MusicL.List:AddColumn( "Pack" )
+			mp:SetMinWidth(30)
+			local loc = pedobearMenuF.MusicL.List:AddColumn( "Local" )
+			loc:SetMinWidth(30)
+			loc:SetMaxWidth(30)
+			local serv = pedobearMenuF.MusicL.List:AddColumn( "Serv" )
+			serv:SetMinWidth(30)
+			serv:SetMaxWidth(30)
 			
-			for k, v in pairs( Either(pre, GAMEMODE.Musics.premusics, GAMEMODE.Musics.musics) ) do
+			local localmusics = Either(pre, GAMEMODE.LocalMusics.premusics, GAMEMODE.LocalMusics.musics)
+			
+			local musiclist = {}
+			
+			for k, v in pairs(localmusics) do
 				
-				if musiclist[v] then
-					musiclist[v] = { true, true }
-				else
-					musiclist[v] = { false, true }
+				musiclist[v[1]] = { v[2], v[3], file.Exists("sound/pedo/"..Either( pre, "premusics", "musics" ).."/"..v[1], "GAME"), nil }
+				
+			end
+			
+			if Either(pre, GAMEMODE.Musics.premusics, GAMEMODE.Musics.musics) then
+				
+				for k, v in pairs( Either(pre, GAMEMODE.Musics.premusics, GAMEMODE.Musics.musics) ) do
+					
+					if musiclist[v[1]] then
+						musiclist[v[1]] = { v[2], v[3], musiclist[v[1]][3], true }
+					else
+						musiclist[v[1]] = { v[2], v[3], file.Exists("sound/pedo/"..Either( pre, "premusics", "musics" ).."/"..v[1], "GAME"), true }
+					end
+					
 				end
 				
 			end
 			
-		end
-		
-		for k, v in SortedPairs(musiclist) do
+			for k, v in SortedPairs(musiclist) do
+				
+				pedobearMenuF.MusicL.List:AddLine( v[1] or GAMEMODE:PrettyMusicName(k), v[2], Either(string.match(k, "://"), "URL", Either(v[3], "✓", "❌")), Either(v[4], "✓", "❌") )
+				
+			end
 			
-			MusicList:AddLine( GAMEMODE:PrettyMusicName(k), Either(v[1], "✓", "❌"), Either(v[2], "✓", "❌") )
-			
 		end
+		CreateMusicList(pre)
 		
 		
-		pedobearMenuF.Music = vgui.Create( "DPanel" )
-		pedobearMenuF.Music:SetParent(pedobearMenuF)
-		pedobearMenuF.Music:SetPos( 325, 255 )
-		pedobearMenuF.Music:SetSize( 305, 215 )
+		pedobearMenuF.MusicCFG = vgui.Create( "DPanel" )
+		pedobearMenuF.MusicCFG:SetParent(pedobearMenuF)
+		pedobearMenuF.MusicCFG:SetPos( 325, 255 )
+		pedobearMenuF.MusicCFG:SetSize( 305, 215 )
 		
 		local musicmenulbl = vgui.Create( "DLabel" )
-		musicmenulbl:SetParent(pedobearMenuF.Music)
+		musicmenulbl:SetParent(pedobearMenuF.MusicCFG)
 		musicmenulbl:SetText( Either(GAMEMODE:IsSeasonalEvent("AprilFool"), "PedoRadio™", "Music").." configuration" )
 		musicmenulbl:SetPos( 10, 5 )
 		musicmenulbl:SetDark( 1 )
 		musicmenulbl:SizeToContents()
 		
 		local enablemusic = vgui.Create( "DCheckBoxLabel" )
-		enablemusic:SetParent(pedobearMenuF.Music)
+		enablemusic:SetParent(pedobearMenuF.MusicCFG)
 		enablemusic:SetText( Either(GAMEMODE:IsSeasonalEvent("AprilFool"), "Enable the PedoRadio™", "Enable music") )
 		enablemusic:SetPos( 15, 30 )
 		enablemusic:SetDark( 1 )
@@ -269,7 +287,7 @@ function GM:Menu()
 		enablemusic:SizeToContents()
 		
 		local allowexternal = vgui.Create( "DCheckBoxLabel" )
-		allowexternal:SetParent(pedobearMenuF.Music)
+		allowexternal:SetParent(pedobearMenuF.MusicCFG)
 		allowexternal:SetText("Allow external musics (Loaded from url)")
 		allowexternal:SetPos( 15, 50 )
 		allowexternal:SetDark( 1 )
@@ -278,7 +296,7 @@ function GM:Menu()
 		allowexternal:SizeToContents()
 		
 		local visualizer = vgui.Create( "DCheckBoxLabel" )
-		visualizer:SetParent(pedobearMenuF.Music)
+		visualizer:SetParent(pedobearMenuF.MusicCFG)
 		visualizer:SetText("Enable visualizer (Downgrade performance)")
 		visualizer:SetPos( 15, 70 )
 		visualizer:SetDark( 1 )
@@ -287,7 +305,7 @@ function GM:Menu()
 		visualizer:SizeToContents()
 		
 		local playmusic = vgui.Create( "DButton" )
-		playmusic:SetParent(pedobearMenuF.Music)
+		playmusic:SetParent(pedobearMenuF.MusicCFG)
 		playmusic:SetText( "Auto play local file" )
 		playmusic:SetPos( 90, 190 )
 		playmusic:SetSize( 125, 20 )
@@ -297,7 +315,7 @@ function GM:Menu()
 		end
 		
 		local vollbl = vgui.Create( "DLabel" )
-		vollbl:SetParent(pedobearMenuF.Music)
+		vollbl:SetParent(pedobearMenuF.MusicCFG)
 		vollbl:SetText( "Volume" )
 		vollbl:SetPos( 125, 140 )
 		vollbl:SetDark( 1 )
@@ -305,7 +323,7 @@ function GM:Menu()
 		
 		local vol = GetConVar( "pedobear_cl_music_volume" )
 		local musivol = vgui.Create( "Slider" )
-		musivol:SetParent(pedobearMenuF.Music)
+		musivol:SetParent(pedobearMenuF.MusicCFG)
 		musivol:SetPos( 15, 150 )
 		musivol:SetSize( 300, 40 )
 		musivol:SetValue( vol:GetFloat() )

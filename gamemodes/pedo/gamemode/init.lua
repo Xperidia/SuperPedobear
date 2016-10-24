@@ -29,6 +29,8 @@ util.AddNetworkString( "XP_Pedo_Taunt" )
 util.AddNetworkString( "XP_Pedo_Music" )
 util.AddNetworkString( "XP_Pedo_AFK" )
 util.AddNetworkString( "XP_Pedo_MusicList" )
+util.AddNetworkString( "PlayerKilledDummy" )
+util.AddNetworkString( "NPCKilledDummy" )
 
 function GM:PlayerInitialSpawn(ply)
 	
@@ -44,7 +46,7 @@ function GM:PlayerInitialSpawn(ply)
 	
 	if (GAMEMODE.Vars.Round.Start or GAMEMODE.Vars.Round.PreStart) and GAMEMODE.Vars.CurrentMusic then
 		
-		GAMEMODE:PedoMusic(GAMEMODE.Vars.CurrentMusic, GAMEMODE.Vars.Round.PreStart, ply)
+		GAMEMODE:PedoMusic(GAMEMODE.Vars.CurrentMusic, GAMEMODE.Vars.Round.PreStart, ply, GAMEMODE.Vars.CurrentMusicName)
 		
 	end
 	
@@ -104,11 +106,36 @@ function GM:PedoVars(ply)
 	
 end
 
-function GM:PedoMusic(src, pre, ply)
+function GM:SelectMusic(pre)
+	
+	GAMEMODE:BuildMusicIndex()
+	
+	local mlist = Either(pre, GAMEMODE.Musics.premusics, GAMEMODE.Musics.musics)
+	
+	if #mlist > 0 then
+		
+		local mid = math.random(1,#mlist)
+		local src = mlist[mid][1]
+		
+		if !string.match(mlist[mid][1], "://") then
+			src = "sound/pedo/"..Either(pre, "premusics", "musics").."/"..src
+		end
+		
+		GAMEMODE.Vars.CurrentMusic = src
+		GAMEMODE.Vars.CurrentMusicName = mlist[mid][2]
+		
+	end
+	
+	GAMEMODE:PedoMusic(GAMEMODE.Vars.CurrentMusic, pre, nil, GAMEMODE.Vars.CurrentMusicName)
+	
+end
+
+function GM:PedoMusic(src, pre, ply, name)
 	
 	net.Start("XP_Pedo_Music")
-		net.WriteString(src)
+		net.WriteString(src or "")
 		net.WriteBool(pre or false)
+		net.WriteString(name or "")
 	if IsValid(ply) then net.Send(ply) else net.Broadcast() end
 	
 end
@@ -382,9 +409,7 @@ function GM:RoundThink()
 			
 			GAMEMODE.Vars.Round.PreStartTime = CurTime() + pedobear_round_pretime:GetFloat()
 			
-			GAMEMODE.Vars.CurrentMusic = "sound/pedo/premusics/"..GAMEMODE.Musics.premusics[math.random(1,#GAMEMODE.Musics.premusics)]
-			
-			GAMEMODE:PedoMusic(GAMEMODE.Vars.CurrentMusic, true)
+			GAMEMODE:SelectMusic(true)
 			
 			GAMEMODE:PedoVars()
 			
@@ -462,11 +487,9 @@ function GM:RoundThink()
 				
 			end
 			
-			GAMEMODE.Vars.CurrentMusic = "sound/pedo/musics/"..GAMEMODE.Musics.musics[math.random(1,#GAMEMODE.Musics.musics)]
-			
 			timer.Create( "XP_Pedo_TempoStart", 0.2, 1, function()
 				
-				GAMEMODE:PedoMusic(GAMEMODE.Vars.CurrentMusic)
+				GAMEMODE:SelectMusic()
 				
 				GAMEMODE:PlayerStats()
 				
@@ -553,6 +576,7 @@ function GM:RoundThink()
 				GAMEMODE.Vars.downvictims = 0
 				
 				GAMEMODE.Vars.CurrentMusic = nil
+				GAMEMODE.Vars.CurrentMusicName = nil
 				
 				GAMEMODE:PedoMusic("stop")
 				
@@ -871,20 +895,64 @@ function GM:EntityTakeDamage( target, dmg )
 	
 end
 
-function GM:BuildMusicIndex()
-	
-	GAMEMODE.Musics.musics = file.Find( "sound/pedo/musics/*", "GAME" )
-	GAMEMODE.Musics.premusics = file.Find( "sound/pedo/premusics/*", "GAME" )
-	
-	GAMEMODE:SendMusicIndex()
-	
-end
-
 function GM:SendMusicIndex(ply)
 	
 	net.Start("XP_Pedo_MusicList")
 		net.WriteTable(GAMEMODE.Musics.musics)
 		net.WriteTable(GAMEMODE.Musics.premusics)
 	if IsValid(ply) then net.Send(ply) else net.Broadcast() end
+	
+end
+
+function GM:OnDummyKilled( ent, attacker, inflictor )
+	
+	if ( IsValid( attacker ) && attacker:GetClass() == "trigger_hurt" ) then attacker = ent end
+	
+	if ( IsValid( attacker ) && attacker:IsVehicle() && IsValid( attacker:GetDriver() ) ) then
+		attacker = attacker:GetDriver()
+	end
+
+	if ( !IsValid( inflictor ) && IsValid( attacker ) ) then
+		inflictor = attacker
+	end
+	
+	-- Convert the inflictor to the weapon that they're holding if we can.
+	if ( IsValid( inflictor ) && attacker == inflictor && ( inflictor:IsPlayer() || inflictor:IsNPC() ) ) then
+	
+		inflictor = inflictor:GetActiveWeapon()
+		if ( !IsValid( attacker ) ) then inflictor = attacker end
+	
+	end
+	
+	local InflictorClass = "worldspawn"
+	local AttackerClass = "worldspawn"
+	
+	if ( IsValid( inflictor ) ) then InflictorClass = inflictor:GetClass() end
+	if ( IsValid( attacker ) ) then
+
+		AttackerClass = attacker:GetClass()
+	
+		if ( attacker:IsPlayer() ) then
+
+			net.Start( "PlayerKilledDummy" )
+		
+				net.WriteEntity( ent )
+				net.WriteString( InflictorClass )
+				net.WriteEntity( attacker )
+		
+			net.Broadcast()
+
+			return
+		end
+
+	end
+	
+	net.Start( "NPCKilledDummy" )
+	
+		net.WriteEntity( ent )
+		net.WriteString( InflictorClass )
+		net.WriteString( AttackerClass )
+	
+	net.Broadcast()
 	
 end

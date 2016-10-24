@@ -7,6 +7,32 @@ killicon.Add( "pedo_pedobear", "pedo/pedobear", Color( 255, 255, 255, 255 ) )
 local Deaths = {}
 
 
+local function RecvPlayerKilledDummy()
+	
+	local victim	= net.ReadEntity()
+	local inflictor	= net.ReadString()
+	local attacker	= net.ReadEntity()
+	
+	if ( !IsValid( attacker ) ) then return end
+	
+	GAMEMODE:AddDeathNotice( attacker:Nick(), attacker:Team(), inflictor, victim:Nick(), victim:Team() )
+	
+end
+net.Receive( "PlayerKilledDummy", RecvPlayerKilledDummy )
+
+
+local function RecvNPCKilledNPC()
+
+	local victim	= net.ReadEntity()
+	local inflictor	= net.ReadString()
+	local attacker	= "#" .. net.ReadString()
+
+	GAMEMODE:AddDeathNotice( attacker, -1, inflictor, victim:Nick(), victim:Team() )
+
+end
+net.Receive( "NPCKilledDummy", RecvNPCKilledDummy )
+
+
 function GM:AddDeathNotice( Attacker, team1, Inflictor, Victim, team2 )
 
 	local Death = {}

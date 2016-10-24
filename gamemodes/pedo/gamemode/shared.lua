@@ -38,6 +38,7 @@ GM.Vars = GM.Vars or {}
 GM.Vars.Round = GM.Vars.Round or {}
 GM.Bots = GM.Bots or {}
 GM.Musics = GM.Musics or {}
+if CLIENT then GM.LocalMusics = GM.LocalMusics or {} end
 
 GM.SeasonalEvents = {
 	{"AprilFool", "April Fool", "01/04"},
@@ -108,6 +109,33 @@ function GM:SeasonalEventStr()
 	
 end
 
+function GM:WordFilter(str, ply)
+	
+	local blockword = false
+	
+	blockword = string.match( GetHostName(), "Ollie's Mod" ) or blockword
+	
+	if CLIENT then
+		
+		blockword = GetConVar("pedobear_cl_censorwords"):GetBool() or blockword
+		
+	elseif SERVER then
+		
+		if IsValid(ply) then blockword = ply:GetInfoNum("pedobear_cl_censorwords", 0) == 1 or blockword end
+		
+	end
+	
+	if blockword then
+		
+		str = string.Replace( str, "raped", "\"captured\"" )
+		str = string.Replace( str, "Raped", "\"Captured\"" )
+		
+	end
+	
+	return str
+	
+end
+
 function GM:Initialize()
 	
 	sound.Add( {
@@ -151,6 +179,7 @@ function GM:Initialize()
 		CreateClientConVar( "pedobear_cl_music_volume", 0.5, true, false )
 		CreateClientConVar( "pedobear_cl_music_allowexternal", 1, true, false )
 		CreateClientConVar( "pedobear_cl_music_visualizer", 1, true, false )
+		CreateClientConVar( "pedobear_cl_censorwords", 0, true, true )
 		
 		cvars.AddChangeCallback( "pedobear_cl_music_volume", function( convar_name, value_old, value_new )
 			if IsValid(GAMEMODE.Vars.Music) then
@@ -175,13 +204,64 @@ function GM:Initialize()
 			table.insert(Pinion.GamemodesSupportingInterrupt, "pedo")
 		end
 		
-		GAMEMODE:BuildMusicIndex()
-		
 	end
+	
+	GAMEMODE:BuildMusicIndex()
 	
 end
 
 function GM:ShutDown()
+end
+
+function GM:BuildMusicIndex()
+	
+	if !file.IsDir( "pedo/musics", "DATA" ) then
+		file.CreateDir( "pedo/musics" )
+	end
+	if !file.IsDir( "pedo/premusics", "DATA" ) then
+		file.CreateDir( "pedo/premusics" )
+	end
+	
+	local function ReadMusicInfo(pre)
+		
+		local mlist = {}
+		
+		local lua = file.Find( "pedo_musiclist/"..Either( pre, "premusics", "musics" ).."/*.lua", "LUA" )
+		
+		for k, v in pairs(lua) do
+			local ft = include( 'pedo_musiclist/'..Either( pre, "premusics", "musics" )..'/'..v )
+			table.Add(mlist, ft)
+		end
+		
+		local infos = file.Find( "pedo/"..Either( pre, "premusics", "musics" ).."/*.txt", "DATA" )
+		
+		for k, v in pairs(infos) do
+			local fileml = file.Read("pedo/"..Either( pre, "premusics", "musics" ).."/"..v)
+			local tmlist = util.JSONToTable( fileml )
+			table.Add(mlist, tmlist)
+		end
+		
+		return mlist
+		
+	end
+	
+	local musiclist = ReadMusicInfo()
+	local premusiclist = ReadMusicInfo(true)
+	
+	if SERVER then
+		
+		GAMEMODE.Musics.musics = musiclist
+		GAMEMODE.Musics.premusics = premusiclist
+		
+		if !game.IsDedicated() then GAMEMODE:SendMusicIndex() end
+		
+	else
+		
+		GAMEMODE.LocalMusics.musics = musiclist
+		GAMEMODE.LocalMusics.premusics = premusiclist
+		
+	end
+	
 end
 
 if SERVER then

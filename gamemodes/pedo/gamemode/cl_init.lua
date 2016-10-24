@@ -112,8 +112,9 @@ net.Receive("XP_Pedo_Music", function( len )
 	
 	local src = net.ReadString()
 	local pre = net.ReadBool()
+	local name = net.ReadString()
 	
-	GAMEMODE:Music(src, pre)
+	GAMEMODE:Music(src, pre, name)
 	
 end)
 
@@ -191,76 +192,114 @@ function GM:HUDPaint()
 	hook.Run( "HUDDrawTargetID" )
 	hook.Run( "DrawDeathNotice", 0.85, 0.04 )
 	
+	--[[ THE INDEX ZONE ]]--
+	
+	local PreStartTime = GAMEMODE.Vars.Round.PreStartTime
+	local PreStart = GAMEMODE.Vars.Round.PreStart
+	local Time = GAMEMODE.Vars.Round.Time
+	local End = GAMEMODE.Vars.Round.End
+	local LastTime = GAMEMODE.Vars.Round.LastTime
+	local Start = GAMEMODE.Vars.Round.Start
+	local TempEnd = GAMEMODE.Vars.Round.TempEnd
+	
 	local function yay(a) return (math.sin(CurTime()*6)+1)/2*a end
 	local ply = LocalPlayer()
 	local sply = ply:GetObserverTarget() or ply
 	if !sply:IsPlayer() then
 		sply = ply
 	end
+	local plyAlive = ply:Alive()
+	local plyTeam = ply:Team()
+	local splyAlive = sply:Alive()
+	local splyTeam = sply:Team()
 	local col = sply:GetPlayerColor():ToColor()
-	if !sply:Alive() then col = team.GetColor( sply:Team() ) end
-	
+	if !splyAlive then col = team.GetColor( splyTeam ) end
 	local wi = true
-	local str = "Victims Left: "..(GAMEMODE.Vars.victims or 0)
-	local str2 = 'Victims "Captured": '..(GAMEMODE.Vars.downvictims or 0)
-	if !string.match( GetHostName(), "Ollie's Mod" ) then str2 = "Victims Raped: "..(GAMEMODE.Vars.downvictims or 0) end
-	local timestr = "00:00"
-	local rnd = "Round "..(GAMEMODE.Vars.Rounds or 0)
-	if GAMEMODE.Vars.Rounds and GAMEMODE.Vars.Rounds > 999 then
-		rnd = "Round ∞"
-	end
-	local str4 = ""
-	
-	if !sply:Alive() or ( sply:Team()!=TEAM_PEDOBEAR and sply:Team()!=TEAM_VICTIMS ) then
+	if !splyAlive or ( splyTeam!=TEAM_PEDOBEAR and splyTeam!=TEAM_VICTIMS ) then
 		wi = false
 	end
 	
-	if GAMEMODE.Vars.Round.Start then
-		
-		draw.RoundedBoxEx( 16, 0, ScrH()/2-10, 330, 100, Color( 0, 0, 0, 200 ), false, true, false, true )
-		draw.DrawText( str.."\n"..str2, "XP_Pedo_TXT", 320, ScrH()/2, Color( 255, 255, 255, 255 ), TEXT_ALIGN_RIGHT )
-		
+	
+	--[[ THE CLOCK ]]--
+	
+	local timestr = "00:00"
+	local TheTime = 0
+	
+	if PreStartTime and PreStartTime - CurTime() >= 0 then
+		TheTime = PreStartTime - CurTime()
+	elseif Time and Time - CurTime() >= 0 then
+		TheTime = Time - CurTime()
+	elseif End or TempEnd then
+		TheTime = LastTime
+	elseif !Start and !PreStart then
+		TheTime = pedobear_round_pretime:GetFloat()
 	end
 	
+	draw.DrawText( GAMEMODE:FormatTime(TheTime), "XP_Pedo_TIME", ScrW()/2, 0, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
 	
-	if GAMEMODE.Vars.Round.PreStartTime and GAMEMODE.Vars.Round.PreStartTime - CurTime() >= 0 then
-		timestr = GAMEMODE:FormatTime(GAMEMODE.Vars.Round.PreStartTime - CurTime())
-	elseif GAMEMODE.Vars.Round.Time and GAMEMODE.Vars.Round.Time - CurTime() >= 0 then
-		timestr = GAMEMODE:FormatTime(GAMEMODE.Vars.Round.Time - CurTime())
-	elseif GAMEMODE.Vars.Round.End or GAMEMODE.Vars.Round.TempEnd then
-		timestr = GAMEMODE:FormatTime(GAMEMODE.Vars.Round.LastTime)
-	elseif !GAMEMODE.Vars.Round.Start and !GAMEMODE.Vars.Round.PreStart then
-		timestr = GAMEMODE:FormatTime(pedobear_round_pretime:GetFloat())
+	
+	--[[ THE ROUND COUNT ]]--
+	
+	local rnd = (GAMEMODE.Vars.Rounds or 0)
+	if GAMEMODE.Vars.Rounds and GAMEMODE.Vars.Rounds > 999 then
+		rnd = "∞"
 	end
 	
-	draw.DrawText( timestr, "XP_Pedo_TIME", ScrW()/2, 0, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
+	draw.DrawText( "Round "..rnd, "XP_Pedo_RND", ScrW()/2, 60, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
 	
-	draw.DrawText( rnd, "XP_Pedo_RND", ScrW()/2, 60, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
 	
-	if !GAMEMODE.Vars.Round.Start and !GAMEMODE.Vars.Round.PreStart and GAMEMODE.Vars.victims<2 then
+	--[[ THE ROUND STATUS ]]--
+	
+	if !Start and !PreStart and GAMEMODE.Vars.victims<2 then
 		
 		draw.RoundedBox( 16, ScrW()/2-200, 110, 400, 55, Color( 0, 0, 0, 200 ) )
 		draw.DrawText( "Waiting for players", "XP_Pedo_RND", ScrW()/2, 110, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
 		
-	elseif GAMEMODE.Vars.Round.PreStart then
+	elseif PreStart then
 		
 		draw.RoundedBox( 16, ScrW()/2-125, 110, 250, 55, Color( 0, 0, 0, 200 ) )
 		draw.DrawText( "Preparing...", "XP_Pedo_RND", ScrW()/2, 110, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
 		
 	end
 	
+	
+	--[[ THE AFK MESSAGE ]]--
+	
 	if GAMEMODE.Vars.AfkTime and GAMEMODE.Vars.AfkTime - CurTime() >= 0 then
 		draw.RoundedBox( 16, ScrW()/2-300, 165, 600, 210, Color( 0, 0, 0, 200 ) )
 		draw.DrawText( "Hey you're kind of afk!\nIf you're still afk in "..GAMEMODE:FormatTime(GAMEMODE.Vars.AfkTime - CurTime()).."\nYou will be kicked out\n of the role of Pedobear", "XP_Pedo_RND", ScrW()/2, 165, Color( 255, yay(255), yay(255), 255 ), TEXT_ALIGN_CENTER )
 	end
 	
-	if ply:Alive() and !GAMEMODE.Vars.Round.Start and ply:Team()==TEAM_VICTIMS then
+	
+	--[[ THE SIDE COUNTERS ]]--
+	
+	if Start then
+		
+		draw.RoundedBoxEx( 16, 0, ScrH()/2-10, 330, 100, Color( 0, 0, 0, 200 ), false, true, false, true )
+		draw.DrawText( GAMEMODE:WordFilter("Victims Left: "..(GAMEMODE.Vars.victims or 0).."\nVictims Raped: "..(GAMEMODE.Vars.downvictims or 0)), "XP_Pedo_TXT", 320, ScrH()/2, Color( 255, 255, 255, 255 ), TEXT_ALIGN_RIGHT )
+		
+	end
+	
+	
+	--[[ THE TIPS MESSAGES ]]--
+	
+	if plyTeam == TEAM_UNASSIGNED then
+		
+		draw.RoundedBox( 8, ScrW()/2-160, ScrH()/2-20, 320, 40, Color( 0, 0, 0, yay(200) ) )
+		draw.DrawText( "Press any key to join!", "XP_Pedo_TXT", ScrW()/2, ScrH()/2-20, Color( 255, 255, 255, yay(255) ), TEXT_ALIGN_CENTER )
+		
+	elseif plyTeam == TEAM_VICTIMS and !Start and !plyAlive then
+		
+		draw.RoundedBox( 8, ScrW()/2-200, ScrH()/2-20, 400, 40, Color( 0, 0, 0, yay(200) ) )
+		draw.DrawText( "Press any key to respawn!", "XP_Pedo_TXT", ScrW()/2, ScrH()/2-20, Color( 255, 255, 255, yay(255) ), TEXT_ALIGN_CENTER )
+		
+	elseif plyAlive and !Start and plyTeam == TEAM_VICTIMS then
 		
 		draw.RoundedBox( 8, ScrW()/2-270, ScrH()-90, 540, 75, Color( 0, 0, 0, 200 ) )
 		if GAMEMODE:IsSeasonalEvent("AprilFool") then draw.DrawText("PedoTips™", "DermaDefault", ScrW()/2-270, ScrH()-90, Color(255, 255, 255, 64), TEXT_ALIGN_LEFT) end
 		draw.DrawText( GAMEMODE:CheckBind("+attack").." to weld a prop to another\n"..GAMEMODE:CheckBind("+attack2").." to unweld a prop\n"..GAMEMODE:CheckBind("+reload").." to create a clone (Only one clone at the same time)", "XP_Pedo_HT", ScrW()/2, ScrH()-90, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
 		
-	elseif ply:Alive() and ply:Team()==TEAM_PEDOBEAR then
+	elseif plyAlive and plyTeam == TEAM_PEDOBEAR then
 		
 		draw.RoundedBox( 8, ScrW()/2-180, ScrH()-90, 360, 75, Color( 0, 0, 0, 200 ) )
 		if GAMEMODE:IsSeasonalEvent("AprilFool") then draw.DrawText("PedoTips™", "DermaDefault", ScrW()/2-180, ScrH()-90, Color(255, 255, 255, 64), TEXT_ALIGN_LEFT) end
@@ -268,43 +307,50 @@ function GM:HUDPaint()
 		
 	end
 	
-	if GAMEMODE.Vars.welding and ply:Alive() and ply:Team()==TEAM_VICTIMS then
+	
+	--[[ THE PERFORMING WELD MESSAGE ]]--
+	
+	if GAMEMODE.Vars.welding and plyAlive and plyTeam == TEAM_VICTIMS then
 		
 		draw.RoundedBox( 8, ScrW()/2-150, ScrH()/2+100, 300, 26, Color( 0, 0, 0, yay(200) ) )
 		draw.DrawText( "Click another prop or world", "XP_Pedo_HT", ScrW()/2, ScrH()/2+100, Color( 255, 255, 255, yay(255) ), TEXT_ALIGN_CENTER )
 		
 	end
 	
-	if ply:Team()==TEAM_UNASSIGNED then
-		
-		draw.RoundedBox( 8, ScrW()/2-160, ScrH()/2-20, 320, 40, Color( 0, 0, 0, yay(200) ) )
-		draw.DrawText( "Press any key to join!", "XP_Pedo_TXT", ScrW()/2, ScrH()/2-20, Color( 255, 255, 255, yay(255) ), TEXT_ALIGN_CENTER )
-		
-	elseif ply:Team()==TEAM_VICTIMS and !GAMEMODE.Vars.Round.Start and !ply:Alive() then
-		
-		draw.RoundedBox( 8, ScrW()/2-200, ScrH()/2-20, 400, 40, Color( 0, 0, 0, yay(200) ) )
-		draw.DrawText( "Press any key to respawn!", "XP_Pedo_TXT", ScrW()/2, ScrH()/2-20, Color( 255, 255, 255, yay(255) ), TEXT_ALIGN_CENTER )
-		
-	end
 	
+	--[[ THE FACE ]]--
 	
 	if wi and (sply:GetModel()=="models/player/pbear/pbear.mdl" or sply:GetModel()=="models/player/kuristaja/pbear/pbear.mdl") then
 		surface.SetDrawColor(255, 255, 255, 255 )
 		surface.SetMaterial( Material("pedo/pedobear") )
 		surface.DrawTexturedRectUV(0, ScrH()-200, 200, 200, 0, 0, 1, 1)
-	elseif ply:Team()!=TEAM_UNASSIGNED and sply:Team()!=TEAM_SPECTATOR then
+	elseif plyTeam != TEAM_UNASSIGNED and splyTeam != TEAM_SPECTATOR then
 		self:DrawHealthFace(sply)
 	end
 	
-	if GAMEMODE.Vars.Round.End then str4 = "Draw game!" end
-	if GAMEMODE.Vars.Round.End and GAMEMODE.Vars.Round.Win==TEAM_VICTIMS then str4 = "The victims wins!" end
-	if GAMEMODE.Vars.Round.End and GAMEMODE.Vars.Round.Win==TEAM_PEDOBEAR then str4 = "Pedobear captured everyone!" end
-	draw.DrawText( str4, "XP_Pedo_TXT", ScrW()/2, ScrH()/2-80, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
-	
-	if ply:Team()!=TEAM_UNASSIGNED and sply:Team()!=TEAM_SPECTATOR then
-		draw.DrawText( sply:Nick(), "XP_Pedo_HUDname", 100+1, ScrH()-200+1, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER )
-		draw.DrawText( sply:Nick(), "XP_Pedo_HUDname", 100, ScrH()-200, col, TEXT_ALIGN_CENTER )
+	if plyTeam != TEAM_UNASSIGNED and splyTeam != TEAM_SPECTATOR then
+		local splynick = sply:Nick()
+		draw.DrawText( splynick, "XP_Pedo_HUDname", 100+1, ScrH()-200+1, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER )
+		draw.DrawText( splynick, "XP_Pedo_HUDname", 100, ScrH()-200, col, TEXT_ALIGN_CENTER )
 	end
+	
+	
+	--[[ THE END ROUND MESSAGE ]]--
+	
+	local function winstr(WinTeam)
+		if WinTeam == TEAM_VICTIMS then
+			return "The victims wins!"
+		elseif WinTeam == TEAM_PEDOBEAR then
+			return GAMEMODE:WordFilter("Pedobear raped everyone!")
+		end
+		return "Draw game!"
+	end
+	if End then
+		draw.DrawText( winstr(GAMEMODE.Vars.Round.Win), "XP_Pedo_TXT", ScrW()/2, ScrH()/2-80, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
+	end
+	
+	
+	--[[ THE MUSICS STUFF ]]--
 	
 	if IsValid(GAMEMODE.Vars.Music) then
 		
@@ -324,7 +370,15 @@ function GM:HUDPaint()
 		
 		draw.RoundedBoxEx( 16, ScrW()-256, ScrH()-100+visspace, 256, 100-visspace, Color( 0, 0, 0, 200 ), true, false, false, false )
 		
-		local title = "♪ "..GAMEMODE:PrettyMusicName(string.GetFileFromFilename(GAMEMODE.Vars.Music:GetFileName())).." ♪"
+		local ctitle = GAMEMODE.Vars.CurrentMusicName
+		local rtitle
+		if ctitle and ctitle != "" then
+			rtitle = ctitle
+		else
+			rtitle = GAMEMODE:PrettyMusicName(string.GetFileFromFilename(GAMEMODE.Vars.Music:GetFileName()))
+		end
+		
+		local title = "♪ "..rtitle.." ♪"
 		draw.DrawText( title, "XP_Pedo_HUDname", ScrW()-127, ScrH()-99+visspace, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER )
 		draw.DrawText( title, "XP_Pedo_HUDname", ScrW()-128, ScrH()-100+visspace, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER )
 		
@@ -373,27 +427,31 @@ function GM:HUDPaintBackground()
 	if !sply:IsPlayer() then
 		sply = ply
 	end
+	local plyAlive = ply:Alive()
+	local plyTeam = ply:Team()
+	local splyAlive = sply:Alive()
+	local splyTeam = sply:Team()
 	
 	draw.RoundedBoxEx( 16, ScrW()/2-100, 0, 200, 110, Color( 0, 0, 0, 200 ), false, false, GAMEMODE.Vars.Round.Start, GAMEMODE.Vars.Round.Start )
 	
-	if ( sply:Team()==TEAM_PEDOBEAR or sply:Team()==TEAM_VICTIMS ) then
+	if ( splyTeam == TEAM_PEDOBEAR or splyTeam == TEAM_VICTIMS ) then
 		
 		local col = sply:GetPlayerColor():ToColor()
-		if !sply:Alive() then col = team.GetColor( sply:Team() ) end
-		local life = Either(sply:Alive(), 1, 0)
+		if !splyAlive then col = team.GetColor( splyTeam ) end
+		local life = Either(splyAlive, 1, 0)
 		local stamina = 200
 		local propheal = 200
 		local taunt = 200
 		local sprintlock = ply.SprintLock
 		
-		if ply != sply and sply:Alive() and sply:Team() == TEAM_VICTIMS then
+		if ply != sply and splyAlive and splyTeam == TEAM_VICTIMS then
 			stamina = math.Remap(sply:GetNWInt( "SprintV", 100 ), 0, 100, 1, 200)
 			sprintlock = sply:GetNWInt( "SprintLock", false )
-		elseif ply:Alive() and ply.SprintV and ply.SprintV < 100 and ply:Team() == TEAM_VICTIMS then
+		elseif plyAlive and ply.SprintV and ply.SprintV < 100 and plyTeam == TEAM_VICTIMS then
 			stamina = math.Remap(ply.SprintV, 0, 100, 1, 200)
 		end
 		
-		if ply != sply and sply:Alive() then
+		if ply != sply and splyAlive then
 			
 			local LastTaunt = sply:GetNWInt( "LastTaunt", 0 )
 			local TauntCooldown = sply:GetNWInt( "TauntCooldown", 0 ) - CurTime()
@@ -405,13 +463,13 @@ function GM:HUDPaintBackground()
 				
 			end
 			
-		elseif ply:Alive() and ply.LastTaunt and ply.TauntCooldown-CurTime() > 0 then
+		elseif plyAlive and ply.LastTaunt and ply.TauntCooldown-CurTime() > 0 then
 			
 			taunt = math.Remap(ply.TauntCooldown-CurTime(), 0, ply.TauntCooldownF, 200, 1)
 			
 		end
 		
-		if sply:Alive() then
+		if splyAlive then
 			
 			local PropHealCD = sply:GetNWInt( "PropHealCD", 0 ) - CurTime()
 			
@@ -425,19 +483,19 @@ function GM:HUDPaintBackground()
 		
 		draw.RoundedBoxEx( 8, 0, ScrH()-200, 200, 200, Color( col.r*life, col.g*life, col.b*life, 150*life ), false, true, false, false )
 		
-		if stamina!=200 then
+		if stamina != 200 then
 			draw.RoundedBoxEx( 2, 200, ScrH()-175, 200, 50, Color( 0, 0, 0, 200 ), false, true, false, true )
 			draw.RoundedBoxEx( 2, 200, ScrH()-175, stamina, 50, Color( col.r, col.g, col.b, 150*life ), false, true, false, true )
 			draw.DrawText( "Stamina", "XP_Pedo_TXT", 300, ScrH()-170, Either(ply.SprintLock, Color( 255, 0, 0, 255 ), Color( 255, 255, 255, 255 )), TEXT_ALIGN_CENTER )
 		end
 		
-		if propheal!=200 and ply:Team()==TEAM_VICTIMS then
+		if propheal != 200 and plyTeam == TEAM_VICTIMS then
 			draw.RoundedBoxEx( 2, 200, ScrH()-125, 200, 50, Color( 0, 0, 0, 200 ), false, true, false, true )
 			draw.RoundedBoxEx( 2, 200, ScrH()-125, propheal, 50, Color( col.r, col.g, col.b, 150*life ), false, true, false, true )
 			draw.DrawText( "Prop healing", "XP_Pedo_TXT", 300, ScrH()-120, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
 		end
 		
-		if taunt!=200 then
+		if taunt != 200 then
 			draw.RoundedBoxEx( 2, 200, ScrH()-75, 200, 50, Color( 0, 0, 0, 200 ), false, true, false, true )
 			draw.RoundedBoxEx( 2, 200, ScrH()-75, taunt, 50, Color( col.r, col.g, col.b, 150*life ), false, true, false, true )
 			draw.DrawText( "Taunt", "XP_Pedo_TXT", 300, ScrH()-70, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
@@ -623,28 +681,11 @@ function GM:HUDDrawTargetID()
 	
 	draw.SimpleText( text, font, x + 1, y + 1, Color( 0, 0, 0, 255 ) )
 	draw.SimpleText( text, font, x + 2, y + 2, Color( 0, 0, 0, 126 ) )
-	if ( trace.Entity:IsPlayer() and trace.Entity:Team() == TEAM_VICTIMS ) or trace.Entity:GetClass() == "pedo_dummy" then
+	if trace.Entity:IsPlayer() or trace.Entity:GetClass() == "pedo_dummy" then
 		local col = trace.Entity:GetPlayerColor():ToColor()
 		draw.SimpleText( text, font, x, y, col )
 	elseif trace.Entity:IsPlayer() then
 		draw.SimpleText( text, font, x, y, self:GetTeamColor( trace.Entity ) )
-	end
-	
-	if trace.Entity:IsPlayer() and trace.Entity:Team()==TEAM_VICTIMS and trace.Entity:Health()>0 then
-		
-		y = y + h + 5
-		
-		local text = trace.Entity:Health() .. "%"
-		local font = "DermaLarge"
-		
-		surface.SetFont( font )
-		local w, h = surface.GetTextSize( text )
-		local x = MouseX - w / 2
-		
-		draw.SimpleText( text, font, x + 1, y + 1, Color( 0, 0, 0, 255 ) )
-		draw.SimpleText( text, font, x + 2, y + 2, Color( 0, 0, 0, 126 ) )
-		draw.SimpleText( text, font, x, y, self:GetTeamColor( trace.Entity ) )
-		
 	end
 
 end
@@ -919,7 +960,9 @@ function GM:StartTaunt(sel)
 	
 end
 
-function GM:Music(src, pre)
+function GM:Music(src, pre, name)
+	
+	GAMEMODE:BuildMusicIndex()
 	
 	GAMEMODE.Vars.CurrentMusic = src
 	
@@ -929,6 +972,7 @@ function GM:Music(src, pre)
 		GAMEMODE.Vars.Music:Pause()
 	elseif IsValid(GAMEMODE.Vars.Music) then
 		GAMEMODE.Vars.Music:Stop()
+		GAMEMODE.Vars.CurrentMusicName = nil
 		GAMEMODE.Vars.Music = nil
 	end
 	
@@ -938,7 +982,7 @@ function GM:Music(src, pre)
 		local isurl = false
 		local orisrc = nil
 		
-		if src != "" and !exist and GetConVar("pedobear_cl_music_allowexternal"):GetBool() then
+		if src != "" and !exist and GetConVar("pedobear_cl_music_allowexternal"):GetBool() and string.match(src, "://") then
 		
 			isurl = true
 			
@@ -983,6 +1027,8 @@ function GM:Music(src, pre)
 			sound.PlayURL( src, "noblock", domusicstuff)
 			
 		end
+		
+		GAMEMODE.Vars.CurrentMusicName = name
 		
 	end
 	

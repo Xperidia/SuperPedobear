@@ -8,7 +8,7 @@ function ENT:Initialize()
 	
 	local ply = self:GetPlayer()
 	
-	self:SetHealth(100)
+	self:SetHealth(1)
 	self:SetCustomCollisionCheck( true )
 	
 	self:SetPos(ply:GetPos())
@@ -16,11 +16,10 @@ function ENT:Initialize()
 	
 	self:SetModel(ply:GetModel())
 	
-	self:SetHealth(ply:Health())
-	
 	self.GetPlayerColor = function() return ply:GetPlayerColor() end
 	self.GetName = function() return ply:GetName() end
 	self.Nick = function() return ply:Nick() end
+	self.Team = function() return ply:Team() end
 	
 	self:SetSkin(ply:GetSkin())
 	
@@ -104,16 +103,14 @@ function ENT:OnKilled( dmginfo )
 	
 	local att = dmginfo:GetAttacker()
 	
-	hook.Call( "OnNPCKilled", GAMEMODE, self, att, dmginfo:GetInflictor() )
-
-	--self:BecomeRagdoll( dmginfo )
-	
-	self:Remove()
+	hook.Call( "OnDummyKilled", GAMEMODE, self, att, dmginfo:GetInflictor() )
 	
 	local ply = self:GetPlayer()
 	
 	ply:PrintMessage(HUD_PRINTTALK, "Your clone is dead!")
+
+	--self:BecomeRagdoll( dmginfo )
 	
-	att:PrintMessage(HUD_PRINTTALK, "It's a trap! It was the clone of "..ply:GetName().."!")
+	self:Remove()
 
 end

@@ -515,6 +515,7 @@ function GM:BeginMenu()
 		changelog:AppendText( "> Music list\n" )
 		changelog:AppendText( "> Death notices\n" )
 		changelog:AppendText( "> Playing music is now the same for all player\n" )
+		changelog:AppendText( "> Base music playlists\n" )
 		--changelog:AppendText( "> And everything cool I've done but forgot\n" )
 		
 		local featuredbtn = vgui.Create( "DButton" )
@@ -546,7 +547,7 @@ function GM:BeginMenu()
 			self:SetFontInternal( "XP_Pedo_HUDname" )
 			self:SetFGColor( Color( 0, 0, 0 ) )
 		end
-		upcoming:AppendText( "> Music playlist\n" )
+		upcoming:AppendText( "> Dynamic music playlist (player controlled)\n" )
 		upcoming:AppendText( "> And everything cool I will done but forget\n" )
 		
 		

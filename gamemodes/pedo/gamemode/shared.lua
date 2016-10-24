@@ -8,7 +8,7 @@ GM.ShortName 	= "Pedo"
 GM.Author 	= "VictorienXP@Xperidia"
 GM.Email 	= "contact@Xperidia.com"
 GM.Website 	= "steamcommunity.com/sharedfiles/filedetails/?id=628449407"
-GM.Version 	= 0.212
+GM.Version 	= 0.213
 GM.TeamBased = true
 
 TEAM_VICTIMS = 1

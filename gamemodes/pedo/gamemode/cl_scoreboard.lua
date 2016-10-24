@@ -86,7 +86,7 @@ local PLAYER_LINE = {
 
 		self.Player = pl
 
-		if !self.Player.Nick then
+		if self.Player and !self.Player.Nick then
 			self.Player.Nick = function() return self.Player.name end
 			self.Player.Team = function() return TEAM_CONNECTING end
 			self.Player.EntIndex = function() return self.Player.userid end

@@ -13,7 +13,7 @@ local function RecvPlayerKilledDummy()
 	local inflictor	= net.ReadString()
 	local attacker	= net.ReadEntity()
 	
-	if ( !IsValid( attacker ) ) then return end
+	if ( !IsValid( attacker ) or !IsValid( victim ) ) then return end
 	
 	GAMEMODE:AddDeathNotice( attacker:Nick(), attacker:Team(), inflictor, victim:Nick(), victim:Team() )
 	

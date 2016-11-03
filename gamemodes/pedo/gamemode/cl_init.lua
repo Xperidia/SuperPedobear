@@ -442,13 +442,11 @@ function GM:HUDPaintBackground()
 		local stamina = 200
 		local propheal = 200
 		local taunt = 200
-		local sprintlock = ply.SprintLock
+		local sprintlock = false
 		
-		if ply != sply and splyAlive and splyTeam == TEAM_VICTIMS then
+		if splyAlive and splyTeam == TEAM_VICTIMS then
 			stamina = math.Remap(sply:GetNWInt( "SprintV", 100 ), 0, 100, 1, 200)
 			sprintlock = sply:GetNWInt( "SprintLock", false )
-		elseif plyAlive and ply.SprintV and ply.SprintV < 100 and plyTeam == TEAM_VICTIMS then
-			stamina = math.Remap(ply.SprintV, 0, 100, 1, 200)
 		end
 		
 		if ply != sply and splyAlive then
@@ -486,7 +484,7 @@ function GM:HUDPaintBackground()
 		if stamina != 200 then
 			draw.RoundedBoxEx( 2, 200, ScrH()-175, 200, 50, Color( 0, 0, 0, 200 ), false, true, false, true )
 			draw.RoundedBoxEx( 2, 200, ScrH()-175, stamina, 50, Color( col.r, col.g, col.b, 150*life ), false, true, false, true )
-			draw.DrawText( "Stamina", "XP_Pedo_TXT", 300, ScrH()-170, Either(ply.SprintLock, Color( 255, 0, 0, 255 ), Color( 255, 255, 255, 255 )), TEXT_ALIGN_CENTER )
+			draw.DrawText( "Stamina", "XP_Pedo_TXT", 300, ScrH()-170, Either(sprintlock, Color( 255, 0, 0, 255 ), Color( 255, 255, 255, 255 )), TEXT_ALIGN_CENTER )
 		end
 		
 		if propheal != 200 and plyTeam == TEAM_VICTIMS then
@@ -848,32 +846,6 @@ end
 function GM:Think()
 	
 	local ply = LocalPlayer()
-	
-	if ply:Team()==TEAM_VICTIMS and ( !GAMEMODE.Vars.CheckTime or GAMEMODE.Vars.CheckTime+0.1<=CurTime() ) then
-		
-		if ply:Alive() and ply.Sprinting and ( !ply.SprintV or ply.SprintV>0 ) and !ply.SprintLock then
-			ply.SprintV = (ply.SprintV or 100) - 1
-		elseif ply:Alive() and (!ply.Sprinting or ply.SprintLock) and ply.SprintV and ply.SprintV<100 then
-			ply.SprintV = ply.SprintV + 1
-		end
-		
-		if ply.SprintV then
-			
-			if ply.SprintV<=0 and !ply.SprintLock then
-				ply.SprintLock = true
-				ply:SetRunSpeed( 200 )
-			elseif ply.SprintV>=85 and ply.SprintLock then
-				ply.SprintLock = false
-				ply:SetRunSpeed( 400 )
-			end
-			
-		end
-		
-		GAMEMODE.Vars.CheckTime = CurTime()
-		
-	elseif ( ply:Team()!=TEAM_VICTIMS or !ply:Alive() ) and ( !ply.SprintV or ply.SprintV!=100 ) then
-		ply.SprintV = 100
-	end
 	
 	if ply:Alive() and (ply:Team()==TEAM_VICTIMS or ply:Team()==TEAM_PEDOBEAR) and !GAMEMODE.ChatOpen and !gui.IsGameUIVisible() then
 		

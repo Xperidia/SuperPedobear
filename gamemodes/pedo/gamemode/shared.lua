@@ -6,7 +6,6 @@ include( "player_class/player_pedobear.lua" )
 GM.Name 	= "Pedobear"
 GM.ShortName 	= "Pedo"
 GM.Author 	= "VictorienXP@Xperidia"
-GM.Email 	= "contact@Xperidia.com"
 GM.Website 	= "steamcommunity.com/sharedfiles/filedetails/?id=628449407"
 GM.Version 	= 0.22
 GM.TeamBased = true

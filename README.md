@@ -1,4 +1,4 @@
-﻿# So this is the Pedobear Gamemode by Xperidia! (For Garry's Mod)
+﻿# So this is the Pedobear Gamemode by Xperidia!
 
 What could possibly go wrong?
 

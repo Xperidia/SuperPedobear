@@ -965,20 +965,16 @@ function GM:PlayerUse( ply, ent )
 	
 	if (ply:Team() == TEAM_VICTIMS and IsValid(ent) and string.match( ent:GetClass(), "door" )) then
 		
-		local ok = true
-		
 		if !ply.PedoUseDelay then
 			ply.PedoUseDelay = 0
 		end
 		
 		if ply.PedoUseDelay > CurTime() then
-			ok = false
+			return false
 		end
 		
-		ply.PedoUseDelay = CurTime() + 0.5
-		ply:SetNWFloat( "PedoUseDelay", ply.PedoUseDelay )
-		
-		return ok
+		ply.PedoUseDelay = CurTime() + 0.75
+		--ply:SetNWFloat( "PedoUseDelay", ply.PedoUseDelay )
 		
 	end
 	

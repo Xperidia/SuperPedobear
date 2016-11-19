@@ -472,15 +472,15 @@ function GM:HUDPaintBackground()
 			
 		end
 		
-		if splyAlive then
+		--[[if splyAlive then
 			
 			local PedoUseDelay = sply:GetNWFloat( "PedoUseDelay", 0 ) - CurTime()
 			
 			if PedoUseDelay > 0 then
-				usedelay = math.Remap(PedoUseDelay, 0, 0.5, 1, 200)
+				usedelay = math.Remap(PedoUseDelay, 0, 0.75, 1, 200)
 			end
 			
-		end
+		end]]
 		
 		draw.RoundedBoxEx( 8, 0, ScrH()-200, 200, 200, Color( 0, 0, 0, 200 ), false, true, false, false )
 		
@@ -492,11 +492,11 @@ function GM:HUDPaintBackground()
 			draw.DrawText( "Stamina", "XP_Pedo_TXT", 300, ScrH()-170, Either(sprintlock, Color( 255, 0, 0, 255 ), Color( 255, 255, 255, 255 )), TEXT_ALIGN_CENTER )
 		end
 		
-		if usedelay != 200 and plyTeam == TEAM_VICTIMS then
+		--[[if usedelay != 200 and plyTeam == TEAM_VICTIMS then
 			draw.RoundedBoxEx( 2, 200, ScrH()-125, 200, 50, Color( 0, 0, 0, 200 ), false, true, false, true )
-			--draw.RoundedBoxEx( 2, 200, ScrH()-125, usedelay, 50, Color( col.r, col.g, col.b, 150*life ), false, true, false, true )
-			draw.DrawText( "Door spam", "XP_Pedo_TXT", 300, ScrH()-120, Color( 255, 0, 0, 255 ), TEXT_ALIGN_CENTER )
-		end
+			draw.RoundedBoxEx( 2, 200, ScrH()-125, usedelay, 50, Color( col.r, col.g, col.b, 150*life ), false, true, false, true )
+			draw.DrawText( "", "XP_Pedo_TXT", 300, ScrH()-120, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
+		end]]
 		
 		if taunt != 200 then
 			draw.RoundedBoxEx( 2, 200, ScrH()-75, 200, 50, Color( 0, 0, 0, 200 ), false, true, false, true )

@@ -207,7 +207,7 @@ function GM:KeyPress( ply, key )
 		if GAMEMODE.Vars.Round.Start then
 			ply:KillSilent()
 		end
-	elseif ply:Team()==TEAM_SPECTATOR then
+	elseif ply:Team()==TEAM_SPECTATOR or ply:Team()==TEAM_UNASSIGNED then
 		GAMEMODE:SpecControl(ply)
 	end
 	
@@ -954,5 +954,34 @@ function GM:OnDummyKilled( ent, attacker, inflictor )
 		net.WriteString( AttackerClass )
 	
 	net.Broadcast()
+	
+end
+
+function GM:PlayerUse( ply, ent )
+	
+	if (!ply:Alive() or ply:Team() == TEAM_SPECTATOR or ply:Team() == TEAM_UNASSIGNED) then
+		return false
+	end
+	
+	if (ply:Team() == TEAM_VICTIMS and IsValid(ent) and string.match( ent:GetClass(), "door" )) then
+		
+		local ok = true
+		
+		if !ply.PedoUseDelay then
+			ply.PedoUseDelay = 0
+		end
+		
+		if ply.PedoUseDelay > CurTime() then
+			ok = false
+		end
+		
+		ply.PedoUseDelay = CurTime() + 0.5
+		ply:SetNWFloat( "PedoUseDelay", ply.PedoUseDelay )
+		
+		return ok
+		
+	end
+	
+	return true
 	
 end

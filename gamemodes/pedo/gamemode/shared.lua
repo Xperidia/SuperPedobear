@@ -7,7 +7,7 @@ GM.Name 	= "Pedobear"
 GM.ShortName 	= "Pedo"
 GM.Author 	= "VictorienXP@Xperidia"
 GM.Website 	= "steamcommunity.com/sharedfiles/filedetails/?id=628449407"
-GM.Version 	= 0.221
+GM.Version 	= 0.222
 GM.TeamBased = true
 
 TEAM_VICTIMS = 1
@@ -356,8 +356,6 @@ function GM:CreateTeams()
 	team.SetUp( TEAM_PEDOBEAR, "Pedobear", Color( 139, 85, 46 ), false )
 	team.SetSpawnPoint( TEAM_PEDOBEAR, "info_player_counterterrorist" )
 	team.SetClass(TEAM_PEDOBEAR, { "player_pedobear" } )
-	
-	team.SetUp( TEAM_SPECTATOR, "Spectator", DefaultColor, false )
 
 	team.SetSpawnPoint( TEAM_SPECTATOR, "worldspawn" )
 	team.SetSpawnPoint( TEAM_UNASSIGNED, "worldspawn" )

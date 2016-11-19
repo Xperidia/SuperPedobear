@@ -510,8 +510,11 @@ function GM:BeginMenu()
 			self:SetFontInternal( "XP_Pedo_HUDname" )
 			self:SetFGColor( Color( 0, 0, 0 ) )
 		end
-		changelog:AppendText( "/!\\ This is a dev build! /!\\\n" )
+		changelog:AppendText( "		/!\\ This is a dev build! /!\\\n" )
 		changelog:AppendText( "> Fixed wrong stamina status\n" )
+		changelog:AppendText( "> Spectator mode is now enabled\n" )
+		changelog:AppendText( "> Spectating tips\n" )
+		changelog:AppendText( "> Fixed door spam (╯°□°）╯︵ ┻━┻\n" )
 		
 		local featuredbtn = vgui.Create( "DButton" )
 		featuredbtn:SetParent(pedobearMenuBF.changelog)

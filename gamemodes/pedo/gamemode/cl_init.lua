@@ -293,6 +293,11 @@ function GM:HUDPaint()
 		draw.RoundedBox( 8, ScrW()/2-200, ScrH()/2-20, 400, 40, Color( 0, 0, 0, yay(200) ) )
 		draw.DrawText( "Press any key to respawn!", "XP_Pedo_TXT", ScrW()/2, ScrH()/2-20, Color( 255, 255, 255, yay(255) ), TEXT_ALIGN_CENTER )
 		
+	elseif (plyTeam == TEAM_VICTIMS and Start and !plyAlive) or plyTeam == TEAM_SPECTATOR then
+		
+		draw.RoundedBox( 8, ScrW()/2-250, ScrH()-90, 500, 75, Color( 0, 0, 0, 200 ) )
+		draw.DrawText( GAMEMODE:CheckBind("+attack").." next player\n"..GAMEMODE:CheckBind("+attack2").." previous player\n"..GAMEMODE:CheckBind("+jump").." spectate mode (1st person/Chase/Free)", "XP_Pedo_HT", ScrW()/2, ScrH()-90, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
+		
 	elseif plyAlive and !Start and plyTeam == TEAM_VICTIMS then
 		
 		draw.RoundedBox( 8, ScrW()/2-270, ScrH()-90, 540, 75, Color( 0, 0, 0, 200 ) )
@@ -440,7 +445,7 @@ function GM:HUDPaintBackground()
 		if !splyAlive then col = team.GetColor( splyTeam ) end
 		local life = Either(splyAlive, 1, 0)
 		local stamina = 200
-		local propheal = 200
+		local usedelay = 200
 		local taunt = 200
 		local sprintlock = false
 		
@@ -469,10 +474,10 @@ function GM:HUDPaintBackground()
 		
 		if splyAlive then
 			
-			local PropHealCD = sply:GetNWInt( "PropHealCD", 0 ) - CurTime()
+			local PedoUseDelay = sply:GetNWFloat( "PedoUseDelay", 0 ) - CurTime()
 			
-			if PropHealCD > 0 then
-				propheal = math.Remap(PropHealCD, 0, 30, 200, 1)
+			if PedoUseDelay > 0 then
+				usedelay = math.Remap(PedoUseDelay, 0, 0.5, 1, 200)
 			end
 			
 		end
@@ -487,10 +492,10 @@ function GM:HUDPaintBackground()
 			draw.DrawText( "Stamina", "XP_Pedo_TXT", 300, ScrH()-170, Either(sprintlock, Color( 255, 0, 0, 255 ), Color( 255, 255, 255, 255 )), TEXT_ALIGN_CENTER )
 		end
 		
-		if propheal != 200 and plyTeam == TEAM_VICTIMS then
+		if usedelay != 200 and plyTeam == TEAM_VICTIMS then
 			draw.RoundedBoxEx( 2, 200, ScrH()-125, 200, 50, Color( 0, 0, 0, 200 ), false, true, false, true )
-			draw.RoundedBoxEx( 2, 200, ScrH()-125, propheal, 50, Color( col.r, col.g, col.b, 150*life ), false, true, false, true )
-			draw.DrawText( "Prop healing", "XP_Pedo_TXT", 300, ScrH()-120, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
+			--draw.RoundedBoxEx( 2, 200, ScrH()-125, usedelay, 50, Color( col.r, col.g, col.b, 150*life ), false, true, false, true )
+			draw.DrawText( "Door spam", "XP_Pedo_TXT", 300, ScrH()-120, Color( 255, 0, 0, 255 ), TEXT_ALIGN_CENTER )
 		end
 		
 		if taunt != 200 then

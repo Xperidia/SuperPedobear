@@ -359,7 +359,7 @@ function GM:Think()
 			
 			if v:Alive() and v.Sprinting and ( !v.SprintV or v.SprintV>0 ) and !v.SprintLock then
 				v.SprintV = (v.SprintV or 100) - 1
-			elseif v:Alive() and (!v.Sprinting or v.SprintLock) and v.SprintV and v.SprintV<100 then
+			elseif v:Alive() and ((!v.Sprinting and v:IsOnGround()) or v.SprintLock) and v.SprintV and v.SprintV<100 then
 				v.SprintV = v.SprintV + 1
 			elseif !v:Alive() and ( !v.SprintV or v.SprintV!=100 ) then
 				v.SprintV = 100

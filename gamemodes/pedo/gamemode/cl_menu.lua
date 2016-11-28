@@ -515,6 +515,7 @@ function GM:BeginMenu()
 		changelog:AppendText( "> Spectator mode is now enabled\n" )
 		changelog:AppendText( "> Spectating tips\n" )
 		changelog:AppendText( "> Fixed door spam (╯°□°）╯︵ ┻━┻\n" )
+		changelog:AppendText( "> If you're not on ground, stamina will not charging\n" )
 		
 		local featuredbtn = vgui.Create( "DButton" )
 		featuredbtn:SetParent(pedobearMenuBF.changelog)

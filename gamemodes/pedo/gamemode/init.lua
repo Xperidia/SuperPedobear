@@ -355,28 +355,37 @@ function GM:Think()
 	
 	if !GAMEMODE.Vars.CheckTime or GAMEMODE.Vars.CheckTime+0.1<=CurTime() then
 		
-		for k, v in pairs(team.GetPlayers(TEAM_VICTIMS)) do
+		for k, v in pairs(player.GetAll()) do
 			
-			if v:Alive() and v.Sprinting and ( !v.SprintV or v.SprintV>0 ) and !v.SprintLock then
-				v.SprintV = (v.SprintV or 100) - 1
-			elseif v:Alive() and ((!v.Sprinting and v:IsOnGround()) or v.SprintLock) and v.SprintV and v.SprintV<100 then
-				v.SprintV = v.SprintV + 1
-			elseif !v:Alive() and ( !v.SprintV or v.SprintV!=100 ) then
-				v.SprintV = 100
-			end
-			
-			if v.SprintV then
+			if v:Team() == TEAM_VICTIMS then
 				
-				if v.SprintV<=0 and !v.SprintLock then
-					v.SprintLock = true
-					v:SetRunSpeed( 200 )
-				elseif v.SprintV>=85 and v.SprintLock then
-					v.SprintLock = false
-					v:SetRunSpeed( 400 )
+				if v:Alive() and v.Sprinting and (!v.SprintV or v.SprintV > 0) and !v.SprintLock then
+					v.SprintV = (v.SprintV or 100) - 1
+				elseif v:Alive() and ((!v.Sprinting and v:IsOnGround()) or v.SprintLock) and v.SprintV and v.SprintV < 100 then
+					v.SprintV = v.SprintV + 1
+				elseif !v:Alive() and (!v.SprintV or v.SprintV != 100) then
+					v.SprintV = 100
 				end
 				
-				v:SetNWInt( "SprintV", v.SprintV )
-				v:SetNWInt( "SprintLock", v.SprintLock )
+				if v.SprintV then
+					
+					if v.SprintV <= 0 and !v.SprintLock then
+						v.SprintLock = true
+						v:SetRunSpeed( 200 )
+					elseif v.SprintV >= 85 and v.SprintLock then
+						v.SprintLock = false
+						v:SetRunSpeed( 400 )
+					end
+					
+					v:SetNWInt("SprintV", v.SprintV)
+					v:SetNWInt("SprintLock", v.SprintLock)
+					
+				end
+				
+			elseif (!v.SprintV or v.SprintV != 100) then
+				
+				v.SprintV = 100
+				v:SetNWInt("SprintV", v.SprintV)
 				
 			end
 			

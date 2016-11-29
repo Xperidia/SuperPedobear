@@ -166,7 +166,7 @@ function GM:PlayerDeathThink( ply )
 		return
 	end
 	
-	GAMEMODE:SpecControl(ply)
+	if ply:Team() == TEAM_VICTIMS or ply:Team() == TEAM_PEDOBEAR then GAMEMODE:SpecControl(ply) end
 	
 	if GAMEMODE.Vars.Round.Start then return end
 	

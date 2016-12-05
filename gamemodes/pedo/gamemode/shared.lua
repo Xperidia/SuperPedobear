@@ -7,7 +7,7 @@ GM.Name 	= "Pedobear"
 GM.ShortName 	= "Pedo"
 GM.Author 	= "VictorienXP@Xperidia"
 GM.Website 	= "steamcommunity.com/sharedfiles/filedetails/?id=628449407"
-GM.Version 	= 0.223
+GM.Version 	= 0.23
 GM.TeamBased = true
 
 TEAM_VICTIMS = 1

@@ -510,7 +510,7 @@ function GM:BeginMenu()
 			self:SetFontInternal( "XP_Pedo_HUDname" )
 			self:SetFGColor( Color( 0, 0, 0 ) )
 		end
-		changelog:AppendText( "		/!\\ This is a dev build! /!\\\n" )
+		--changelog:AppendText( "		/!\\ This is a dev build! /!\\\n" )
 		changelog:AppendText( "> Fixed wrong stamina status\n" )
 		changelog:AppendText( "> Spectator mode is now enabled\n" )
 		changelog:AppendText( "> Spectating tips\n" )
@@ -550,7 +550,6 @@ function GM:BeginMenu()
 			self:SetFGColor( Color( 0, 0, 0 ) )
 		end
 		upcoming:AppendText( "> Dynamic music playlist (player controlled)\n" )
-		upcoming:AppendText( "> And everything cool I will done but forget\n" )
 		
 		
 		if !GetConVar("pedobear_cl_disablexpsc"):GetBool() then

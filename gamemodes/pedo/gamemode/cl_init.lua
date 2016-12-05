@@ -319,6 +319,7 @@ function GM:HUDPaint()
 	
 	
 	--[[ THE PERFORMING WELD MESSAGE ]]--
+	
 	if splyAlive and splyTeam == TEAM_VICTIMS then
 		
 		if weldingstate == 2 then

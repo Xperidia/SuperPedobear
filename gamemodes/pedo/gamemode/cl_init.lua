@@ -222,6 +222,7 @@ function GM:HUDPaint()
 	if welding == sply then
 		welding = nil
 	end
+	local weldingstate = sply:GetNWInt("PedoWeldingState")
 	
 	
 	--[[ THE CLOCK ]]--
@@ -318,11 +319,24 @@ function GM:HUDPaint()
 	
 	
 	--[[ THE PERFORMING WELD MESSAGE ]]--
-	
-	if IsValid(welding) and splyAlive and splyTeam == TEAM_VICTIMS then
+	if splyAlive and splyTeam == TEAM_VICTIMS then
 		
-		draw.RoundedBox( 8, ScrW()/2-100, ScrH()/2+100, 200, 26, Color( 0, 0, 0, yay(200) ) )
-		draw.DrawText( "Click another prop", "XP_Pedo_HT", ScrW()/2, ScrH()/2+100, Color( 255, 255, 255, yay(255) ), TEXT_ALIGN_CENTER )
+		if weldingstate == 2 then
+			
+			draw.RoundedBox( 8, ScrW()/2-100, ScrH()/2+100, 200, 26, Color( 0, 0, 0, 200 ) )
+			draw.DrawText( "This prop is too far", "XP_Pedo_HT", ScrW()/2, ScrH()/2+100, Color( 255, 0, 0, 255 ), TEXT_ALIGN_CENTER )
+			
+		elseif weldingstate == 3 then
+			
+			draw.RoundedBox( 8, ScrW()/2-150, ScrH()/2+100, 300, 26, Color( 0, 0, 0, 200 ) )
+			draw.DrawText( "The props are too far each other", "XP_Pedo_HT", ScrW()/2, ScrH()/2+100, Color( 255, 0, 0, 255 ), TEXT_ALIGN_CENTER )
+			
+		elseif IsValid(welding) then
+			
+			draw.RoundedBox( 8, ScrW()/2-100, ScrH()/2+100, 200, 26, Color( 0, 0, 0, yay(200) ) )
+			draw.DrawText( "Click another prop", "XP_Pedo_HT", ScrW()/2, ScrH()/2+100, Color( 255, 255, 255, yay(255) ), TEXT_ALIGN_CENTER )
+			
+		end
 		
 	end
 	

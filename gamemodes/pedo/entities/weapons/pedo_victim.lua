@@ -43,10 +43,16 @@ function SWEP:PrimaryAttack()
 		if (!trace.HitNonWorld) then
 			self.laste = nil
 			self.Owner:SetNWEntity("PedoWelding", self.Owner)
+			self.Owner:SetNWInt("PedoWeldingState", 0)
 			return
 		end
 		
 		if IsValid( trace.Entity ) && trace.Entity:IsPlayer() then return end
+		
+		if trace.HitPos:Distance(trace.StartPos) > 100 then
+			self.Owner:SetNWInt("PedoWeldingState", 2)
+			return
+		end
 		
 		if !util.IsValidPhysicsObject( trace.Entity, trace.PhysicsBone ) then return end
 		
@@ -57,6 +63,11 @@ function SWEP:PrimaryAttack()
 			self.laste = { trace.Entity, trace.HitPos, Phys, trace.PhysicsBone, trace.HitNormal }
 			
 		else
+			
+			if trace.Entity:GetPos():Distance(self.laste[1]:GetPos()) > 100 then
+				self.Owner:SetNWInt("PedoWeldingState", 3)
+				return
+			end
 			
 			local Ent1, Ent2 = self.laste[1], trace.Entity
 			local Bone1, Bone2 = self.laste[4], trace.PhysicsBone
@@ -70,8 +81,10 @@ function SWEP:PrimaryAttack()
 		
 		if self.laste and IsValid(self.laste[1]) then
 			self.Owner:SetNWEntity("PedoWelding", self.laste[1])
+			self.Owner:SetNWInt("PedoWeldingState", 1)
 		else
 			self.Owner:SetNWEntity("PedoWelding", self.Owner)
+			self.Owner:SetNWInt("PedoWeldingState", 0)
 		end
 		
 	end
@@ -81,6 +94,10 @@ end
 function SWEP:SecondaryAttack()
 	
 	if SERVER then
+		
+		self.laste = nil
+		self.Owner:SetNWEntity("PedoWelding", self.Owner)
+		self.Owner:SetNWInt("PedoWeldingState", 0)
 		
 		local tr = util.GetPlayerTrace( self.Owner )
 		
@@ -103,7 +120,11 @@ function SWEP:Reload()
 end
 
 function SWEP:OnRemove()
-	if CLIENT then GAMEMODE.Vars.welding = nil end
+	if SERVER then
+		self.laste = nil
+		self.Owner:SetNWEntity("PedoWelding", self.Owner)
+		self.Owner:SetNWInt("PedoWeldingState", 0)
+	end
 end
 
 function SWEP:ShouldDropOnDie()
@@ -111,7 +132,11 @@ function SWEP:ShouldDropOnDie()
 end
 
 function SWEP:OnDrop()
-	if CLIENT then GAMEMODE.Vars.welding = nil end
+	if SERVER then
+		self.laste = nil
+		self.Owner:SetNWEntity("PedoWelding", self.Owner)
+		self.Owner:SetNWInt("PedoWeldingState", 0)
+	end
 	self:Remove()
 end
 

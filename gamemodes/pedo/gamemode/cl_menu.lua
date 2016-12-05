@@ -518,6 +518,7 @@ function GM:BeginMenu()
 		changelog:AppendText( "> If you're not on ground, stamina will not charge\n" )
 		changelog:AppendText( "> Fixed welding status\n" )
 		changelog:AppendText( "> Welding to world is now forbiden\n" )
+		changelog:AppendText( "> Welding now have distance restriction\n" )
 		
 		--[[local featuredbtn = vgui.Create( "DButton" )
 		featuredbtn:SetParent(pedobearMenuBF.changelog)

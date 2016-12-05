@@ -218,6 +218,10 @@ function GM:HUDPaint()
 	if !splyAlive or ( splyTeam!=TEAM_PEDOBEAR and splyTeam!=TEAM_VICTIMS ) then
 		wi = false
 	end
+	local welding = sply:GetNWEntity("PedoWelding")
+	if welding == sply then
+		welding = nil
+	end
 	
 	
 	--[[ THE CLOCK ]]--
@@ -315,10 +319,10 @@ function GM:HUDPaint()
 	
 	--[[ THE PERFORMING WELD MESSAGE ]]--
 	
-	if GAMEMODE.Vars.welding and plyAlive and plyTeam == TEAM_VICTIMS then
+	if IsValid(welding) and splyAlive and splyTeam == TEAM_VICTIMS then
 		
-		draw.RoundedBox( 8, ScrW()/2-150, ScrH()/2+100, 300, 26, Color( 0, 0, 0, yay(200) ) )
-		draw.DrawText( "Click another prop or world", "XP_Pedo_HT", ScrW()/2, ScrH()/2+100, Color( 255, 255, 255, yay(255) ), TEXT_ALIGN_CENTER )
+		draw.RoundedBox( 8, ScrW()/2-100, ScrH()/2+100, 200, 26, Color( 0, 0, 0, yay(200) ) )
+		draw.DrawText( "Click another prop", "XP_Pedo_HT", ScrW()/2, ScrH()/2+100, Color( 255, 255, 255, yay(255) ), TEXT_ALIGN_CENTER )
 		
 	end
 	
@@ -701,6 +705,14 @@ hook.Add( "PreDrawHalos", "fnafgmHalos", function()
 	local tab = {}
 	local tab2 = {}
 	local tab3 = {}
+	local sply = ply:GetObserverTarget() or ply
+	if !sply:IsPlayer() then
+		sply = ply
+	end
+	local welding = sply:GetNWEntity("PedoWelding")
+	if welding == sply then
+		welding = nil
+	end
 	
 	if ply:Team() == TEAM_VICTIMS then
 		
@@ -736,9 +748,9 @@ hook.Add( "PreDrawHalos", "fnafgmHalos", function()
 		end
 		halo.Add( tab2, team.GetColor(TEAM_PEDOBEAR), 1, 1, 1, true, !ply:Alive() )
 		
-		if GAMEMODE.Vars.welding then
+		if IsValid(welding) then
 			
-			halo.Add( { GAMEMODE.Vars.welding[1] }, Color(255,255,255), 1, 1, 1, true, false )
+			halo.Add( { welding }, Color(255,255,255), 1, 1, 1, true, false )
 			
 		end
 		

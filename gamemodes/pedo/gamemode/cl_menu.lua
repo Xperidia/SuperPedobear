@@ -515,16 +515,18 @@ function GM:BeginMenu()
 		changelog:AppendText( "> Spectator mode is now enabled\n" )
 		changelog:AppendText( "> Spectating tips\n" )
 		changelog:AppendText( "> Fixed door spam (╯°□°）╯︵ ┻━┻\n" )
-		changelog:AppendText( "> If you're not on ground, stamina will not charging\n" )
+		changelog:AppendText( "> If you're not on ground, stamina will not charge\n" )
+		changelog:AppendText( "> Fixed welding status\n" )
+		changelog:AppendText( "> Welding to world is now forbiden\n" )
 		
-		local featuredbtn = vgui.Create( "DButton" )
+		--[[local featuredbtn = vgui.Create( "DButton" )
 		featuredbtn:SetParent(pedobearMenuBF.changelog)
 		featuredbtn:SetText( "Check the last dev vlog" )
 		featuredbtn:SetPos( 90, 0 )
 		featuredbtn:SetSize( 125, 20 )
 		featuredbtn.DoClick = function()
 			gui.OpenURL( "https://youtu.be/4DdNqhu0pew" )
-		end
+		end]]
 		
 		
 		pedobearMenuBF.upcoming = vgui.Create( "DPanel" )

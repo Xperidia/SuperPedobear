@@ -32,38 +32,49 @@ end
 
 function SWEP:PrimaryAttack()
 	
-	local tr = util.GetPlayerTrace( self.Owner )
-	
-	local trace = util.TraceLine( tr )
-	
-	if (!trace.Hit) then return end
-	
-	if ( IsValid( trace.Entity ) && trace.Entity:IsPlayer() ) then return end
-	
-	if ( SERVER && !util.IsValidPhysicsObject( trace.Entity, trace.PhysicsBone ) ) then return end
-
-	local Phys = trace.Entity:GetPhysicsObjectNum( trace.PhysicsBone )
-	
-	if !self.laste then
+	if SERVER then
 		
-		self.laste = { trace.Entity, trace.HitPos, Phys, trace.PhysicsBone, trace.HitNormal }
+		local tr = util.GetPlayerTrace( self.Owner )
 		
-	else
+		local trace = util.TraceLine( tr )
 		
-		if SERVER then
+		if (!trace.Hit) then return end
+		
+		if (!trace.HitNonWorld) then
+			self.laste = nil
+			self.Owner:SetNWEntity("PedoWelding", self.Owner)
+			return
+		end
+		
+		if IsValid( trace.Entity ) && trace.Entity:IsPlayer() then return end
+		
+		if !util.IsValidPhysicsObject( trace.Entity, trace.PhysicsBone ) then return end
+		
+		local Phys = trace.Entity:GetPhysicsObjectNum( trace.PhysicsBone )
+		
+		if !self.laste then
+			
+			self.laste = { trace.Entity, trace.HitPos, Phys, trace.PhysicsBone, trace.HitNormal }
+			
+		else
 			
 			local Ent1, Ent2 = self.laste[1], trace.Entity
 			local Bone1, Bone2 = self.laste[4], trace.PhysicsBone
 			
 			constraint.Weld( Ent1, Ent2, Bone1, Bone2, 2147483647, false, false )
 			
+			
+			self.laste = nil
+			
 		end
 		
-		self.laste = nil
+		if self.laste and IsValid(self.laste[1]) then
+			self.Owner:SetNWEntity("PedoWelding", self.laste[1])
+		else
+			self.Owner:SetNWEntity("PedoWelding", self.Owner)
+		end
 		
 	end
-	
-	if CLIENT then GAMEMODE.Vars.welding = self.laste end
 	
 end
  

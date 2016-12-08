@@ -56,6 +56,9 @@ function GM.PlayerMeta:Nick()
 	return self:RealNick()
 end
 
+GM.PlayerEasterEgg = {}
+GM.PlayerEasterEgg["76561198108011282"] = {Model("models/player/nachocheese.mdl"), GM.Materials.PepperDeath, "https://xperidia.com/PedoMusics/76561198108011282.mp3"} --Marco
+
 
 function GM:IsSeasonalEvent(str)
 	

@@ -333,9 +333,9 @@ function GM:Think()
 	
 	for k, v in pairs(team.GetPlayers(TEAM_PEDOBEAR)) do
 		
-		if v:SteamID()=="STEAM_0:0:73872777" and v:GetModel()!="models/player/nachocheese.mdl" then
-			v:SetModel( Model("models/player/nachocheese.mdl") )
-		elseif v:SteamID()!="STEAM_0:0:73872777" and v:GetModel()!="models/player/pbear/pbear.mdl" then
+		if GAMEMODE.PlayerEasterEgg[v:SteamID64()] and GAMEMODE.PlayerEasterEgg[v:SteamID64()][1] and v:GetModel() != GAMEMODE.PlayerEasterEgg[v:SteamID64()][1] then
+			v:SetModel( GAMEMODE.PlayerEasterEgg[v:SteamID64()][1] )
+		elseif (!GAMEMODE.PlayerEasterEgg[v:SteamID64()] or (GAMEMODE.PlayerEasterEgg[v:SteamID64()] and !GAMEMODE.PlayerEasterEgg[v:SteamID64()][1])) and v:GetModel()!="models/player/pbear/pbear.mdl" then
 			v:SetModel( Model("models/player/pbear/pbear.mdl") )
 		end
 		
@@ -498,7 +498,25 @@ function GM:RoundThink()
 			
 			timer.Create( "XP_Pedo_TempoStart", 0.2, 1, function()
 				
-				GAMEMODE:SelectMusic()
+				local custommusic = false
+				
+				for k, v in pairs(team.GetPlayers(TEAM_PEDOBEAR)) do
+					
+					if GAMEMODE.PlayerEasterEgg[v:SteamID64()] and GAMEMODE.PlayerEasterEgg[v:SteamID64()][3] then
+						
+						GAMEMODE.Vars.CurrentMusic = GAMEMODE.PlayerEasterEgg[v:SteamID64()][3]
+						GAMEMODE.Vars.CurrentMusicName = v:Nick()
+						custommusic = true
+						
+					end
+					
+				end
+				
+				if custommusic then
+					GAMEMODE:PedoMusic(GAMEMODE.Vars.CurrentMusic, false, nil, GAMEMODE.Vars.CurrentMusicName)
+				else
+					GAMEMODE:SelectMusic()
+				end
 				
 				GAMEMODE:PlayerStats()
 				
@@ -665,9 +683,9 @@ function GM:DoPlayerDeath( ply, attacker, dmginfo )
 	
 		if attacker != ply and attacker:Team()==TEAM_PEDOBEAR then
 			attacker:AddFrags( 1 )
-			if GAMEMODE:IsSeasonalEvent("Halloween") or ply:GetInfoNum("pedobear_cl_jumpscare", 0)==1 then
-				if attacker:SteamID()=="STEAM_0:0:73872777" then
-					ply:ConCommand( "pp_mat_overlay "..tostring(GAMEMODE.Materials.PepperDeath) )
+			if GAMEMODE:IsSeasonalEvent("Halloween") or ply:GetInfoNum("pedobear_cl_jumpscare", 0) == 1 then
+				if GAMEMODE.PlayerEasterEgg[attacker:SteamID64()] and GAMEMODE.PlayerEasterEgg[attacker:SteamID64()][2] then
+					ply:ConCommand( "pp_mat_overlay "..GAMEMODE.PlayerEasterEgg[attacker:SteamID64()][2] )
 				else
 					ply:ConCommand( "pp_mat_overlay "..tostring(GAMEMODE.Materials.Death) )
 				end

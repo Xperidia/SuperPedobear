@@ -1133,7 +1133,7 @@ end
 
 hook.Add("CalcView", "XP_Pedo_thirdperson", function(ply, pos, angles, fov)
 	
-	if ply:Alive() and ply.ThirdPerson and !ply:IsPlayingTaunt() then
+	if ply:Alive() and ply.ThirdPerson and !ply:IsPlayingTaunt() and ply:Team() != TEAM_SPECTATOR then
 		
 		local view = {}
 		

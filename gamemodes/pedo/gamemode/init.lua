@@ -31,6 +31,7 @@ util.AddNetworkString( "XP_Pedo_AFK" )
 util.AddNetworkString( "XP_Pedo_MusicList" )
 util.AddNetworkString( "PlayerKilledDummy" )
 util.AddNetworkString( "NPCKilledDummy" )
+util.AddNetworkString( "XP_Pedo_List" )
 
 function GM:PlayerInitialSpawn(ply)
 	
@@ -496,6 +497,10 @@ function GM:RoundThink()
 				
 			end
 			
+			net.Start( "XP_Pedo_List" )
+				net.WriteTable(Pedos)
+			net.Broadcast()
+			
 			timer.Create( "XP_Pedo_TempoStart", 0.2, 1, function()
 				
 				local custommusic = false
@@ -604,6 +609,10 @@ function GM:RoundThink()
 				
 				GAMEMODE.Vars.CurrentMusic = nil
 				GAMEMODE.Vars.CurrentMusicName = nil
+				
+				net.Start( "XP_Pedo_List" )
+					net.WriteTable({})
+				net.Broadcast()
 				
 				GAMEMODE:PedoMusic("stop")
 				
@@ -778,8 +787,12 @@ end
 
 function GM:PlayerCanHearPlayersVoice( pListener, pTalker )
 
-	if pListener:Team()==TEAM_UNASSIGNED then
+	if pListener:Team() == TEAM_UNASSIGNED then
 		return false, false
+	end
+	
+	if pListener:Team() == TEAM_SPECTATOR then
+		return true, false
 	end
 	
 	if GAMEMODE.Vars.Round.Start and !pTalker:Alive() and pListener:Alive() then return false end

@@ -133,6 +133,12 @@ net.Receive("XP_Pedo_MusicList", function( len )
 	
 end)
 
+net.Receive("XP_Pedo_List", function( len )
+	
+	GAMEMODE.Vars.Pedos = net.ReadTable()
+	
+end)
+
 hook.Add("HUDShouldDraw", "HideHUD", function( name )
 	
 	local HUDhide = {
@@ -255,7 +261,28 @@ function GM:HUDPaint()
 	
 	--[[ THE ROUND STATUS ]]--
 	
-	if !Start and !PreStart and GAMEMODE.Vars.victims<2 then
+	if Start and !PreStart and GAMEMODE.Vars.Pedos and #GAMEMODE.Vars.Pedos > 0 then
+		
+		local txt = ""
+		
+		for k, v in pairs(GAMEMODE.Vars.Pedos) do
+			
+			if IsValid(v) and v:Alive() and GAMEMODE.PlayerEasterEgg[v:SteamID64()] and GAMEMODE.PlayerEasterEgg[v:SteamID64()][4] then
+				
+				txt = Format(GAMEMODE.PlayerEasterEgg[v:SteamID64()][4], v:Nick())
+				
+			end
+			
+		end
+		
+		if txt != "" then
+			
+			draw.RoundedBox( 16, ScrW()/2-300, 110, 600, 40, Color( 0, 0, 0, 200 ) )
+			draw.DrawText( txt, "XP_Pedo_TXT", ScrW()/2, 110, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
+			
+		end
+		
+	elseif !Start and !PreStart and GAMEMODE.Vars.victims<2 then
 		
 		draw.RoundedBox( 16, ScrW()/2-200, 110, 400, 55, Color( 0, 0, 0, 200 ) )
 		draw.DrawText( "Waiting for players", "XP_Pedo_RND", ScrW()/2, 110, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
@@ -264,6 +291,42 @@ function GM:HUDPaint()
 		
 		draw.RoundedBox( 16, ScrW()/2-125, 110, 250, 55, Color( 0, 0, 0, 200 ) )
 		draw.DrawText( "Preparing...", "XP_Pedo_RND", ScrW()/2, 110, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
+		
+	end
+	
+	
+	--[[ THE PEDOBEAR SHOWCASE ]]--
+	
+	if Start and !PreStart then
+		
+		local txt = ""
+		local size = 40
+		
+		if GAMEMODE.Vars.Pedos and #GAMEMODE.Vars.Pedos > 0 then
+			
+			for k, v in pairs(GAMEMODE.Vars.Pedos) do
+				
+				if IsValid(v) and v:Alive() and txt == "" then
+					
+					txt = Format(Either((#GAMEMODE.Vars.Pedos > 1), "%s is a Pedobear", "%s is the Pedobear"), v:Nick())
+					
+				elseif IsValid(v) and v:Alive() and txt != "" then
+					
+					txt = txt .. Format("\n%s is a Pedobear", v:Nick())
+					size = size + 24
+					
+				end
+				
+			end
+			
+		end
+		
+		if txt != "" then
+			
+			draw.RoundedBox( 16, 8, 24, 400, size, Color( 0, 0, 0, 200 ) )
+			draw.DrawText( txt, "XP_Pedo_HT", 200, 32, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
+			
+		end
 		
 	end
 	
@@ -684,9 +747,7 @@ function GM:HUDDrawTargetID()
 	local text = ""
 	local font = "DermaLarge"
 	
-	if ( trace.Entity:IsPlayer() and trace.Entity:Team() == TEAM_VICTIMS ) or trace.Entity:GetClass() == "pedo_dummy" then
-		text = trace.Entity:Nick()
-	elseif trace.Entity:IsPlayer() and ply:Team() == TEAM_PEDOBEAR then
+	if trace.Entity:IsPlayer() or trace.Entity:GetClass() == "pedo_dummy" then
 		text = trace.Entity:Nick()
 	end
 	
@@ -1210,5 +1271,45 @@ function GM:OnPlayerChat( player, strText, bTeamOnly, bPlayerIsDead )
 	chat.AddText( unpack(tab) )
 	
 	return true
+	
+end
+
+function GM:RenderScreenspaceEffects()
+	
+	local ravemode = false
+	
+	if GAMEMODE.Vars.Pedos and #GAMEMODE.Vars.Pedos > 0 then
+		
+		for k, v in pairs(GAMEMODE.Vars.Pedos) do
+			
+			if IsValid(v) and v:Alive() and v:SteamID64() == "76561198108011282" then
+				
+				ravemode = true
+				
+			end
+			
+		end
+		
+	end
+	
+	if ravemode then
+		
+		local x = CurTime()*5
+		local tab = {
+			["$pp_colour_addr"] = 0,
+			["$pp_colour_addg"] = 0,
+			["$pp_colour_addb"] = 0,
+			["$pp_colour_brightness"] = 0,
+			["$pp_colour_contrast"] = 1,
+			["$pp_colour_colour"] = 1,
+			["$pp_colour_mulr"] = (0.5 * math.sin(x - 1))*10,
+			["$pp_colour_mulg"] = (0.5 * math.sin(x))*10,
+			["$pp_colour_mulb"] = (0.5 * math.sin(x + 1))*10
+		}
+		DrawColorModify( tab )
+		
+	end
+	
+	--DrawToyTown( 2, ScrH()/2 ) -- Pedo distance ?
 	
 end

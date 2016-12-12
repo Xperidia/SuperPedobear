@@ -7,7 +7,7 @@ GM.Name 	= "Pedobear"
 GM.ShortName 	= "Pedo"
 GM.Author 	= "VictorienXP@Xperidia"
 GM.Website 	= "steamcommunity.com/sharedfiles/filedetails/?id=628449407"
-GM.Version 	= 0.231
+GM.Version 	= 0.232
 GM.TeamBased = true
 
 TEAM_VICTIMS = 1
@@ -442,4 +442,12 @@ function GM:RetrieveXperidiaAccountRank(ply)
 		
 	end
 	
+end
+
+
+function GM:LimitString(str, size)
+	if #str <= size then
+		return str
+	end
+	return string.Left(str, size - 1) .. "..."
 end

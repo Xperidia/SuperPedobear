@@ -308,11 +308,11 @@ function GM:HUDPaint()
 				
 				if IsValid(v) and v:Alive() and txt == "" then
 					
-					txt = Format(Either((#GAMEMODE.Vars.Pedos > 1), "%s is a Pedobear", "%s is the Pedobear"), v:Nick())
+					txt = Format(Either((#GAMEMODE.Vars.Pedos > 1), "%s is a Pedobear", "%s is the Pedobear"), GAMEMODE:LimitString(v:Nick(), 16))
 					
 				elseif IsValid(v) and v:Alive() and txt != "" then
 					
-					txt = txt .. Format("\n%s is a Pedobear", v:Nick())
+					txt = txt .. Format("\n%s is a Pedobear", GAMEMODE:LimitString(v:Nick(), 16))
 					size = size + 24
 					
 				end
@@ -416,7 +416,7 @@ function GM:HUDPaint()
 	end
 	
 	if plyTeam != TEAM_UNASSIGNED and splyTeam != TEAM_SPECTATOR then
-		local splynick = sply:Nick()
+		local splynick = GAMEMODE:LimitString(sply:Nick(), 16)
 		draw.DrawText( splynick, "XP_Pedo_HUDname", 100+1, ScrH()-200+1, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER )
 		draw.DrawText( splynick, "XP_Pedo_HUDname", 100, ScrH()-200, col, TEXT_ALIGN_CENTER )
 	end
@@ -465,7 +465,7 @@ function GM:HUDPaint()
 			rtitle = GAMEMODE:PrettyMusicName(string.GetFileFromFilename(GAMEMODE.Vars.Music:GetFileName()))
 		end
 		
-		local title = "♪ "..rtitle.." ♪"
+		local title = "♪ "..GAMEMODE:LimitString(rtitle, 30).." ♪"
 		draw.DrawText( title, "XP_Pedo_HUDname", ScrW()-127, ScrH()-99+visspace, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER )
 		draw.DrawText( title, "XP_Pedo_HUDname", ScrW()-128, ScrH()-100+visspace, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER )
 		

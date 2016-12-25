@@ -28,7 +28,7 @@ function PLAYER:SetupDataTables()
 
 end
 
-function PLAYER:ShouldDrawLocal() 
+function PLAYER:ShouldDrawLocal()
 
 	if ( self.TauntCam:ShouldDrawLocalPlayer( self.Player, self.Player:IsPlayingTaunt() ) ) then return true end
 
@@ -49,11 +49,11 @@ function PLAYER:Loadout()
 
 	self.Player:RemoveAllItems()
 	self.Player:Give( "pedo_pedobear" )
-	
+
 end
 
 function PLAYER:SetModel()
-	
+
 	self.Player:SetModel( Model("models/player/pbear/pbear.mdl") )
 
 end
@@ -61,21 +61,21 @@ end
 function PLAYER:Spawn()
 
 	BaseClass.Spawn( self )
-	
+
 	self.Player:SetPlayerColor( Vector( 0.545098, 0.333333, 0.180392 ) )
-	
+
 	self.Player:SetModelScale( 1, 0 )
-	
+
 end
 
 function PLAYER:StartMove( mv )
-	
+
 	if mv:KeyDown( IN_SPEED ) and !mv:GetVelocity():IsZero() then
 		self.Player.Sprinting = true
 	else
 		self.Player.Sprinting = false
 	end
-	
+
 end
 
 player_manager.RegisterClass( "player_pedobear", PLAYER, "player_default" )

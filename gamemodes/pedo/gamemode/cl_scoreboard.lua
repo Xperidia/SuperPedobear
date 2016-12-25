@@ -23,7 +23,7 @@ local PLAYER_LINE = {
 		self.Avatar = vgui.Create( "AvatarImage", self.AvatarButton )
 		self.Avatar:SetSize( 32, 32 )
 		self.Avatar:SetMouseInputEnabled( false )
-		
+
 		self.FriendStatusI = vgui.Create( "DImage", self )
 		self.FriendStatusI:SetSize( 16, 16 )
 		self.FriendStatusI:SetPos( 28, 22 )
@@ -96,7 +96,7 @@ local PLAYER_LINE = {
 			self.Player.GetUserGroup = function() return "" end
 			local steamid = util.SteamIDTo64(self.Player.networkid)
 			self.Avatar:SetSteamID(steamid)
-			self.Player.ShowProfile = function() gui.OpenURL( "http://steamcommunity.com/profiles/"..steamid.."/" ) end
+			self.Player.ShowProfile = function() gui.OpenURL("http://steamcommunity.com/profiles/" .. steamid .. "/") end
 		else
 			self.Avatar:SetPlayer( pl )
 		end
@@ -112,69 +112,69 @@ local PLAYER_LINE = {
 			self:Remove()
 			return
 		end
-		
+
 		if istable(self.Player) and IsValid( self.Player:GetPlayerEnt() ) then
 			self:SetZPos( 9999 ) -- Causes a rebuild
 			self:Remove()
 			cplayerslist[self.Player.userid] = nil
 			return
 		end
-		
+
 		if istable(self.Player) then
-			
+
 			local nope = true
-			
+
 			for id, pl in pairs( player.GetAny() ) do
-				
-				if pl.userid==self.Player.userid then
+
+				if pl.userid == self.Player.userid then
 					nope = false
 				end
 
 			end
-			
+
 			if nope then
-				
+
 				self:SetZPos( 9999 ) -- Causes a rebuild
 				self:Remove()
 				cplayerslist[self.Player.userid] = nil
 				return
-				
+
 			end
-			
+
 		end
 
-		if ( self.PName == nil || self.PName != self.Player:Nick() ) then
+		if ( self.PName == nil or self.PName != self.Player:Nick() ) then
 			self.PName = self.Player:Nick()
 			self.Name:SetText( self.PName )
 		end
 
-		if self.Player:Team() == TEAM_PEDOBEAR and ( self.PColor == nil || self.PColor != team.GetColor(self.Player:Team()) ) then
+		if self.Player:Team() == TEAM_PEDOBEAR and ( self.PColor == nil or self.PColor != team.GetColor(self.Player:Team()) ) then
 			self.PColor = team.GetColor(self.Player:Team())
 			self.Name:SetTextColor(self.PColor)
-		elseif self.Player:Team() != TEAM_PEDOBEAR and ( self.PColor == nil || self.PColor != Color( 255, 255, 255 ) ) then
+		elseif self.Player:Team() != TEAM_PEDOBEAR and ( self.PColor == nil or self.PColor != Color( 255, 255, 255 ) ) then
 			self.PColor = Color( 255, 255, 255 )
 			self.Name:SetTextColor( self.PColor )
 		end
-		
-		if ( self.NumKills == nil || self.NumKills != self.Player:Frags() ) then
+
+		if ( self.NumKills == nil or self.NumKills != self.Player:Frags() ) then
 			self.NumKills = self.Player:Frags()
 			self.Kills:SetText( self.NumKills )
 		end
 
-		if ( self.NumDeaths == nil || self.NumDeaths != self.Player:Deaths() ) then
+		if ( self.NumDeaths == nil or self.NumDeaths != self.Player:Deaths() ) then
 			self.NumDeaths = self.Player:Deaths()
 			self.Deaths:SetText( self.NumDeaths )
 		end
-		
-		if IsValid(self.Player) and ( self.PedoChanceTxt == nil || self.PedoChanceTxt != math.ceil((self.Player:GetNWFloat("XP_Pedo_PedoChance", 0) * 100)).."%" ) then
-			self.PedoChanceTxt = math.ceil((self.Player:GetNWFloat("XP_Pedo_PedoChance", 0) * 100)).."%"
+
+		if IsValid(self.Player) and (self.PedoChanceTxt == nil or self.PedoChanceTxt != math.ceil(self.Player:GetNWFloat("XP_Pedo_PedoChance", 0) * 100) .. "%") then
+			self.PedoChanceTxt = math.ceil(self.Player:GetNWFloat("XP_Pedo_PedoChance", 0) * 100) .. "%"
 			self.PedoChance:SetText( self.PedoChanceTxt )
 		elseif !IsValid(self.Player) and self.PedoChanceTxt != "" then
 			self.PedoChanceTxt = ""
 			self.PedoChance:SetText(self.PedoChanceTxt)
 		end
 
-		if ( self.NumPing == nil || ( self.NumPing != self.Player:Ping() and self.NumPing != "BOT" and self.NumPing != "HOST" and self.NumPing != "..." ) ) then
+		if ( self.NumPing == nil or ( self.NumPing != self.Player:Ping() and self.NumPing != "BOT" and self.NumPing != "HOST" and self.NumPing != "..." ) ) then
 			if !IsValid(self.Player) then
 				self.NumPing = "..."
 				self.Ping:SetText( self.NumPing )
@@ -190,15 +190,15 @@ local PLAYER_LINE = {
 			end
 		end
 
-		if ( self.LGroup == nil || string.lower(self.LGroup) != self.Player:GetUserGroup() ) and self.Player:GetUserGroup()!="user" then
-			self.LGroup = string.upper( string.sub(self.Player:GetUserGroup(), 1, 1) )..string.sub(self.Player:GetUserGroup(), 2)
+		if ( self.LGroup == nil or string.lower(self.LGroup) != self.Player:GetUserGroup() ) and self.Player:GetUserGroup() != "user" then
+			self.LGroup = string.upper( string.sub(self.Player:GetUserGroup(), 1, 1) ) .. string.sub(self.Player:GetUserGroup(), 2)
 			self.Group:SetText( self.LGroup )
 		end
 
 		--
 		-- Change the icon of the mute button based on state
 		--
-		if IsValid( self.Player ) and ( self.Muted == nil || self.Muted != self.Player:IsMuted() ) then
+		if IsValid( self.Player ) and ( self.Muted == nil or self.Muted != self.Player:IsMuted() ) then
 
 			self.Muted = self.Player:IsMuted()
 			if ( self.Muted ) then
@@ -210,9 +210,9 @@ local PLAYER_LINE = {
 			self.Mute.DoClick = function() self.Player:SetMuted( !self.Muted ) end
 
 		end
-		
-		if IsValid( self.Player ) and ( self.FriendStatus == nil || self.FriendStatus != self.Player:GetFriendStatus() ) then
-			
+
+		if IsValid( self.Player ) and ( self.FriendStatus == nil or self.FriendStatus != self.Player:GetFriendStatus() ) then
+
 			self.FriendStatus = self.Player:GetFriendStatus()
 			if ( self.FriendStatus == "friend" ) then
 				self.FriendStatusI:SetImageColor( Color(255,255,255,255) )
@@ -228,27 +228,27 @@ local PLAYER_LINE = {
 			end
 
 		end
-		
+
 		if ( self.Player:Team() == TEAM_PEDOBEAR ) then
 			self:SetZPos( -2000 + self.Player:EntIndex() )
 			return
 		end
-		
+
 		if ( self.Player:Team() == TEAM_CONNECTING or self.Player:Team() == TEAM_UNASSIGNED ) then
 			self:SetZPos( 3000 + self.Player:EntIndex() )
 			return
 		end
-		
+
 		if ( self.Player:Team() == TEAM_SPECTATOR ) then
 			self:SetZPos( 2000 + self.Player:EntIndex() )
 			return
 		end
-		
+
 		if ( !self.Player:Alive() ) then
 			self:SetZPos( 1000 + self.Player:EntIndex() )
 			return
 		end
-		
+
 		self:SetZPos( ( self.NumKills * -50 ) + self.Player:EntIndex() )
 
 	end,
@@ -258,7 +258,7 @@ local PLAYER_LINE = {
 		if ( !IsValid( self.Player ) and !istable(self.Player) ) then
 			return
 		end
-		
+
 		if istable(self.Player) and IsValid( self.Player:GetPlayerEnt() ) then
 			return
 		end
@@ -334,15 +334,15 @@ local SCORE_BOARD = {
 	Think = function( self, w, h )
 
 		self.Name:SetText( GetHostName() )
-		
+
 		local numplayers = #player.GetAll()
 		if player.GetAny then
 			local numplayersany = #player.GetAny()
-			if numplayers<numplayersany then
+			if numplayers < numplayersany then
 				numplayers = numplayersany
 			end
 		end
-		self.NumPlayers:SetText( numplayers.."/"..game.MaxPlayers() )
+		self.NumPlayers:SetText(numplayers .. "/" .. game.MaxPlayers())
 		--self.Map:SetText(game.GetMap())
 
 		--
@@ -359,24 +359,24 @@ local SCORE_BOARD = {
 			self.Scores:AddItem( pl.ScoreEntry )
 
 		end
-		
+
 		if player.GetAny then
-			
+
 			for id, pl in pairs( player.GetAny() ) do
-				
+
 				if ( IsValid( pl:GetPlayerEnt() ) ) then continue end
 				if ( IsValid( pl.ScoreEntry ) ) then continue end
 				if cplayerslist[pl.userid] then continue end
-				
+
 				pl.ScoreEntry = vgui.CreateFromTable( PLAYER_LINE, pl.ScoreEntry )
 				pl.ScoreEntry:Setup( pl )
 
 				self.Scores:AddItem( pl.ScoreEntry )
-				
+
 				cplayerslist[pl.userid] = true
 
 			end
-			
+
 		end
 
 	end

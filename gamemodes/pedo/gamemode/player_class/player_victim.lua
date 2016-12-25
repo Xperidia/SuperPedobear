@@ -28,7 +28,7 @@ function PLAYER:SetupDataTables()
 
 end
 
-function PLAYER:ShouldDrawLocal() 
+function PLAYER:ShouldDrawLocal()
 
 	if ( self.TauntCam:ShouldDrawLocalPlayer( self.Player, self.Player:IsPlayingTaunt() ) ) then return true end
 
@@ -49,41 +49,41 @@ function PLAYER:Loadout()
 
 	self.Player:RemoveAllItems()
 	self.Player:Give( "pedo_victim" )
-	
+
 end
 
 function PLAYER:Spawn()
 
 	BaseClass.Spawn( self )
-	
+
 	self.Player:SetPlayerColor( Vector( math.Rand(0,1), math.Rand(0,1), math.Rand(0,1) ) )
-	
+
 	self.Player:SetModelScale( 1, 0 )
-	
+
 end
 
 function PLAYER:SetModel()
 
 	BaseClass.SetModel( self )
-	
-	local models = {"models/player/p2_chell.mdl","models/player/alyx.mdl"} 
-	
+
+	local models = {"models/player/p2_chell.mdl","models/player/alyx.mdl"}
+
 	--if player_manager.AllValidModels()["Homura Akemi"] then
 		models = {"models/jazzmcfly/magica/homura_mg.mdl", "models/jazzmcfly/magica/kyouko_mg.mdl", "models/jazzmcfly/magica/madoka_mg.mdl", "models/jazzmcfly/magica/mami_mg.mdl", "models/jazzmcfly/magica/sayaka_mg.mdl"}
 	--end
-	
+
 	self.Player:SetModel( models[math.random( 1, #models )] )
 
 end
 
 function PLAYER:StartMove( mv )
-	
+
 	if mv:KeyDown( IN_SPEED ) and !mv:GetVelocity():IsZero() then
 		self.Player.Sprinting = true
 	else
 		self.Player.Sprinting = false
 	end
-	
+
 end
 
 player_manager.RegisterClass( "player_victim", PLAYER, "player_default" )

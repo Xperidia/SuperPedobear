@@ -29,7 +29,7 @@ function PANEL:Setup( ply )
 	self.LabelName:SetText( ply:Nick() )
 	self.LabelName:SetTextColor( team.GetColor( ply:Team() ) )
 	self.Avatar:SetPlayer( ply )
-	
+
 	self:InvalidateLayout()
 
 end
@@ -46,7 +46,7 @@ function PANEL:Paint( w, h )
 end
 
 function PANEL:Think()
-	
+
 	if ( IsValid( self.ply ) ) then
 		self.LabelName:SetText( self.ply:Nick() )
 		if self.ply:Alive() and self.ply:Team() == TEAM_VICTIMS then
@@ -63,17 +63,17 @@ function PANEL:Think()
 end
 
 function PANEL:FadeOut( anim, delta, data )
-	
+
 	if ( anim.Finished ) then
-	
+
 		if ( IsValid( PlayerVoicePanels[ self.ply ] ) ) then
 			PlayerVoicePanels[ self.ply ]:Remove()
 			PlayerVoicePanels[ self.ply ] = nil
 			return
 		end
-		
+
 	return end
-	
+
 	self:SetAlpha( 255 - ( 255 * delta ) )
 
 end
@@ -85,7 +85,7 @@ derma.DefineControl( "VoiceNotify", "", PANEL, "DPanel" )
 function GM:PlayerStartVoice( ply )
 
 	if ( !IsValid( g_VoicePanelList ) ) then return end
-	
+
 	-- There'd be an exta one if voice_loopback is on, so remove it.
 	GAMEMODE:PlayerEndVoice( ply )
 
@@ -107,7 +107,7 @@ function GM:PlayerStartVoice( ply )
 
 	local pnl = g_VoicePanelList:Add( "VoiceNotify" )
 	pnl:Setup( ply )
-	
+
 	PlayerVoicePanels[ ply ] = pnl
 
 end
@@ -115,11 +115,11 @@ end
 local function VoiceClean()
 
 	for k, v in pairs( PlayerVoicePanels ) do
-	
+
 		if ( !IsValid( k ) ) then
 			GAMEMODE:PlayerEndVoice( k )
 		end
-	
+
 	end
 
 end

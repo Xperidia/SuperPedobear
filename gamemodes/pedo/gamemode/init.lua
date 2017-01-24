@@ -43,6 +43,7 @@ function GM:PlayerInitialSpawn(ply)
 	else
 		ply:SetTeam(TEAM_UNASSIGNED)
 		GAMEMODE:LoadChances(ply)
+		GAMEMODE:LoadPlayerInfo(ply)
 	end
 
 	if (GAMEMODE.Vars.Round.Start or GAMEMODE.Vars.Round.PreStart) and GAMEMODE.Vars.CurrentMusic then
@@ -90,6 +91,7 @@ end
 
 function GM:PlayerDisconnected(ply)
 	GAMEMODE:StoreChances(ply)
+	GAMEMODE:StorePlayerInfo(ply)
 end
 
 function GM:PedoVars(ply)
@@ -627,6 +629,7 @@ function GM:RoundThink()
 				end
 
 				GAMEMODE:StoreChances()
+				GAMEMODE:StorePlayerInfo(ply)
 				GAMEMODE:PedoVars()
 				GAMEMODE:PlayerStats()
 
@@ -690,6 +693,8 @@ function GM:DoPlayerDeath(ply, attacker, dmginfo)
 
 		if attacker != ply and attacker:Team() == TEAM_PEDOBEAR then
 			attacker:AddFrags(1)
+			attacker:SetNWInt("XP_Pedo_TotalVictims", attacker:GetNWInt("XP_Pedo_TotalVictims", 0) + 1)
+			attacker:SetNWInt("XP_Pedo_VictimsCurrency", attacker:GetNWInt("XP_Pedo_VictimsCurrency", 0) + 1)
 			if GAMEMODE:IsSeasonalEvent("Halloween") or ply:GetInfoNum("pedobear_cl_jumpscare", 0) == 1 then
 				if GAMEMODE.PlayerEasterEgg[attacker:SteamID64()] and GAMEMODE.PlayerEasterEgg[attacker:SteamID64()][2] then
 					ply:ConCommand("pp_mat_overlay " .. GAMEMODE.PlayerEasterEgg[attacker:SteamID64()][2])
@@ -1017,5 +1022,197 @@ function GM:PlayerUse(ply, ent)
 	end
 
 	return true
+
+end
+
+function GM:RetrieveXperidiaAccountRank(ply)
+
+	if !IsValid(ply) then return end
+
+	if ply:IsBot() then return end
+
+	if !ply.XperidiaRankLastTime or ply.XperidiaRankLastTime + 3600 < SysTime() then
+
+		local steamid = ply:SteamID64()
+
+		local XperidiaRanks = { "Premium", "Creator", "Administrator" }
+
+		GAMEMODE:Log("Retrieving the Xperidia Rank for " .. ply:GetName() .. "...", nil, true)
+
+		http.Post( "https://www.xperidia.com/UCP/rank.php", { steamid = steamid },
+		function( responseText, contentLength, responseHeaders, statusCode )
+
+			if !IsValid(ply) then return end
+
+			if statusCode == 200 then
+
+				local rank = tonumber(string.Right(responseText, contentLength-3))
+				ply.XperidiaRank = rank
+				ply:SetNWInt( "XperidiaRank", rank )
+				ply.XperidiaRankLastTime = SysTime()
+
+				if XperidiaRanks[rank] then
+					GAMEMODE:Log("The Xperidia Rank for " .. ply:GetName() .. " is " .. XperidiaRanks[rank])
+				else
+					GAMEMODE:Log(ply:GetName() .. " doesn't have any Xperidia Rank...", nil, true)
+				end
+
+			else
+				GAMEMODE:Log("Error while retriving Xperidia Rank for " .. ply:GetName() .. " (HTTP " .. (statusCode or "?") .. ")")
+			end
+
+		end,
+		function( errorMessage )
+
+			GAMEMODE:Log(errorMessage)
+
+		end )
+
+	end
+
+end
+
+function GM:StoreChances(ply)
+
+	if !pedobear_save_chances:GetBool() then GAMEMODE:Log("Chances saving is disabled. Not saving pedobear chances.") return end
+
+	local function savechance(pl)
+
+		if pl:IsBot() then return end
+
+		local chance = pl:GetNWFloat("XP_Pedo_PedoChance", nil)
+
+		if chance != nil then
+
+			pl:SetPData("XP_Pedo_PedoChance", math.floor(math.Clamp(chance, 0, 100) * 100))
+
+			GAMEMODE:Log("Saved the " .. (chance * 100) .. "% pedobear chance of " .. pl:GetName())
+
+		end
+
+	end
+
+	if IsValid(ply) then
+
+		savechance(ply)
+
+	elseif ply == nil then
+
+		for _, v in pairs(player.GetAll()) do
+
+			savechance(v)
+
+		end
+
+	end
+
+end
+
+function GM:LoadChances(ply)
+
+	if !pedobear_save_chances:GetBool() then GAMEMODE:Log("Chances saving is disabled. Not loading pedobear chances.", nil, true) return end
+
+	local function loadchance(pl)
+
+		if pl:IsBot() then return end
+
+		local chance = pl:GetPData("XP_Pedo_PedoChance", nil)
+
+		if chance != nil then
+
+			chance = chance * 0.01
+
+			pl:SetNWFloat("XP_Pedo_PedoChance", chance)
+
+			GAMEMODE:Log("Loaded the " .. (chance * 100) .. "% pedobear chance of " .. pl:GetName())
+
+		else
+
+			pl:SetNWFloat("XP_Pedo_PedoChance", 0.01)
+
+			GAMEMODE:Log("No pedobear chance found for " .. pl:GetName() .. ", default was set")
+
+		end
+
+	end
+
+	if IsValid(ply) then
+
+		loadchance(ply)
+
+	elseif ply == nil then
+
+		for _, v in pairs(player.GetAll()) do
+
+			loadchance(v)
+
+		end
+
+	end
+
+end
+
+function GM:StorePlayerInfo(ply)
+
+	local function saveinfo(pl)
+
+		if pl:IsBot() then return end
+
+		local totalvictims = pl:GetNWInt("XP_Pedo_TotalVictims", nil)
+		local victimscurrency = pl:GetNWInt("XP_Pedo_VictimsCurrency", nil)
+
+		if totalvictims != nil then
+			pl:SetPData("XP_Pedo_TotalVictims", totalvictims)
+		end
+		if victimscurrency != nil then
+			pl:SetPData("XP_Pedo_VictimsCurrency", victimscurrency)
+		end
+
+		GAMEMODE:Log("Saved the player info of " .. pl:GetName())
+
+	end
+
+	if IsValid(ply) then
+
+		saveinfo(ply)
+
+	elseif ply == nil then
+
+		for _, v in pairs(player.GetAll()) do
+
+			saveinfo(v)
+
+		end
+
+	end
+
+end
+
+function GM:LoadPlayerInfo(ply)
+
+	local function loadinfo(pl)
+
+		if pl:IsBot() then return end
+
+		pl:SetNWInt("XP_Pedo_TotalVictims", pl:GetPData("XP_Pedo_TotalVictims", 0))
+		pl:SetNWInt("XP_Pedo_VictimsCurrency", pl:GetPData("XP_Pedo_VictimsCurrency", 0))
+
+		GAMEMODE:Log("Loaded the player info of " .. pl:GetName())
+
+	end
+
+	if IsValid(ply) then
+
+		loadinfo(ply)
+
+	elseif ply == nil then
+
+		for _, v in pairs(player.GetAll()) do
+
+			loadinfo(v)
+
+		end
+
+	end
 
 end

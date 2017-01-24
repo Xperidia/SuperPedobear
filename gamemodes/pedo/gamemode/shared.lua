@@ -7,7 +7,7 @@ GM.Name 	= "Pedobear"
 GM.ShortName 	= "Pedo"
 GM.Author 	= "VictorienXP@Xperidia"
 GM.Website 	= "steamcommunity.com/sharedfiles/filedetails/?id=628449407"
-GM.Version 	= 0.232
+GM.Version 	= 0.233
 GM.TeamBased = true
 
 TEAM_VICTIMS = 1
@@ -267,90 +267,6 @@ function GM:BuildMusicIndex()
 
 end
 
-if SERVER then
-
-	function GM:StoreChances(ply)
-
-		if !pedobear_save_chances:GetBool() then GAMEMODE:Log("Chances saving is disabled. Not saving pedobear chances.") return end
-
-		local function savechance(pl)
-
-			if pl:IsBot() then return end
-
-			local chance = pl:GetNWFloat("XP_Pedo_PedoChance", nil)
-
-			if chance != nil then
-
-				pl:SetPData("XP_Pedo_PedoChance", math.floor(math.Clamp(chance,0,100) * 100))
-
-				GAMEMODE:Log("Saved the " .. (chance * 100) .. "% pedobear chance of " .. pl:GetName())
-
-			end
-
-		end
-
-		if IsValid(ply) then
-
-			savechance(ply)
-
-		elseif ply == nil then
-
-			for _, v in pairs(player.GetAll()) do
-
-				savechance(v)
-
-			end
-
-		end
-
-	end
-
-	function GM:LoadChances(ply)
-
-		if !pedobear_save_chances:GetBool() then GAMEMODE:Log("Chances saving is disabled. Not loading pedobear chances.", nil, true) return end
-
-		local function loadchance(pl)
-
-			if pl:IsBot() then return end
-
-			local chance = pl:GetPData("XP_Pedo_PedoChance", nil)
-
-			if chance != nil then
-
-				chance = chance * 0.01
-
-				pl:SetNWFloat("XP_Pedo_PedoChance", chance)
-
-				GAMEMODE:Log("Loaded the " .. (chance * 100) .. "% pedobear chance of " .. pl:GetName())
-
-			else
-
-				pl:SetNWFloat("XP_Pedo_PedoChance", 0.01)
-
-				GAMEMODE:Log("No pedobear chance found for " .. pl:GetName() .. ", default was set")
-
-			end
-
-		end
-
-		if IsValid(ply) then
-
-			loadchance(ply)
-
-		elseif ply == nil then
-
-			for _, v in pairs(player.GetAll()) do
-
-				loadchance(v)
-
-			end
-
-		end
-
-	end
-
-end
-
 function GM:CreateTeams()
 
 	team.SetUp( TEAM_VICTIMS, "Victims", Color(247, 127, 190) )
@@ -376,7 +292,6 @@ function GM:ShouldCollide( Ent1, Ent2 )
 
 end
 
-
 function GM:Log(str,tn,hardcore)
 
 	local name = GAMEMODE.ShortName or "Pedo"
@@ -393,57 +308,6 @@ function GM:Log(str,tn,hardcore)
 	end
 
 end
-
-
-function GM:RetrieveXperidiaAccountRank(ply)
-
-	if !SERVER then return end
-
-	if !IsValid(ply) then return end
-
-	if ply:IsBot() then return end
-
-	if !ply.XperidiaRankLastTime or ply.XperidiaRankLastTime + 3600 < SysTime() then
-
-		local steamid = ply:SteamID64()
-
-		local XperidiaRanks = { "Premium", "Creator", "Administrator" }
-
-		GAMEMODE:Log("Retrieving the Xperidia Rank for " .. ply:GetName() .. "...", nil, true)
-
-		http.Post( "https://www.xperidia.com/UCP/rank.php", { steamid = steamid },
-		function( responseText, contentLength, responseHeaders, statusCode )
-
-			if !IsValid(ply) then return end
-
-			if statusCode == 200 then
-
-				local rank = tonumber(string.Right(responseText, contentLength-3))
-				ply.XperidiaRank = rank
-				ply:SetNWInt( "XperidiaRank", rank )
-				ply.XperidiaRankLastTime = SysTime()
-
-				if XperidiaRanks[rank] then
-					GAMEMODE:Log("The Xperidia Rank for " .. ply:GetName() .. " is " .. XperidiaRanks[rank])
-				else
-					GAMEMODE:Log(ply:GetName() .. " doesn't have any Xperidia Rank...", nil, true)
-				end
-
-			else
-				GAMEMODE:Log("Error while retriving Xperidia Rank for " .. ply:GetName() .. " (HTTP " .. (statusCode or "?") .. ")")
-			end
-
-		end,
-		function( errorMessage )
-
-			GAMEMODE:Log(errorMessage)
-
-		end )
-
-	end
-
-end
-
 
 function GM:LimitString(str, size)
 	if #str <= size then

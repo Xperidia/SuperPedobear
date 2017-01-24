@@ -513,6 +513,8 @@ function GM:BeginMenu()
 		changelog:AppendText("		/!\\ This is a dev build! /!\\\n")
 		changelog:AppendText("> Fixed a bug with the spectator team\n")
 		changelog:AppendText("> Basic string size limit\n")
+		changelog:AppendText("> Total victims count\n")
+		changelog:AppendText("> Victim currency\n")
 
 		--[[local featuredbtn = vgui.Create("DButton")
 		featuredbtn:SetParent(pedobearMenuBF.changelog)

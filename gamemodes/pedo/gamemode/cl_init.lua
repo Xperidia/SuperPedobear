@@ -1021,7 +1021,9 @@ function GM:StartTaunt(sel)
 
 end
 
-function GM:Music(src, pre, name)
+function GM:Music(src, pre, name, retry)
+
+	if !retry then retry = 0 end
 
 	GAMEMODE:BuildMusicIndex()
 
@@ -1068,8 +1070,12 @@ function GM:Music(src, pre, name)
 
 			if errorID or errorName then
 				GAMEMODE:Log("Error while starting music \"" .. src .. "\": " .. errorName .. " (" .. errorID .. ")")
-				GAMEMODE:Log("Retrying with fallback...")
-				GAMEMODE:Music("", pre)
+				if retry < 5 then
+					GAMEMODE:Log("Retrying with fallback...")
+					GAMEMODE:Music("", pre, nil, retry + 1)
+				else
+					GAMEMODE:Log("Too many retries! Aborting fallback...")
+				end
 			elseif orisrc != nil then
 				GAMEMODE:Log("Playing music \"" .. src .. "\"" .. Either(pre, " (pre round music)", "") .. " instead of " .. Either(orisrc != "", "\"" .. orisrc .. "\"", "nothing"))
 			else

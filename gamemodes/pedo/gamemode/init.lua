@@ -12,6 +12,7 @@ AddCSLuaFile("cl_menu.lua")
 AddCSLuaFile("cl_tauntmenu.lua")
 AddCSLuaFile("cl_voice.lua")
 AddCSLuaFile("cl_deathnotice.lua")
+AddCSLuaFile("cl_pedovan.lua")
 
 include("shared.lua")
 

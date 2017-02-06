@@ -7,7 +7,7 @@ GM.Name 	= "Super Pedobear"
 GM.ShortName 	= "SuperPedobear"
 GM.Author 	= "VictorienXP@Xperidia"
 GM.Website 	= "steamcommunity.com/sharedfiles/filedetails/?id=628449407"
-GM.Version 	= 0.233
+GM.Version 	= 0.234
 GM.TeamBased = true
 
 TEAM_VICTIMS = 1
@@ -31,6 +31,7 @@ GM.Sounds.Death = GM.Sounds.Death or {}
 
 GM.Materials = {}
 GM.Materials.Death = Material("pedo/pedoscare")
+GM.Materials.PedoVan = Material("pedo/pedovan")
 GM.Materials.PepperDeath = Material("pedo/pepperscare")
 
 GM.Vars = GM.Vars or {}

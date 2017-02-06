@@ -125,6 +125,7 @@ function GM:Menu()
 		.. GAMEMODE:CheckBind("gm_showteam") .. ": Change team\n"
 		.. GAMEMODE:CheckBind("gm_showspare1") .. ": Taunt menu\n"
 		.. "1-9: Quick taunt\n"
+		.. GAMEMODE:CheckBind("+menu") .. ": PedoVan (Shop)\n"
 		.. GAMEMODE:CheckBind("+menu_context") .. ": Toggle thirdperson")
 		desclbl:SetPos(20, 30)
 		desclbl:SetDark(1)
@@ -485,6 +486,7 @@ function GM:BeginMenu()
 		.. GAMEMODE:CheckBind("gm_showteam") .. ": Change team\n"
 		.. GAMEMODE:CheckBind("gm_showspare1") .. ": Taunt menu\n"
 		.. "1-9: Quick taunt\n"
+		.. GAMEMODE:CheckBind("+menu") .. ": PedoVan (Shop)\n"
 		.. GAMEMODE:CheckBind("+menu_context") .. ": Toggle thirdperson" )
 		desclbl:SetPos(20, 30)
 		desclbl:SetDark(1)
@@ -516,6 +518,7 @@ function GM:BeginMenu()
 		changelog:AppendText("> Total victims count\n")
 		changelog:AppendText("> Victim currency (For the PedoVan)\n")
 		changelog:AppendText("> Now the gamemode name is \"Super Pedobear\"\n")
+		changelog:AppendText("> The PedoVan frame is implemented\n")
 
 		--[[local featuredbtn = vgui.Create("DButton")
 		featuredbtn:SetParent(pedobearMenuBF.changelog)

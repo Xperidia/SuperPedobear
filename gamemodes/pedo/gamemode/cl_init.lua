@@ -4,6 +4,7 @@ include("cl_menu.lua")
 include("cl_tauntmenu.lua")
 include("cl_voice.lua")
 include("cl_deathnotice.lua")
+include("cl_pedovan.lua")
 
 DEFINE_BASECLASS("gamemode_base")
 
@@ -1192,6 +1193,10 @@ end
 
 function GM:OnContextMenuOpen()
 	LocalPlayer().ThirdPerson = !LocalPlayer().ThirdPerson
+end
+
+function GM:OnSpawnMenuOpen()
+	GAMEMODE:PedoVan()
 end
 
 hook.Add("CalcView", "XP_Pedo_thirdperson", function(ply, pos, angles, fov)

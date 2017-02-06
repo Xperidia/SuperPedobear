@@ -1,9 +1,8 @@
 "pedo"
 {
 	"base"		"base"
-	"title"		"Pedobear"
-	"maps"		"^ph_"
+	"title"		"Super Pedobear"
+	"maps"		"^ph_|^spb_"
 	"menusystem"	"1"
 	"workshopid"	"628449407"
-	
 }

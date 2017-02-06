@@ -3,8 +3,8 @@ DEFINE_BASECLASS( "gamemode_base" )
 include( "player_class/player_victim.lua" )
 include( "player_class/player_pedobear.lua" )
 
-GM.Name 	= "Pedobear"
-GM.ShortName 	= "Pedo"
+GM.Name 	= "Super Pedobear"
+GM.ShortName 	= "SuperPedobear"
 GM.Author 	= "VictorienXP@Xperidia"
 GM.Website 	= "steamcommunity.com/sharedfiles/filedetails/?id=628449407"
 GM.Version 	= 0.233
@@ -294,7 +294,7 @@ end
 
 function GM:Log(str,tn,hardcore)
 
-	local name = GAMEMODE.ShortName or "Pedo"
+	local name = GAMEMODE.Name or "Pedo"
 	if tn then name = "Pedo" end
 
 	if hardcore and !pedobear_enabledevmode:GetBool() then return end

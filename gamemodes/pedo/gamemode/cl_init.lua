@@ -586,7 +586,7 @@ function GM:HUDPaintBackground()
 
 	end
 
-	draw.DrawText(GAMEMODE.Name .. " Gamemode V" .. GAMEMODE.Version, "DermaDefault", ScrW() / 2, 0, Color(255, 255, 255, 64), TEXT_ALIGN_CENTER)
+	draw.DrawText(GAMEMODE.Name .. " V" .. GAMEMODE.Version, "DermaDefault", ScrW() / 2, 0, Color(255, 255, 255, 64), TEXT_ALIGN_CENTER)
 	if GAMEMODE:IsSeasonalEvent("AprilFool") then draw.DrawText("PedoFrame™", "DermaDefault", 1, ScrH() - 200, Color(255, 255, 255, 64), TEXT_ALIGN_LEFT) end
 
 end
@@ -1122,19 +1122,19 @@ function GM:Stats()
 
 	local steamid = LocalPlayer():SteamID64()
 
-	if !file.IsDir((GAMEMODE.ShortName or "pedo") .. "/stats", "DATA") then
-		file.CreateDir((GAMEMODE.ShortName or "pedo") .. "/stats")
+	if !file.IsDir("superpedobear/stats", "DATA") then
+		file.CreateDir("superpedobear/stats")
 	end
 
-	local needstat = !file.Exists((GAMEMODE.ShortName or "pedo") .. "/stats/" .. steamid .. ".txt", "DATA")
+	local needstat = !file.Exists("superpedobear/stats/" .. steamid .. ".txt", "DATA")
 
 	if needstat then
 
-		http.Post( "https://www.xperidia.com/UCP/stats.php", { steamid = steamid, zone = GAMEMODE.ShortName or "pedo" },
+		http.Post( "https://www.xperidia.com/UCP/stats.php", { steamid = steamid, zone = "pedo" },
 		function( responseText, contentLength, responseHeaders, statusCode )
 
 			if statusCode == 200 then
-				file.Write((GAMEMODE.ShortName or "pedo") .. "/stats/" .. steamid .. ".txt", "")
+				file.Write("superpedobear/stats/" .. steamid .. ".txt", "")
 				GAMEMODE:Log(responseText)
 			else
 				GAMEMODE:Log("Error while registering the gamemode (ERROR " .. statusCode .. ")")

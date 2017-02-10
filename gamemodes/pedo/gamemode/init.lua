@@ -443,20 +443,12 @@ function GM:RoundThink()
 			local PedoIndex = 1
 			local tw = "the"
 
-			if GAMEMODE:IsSeasonalEvent("PedobearDay") then
-
-				WantedPedos = math.Clamp(#team.GetPlayers(TEAM_VICTIMS) - 2, 1, 128)
-
-			else
-
-				if GAMEMODE.Vars.victims >= 64 then
-					WantedPedos = 4
-				elseif GAMEMODE.Vars.victims >= 32 then
-					WantedPedos = 3
-				elseif GAMEMODE.Vars.victims >= 24 then
-					WantedPedos = 2
-				end
-
+			if GAMEMODE.Vars.victims >= 64 then
+				WantedPedos = 4
+			elseif GAMEMODE.Vars.victims >= 32 then
+				WantedPedos = 3
+			elseif GAMEMODE.Vars.victims >= 24 then
+				WantedPedos = 2
 			end
 
 			GAMEMODE:Log(WantedPedos .. " pedobear(s) will be selected", nil, true)

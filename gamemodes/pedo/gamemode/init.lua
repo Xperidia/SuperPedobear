@@ -576,7 +576,7 @@ function GM:RoundThink()
 			--GAMEMODE:PedoMusic("pause")
 
 			if MapVote and GAMEMODE.Vars.Rounds >= 8 then
-				MapVote.Start()
+				MapVote.Start(nil, nil, nil, {"ph_", "spb_"})
 			end
 
 			timer.Create( "XP_Pedo_TempoPreEnd", 9.8, 1, function()

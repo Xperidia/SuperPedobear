@@ -1028,7 +1028,7 @@ function GM:RetrieveXperidiaAccountRank(ply)
 
 		local steamid = ply:SteamID64()
 
-		local XperidiaRanks = { "Premium", "Creator", "Administrator" }
+		local XperidiaRanks = { "Premium", "Staff", "Administrator" }
 
 		GAMEMODE:Log("Retrieving the Xperidia Rank for " .. ply:GetName() .. "...", nil, true)
 

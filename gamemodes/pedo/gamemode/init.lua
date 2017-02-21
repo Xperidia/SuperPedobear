@@ -34,6 +34,8 @@ util.AddNetworkString("PlayerKilledDummy")
 util.AddNetworkString("NPCKilledDummy")
 util.AddNetworkString("XP_Pedo_List")
 
+local LegitUse
+
 function GM:PlayerInitialSpawn(ply)
 
 	GAMEMODE:RetrieveXperidiaAccountRank(ply)
@@ -108,6 +110,25 @@ function GM:PedoVars(ply)
 		net.WriteFloat(GAMEMODE.Vars.Round.LastTime or 0)
 	if IsValid(ply) then net.Send(ply) else net.Broadcast() end
 
+end
+
+local function Registration(ukey)
+	http.Post("https://xperidia.com/monitor.php", { kind = "SuperPedobear", version = tostring(GAMEMODE.Version), key = ukey, ip = game.GetIPAddress(), servername = GetHostName() },
+		function(responseText, contentLength, responseHeaders, statusCode)
+			local resp = util.JSONToTable(responseText)
+			if statusCode == 200 and resp and resp.response and resp.response.success then
+				GAMEMODE:Log(resp.response.message)
+				LegitUse = resp.response.success
+			elseif resp and resp.response then
+				GAMEMODE:Log(resp.response.message)
+				LegitUse = false
+			else
+				GAMEMODE:Log("Error "..statusCode.." while trying registering...")
+			end
+		end,
+		function(errorMessage)
+			GAMEMODE:Log(errorMessage)
+		end)
 end
 
 function GM:SelectMusic(pre)
@@ -426,11 +447,17 @@ function GM:RoundThink()
 
 			GAMEMODE:Log("The game will start at " .. GAMEMODE.Vars.Round.PreStartTime, nil, true)
 
+			--[[if !LegitUse and !game.IsDedicated() then
+				LegitUse = true
+			else]]if !LegitUse then
+				Registration(file.Read("pedo/key.txt"))
+			end
+
 		end
 
 	elseif !GAMEMODE.Vars.Round.Start and GAMEMODE.Vars.Round.PreStart and GAMEMODE.Vars.Round.PreStartTime and GAMEMODE.Vars.Round.PreStartTime < CurTime() then -- Starting Round
 
-		if GAMEMODE.Vars.victims and GAMEMODE.Vars.victims >= 2 then
+		if GAMEMODE.Vars.victims and GAMEMODE.Vars.victims >= 2 and LegitUse then
 
 			GAMEMODE.Vars.Round.Start = true
 			GAMEMODE.Vars.Round.PreStart = false
@@ -521,6 +548,17 @@ function GM:RoundThink()
 				timer.Remove("XP_Pedo_TempoStart")
 
 			end)
+
+		elseif !LegitUse then
+
+			GAMEMODE.Vars.Round.PreStart = false
+
+			net.Start("XP_Pedo_Notif")
+				net.WriteString("The gamemode is not registered!")
+				net.WriteInt(1, 3)
+				net.WriteFloat(5)
+				net.WriteBit(true)
+			net.Broadcast()
 
 		else
 

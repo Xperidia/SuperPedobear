@@ -496,7 +496,7 @@ function GM:BeginMenu()
 		pedobearMenuBF.changelog = vgui.Create("DPanel")
 		pedobearMenuBF.changelog:SetParent(pedobearMenuBF)
 		pedobearMenuBF.changelog:SetPos(10, 255)
-		pedobearMenuBF.changelog:SetSize(305, 215)
+		pedobearMenuBF.changelog:SetSize(620, 215)
 
 		local changeloglbl = vgui.Create("DLabel")
 		changeloglbl:SetParent(pedobearMenuBF.changelog)
@@ -507,19 +507,13 @@ function GM:BeginMenu()
 
 		local changelog = vgui.Create("RichText", pedobearMenuBF.changelog)
 		changelog:SetPos(0, 20)
-		changelog:SetSize(305, 195)
+		changelog:SetSize(620, 195)
 		function changelog:PerformLayout()
 			self:SetFontInternal("XP_Pedo_HUDname")
 			self:SetFGColor(Color(0, 0, 0))
 		end
-		--changelog:AppendText("		/!\\ This is a dev build! /!\\\n")
-		changelog:AppendText("> Fixed a bug with the spectator team\n")
-		changelog:AppendText("> Basic string size limit\n")
-		changelog:AppendText("> Total victims count\n")
-		changelog:AppendText("> Victim currency (For the PedoVan)\n")
-		changelog:AppendText("> Now the gamemode name is \"Super Pedobear\"\n")
-		changelog:AppendText("> The PedoVan frame is implemented\n")
-		changelog:AppendText("> Removed Pedobear Anniversary event\n")
+		changelog:AppendText("							/!\\ This is a dev build! /!\\\n")
+		changelog:AppendText("> Gamemode registration\n")
 
 		--[[local featuredbtn = vgui.Create("DButton")
 		featuredbtn:SetParent(pedobearMenuBF.changelog)
@@ -529,28 +523,6 @@ function GM:BeginMenu()
 		featuredbtn.DoClick = function()
 			gui.OpenURL("")
 		end]]
-
-
-		pedobearMenuBF.upcoming = vgui.Create("DPanel")
-		pedobearMenuBF.upcoming:SetParent(pedobearMenuBF)
-		pedobearMenuBF.upcoming:SetPos(325, 255)
-		pedobearMenuBF.upcoming:SetSize(305, 215)
-
-		local upcominglbl = vgui.Create("DLabel")
-		upcominglbl:SetParent(pedobearMenuBF.upcoming)
-		upcominglbl:SetText("Upcoming stuff")
-		upcominglbl:SetPos(10, 5)
-		upcominglbl:SetDark(1)
-		upcominglbl:SizeToContents()
-
-		local upcoming = vgui.Create("RichText", pedobearMenuBF.upcoming)
-		upcoming:SetPos(0, 20)
-		upcoming:SetSize(305, 195)
-		function upcoming:PerformLayout()
-			self:SetFontInternal("XP_Pedo_HUDname")
-			self:SetFGColor(Color(0, 0, 0))
-		end
-		upcoming:AppendText("> Dynamic music playlist (player controlled)\n")
 
 
 		if !GetConVar("pedobear_cl_disablexpsc"):GetBool() then

@@ -123,7 +123,7 @@ local function Registration(ukey)
 				GAMEMODE:Log(resp.response.message)
 				LegitUse = false
 			else
-				GAMEMODE:Log("Error "..statusCode.." while trying registering...")
+				GAMEMODE:Log("Error " .. statusCode .. " while trying registering...")
 			end
 		end,
 		function(errorMessage)

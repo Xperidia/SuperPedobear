@@ -344,7 +344,7 @@ function GM:HUDPaint()
 	if Start then
 
 		draw.RoundedBoxEx(16, 0, ScrH() / 2 - 10, 330, 100, Color(0, 0, 0, 200), false, true, false, true)
-		draw.DrawText( GAMEMODE:WordFilter("Victims Left: " .. (GAMEMODE.Vars.victims or 0) .. "\nVictims Raped: " .. (GAMEMODE.Vars.downvictims or 0)), "XP_Pedo_TXT", 320, ScrH() / 2, Color(255, 255, 255, 255), TEXT_ALIGN_RIGHT)
+		draw.DrawText( "Victims Left: " .. (GAMEMODE.Vars.victims or 0) .. "\nVictims Captured: " .. (GAMEMODE.Vars.downvictims or 0), "XP_Pedo_TXT", 320, ScrH() / 2, Color(255, 255, 255, 255), TEXT_ALIGN_RIGHT)
 
 	end
 
@@ -428,7 +428,7 @@ function GM:HUDPaint()
 		if WinTeam == TEAM_VICTIMS then
 			return "The victims wins!"
 		elseif WinTeam == TEAM_PEDOBEAR then
-			return GAMEMODE:WordFilter("Pedobear raped everyone!")
+			return "Pedobear captured everyone!"
 		end
 		return "Draw game!"
 	end

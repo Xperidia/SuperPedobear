@@ -113,33 +113,6 @@ function GM:SeasonalEventStr()
 
 end
 
-function GM:WordFilter(str, ply)
-
-	local blockword = false
-
-	blockword = string.match( GetHostName(), "Ollie's Mod" ) or blockword
-
-	if CLIENT then
-
-		blockword = GetConVar("pedobear_cl_censorwords"):GetBool() or blockword
-
-	elseif SERVER then
-
-		if IsValid(ply) then blockword = ply:GetInfoNum("pedobear_cl_censorwords", 0) == 1 or blockword end
-
-	end
-
-	if blockword then
-
-		str = string.Replace( str, "raped", "\"captured\"" )
-		str = string.Replace( str, "Raped", "\"Captured\"" )
-
-	end
-
-	return str
-
-end
-
 function GM:Initialize()
 
 	sound.Add( {
@@ -183,7 +156,6 @@ function GM:Initialize()
 		CreateClientConVar( "pedobear_cl_music_volume", 0.5, true, false )
 		CreateClientConVar( "pedobear_cl_music_allowexternal", 1, true, false )
 		CreateClientConVar( "pedobear_cl_music_visualizer", 1, true, false )
-		CreateClientConVar( "pedobear_cl_censorwords", 0, true, true )
 
 		cvars.AddChangeCallback( "pedobear_cl_music_volume", function( convar_name, value_old, value_new )
 			if IsValid(GAMEMODE.Vars.Music) then

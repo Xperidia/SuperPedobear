@@ -190,7 +190,7 @@ function GM:Menu()
 		disablehalo:SetValue(GetConVar("pedobear_cl_disablehalos"):GetBool())
 		disablehalo:SizeToContents()
 
-		local censorwords = vgui.Create("DCheckBoxLabel")
+		--[[local censorwords = vgui.Create("DCheckBoxLabel")
 		censorwords:SetParent(pedobearMenuF.config)
 		censorwords:SetText("Word censoring")
 		censorwords:SetPos(15, 130)
@@ -198,7 +198,7 @@ function GM:Menu()
 		censorwords:SetConVar("pedobear_cl_censorwords")
 		censorwords:SetValue(GetConVar("pedobear_cl_censorwords"):GetBool())
 		censorwords:SetDisabled(string.match(GetHostName(), "Ollie's Mod"))
-		censorwords:SizeToContents()
+		censorwords:SizeToContents()]]
 
 
 		pedobearMenuF.MusicL = vgui.Create("DPanel")
@@ -515,6 +515,7 @@ function GM:BeginMenu()
 		changelog:AppendText("							/!\\ This is a dev build! /!\\\n")
 		changelog:AppendText("> Gamemode registration\n")
 		changelog:AppendText("> Stamina won't drop during preparation time\n")
+		changelog:AppendText("> Removed Word censoring\n")
 
 		--[[local featuredbtn = vgui.Create("DButton")
 		featuredbtn:SetParent(pedobearMenuBF.changelog)

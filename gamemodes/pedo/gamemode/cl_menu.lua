@@ -208,29 +208,32 @@ function GM:Menu()
 
 		local pre = GAMEMODE.Vars.Round.PreStart
 
+		pedobearMenuF.MusicL.lbl = vgui.Create("DLabel")
+		pedobearMenuF.MusicL.lbl:SetParent(pedobearMenuF.MusicL)
+		pedobearMenuF.MusicL.lbl:SetText("Music list")
+		pedobearMenuF.MusicL.lbl:SetPos(10, 5)
+		pedobearMenuF.MusicL.lbl:SetSize(289, 10)
+		pedobearMenuF.MusicL.lbl:SetDark(1)
+
+		pedobearMenuF.MusicL.List = vgui.Create("DListView", pedobearMenuF.MusicL)
+		pedobearMenuF.MusicL.List:SetPos(0, 20)
+		pedobearMenuF.MusicL.List:SetSize(305, 195)
+		pedobearMenuF.MusicL.List:SetMultiSelect(false)
+		local name = pedobearMenuF.MusicL.List:AddColumn("Music")
+		name:SetMinWidth(150)
+		local mp = pedobearMenuF.MusicL.List:AddColumn("Pack")
+		mp:SetMinWidth(30)
+		local loc = pedobearMenuF.MusicL.List:AddColumn("Local")
+		loc:SetMinWidth(30)
+		loc:SetMaxWidth(30)
+		local serv = pedobearMenuF.MusicL.List:AddColumn("Serv")
+		serv:SetMinWidth(30)
+		serv:SetMaxWidth(30)
+
 		local function CreateMusicList(pre)
 
-			pedobearMenuF.MusicL.lbl = vgui.Create("DLabel")
-			pedobearMenuF.MusicL.lbl:SetParent(pedobearMenuF.MusicL)
-			pedobearMenuF.MusicL.lbl:SetText(Either(GAMEMODE:IsSeasonalEvent("AprilFool"), "PedoRadio™", "Music") .. " list" .. Either(pre, " (Pre Round Musics)", ""))
-			pedobearMenuF.MusicL.lbl:SetPos(10, 5)
-			pedobearMenuF.MusicL.lbl:SetDark(1)
-			pedobearMenuF.MusicL.lbl:SizeToContents()
-
-			pedobearMenuF.MusicL.List = vgui.Create("DListView", pedobearMenuF.MusicL)
-			pedobearMenuF.MusicL.List:SetPos(0, 20)
-			pedobearMenuF.MusicL.List:SetSize(305, 195)
-			pedobearMenuF.MusicL.List:SetMultiSelect(false)
-			local name = pedobearMenuF.MusicL.List:AddColumn("Music")
-			name:SetMinWidth(150)
-			local mp = pedobearMenuF.MusicL.List:AddColumn("Pack")
-			mp:SetMinWidth(30)
-			local loc = pedobearMenuF.MusicL.List:AddColumn("Local")
-			loc:SetMinWidth(30)
-			loc:SetMaxWidth(30)
-			local serv = pedobearMenuF.MusicL.List:AddColumn("Serv")
-			serv:SetMinWidth(30)
-			serv:SetMaxWidth(30)
+			pedobearMenuF.MusicL.List:Clear()
+			pedobearMenuF.MusicL.lbl:SetText("Music list" .. Either(pre, " (Pre Round Musics)", ""))
 
 			local localmusics = Either(pre, GAMEMODE.LocalMusics.premusics, GAMEMODE.LocalMusics.musics)
 
@@ -264,6 +267,17 @@ function GM:Menu()
 
 		end
 		CreateMusicList(pre)
+
+		local switchbtn = vgui.Create("DButton")
+		switchbtn:SetParent(pedobearMenuF.MusicL)
+		switchbtn:SetText("Switch to " .. Either(pre, "Round", "Pre round"))
+		switchbtn:SetPos(200, 0)
+		switchbtn:SetSize(105, 20)
+		switchbtn.DoClick = function()
+			pre = !pre
+			switchbtn:SetText("Switch to " .. Either(pre, "Round", "Pre round"))
+			CreateMusicList(pre)
+		end
 
 
 		pedobearMenuF.MusicCFG = vgui.Create("DPanel")
@@ -516,6 +530,7 @@ function GM:BeginMenu()
 		changelog:AppendText("> Gamemode registration\n")
 		changelog:AppendText("> Stamina won't drop during preparation time\n")
 		changelog:AppendText("> Removed Word censoring\n")
+		changelog:AppendText("> Reworked music list a little bit\n")
 
 		--[[local featuredbtn = vgui.Create("DButton")
 		featuredbtn:SetParent(pedobearMenuBF.changelog)

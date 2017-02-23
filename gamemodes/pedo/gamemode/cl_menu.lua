@@ -514,6 +514,7 @@ function GM:BeginMenu()
 		end
 		changelog:AppendText("							/!\\ This is a dev build! /!\\\n")
 		changelog:AppendText("> Gamemode registration\n")
+		changelog:AppendText("> Stamina won't drop during preparation time\n")
 
 		--[[local featuredbtn = vgui.Create("DButton")
 		featuredbtn:SetParent(pedobearMenuBF.changelog)

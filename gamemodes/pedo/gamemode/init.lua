@@ -139,7 +139,7 @@ function GM:SelectMusic(pre)
 
 	if #mlist > 0 then
 
-		local mid = math.random(1,#mlist)
+		local mid = math.random(1, #mlist)
 		local src = mlist[mid][1]
 
 		if !string.match(mlist[mid][1], "://") then
@@ -382,7 +382,7 @@ function GM:Think()
 
 			if v:Team() == TEAM_VICTIMS then
 
-				if v:Alive() and v.Sprinting and (!v.SprintV or v.SprintV > 0) and !v.SprintLock then
+				if v:Alive() and GAMEMODE.Vars.Round.Start and v.Sprinting and (!v.SprintV or v.SprintV > 0) and !v.SprintLock then
 					v.SprintV = (v.SprintV or 100) - 1
 				elseif v:Alive() and ((!v.Sprinting and v:IsOnGround()) or v.SprintLock) and v.SprintV and v.SprintV < 100 then
 					v.SprintV = v.SprintV + 1

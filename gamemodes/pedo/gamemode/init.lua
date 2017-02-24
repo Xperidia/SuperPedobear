@@ -241,7 +241,8 @@ function GM:SpecControl(ply, manual)
 	local players = {}
 
 	for k, v in pairs(player.GetAll()) do
-		if v:Alive() and (v:Team() == TEAM_VICTIMS or v:Team() == TEAM_PEDOBEAR) and v != ply then
+		local vteam = v:Team()
+		if v:Alive() and (vteam == TEAM_VICTIMS or vteam == TEAM_PEDOBEAR) and v != ply and vteam != TEAM_UNASSIGNED and vteam != TEAM_SPECTATOR then
 			table.insert(players, v)
 		end
 	end

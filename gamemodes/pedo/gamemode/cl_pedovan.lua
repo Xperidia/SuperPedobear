@@ -39,6 +39,11 @@ function GM:PedoVan()
 		if closeanim:Active() then closeanim:Run() end
 	end
 	self.DoClose = function()
+		if closeanim:Active() then
+			if IsValid(self) then self:Close() end
+			timer.Remove("ClosePedoVan")
+			return
+		end
 		closeanim:Start(0.50)
 		timer.Create("ClosePedoVan", 0.5, 1, function()
 			if IsValid(self) then self:Close() end

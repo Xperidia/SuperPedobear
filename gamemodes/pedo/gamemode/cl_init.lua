@@ -192,6 +192,17 @@ function GM:PrettyMusicName(snd)
 	return string.gsub(str, "(%a)([%w_']*)", function(first, rest) return first:upper() .. rest:lower() end)
 end
 
+function GM:LimitString(str, size, font)
+	surface.SetFont(font)
+	if surface.GetTextSize(str) <= size then
+		return str
+	end
+	while surface.GetTextSize(str .. "...") >= size do
+		str = string.Left(str, #str - 1)
+	end
+	return str .. "..."
+end
+
 function GM:HUDPaint()
 
 	if GetConVarNumber("cl_drawhud") == 0 then return end
@@ -301,6 +312,7 @@ function GM:HUDPaint()
 
 		local txt = ""
 		local size = 40
+		local w, h = 0, 0
 
 		if GAMEMODE.Vars.Pedos and #GAMEMODE.Vars.Pedos > 0 then
 
@@ -308,12 +320,11 @@ function GM:HUDPaint()
 
 				if IsValid(v) and v:Alive() and txt == "" then
 
-					txt = Format(Either(#GAMEMODE.Vars.Pedos > 1, "%s is a Pedobear", "%s is the Pedobear"), GAMEMODE:LimitString(v:Nick(), 16))
+					txt = Format(Either(#GAMEMODE.Vars.Pedos > 1, "%s is a Pedobear", "%s is the Pedobear"), v:Nick())
 
 				elseif IsValid(v) and v:Alive() and txt != "" then
 
-					txt = txt .. Format("\n%s is a Pedobear", GAMEMODE:LimitString(v:Nick(), 16))
-					size = size + 24
+					txt = txt .. Format("\n%s is a Pedobear", v:Nick())
 
 				end
 
@@ -323,8 +334,10 @@ function GM:HUDPaint()
 
 		if txt != "" then
 
-			draw.RoundedBox(16, 8, 24, 400, size, Color(0, 0, 0, 200))
-			draw.DrawText(txt, "XP_Pedo_HT", 200, 32, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+			surface.SetFont("XP_Pedo_HT")
+			w, h = surface.GetTextSize(txt)
+			draw.RoundedBox(16, 8, 24, w + 16, h + 16, Color(0, 0, 0, 200))
+			draw.DrawText(txt, "XP_Pedo_HT", 16 + w / 2, 32, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
 
 		end
 
@@ -343,8 +356,11 @@ function GM:HUDPaint()
 
 	if Start then
 
-		draw.RoundedBoxEx(16, 0, ScrH() / 2 - 10, 330, 100, Color(0, 0, 0, 200), false, true, false, true)
-		draw.DrawText( "Victims Left: " .. (GAMEMODE.Vars.victims or 0) .. "\nVictims Captured: " .. (GAMEMODE.Vars.downvictims or 0), "XP_Pedo_TXT", 320, ScrH() / 2, Color(255, 255, 255, 255), TEXT_ALIGN_RIGHT)
+		surface.SetFont("XP_Pedo_TXT")
+		local stxt = "Victims Left: " .. (GAMEMODE.Vars.victims or 0) .. "\nVictims Captured: " .. (GAMEMODE.Vars.downvictims or 0)
+		local w, h = surface.GetTextSize(stxt)
+		draw.RoundedBoxEx(16, 0, ScrH() / 2 - 10, w + 16, h + 20, Color(0, 0, 0, 200), false, true, false, true)
+		draw.DrawText(stxt, "XP_Pedo_TXT", w, ScrH() / 2, Color(255, 255, 255, 255), TEXT_ALIGN_RIGHT)
 
 	end
 
@@ -416,8 +432,8 @@ function GM:HUDPaint()
 	end
 
 	if plyTeam != TEAM_UNASSIGNED and splyTeam != TEAM_SPECTATOR then
-		local splynick = GAMEMODE:LimitString(sply:Nick(), 16)
-		draw.DrawText(splynick, "XP_Pedo_HUDname", 100 + 1, ScrH() - 200 + 1, Color( 0, 0, 0, 255), TEXT_ALIGN_CENTER)
+		local splynick = GAMEMODE:LimitString(sply:Nick(), 200, "XP_Pedo_HUDname")
+		draw.DrawText(splynick, "XP_Pedo_HUDname", 100 + 1, ScrH() - 200 + 1, Color(0, 0, 0, 255), TEXT_ALIGN_CENTER)
 		draw.DrawText(splynick, "XP_Pedo_HUDname", 100, ScrH() - 200, col, TEXT_ALIGN_CENTER)
 	end
 
@@ -433,7 +449,10 @@ function GM:HUDPaint()
 		return "Draw game!"
 	end
 	if End then
-		draw.DrawText(winstr(GAMEMODE.Vars.Round.Win), "XP_Pedo_TXT", ScrW() / 2 , ScrH() / 2 - 80, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+		surface.SetFont("XP_Pedo_TXT")
+		local w, h = surface.GetTextSize(winstr(GAMEMODE.Vars.Round.Win))
+		draw.RoundedBox(16, ScrW() / 2 - w / 2 - 8, ScrH() / 2 - 80, w + 16, h, Color(0, 0, 0, 220))
+		draw.DrawText(winstr(GAMEMODE.Vars.Round.Win), "XP_Pedo_TXT", ScrW() / 2, ScrH() / 2 - 80, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
 	end
 
 
@@ -464,7 +483,7 @@ function GM:HUDPaint()
 			rtitle = GAMEMODE:PrettyMusicName(string.GetFileFromFilename(GAMEMODE.Vars.Music:GetFileName()))
 		end
 
-		local title = "♪ " .. GAMEMODE:LimitString(rtitle, 30) .. " ♪"
+		local title = "♪ " .. GAMEMODE:LimitString(rtitle, 216, "XP_Pedo_HUDname") .. " ♪"
 		draw.DrawText(title, "XP_Pedo_HUDname", ScrW() - 127, ScrH() - 99 + visspace, Color(0, 0, 0, 255), TEXT_ALIGN_CENTER)
 		draw.DrawText(title, "XP_Pedo_HUDname", ScrW() - 128, ScrH() - 100 + visspace, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
 
@@ -479,8 +498,10 @@ function GM:HUDPaint()
 		surface.DrawLine(ScrW() - 256, ScrH() - 64 + visspace, ScrW(), ScrH() - 64 + visspace)
 		surface.DrawLine(ScrW() - 256, ScrH() - 48 + visspace, ScrW(), ScrH() - 48 + visspace)
 
-		draw.RoundedBox(4, ScrW() - 196, ScrH() - 80 + visspace, 136, 16, Color(0, 0, 0, 220)) --Time
-		local timetxt = GAMEMODE:FormatTimeTri(time) .. "/" .. GAMEMODE:FormatTimeTri(totaltime)
+		local timetxt = GAMEMODE:FormatTimeTri(time) .. "/" .. GAMEMODE:FormatTimeTri(totaltime) --Time
+		surface.SetFont("XP_Pedo_HUDname")
+		local tw, _ = surface.GetTextSize(timetxt)
+		draw.RoundedBox(4, ScrW() - 128 - tw / 2 - 4, ScrH() - 80 + visspace, tw + 8, 16, Color(0, 0, 0, 220))
 		draw.DrawText(timetxt, "XP_Pedo_HUDname", ScrW() - 127, ScrH() - 81 + visspace, Color(0, 0, 0, 255), TEXT_ALIGN_CENTER)
 		draw.DrawText(timetxt, "XP_Pedo_HUDname", ScrW() - 128, ScrH() - 82 + visspace, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
 

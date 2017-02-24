@@ -7,7 +7,7 @@ GM.Name 	= "Super Pedobear"
 GM.ShortName 	= "SuperPedobear"
 GM.Author 	= "VictorienXP@Xperidia"
 GM.Website 	= "steamcommunity.com/sharedfiles/filedetails/?id=628449407"
-GM.Version 	= 0.241
+GM.Version 	= 0.242
 GM.TeamBased = true
 
 TEAM_VICTIMS = 1
@@ -274,17 +274,10 @@ function GM:Log(str,tn,hardcore)
 
 	if game.IsDedicated() or GAMEMODE.Vars.DS then
 		local tmstmp = os.time()
-		local time = os.date( "L %m/%d/%Y - %H:%M:%S" , tmstmp )
+		local time = os.date("L %m/%d/%Y - %H:%M:%S", tmstmp)
 		Msg(time .. ": [" .. name .. "] " .. (str or "This was a log message, but something went wrong") .. "\n")
 	else
 		Msg("[" .. name .. "] " .. (str or "This was a log message, but something went wrong") .. "\n")
 	end
 
-end
-
-function GM:LimitString(str, size)
-	if #str <= size then
-		return str
-	end
-	return string.Left(str, size - 1) .. "..."
 end

@@ -7,7 +7,7 @@ GM.Name 	= "Super Pedobear"
 GM.ShortName 	= "SuperPedobear"
 GM.Author 	= "VictorienXP@Xperidia"
 GM.Website 	= "steamcommunity.com/sharedfiles/filedetails/?id=628449407"
-GM.Version 	= 0.242
+GM.Version 	= 0.243
 GM.TeamBased = true
 
 TEAM_VICTIMS = 1
@@ -148,14 +148,15 @@ function GM:Initialize()
 
 	if CLIENT then
 
-		CreateClientConVar( "pedobear_cl_disablexpsc", 0, true, false )
-		CreateClientConVar( "pedobear_cl_disabletauntmenuclose", 0, true, false )
-		CreateClientConVar( "pedobear_cl_jumpscare", 0, true, true )
-		CreateClientConVar( "pedobear_cl_disablehalos", 0, true, false )
-		CreateClientConVar( "pedobear_cl_music_enable", 1, true, false )
-		CreateClientConVar( "pedobear_cl_music_volume", 0.5, true, false )
-		CreateClientConVar( "pedobear_cl_music_allowexternal", 1, true, false )
-		CreateClientConVar( "pedobear_cl_music_visualizer", 1, true, false )
+		CreateClientConVar("pedobear_cl_disablexpsc", 0, true, false)
+		CreateClientConVar("pedobear_cl_disabletauntmenuclose", 0, true, false)
+		CreateClientConVar("pedobear_cl_jumpscare", 0, true, true )
+		CreateClientConVar("pedobear_cl_disablehalos", 0, true, false)
+		CreateClientConVar("pedobear_cl_music_enable", 1, true, false)
+		CreateClientConVar("pedobear_cl_music_volume", 0.5, true, false)
+		CreateClientConVar("pedobear_cl_music_allowexternal", 1, true, false)
+		CreateClientConVar("pedobear_cl_music_visualizer", 1, true, false)
+		CreateClientConVar("pedobear_cl_hud_offset", 0, true, false)
 
 		cvars.AddChangeCallback( "pedobear_cl_music_volume", function( convar_name, value_old, value_new )
 			if IsValid(GAMEMODE.Vars.Music) then

@@ -200,6 +200,16 @@ function GM:Menu()
 		censorwords:SetDisabled(string.match(GetHostName(), "Ollie's Mod"))
 		censorwords:SizeToContents()]]
 
+		local hudoffset = vgui.Create("DNumSlider", pedobearMenuF.config)
+		hudoffset:SetPos(15, 190)
+		hudoffset:SetSize(300, 16)
+		hudoffset:SetText("HUD Offset")
+		hudoffset:SetMin(0)
+		hudoffset:SetMax(64)
+		hudoffset:SetDecimals(0)
+		hudoffset:SetDark(1)
+		hudoffset:SetConVar("pedobear_cl_hud_offset")
+
 
 		pedobearMenuF.MusicL = vgui.Create("DPanel")
 		pedobearMenuF.MusicL:SetParent(pedobearMenuF)
@@ -533,15 +543,17 @@ function GM:BeginMenu()
 		changelog:AppendText("> Reworked music list a little bit\n")
 		changelog:AppendText("> Reworked string limiter\n")
 		changelog:AppendText("> Reworked many string draws\n")
+		changelog:AppendText("> Huge bunch of hud improvements\n")
+		changelog:AppendText("> HUD Offset can be set\n")
 
-		--[[local featuredbtn = vgui.Create("DButton")
+		local featuredbtn = vgui.Create("DButton")
 		featuredbtn:SetParent(pedobearMenuBF.changelog)
 		featuredbtn:SetText("Check the last dev vlog")
-		featuredbtn:SetPos(90, 0)
-		featuredbtn:SetSize(125, 20)
+		featuredbtn:SetPos(200, 0)
+		featuredbtn:SetSize(200, 20)
 		featuredbtn.DoClick = function()
-			gui.OpenURL("")
-		end]]
+			gui.OpenURL("https://youtu.be/fFIhuDZjDCI")
+		end
 
 
 		if !GetConVar("pedobear_cl_disablexpsc"):GetBool() then

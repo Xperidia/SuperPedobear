@@ -1078,7 +1078,7 @@ function GM:RetrieveXperidiaAccountRank(ply)
 
 			if statusCode == 200 then
 
-				local rank = tonumber(string.Right(responseText, contentLength-3))
+				local rank = tonumber(responseText)
 				ply.XperidiaRank = rank
 				ply:SetNWInt( "XperidiaRank", rank )
 				ply.XperidiaRankLastTime = SysTime()

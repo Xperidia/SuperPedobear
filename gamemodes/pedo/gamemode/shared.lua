@@ -268,17 +268,11 @@ end
 
 function GM:Log(str,tn,hardcore)
 
-	local name = GAMEMODE.Name or "Pedo"
-	if tn then name = "Pedo" end
+	local name = GAMEMODE.ShortName or "SuperPedobear"
+	if tn then name = "SuperPedobear" end
 
 	if hardcore and !pedobear_enabledevmode:GetBool() then return end
 
-	if game.IsDedicated() or GAMEMODE.Vars.DS then
-		local tmstmp = os.time()
-		local time = os.date("L %m/%d/%Y - %H:%M:%S", tmstmp)
-		Msg(time .. ": [" .. name .. "] " .. (str or "This was a log message, but something went wrong") .. "\n")
-	else
-		Msg("[" .. name .. "] " .. (str or "This was a log message, but something went wrong") .. "\n")
-	end
+	Msg("[" .. name .. "] " .. (str or "This was a log message, but something went wrong") .. "\n")
 
 end

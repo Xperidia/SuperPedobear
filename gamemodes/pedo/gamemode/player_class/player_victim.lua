@@ -66,13 +66,16 @@ function PLAYER:SetModel()
 
 	BaseClass.SetModel( self )
 
-	local models = {"models/player/p2_chell.mdl","models/player/alyx.mdl"}
+	local cl_playermodel = self.Player:GetInfo("cl_playermodel")
+	local avmodels = player_manager.AllValidModels()
 
-	--if player_manager.AllValidModels()["Homura Akemi"] then
-		models = {"models/jazzmcfly/magica/homura_mg.mdl", "models/jazzmcfly/magica/kyouko_mg.mdl", "models/jazzmcfly/magica/madoka_mg.mdl", "models/jazzmcfly/magica/mami_mg.mdl", "models/jazzmcfly/magica/sayaka_mg.mdl"}
-	--end
-
-	self.Player:SetModel( models[math.random( 1, #models )] )
+	if cl_playermodel == "none" or !avmodels[cl_playermodel] then
+		local models = {"models/jazzmcfly/magica/homura_mg.mdl", "models/jazzmcfly/magica/kyouko_mg.mdl", "models/jazzmcfly/magica/madoka_mg.mdl", "models/jazzmcfly/magica/mami_mg.mdl", "models/jazzmcfly/magica/sayaka_mg.mdl"}
+		self.Player:SetModel(models[math.random(1, #models)])
+	else
+		local modelname = player_manager.TranslatePlayerModel(cl_playermodel)
+		self.Player:SetModel(modelname)
+	end
 
 end
 

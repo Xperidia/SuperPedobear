@@ -75,6 +75,16 @@ function PLAYER:SetModel()
 	else
 		local modelname = player_manager.TranslatePlayerModel(cl_playermodel)
 		self.Player:SetModel(modelname)
+
+		local skin = self.Player:GetInfoNum("cl_playerskin", 0)
+		self.Player:SetSkin( skin )
+
+		local groups = self.Player:GetInfo("cl_playerbodygroups")
+		if groups == nil then groups = "" end
+		local groups = string.Explode(" ", groups)
+		for k = 0, self.Player:GetNumBodyGroups() - 1 do
+			self.Player:SetBodygroup( k, tonumber( groups[ k + 1 ] ) or 0 )
+		end
 	end
 
 end

@@ -355,14 +355,18 @@ end
 
 function GM:Think()
 
-	for k, v in pairs(team.GetPlayers(TEAM_PEDOBEAR)) do
-
-		if GAMEMODE.PlayerEasterEgg[v:SteamID64()] and GAMEMODE.PlayerEasterEgg[v:SteamID64()][1] and v:GetModel() != GAMEMODE.PlayerEasterEgg[v:SteamID64()][1] then
-			v:SetModel( GAMEMODE.PlayerEasterEgg[v:SteamID64()][1] )
-		elseif (!GAMEMODE.PlayerEasterEgg[v:SteamID64()] or (GAMEMODE.PlayerEasterEgg[v:SteamID64()] and !GAMEMODE.PlayerEasterEgg[v:SteamID64()][1])) and v:GetModel() != "models/player/pbear/pbear.mdl" then
-			v:SetModel(Model("models/player/pbear/pbear.mdl"))
+	for k, v in pairs(player.GetAll()) do
+		if v:Team() == TEAM_PEDOBEAR then
+			if GAMEMODE.PlayerEasterEgg[v:SteamID64()] and GAMEMODE.PlayerEasterEgg[v:SteamID64()][1] and v:GetModel() != GAMEMODE.PlayerEasterEgg[v:SteamID64()][1] then
+				v:SetModel( GAMEMODE.PlayerEasterEgg[v:SteamID64()][1] )
+			elseif (!GAMEMODE.PlayerEasterEgg[v:SteamID64()] or (GAMEMODE.PlayerEasterEgg[v:SteamID64()] and !GAMEMODE.PlayerEasterEgg[v:SteamID64()][1])) and v:GetModel() != "models/player/pbear/pbear.mdl" then
+				v:SetModel(Model("models/player/pbear/pbear.mdl"))
+			end
+		elseif v:Team() == TEAM_VICTIMS and v:Alive() then
+				if v:GetModel() == "models/player/pbear/pbear.mdl" then
+					v:SetModel(Model("models/jazzmcfly/magica/homura_mg.mdl"))
+				end
 		end
-
 	end
 
 	for k, v in pairs(team.GetPlayers(TEAM_VICTIMS)) do

@@ -90,19 +90,26 @@ function GM:Menu()
 			pedobearMenuF:Close()
 		end
 
-		if ConVarExists("sv_playermodel_selector_gamemodes") then
+		local playermodelselection = vgui.Create("DButton")
+		playermodelselection:SetParent(pedobearMenuF.one)
+		playermodelselection:SetText("Outfitter")
+		playermodelselection:SetPos(145, 64)
+		playermodelselection:SetSize(160, 20)
+		playermodelselection:SetEnabled(concommand.GetTable()["outfitter_open"])
+		playermodelselection.DoClick = function()
+			RunConsoleCommand("outfitter_open")
+			pedobearMenuF:Close()
+		end
 
-			local playermodelselection = vgui.Create("DButton")
-			playermodelselection:SetParent(pedobearMenuF.one)
-			playermodelselection:SetText("Select a playermodel")
-			playermodelselection:SetPos(20, 165)
-			playermodelselection:SetSize(125, 20)
-			playermodelselection:SetEnabled(GetConVar("sv_playermodel_selector_gamemodes"):GetBool() or LocalPlayer():IsAdmin() or LocalPlayer():IsUserGroup("premium"))
-			playermodelselection.DoClick = function()
-				RunConsoleCommand("playermodel_selector")
-				pedobearMenuF:Close()
-			end
-
+		local playermodelselection = vgui.Create("DButton")
+		playermodelselection:SetParent(pedobearMenuF.one)
+		playermodelselection:SetText("Enhanced PlayerModel Selector")
+		playermodelselection:SetPos(145, 84)
+		playermodelselection:SetSize(160, 20)
+		playermodelselection:SetEnabled(concommand.GetTable()["playermodel_selector"] and (GetConVar("sv_playermodel_selector_gamemodes"):GetBool() or LocalPlayer():IsAdmin() or LocalPlayer():IsUserGroup("premium")))
+		playermodelselection.DoClick = function()
+			RunConsoleCommand("playermodel_selector")
+			pedobearMenuF:Close()
 		end
 
 		local support = vgui.Create("DButton")

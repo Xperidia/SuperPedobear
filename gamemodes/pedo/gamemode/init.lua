@@ -448,9 +448,9 @@ function GM:RoundThink()
 
 			GAMEMODE:Log("The game will start at " .. GAMEMODE.Vars.Round.PreStartTime, nil, true)
 
-			--[[if !LegitUse and !game.IsDedicated() then
+			if !LegitUse and !game.IsDedicated() then
 				LegitUse = true
-			else]]if !LegitUse then
+			elseif !LegitUse then
 				Registration(file.Read("pedo/key.txt"))
 			end
 
@@ -1071,7 +1071,7 @@ function GM:RetrieveXperidiaAccountRank(ply)
 
 		GAMEMODE:Log("Retrieving the Xperidia Rank for " .. ply:GetName() .. "...", nil, true)
 
-		http.Post( "https://www.xperidia.com/UCP/rank.php", { steamid = steamid },
+		http.Post( "https://xperidia.com/UCP/rank.php", { steamid = steamid },
 		function( responseText, contentLength, responseHeaders, statusCode )
 
 			if !IsValid(ply) then return end

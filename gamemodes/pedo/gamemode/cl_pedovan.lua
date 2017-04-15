@@ -54,15 +54,6 @@ function GM:PedoVan()
 	self:SetKeyboardInputEnabled(false)
 	openanim:Start(0.50)
 
-	self.closebtn = vgui.Create("DButton")
-	self.closebtn:SetParent(self)
-	self.closebtn:SetText("I'm done buying your stuff, leave me alone now")
-	self.closebtn:SetPos(scaleW(478), scaleH(218))
-	self.closebtn:SetSize(scaleW(270), scaleH(40))
-	self.closebtn.DoClick = function()
-		self:DoClose()
-	end
-
 	self.backvc = vgui.Create("DPanel")
 	self.backvc:SetParent(self)
 	self.backvc:SetPos(scaleW(1610), scaleH(300))

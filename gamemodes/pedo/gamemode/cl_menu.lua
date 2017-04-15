@@ -90,14 +90,12 @@ function GM:Menu()
 			pedobearMenuF:Close()
 		end
 
-		local add = 0
-
 		if ConVarExists("sv_playermodel_selector_gamemodes") then
 
 			local playermodelselection = vgui.Create("DButton")
 			playermodelselection:SetParent(pedobearMenuF.one)
 			playermodelselection:SetText("Select a playermodel")
-			playermodelselection:SetPos(90, 165)
+			playermodelselection:SetPos(20, 165)
 			playermodelselection:SetSize(125, 20)
 			playermodelselection:SetEnabled(GetConVar("sv_playermodel_selector_gamemodes"):GetBool() or LocalPlayer():IsAdmin() or LocalPlayer():IsUserGroup("premium"))
 			playermodelselection.DoClick = function()
@@ -105,15 +103,23 @@ function GM:Menu()
 				pedobearMenuF:Close()
 			end
 
-			add = 5
+		end
 
+		local support = vgui.Create("DButton")
+		support:SetParent(pedobearMenuF.one)
+		support:SetText("Support")
+		support:SetPos(160, 165)
+		support:SetSize(125, 20)
+		support.DoClick = function()
+			gui.OpenURL("https://xperi.link/XP-DSupport")
+			pedobearMenuF:Close()
 		end
 
 		local beginmenubtn = vgui.Create("DButton")
 		beginmenubtn:SetParent(pedobearMenuF.one)
 		beginmenubtn:SetText("Welcome screen")
-		beginmenubtn:SetPos(90, 145 - add)
-		beginmenubtn:SetSize(125, 20)
+		beginmenubtn:SetPos(200, 0)
+		beginmenubtn:SetSize(105, 20)
 		beginmenubtn.DoClick = function()
 			GAMEMODE:BeginMenu()
 			pedobearMenuF:Close()
@@ -536,7 +542,7 @@ function GM:BeginMenu()
 			self:SetFontInternal("XP_Pedo_HUDname")
 			self:SetFGColor(Color(0, 0, 0))
 		end
-		changelog:AppendText("							/!\\ This is a dev build! /!\\\n")
+		--changelog:AppendText("							/!\\ This is a dev build! /!\\\n")
 		changelog:AppendText("> Gamemode registration\n")
 		changelog:AppendText("> Stamina won't drop during preparation time\n")
 		changelog:AppendText("> Removed word censoring\n")

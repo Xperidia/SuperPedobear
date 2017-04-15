@@ -622,13 +622,13 @@ end
 
 function GM:CreateHealthFace(ply)
 	self.HealthFace = ClientsideModel(ply:GetModel(), RENDER_GROUP_OPAQUE_ENTITY)
-	self.HealthFace:SetNoDraw( true )
+	self.HealthFace:SetNoDraw(true)
 	local iSeq = self.HealthFace:LookupSequence("idle_passive")
-	if ( iSeq <= 0 ) then iSeq = self.HealthFace:LookupSequence("walk_all") end
-	if ( iSeq <= 0 ) then iSeq = self.HealthFace:LookupSequence("WalkUnarmed_all") end
-	if ( iSeq <= 0 ) then iSeq = self.HealthFace:LookupSequence("walk_all_moderate") end
-	if ( iSeq > 0 ) then
-		self.HealthFace:SetSequence( iSeq )
+	if (iSeq <= 0) then iSeq = self.HealthFace:LookupSequence("walk_all") end
+	if (iSeq <= 0) then iSeq = self.HealthFace:LookupSequence("WalkUnarmed_all") end
+	if (iSeq <= 0) then iSeq = self.HealthFace:LookupSequence("walk_all_moderate") end
+	if (iSeq > 0) then
+		self.HealthFace:SetSequence(iSeq)
 		self.HealthFace:ResetSequenceInfo()
 		self.HealthFace:SetCycle(0)
 		self.HealthFace:SetPlaybackRate(1)
@@ -642,14 +642,14 @@ function GM:CreateHealthFace(ply)
 	self.HealthFace:SetSkin(ply:GetSkin())
 
 	for k,v in pairs(ply:GetBodyGroups()) do
-		self.HealthFace:SetBodygroup( v["id"], ply:GetBodygroup( v["id"] ) )
+		self.HealthFace:SetBodygroup(v["id"], ply:GetBodygroup(v["id"]))
 	end
 
 end
 
 local function SameBodyGroups(self, ply)
 	for k, v in pairs(self:GetBodyGroups()) do
-		if self:GetBodygroup( v.id ) != ply:GetBodygroup( v.id ) then return false end
+		if self:GetBodygroup(v.id) != ply:GetBodygroup(v.id) then return false end
 	end
 	return true
 end

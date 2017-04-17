@@ -122,6 +122,16 @@ function GM:Menu()
 			pedobearMenuF:Close()
 		end
 
+		local SplashScreen = vgui.Create("DButton")
+		SplashScreen:SetParent(pedobearMenuF.one)
+		SplashScreen:SetText("Splash Screen")
+		SplashScreen:SetPos(20, 165)
+		SplashScreen:SetSize(125, 20)
+		SplashScreen.DoClick = function()
+			GAMEMODE:SplashScreen()
+			pedobearMenuF:Close()
+		end
+
 		local beginmenubtn = vgui.Create("DButton")
 		beginmenubtn:SetParent(pedobearMenuF.one)
 		beginmenubtn:SetText("Welcome screen")
@@ -264,7 +274,7 @@ function GM:Menu()
 
 			for k, v in pairs(localmusics) do
 
-				musiclist[v[1]] = { v[2], v[3], file.Exists("sound/pedo/" .. Either(pre, "premusics", "musics") .. "/" .. v[1], "GAME"), nil }
+				musiclist[v[1]] = { v[2], v[3], file.Exists("sound/superpedobear/" .. Either(pre, "premusics", "musics") .. "/" .. v[1], "GAME"), nil }
 
 			end
 
@@ -275,7 +285,7 @@ function GM:Menu()
 					if musiclist[v[1]] then
 						musiclist[v[1]] = { v[2], v[3], musiclist[v[1]][3], true }
 					else
-						musiclist[v[1]] = { v[2], v[3], file.Exists("sound/pedo/" .. Either(pre, "premusics", "musics") .. "/" .. v[1], "GAME"), true }
+						musiclist[v[1]] = { v[2], v[3], file.Exists("sound/superpedobear/" .. Either(pre, "premusics", "musics") .. "/" .. v[1], "GAME"), true }
 					end
 
 				end
@@ -549,15 +559,7 @@ function GM:BeginMenu()
 			self:SetFontInternal("XP_Pedo_HUDname")
 			self:SetFGColor(Color(0, 0, 0))
 		end
-		--changelog:AppendText("							/!\\ This is a dev build! /!\\\n")
-		changelog:AppendText("> Gamemode registration\n")
-		changelog:AppendText("> Stamina won't drop during preparation time\n")
-		changelog:AppendText("> Removed word censoring\n")
-		changelog:AppendText("> Reworked music list a little bit\n")
-		changelog:AppendText("> Reworked string limiter\n")
-		changelog:AppendText("> Reworked many string draws\n")
-		changelog:AppendText("> Huge bunch of hud improvements\n")
-		changelog:AppendText("> HUD Offset can be set\n")
+		changelog:AppendText("							/!\\ This is a dev build! /!\\\n")
 
 		local featuredbtn = vgui.Create("DButton")
 		featuredbtn:SetParent(pedobearMenuBF.changelog)
@@ -587,4 +589,52 @@ function GM:BeginMenu()
 
 	end
 
+end
+
+function GM:SplashScreen()
+
+	if !IsValid(pedobearSplashScreenF) and !engine.IsPlayingDemo() then
+
+		pedobearSplashScreenF = vgui.Create("DFrame")
+		pedobearSplashScreenF:ParentToHUD()
+		pedobearSplashScreenF:SetPos(0, 0)
+		pedobearSplashScreenF:SetSize(ScrW(), ScrH())
+		pedobearSplashScreenF:SetTitle("")
+		pedobearSplashScreenF:SetVisible(true)
+		pedobearSplashScreenF:SetDraggable(false)
+		pedobearSplashScreenF:ShowCloseButton(false)
+		pedobearSplashScreenF:SetScreenLock(true)
+		pedobearSplashScreenF.Paint = function(self, w, h)
+		end
+		pedobearSplashScreenF:MakePopup()
+		--pedobearSplashScreenF:SetKeyboardInputEnabled(false)
+		--pedobearSplashScreenF:SetMouseInputEnabled(false)
+
+		pedobearSplashScreenF.SplashScreen = vgui.Create("DHTML")
+		pedobearSplashScreenF.SplashScreen:SetParent(pedobearSplashScreenF)
+		pedobearSplashScreenF.SplashScreen:SetPos(0, 0)
+		pedobearSplashScreenF.SplashScreen:SetSize(ScrW(), ScrH())
+		pedobearSplashScreenF.SplashScreen:SetAllowLua(true)
+		pedobearSplashScreenF.SplashScreen:OpenURL("https://dev.xperidia.com/SuperPedobear/?steamid=" .. LocalPlayer():SteamID64())
+		--pedobearSplashScreenF.SplashScreen:SetScrollbars(false)
+
+		local closebtn = vgui.Create("DButton", pedobearSplashScreenF)
+		closebtn:SetText("X")
+		closebtn:SetPos(ScrW() - 20, 0)
+		closebtn:SetSize(20, 20)
+		closebtn.DoClick = function()
+			pedobearSplashScreenF:Close()
+		end
+		closebtn:SetZPos(32767)
+
+	elseif IsValid(pedobearSplashScreenF) then
+		pedobearSplashScreenF:Close()
+	end
+
+end
+
+function GM:HideSplashScreenUntilNextUpdate()
+	local tab = {}
+	tab.LastVersion = GAMEMODE.Version
+	file.Write("superpedobear/info.txt", util.TableToJSON(tab))
 end

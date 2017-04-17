@@ -7,32 +7,32 @@ GM.Name 	= "Super Pedobear"
 GM.ShortName 	= "SuperPedobear"
 GM.Author 	= "VictorienXP@Xperidia"
 GM.Website 	= "steamcommunity.com/sharedfiles/filedetails/?id=628449407"
-GM.Version 	= 0.25
+GM.Version 	= 0.251
 GM.TeamBased = true
 
 TEAM_VICTIMS = 1
 TEAM_PEDOBEAR = 2
 
 GM.Sounds = {}
-GM.Sounds.YoureThePedo = Sound("pedo/yourethepedo.wav")
-GM.Sounds.HeartBeat = Sound("pedo/heartbeat.ogg")
+GM.Sounds.YoureThePedo = Sound("superpedobear/yourethepedo.wav")
+GM.Sounds.HeartBeat = Sound("superpedobear/heartbeat.ogg")
 
 GM.Sounds.Taunts = {}
-table.insert(GM.Sounds.Taunts, {"Goat Gentleman", Sound("pedo/taunts/s1.ogg"), 0, 16.5})
-table.insert(GM.Sounds.Taunts, {"Makka Pakka", Sound("pedo/taunts/s2.ogg"), 0, 13})
-table.insert(GM.Sounds.Taunts, {"Stampy Intro", Sound("pedo/taunts/s3.ogg"), 0, 7})
-table.insert(GM.Sounds.Taunts, {"Buttsauce", Sound("pedo/taunts/s4.ogg"), 0, 1})
-table.insert(GM.Sounds.Taunts, {"Thomas the tank engine", Sound("pedo/taunts/s5.ogg"), 0, 7})
-table.insert(GM.Sounds.Taunts, {"Get your lollipops", Sound("pedo/taunts/p1.ogg"), TEAM_PEDOBEAR, 6})
-table.insert(GM.Sounds.Taunts, {"MY PEE PEE", Sound("pedo/taunts/s6.ogg"), 0, 20.5})
+table.insert(GM.Sounds.Taunts, {"Goat Gentleman", Sound("superpedobear/taunts/s1.ogg"), 0, 16.5})
+table.insert(GM.Sounds.Taunts, {"Makka Pakka", Sound("superpedobear/taunts/s2.ogg"), 0, 13})
+table.insert(GM.Sounds.Taunts, {"Stampy Intro", Sound("superpedobear/taunts/s3.ogg"), 0, 7})
+table.insert(GM.Sounds.Taunts, {"Buttsauce", Sound("superpedobear/taunts/s4.ogg"), 0, 1})
+table.insert(GM.Sounds.Taunts, {"Thomas the tank engine", Sound("superpedobear/taunts/s5.ogg"), 0, 7})
+table.insert(GM.Sounds.Taunts, {"Get your lollipops", Sound("superpedobear/taunts/p1.ogg"), TEAM_PEDOBEAR, 6})
+table.insert(GM.Sounds.Taunts, {"MY PEE PEE", Sound("superpedobear/taunts/s6.ogg"), 0, 20.5})
 
 GM.Sounds.Damage = GM.Sounds.Damage or {}
 GM.Sounds.Death = GM.Sounds.Death or {}
 
 GM.Materials = {}
-GM.Materials.Death = Material("pedo/pedoscare")
-GM.Materials.PedoVan = Material("pedo/pedovan")
-GM.Materials.PepperDeath = Material("pedo/pepperscare")
+GM.Materials.Death = Material("superpedobear/pedoscare")
+GM.Materials.PedoVan = Material("superpedobear/pedovan")
+GM.Materials.PepperDeath = Material("superpedobear/pepperscare")
 
 GM.Vars = GM.Vars or {}
 GM.Vars.Round = GM.Vars.Round or {}
@@ -130,20 +130,20 @@ function GM:Initialize()
 	pedobear_afk_action = CreateConVar("pedobear_afk_action", 30, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Time needed for a player to be kick out of pedobear when afk.")
 	pedobear_save_chances = CreateConVar("pedobear_save_chances", 1, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Set if we should save the chances to be Pedobear.")
 
-	local damagesnd = file.Find("sound/pedo/damage/*.ogg", "GAME")
+	local damagesnd = file.Find("sound/superpedobear/damage/*.ogg", "GAME")
 
 	for _, v in pairs(damagesnd) do
-		table.insert(GAMEMODE.Sounds.Damage, Sound("pedo/damage/" .. v))
+		table.insert(GAMEMODE.Sounds.Damage, Sound("superpedobear/damage/" .. v))
 	end
 
-	local deathsnd = file.Find("sound/pedo/death/*.ogg", "GAME")
+	local deathsnd = file.Find("sound/superpedobear/death/*.ogg", "GAME")
 
 	for _, v in pairs(deathsnd) do
-		table.insert(GAMEMODE.Sounds.Death, Sound("pedo/death/" .. v))
+		table.insert(GAMEMODE.Sounds.Death, Sound("superpedobear/death/" .. v))
 	end
 
-	if !file.IsDir("pedo", "DATA") then
-		file.CreateDir("pedo")
+	if !file.IsDir("superpedobear", "DATA") then
+		file.CreateDir("superpedobear")
 	end
 
 	if CLIENT then
@@ -192,11 +192,11 @@ end
 
 function GM:BuildMusicIndex()
 
-	if !file.IsDir("pedo/musics", "DATA") then
-		file.CreateDir("pedo/musics")
+	if !file.IsDir("superpedobear/musics", "DATA") then
+		file.CreateDir("superpedobear/musics")
 	end
-	if !file.IsDir("pedo/premusics", "DATA") then
-		file.CreateDir("pedo/premusics")
+	if !file.IsDir("superpedobear/premusics", "DATA") then
+		file.CreateDir("superpedobear/premusics")
 	end
 
 	local function ReadMusicInfo(pre)
@@ -210,10 +210,10 @@ function GM:BuildMusicIndex()
 			table.Add(mlist, ft)
 		end
 
-		local infos = file.Find("pedo/" .. Either(pre, "premusics", "musics") .. "/*.txt", "DATA")
+		local infos = file.Find("superpedobear/" .. Either(pre, "premusics", "musics") .. "/*.txt", "DATA")
 
 		for _, v in pairs(infos) do
-			local fileml = file.Read("pedo/" .. Either(pre, "premusics", "musics") .. "/" .. v)
+			local fileml = file.Read("superpedobear/" .. Either(pre, "premusics", "musics") .. "/" .. v)
 			local tmlist = util.JSONToTable(fileml)
 			table.Add(mlist, tmlist)
 		end

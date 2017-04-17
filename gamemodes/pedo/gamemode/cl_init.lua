@@ -428,7 +428,7 @@ function GM:HUDPaint()
 
 	if wi and (sply:GetModel() == "models/player/pbear/pbear.mdl" or sply:GetModel() == "models/player/kuristaja/pbear/pbear.mdl") then
 		surface.SetDrawColor(255, 255, 255, 255)
-		surface.SetMaterial(Material("pedo/pedobear"))
+		surface.SetMaterial(Material("superpedobear/pedobear"))
 		surface.DrawTexturedRectUV(hudoffset, ScrH() - 200 - hudoffset, 200, 200, 0, 0, 1, 1)
 	elseif plyTeam != TEAM_UNASSIGNED and splyTeam != TEAM_SPECTATOR then
 		self:DrawHealthFace(sply, hudoffset, ScrH() - 200 - hudoffset)
@@ -1077,11 +1077,11 @@ function GM:Music(src, pre, name, retry)
 
 		elseif src == "" or !exist then
 
-			local tbl = file.Find("sound/pedo/" .. Either(pre, "premusics", "musics") .. "/*", "GAME")
+			local tbl = file.Find("sound/superpedobear/" .. Either(pre, "premusics", "musics") .. "/*", "GAME")
 
 			if #tbl > 0 then
 				orisrc = src
-				src = "sound/pedo/" .. Either(pre, "premusics", "musics") .. "/" .. tbl[math.random(1,#tbl)]
+				src = "sound/superpedobear/" .. Either(pre, "premusics", "musics") .. "/" .. tbl[math.random(1,#tbl)]
 			end
 
 		end
@@ -1189,11 +1189,11 @@ function GM:Stats()
 
 		tab.LastVersion = GAMEMODE.Version
 
-		file.Write("pedo/info.txt", util.TableToJSON(tab))
+		file.Write("superpedobear/info.txt", util.TableToJSON(tab))
 
 	end
 
-	local info = file.Read("pedo/info.txt")
+	local info = file.Read("superpedobear/info.txt")
 
 	if info then
 

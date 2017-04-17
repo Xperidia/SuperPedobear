@@ -112,8 +112,8 @@ function GM:PedoVars(ply)
 
 end
 
-local function Registration(ukey)
-	http.Post("https://xperidia.com/monitor.php", { kind = "SuperPedobear", version = tostring(GAMEMODE.Version), key = ukey, ip = game.GetIPAddress(), servername = GetHostName() },
+local function Registration()
+	http.Post("https://xperidia.com/monitor.php", { kind = "SuperPedobear", version = tostring(GAMEMODE.Version), key = file.Read("superpedobear/key.txt"), ip = game.GetIPAddress(), servername = GetHostName() },
 		function(responseText, contentLength, responseHeaders, statusCode)
 			local resp = util.JSONToTable(responseText)
 			if statusCode == 200 and resp and resp.response and resp.response.success then
@@ -143,7 +143,7 @@ function GM:SelectMusic(pre)
 		local src = mlist[mid][1]
 
 		if !string.match(mlist[mid][1], "://") then
-			src = "sound/pedo/" .. Either(pre, "premusics", "musics") .. "/" .. src
+			src = "sound/superpedobear/" .. Either(pre, "premusics", "musics") .. "/" .. src
 		end
 
 		GAMEMODE.Vars.CurrentMusic = src
@@ -455,7 +455,7 @@ function GM:RoundThink()
 			if !LegitUse and !game.IsDedicated() then
 				LegitUse = true
 			elseif !LegitUse then
-				Registration(file.Read("pedo/key.txt"))
+				Registration()
 			end
 
 		end

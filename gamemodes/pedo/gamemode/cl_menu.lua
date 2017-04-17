@@ -93,7 +93,7 @@ function GM:Menu()
 		local playermodelselection = vgui.Create("DButton")
 		playermodelselection:SetParent(pedobearMenuF.one)
 		playermodelselection:SetText("Outfitter")
-		playermodelselection:SetPos(145, 64)
+		playermodelselection:SetPos(145, 40)
 		playermodelselection:SetSize(160, 20)
 		playermodelselection:SetEnabled(concommand.GetTable()["outfitter_open"])
 		playermodelselection.DoClick = function()
@@ -104,7 +104,7 @@ function GM:Menu()
 		local playermodelselection = vgui.Create("DButton")
 		playermodelselection:SetParent(pedobearMenuF.one)
 		playermodelselection:SetText("Enhanced PlayerModel Selector")
-		playermodelselection:SetPos(145, 84)
+		playermodelselection:SetPos(145, 60)
 		playermodelselection:SetSize(160, 20)
 		playermodelselection:SetEnabled(concommand.GetTable()["playermodel_selector"] and (GetConVar("sv_playermodel_selector_gamemodes"):GetBool() or LocalPlayer():IsAdmin()))
 		playermodelselection.DoClick = function()
@@ -147,6 +147,7 @@ function GM:Menu()
 		desclbl:SetText("Some controls:\n\n" .. GAMEMODE:CheckBind("gm_showhelp") .. ": This window\n"
 		.. GAMEMODE:CheckBind("gm_showteam") .. ": Change team\n"
 		.. GAMEMODE:CheckBind("gm_showspare1") .. ": Taunt menu\n"
+		.. GAMEMODE:CheckBind("gm_showspare2") .. ": Jukebox menu (not implemented yet)\n"
 		.. "1-9: Quick taunt\n"
 		.. GAMEMODE:CheckBind("+menu") .. ": PedoVan (Shop)\n"
 		.. GAMEMODE:CheckBind("+menu_context") .. ": Toggle thirdperson")
@@ -618,6 +619,21 @@ function GM:SplashScreen()
 		pedobearSplashScreenF.SplashScreen:SetAllowLua(true)
 		pedobearSplashScreenF.SplashScreen:OpenURL("https://dev.xperidia.com/SuperPedobear/?steamid=" .. LocalPlayer():SteamID64())
 		--pedobearSplashScreenF.SplashScreen:SetScrollbars(false)
+		pedobearSplashScreenF.SplashScreen:Call('$("#controls").append("<h2><u>Controls</u></h2><table>'
+		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("+forward") .. "</td><td> Forward</td></tr>"
+		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("+moveleft") .. "</td><td> Left</td></tr>"
+		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("+moveright") .. "</td><td> Right</td></tr>"
+		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("+back") .. "</td><td> Back</td></tr>"
+		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("+duck") .. "</td><td> Duck</td></tr>"
+		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("+jump") .. "</td><td> Jump</td></tr>"
+		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("+speed") .. "</td><td> Sprint</td></tr>"
+		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("gm_showhelp") .. "</td><td> Gamemode menu</td></tr>"
+		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("gm_showteam") .. "</td><td> Change team</td></tr>"
+		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("gm_showspare1") .. "</td><td> Taunt menu</td></tr>"
+		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("gm_showspare2") .. "</td><td> Jukebox menu (not implemented yet)</td></tr>"
+		.. "<tr><td class='leftside'>1-9</td><td> Quick taunt</td></tr>"
+		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("+menu") .. "</td><td> PedoVan (Shop)</td></tr>"
+		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("+menu_context") .. "</td><td> Toggle thirdperson</td></tr>" .. '</table>");')
 
 		local closebtn = vgui.Create("DButton", pedobearSplashScreenF)
 		closebtn:SetText("X")

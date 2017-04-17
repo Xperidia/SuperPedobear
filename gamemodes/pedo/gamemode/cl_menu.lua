@@ -560,6 +560,7 @@ function GM:BeginMenu()
 			self:SetFGColor(Color(0, 0, 0))
 		end
 		changelog:AppendText("							/!\\ This is a dev build! /!\\\n")
+		changelog:AppendText("> Splash Screen tests\n")
 
 		local featuredbtn = vgui.Create("DButton")
 		featuredbtn:SetParent(pedobearMenuBF.changelog)

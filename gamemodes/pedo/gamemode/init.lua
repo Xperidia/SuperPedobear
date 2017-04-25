@@ -1075,8 +1075,8 @@ function GM:RetrieveXperidiaAccountRank(ply)
 
 		GAMEMODE:Log("Retrieving the Xperidia Rank for " .. ply:GetName() .. "...", nil, true)
 
-		http.Post( "https://xperidia.com/UCP/rank.php", { steamid = steamid },
-		function( responseText, contentLength, responseHeaders, statusCode )
+		http.Post("https://xperidia.com/UCP/rank.php", {steamid = steamid},
+		function(responseText, contentLength, responseHeaders, statusCode)
 
 			if !IsValid(ply) then return end
 
@@ -1084,7 +1084,7 @@ function GM:RetrieveXperidiaAccountRank(ply)
 
 				local rank = tonumber(responseText)
 				ply.XperidiaRank = rank
-				ply:SetNWInt( "XperidiaRank", rank )
+				ply:SetNWInt("XperidiaRank", rank)
 				ply.XperidiaRankLastTime = SysTime()
 
 				if XperidiaRanks[rank] then
@@ -1098,11 +1098,11 @@ function GM:RetrieveXperidiaAccountRank(ply)
 			end
 
 		end,
-		function( errorMessage )
+		function(errorMessage)
 
 			GAMEMODE:Log(errorMessage)
 
-		end )
+		end)
 
 	end
 

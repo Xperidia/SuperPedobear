@@ -2,7 +2,7 @@ local hud_deathnotice_time = GetConVar( "hud_deathnotice_time" )
 
 local NPC_Color = Color( 250, 50, 50, 255 )
 
-killicon.Add( "pedo_pedobear", "pedo/pedobear", Color( 255, 255, 255, 255 ) )
+killicon.Add( "pedo_pedobear", "superpedobear/pedobear", Color( 255, 255, 255, 255 ) )
 
 local Deaths = {}
 

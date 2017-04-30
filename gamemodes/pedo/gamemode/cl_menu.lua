@@ -562,6 +562,7 @@ function GM:BeginMenu()
 		end
 		changelog:AppendText("							/!\\ This is a dev build! /!\\\n")
 		changelog:AppendText("> Splash Screen tests\n")
+		changelog:AppendText("> Removed pedochance visibility\n")
 
 		local featuredbtn = vgui.Create("DButton")
 		featuredbtn:SetParent(pedobearMenuBF.changelog)

@@ -68,13 +68,6 @@ local PLAYER_LINE = {
 		self.Group:SetContentAlignment( 5 )
 		self.Group:SetText( "" )
 
-		self.PedoChance = self:Add( "DLabel" )
-		self.PedoChance:Dock( RIGHT )
-		self.PedoChance:SetWidth( 50 )
-		self.PedoChance:SetFont( "ScoreboardDefault" )
-		self.PedoChance:SetTextColor( Color( 255, 255, 255 ) )
-		self.PedoChance:SetContentAlignment( 5 )
-
 		self:Dock( TOP )
 		self:DockPadding( 3, 3, 3, 3 )
 		self:SetHeight( 32 + 3 * 2 )
@@ -164,14 +157,6 @@ local PLAYER_LINE = {
 		if ( self.NumDeaths == nil or self.NumDeaths != self.Player:Deaths() ) then
 			self.NumDeaths = self.Player:Deaths()
 			self.Deaths:SetText( self.NumDeaths )
-		end
-
-		if IsValid(self.Player) and (self.PedoChanceTxt == nil or self.PedoChanceTxt != math.ceil(self.Player:GetNWFloat("XP_Pedo_PedoChance", 0) * 100) .. "%") then
-			self.PedoChanceTxt = math.ceil(self.Player:GetNWFloat("XP_Pedo_PedoChance", 0) * 100) .. "%"
-			self.PedoChance:SetText( self.PedoChanceTxt )
-		elseif !IsValid(self.Player) and self.PedoChanceTxt != "" then
-			self.PedoChanceTxt = ""
-			self.PedoChance:SetText(self.PedoChanceTxt)
 		end
 
 		if ( self.NumPing == nil or ( self.NumPing != self.Player:Ping() and self.NumPing != "BOT" and self.NumPing != "HOST" and self.NumPing != "..." ) ) then

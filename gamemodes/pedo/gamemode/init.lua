@@ -871,7 +871,9 @@ end
 
 function GM:PlayerCanSeePlayersChat(text, teamOnly, listener, speaker)
 
-	if GAMEMODE.Vars.Round.Start and !speaker:Alive() and listener:Alive() then return false end
+	if GAMEMODE.Vars.Round.Start and !GAMEMODE.Vars.Round.End and listener:Team() == TEAM_VICTIMS and !speaker:Alive() and listener:Alive() then
+		return false
+	end
 
 	if bTeamOnly then
 		if !IsValid(pSpeaker) or !IsValid(pListener) then return false end

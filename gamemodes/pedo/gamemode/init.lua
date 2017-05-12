@@ -49,12 +49,6 @@ function GM:PlayerInitialSpawn(ply)
 		GAMEMODE:LoadPlayerInfo(ply)
 	end
 
-	if (GAMEMODE.Vars.Round.Start or GAMEMODE.Vars.Round.PreStart) and GAMEMODE.Vars.CurrentMusic then
-
-		GAMEMODE:PedoMusic(GAMEMODE.Vars.CurrentMusic, GAMEMODE.Vars.Round.PreStart, ply, GAMEMODE.Vars.CurrentMusicName)
-
-	end
-
 	if !game.IsDedicated() then
 		if ply:IsListenServerHost() then
 			ply:SetNWBool("IsListenServerHost", true)

@@ -871,13 +871,23 @@ end
 
 function GM:PlayerCanSeePlayersChat(text, teamOnly, listener, speaker)
 
-	if GAMEMODE.Vars.Round.Start and !GAMEMODE.Vars.Round.End and listener:Team() == TEAM_VICTIMS and !speaker:Alive() and listener:Alive() then
-		return false
+	if IsValid(listener) and (listener:Team() == TEAM_SPECTATOR or (listener.XperidiaRank and listener.XperidiaRank.id >= 250)) then
+		return true
 	end
 
-	if bTeamOnly then
-		if !IsValid(pSpeaker) or !IsValid(pListener) then return false end
-		if pListener:Team() != pSpeaker:Team() then return false end
+	if IsValid(speaker) and speaker.XperidiaRank and speaker.XperidiaRank.id >= 250 then
+		return  true
+	end
+
+	if teamOnly then
+		if !IsValid(speaker) or !IsValid(listener) then return false end
+		if listener:Team() != speaker:Team() then return false end
+	end
+
+	if GAMEMODE.Vars.Round.Start and !GAMEMODE.Vars.Round.End and !teamOnly then
+		if speaker:Team() == TEAM_VICTIMS and !speaker:Alive() and listener:Team() == TEAM_PEDOBEAR then
+			return false
+		end
 	end
 
 	return true

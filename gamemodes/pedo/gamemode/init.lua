@@ -1064,50 +1064,37 @@ function GM:PlayerUse(ply, ent)
 end
 
 function GM:RetrieveXperidiaAccountRank(ply)
-
 	if !IsValid(ply) then return end
-
 	if ply:IsBot() then return end
-
 	if !ply.XperidiaRankLastTime or ply.XperidiaRankLastTime + 3600 < SysTime() then
-
 		local steamid = ply:SteamID64()
-
-		local XperidiaRanks = { "Premium", "Staff", "Administrator" }
-
 		GAMEMODE:Log("Retrieving the Xperidia Rank for " .. ply:GetName() .. "...", nil, true)
-
-		http.Post("https://xperidia.com/UCP/rank.php", {steamid = steamid},
+		http.Post("https://xperidia.com/UCP/rank_v2.php", {steamid = steamid},
 		function(responseText, contentLength, responseHeaders, statusCode)
-
 			if !IsValid(ply) then return end
-
 			if statusCode == 200 then
-
-				local rank = tonumber(responseText)
-				ply.XperidiaRank = rank
-				ply:SetNWInt("XperidiaRank", rank)
-				ply.XperidiaRankLastTime = SysTime()
-
-				if XperidiaRanks[rank] then
-					GAMEMODE:Log("The Xperidia Rank for " .. ply:GetName() .. " is " .. XperidiaRanks[rank])
-				else
-					GAMEMODE:Log(ply:GetName() .. " doesn't have any Xperidia Rank...", nil, true)
+				local rank_info = util.JSONToTable(responseText)
+				if rank_info and rank_info.id then
+					ply.XperidiaRank = rank_info
+					ply:SetNWInt("XperidiaRank", rank_info.id)
+					ply:SetNWString("XperidiaRankName", rank_info.name)
+					ply.XperidiaRankLastTime = SysTime()
+					if rank_info.id != 0 and rank_info.name then
+						GAMEMODE:Log("The Xperidia Rank for " .. ply:GetName() .. " is " .. rank_info.name .. " (" .. rank_info.id .. ")")
+					elseif rank_info.id != 0 then
+						GAMEMODE:Log("The Xperidia Rank for " .. ply:GetName() .. " is " .. rank_info.id)
+					else
+						GAMEMODE:Log(ply:GetName() .. " doesn't have any Xperidia Rank...", nil, true)
+					end
 				end
-
 			else
 				GAMEMODE:Log("Error while retriving Xperidia Rank for " .. ply:GetName() .. " (HTTP " .. (statusCode or "?") .. ")")
 			end
-
 		end,
 		function(errorMessage)
-
 			GAMEMODE:Log(errorMessage)
-
 		end)
-
 	end
-
 end
 
 function GM:StoreChances(ply)

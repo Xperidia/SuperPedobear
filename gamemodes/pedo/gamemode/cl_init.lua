@@ -1278,15 +1278,15 @@ function GM:OnPlayerChat(player, strText, bTeamOnly, bPlayerIsDead)
 	end
 
 	if IsValid(player) then
-		if player:GetNWInt("XperidiaRank", 0) == 3 then
-			table.insert(tab, Color(85, 255, 255))
-			table.insert(tab, "{Xperidia Admin} ")
-		elseif player:GetNWInt("XperidiaRank", 0) == 2 then
-			table.insert(tab, Color(85, 255, 255))
-			table.insert(tab, "{Xperidia Staff} ")
-		elseif player:GetNWInt("XperidiaRank", 0) == 1 then
-			table.insert(tab, Color(255, 170, 0))
-			table.insert(tab, "{Xperidia Premium} ")
+		local rankid = player:GetNWInt("XperidiaRank", 0)
+		local rankname = player:GetNWString("XperidiaRankName", "<Unknown rank name>")
+		if rankid > 0 then
+			if rankid < 200 then
+				table.insert(tab, Color(255, 170, 0))
+			else
+				table.insert(tab, Color(85, 255, 255))
+			end
+			table.insert(tab, "{Xperidia " .. rankname .. "} ")
 		end
 		if player:GetUserGroup() != "user" then
 			table.insert(tab, Color(255, 255, 255))

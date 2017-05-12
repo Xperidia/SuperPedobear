@@ -1150,6 +1150,10 @@ function GM:GetTeamColor(ent)
 
 end
 
+function GM:InitPostEntity()
+	GAMEMODE:Stats()
+end
+
 function GM:Stats()
 
 	local steamid = LocalPlayer():SteamID64()
@@ -1161,53 +1165,33 @@ function GM:Stats()
 	local needstat = !file.Exists("superpedobear/stats/" .. steamid .. ".txt", "DATA")
 
 	if needstat then
-
 		http.Post( "https://www.xperidia.com/UCP/stats.php", { steamid = steamid, zone = "pedo" },
 		function( responseText, contentLength, responseHeaders, statusCode )
-
 			if statusCode == 200 then
 				file.Write("superpedobear/stats/" .. steamid .. ".txt", "")
 				GAMEMODE:Log(responseText)
 			else
 				GAMEMODE:Log("Error while registering the gamemode (ERROR " .. statusCode .. ")")
 			end
-
 		end,
 		function(errorMessage)
-
 			GAMEMODE:Log(errorMessage)
-
 		end)
-
 	end
 
 	local function welcomehandle()
-
-		GAMEMODE:BeginMenu()
-
-		local tab = {}
-
-		tab.LastVersion = GAMEMODE.Version
-
-		file.Write("superpedobear/info.txt", util.TableToJSON(tab))
-
+		GAMEMODE:SplashScreen()
 	end
 
 	local info = file.Read("superpedobear/info.txt")
 
 	if info then
-
 		local tab = util.JSONToTable(info)
 		if !tab or (tab.LastVersion and tab.LastVersion < GAMEMODE.Version) then
-
 			welcomehandle()
-
 		end
-
 	else
-
 		welcomehandle()
-
 	end
 
 end

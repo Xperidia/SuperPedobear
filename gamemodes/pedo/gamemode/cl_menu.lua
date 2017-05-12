@@ -70,6 +70,19 @@ function GM:Menu()
 		onelbl:SetDark(1)
 		onelbl:SizeToContents()
 
+		local desclbl = vgui.Create("DLabel")
+		desclbl:SetParent(pedobearMenuF.one)
+		desclbl:SetText("Some controls:\n\n" .. GAMEMODE:CheckBind("gm_showhelp") .. ": This window\n"
+		.. GAMEMODE:CheckBind("gm_showteam") .. ": Change team\n"
+		.. GAMEMODE:CheckBind("gm_showspare1") .. ": Taunt menu\n"
+		.. GAMEMODE:CheckBind("gm_showspare2") .. ": Jukebox menu\n"
+		.. GAMEMODE:CheckBind("+menu") .. ": PedoVan (Shop)\n"
+		.. GAMEMODE:CheckBind("+menu_context") .. ": Toggle thirdperson\n"
+		.. "1-9: Quick taunt")
+		desclbl:SetPos(20, 30)
+		desclbl:SetDark(1)
+		desclbl:SizeToContents()
+
 		local xpucp = vgui.Create( "DButton" )
 		xpucp:SetParent(pedobearMenuF.one)
 		xpucp:SetText("Xperidia Account")
@@ -132,29 +145,6 @@ function GM:Menu()
 			pedobearMenuF:Close()
 		end
 
-		local beginmenubtn = vgui.Create("DButton")
-		beginmenubtn:SetParent(pedobearMenuF.one)
-		beginmenubtn:SetText("Welcome screen")
-		beginmenubtn:SetPos(200, 0)
-		beginmenubtn:SetSize(105, 20)
-		beginmenubtn.DoClick = function()
-			GAMEMODE:BeginMenu()
-			pedobearMenuF:Close()
-		end
-
-		local desclbl = vgui.Create("DLabel")
-		desclbl:SetParent(pedobearMenuF.one)
-		desclbl:SetText("Some controls:\n\n" .. GAMEMODE:CheckBind("gm_showhelp") .. ": This window\n"
-		.. GAMEMODE:CheckBind("gm_showteam") .. ": Change team\n"
-		.. GAMEMODE:CheckBind("gm_showspare1") .. ": Taunt menu\n"
-		.. GAMEMODE:CheckBind("gm_showspare2") .. ": Jukebox menu (not implemented yet)\n"
-		.. "1-9: Quick taunt\n"
-		.. GAMEMODE:CheckBind("+menu") .. ": PedoVan (Shop)\n"
-		.. GAMEMODE:CheckBind("+menu_context") .. ": Toggle thirdperson")
-		desclbl:SetPos(20, 30)
-		desclbl:SetDark(1)
-		desclbl:SizeToContents()
-
 
 		pedobearMenuF.config = vgui.Create("DPanel")
 		pedobearMenuF.config:SetParent(pedobearMenuF)
@@ -214,16 +204,6 @@ function GM:Menu()
 		disablehalo:SetValue(GetConVar("pedobear_cl_disablehalos"):GetBool())
 		disablehalo:SizeToContents()
 
-		--[[local censorwords = vgui.Create("DCheckBoxLabel")
-		censorwords:SetParent(pedobearMenuF.config)
-		censorwords:SetText("Word censoring")
-		censorwords:SetPos(15, 130)
-		censorwords:SetDark(1)
-		censorwords:SetConVar("pedobear_cl_censorwords")
-		censorwords:SetValue(GetConVar("pedobear_cl_censorwords"):GetBool())
-		censorwords:SetDisabled(string.match(GetHostName(), "Ollie's Mod"))
-		censorwords:SizeToContents()]]
-
 		local hudoffset = vgui.Create("DNumSlider", pedobearMenuF.config)
 		hudoffset:SetPos(15, 190)
 		hudoffset:SetSize(300, 16)
@@ -274,29 +254,21 @@ function GM:Menu()
 			local musiclist = {}
 
 			for k, v in pairs(localmusics) do
-
 				musiclist[v[1]] = { v[2], v[3], file.Exists("sound/superpedobear/" .. Either(pre, "premusics", "musics") .. "/" .. v[1], "GAME"), nil }
-
 			end
 
 			if Either(pre, GAMEMODE.Musics.premusics, GAMEMODE.Musics.musics) then
-
 				for k, v in pairs(Either(pre, GAMEMODE.Musics.premusics, GAMEMODE.Musics.musics)) do
-
 					if musiclist[v[1]] then
 						musiclist[v[1]] = { v[2], v[3], musiclist[v[1]][3], true }
 					else
 						musiclist[v[1]] = { v[2], v[3], file.Exists("sound/superpedobear/" .. Either(pre, "premusics", "musics") .. "/" .. v[1], "GAME"), true }
 					end
-
 				end
-
 			end
 
 			for k, v in SortedPairs(musiclist) do
-
 				pedobearMenuF.MusicL.List:AddLine(v[1] or GAMEMODE:PrettyMusicName(k), v[2], Either(string.match(k, "://"), "URL", Either(v[3], "✓", "❌")), Either(v[4], "✓", "❌"))
-
 			end
 
 		end
@@ -398,9 +370,7 @@ function GM:Menu()
 
 
 	elseif IsValid(pedobearMenuF) then
-
 		pedobearMenuF:Close()
-
 	end
 
 end
@@ -408,190 +378,6 @@ end
 function pedobearSCLoaded()
 	if IsValid(pedobearMenuF) then xpsc_anim:Start(0.25) end
 	if IsValid(pedobearMenuBF) then xpsc_anim2:Start(0.25) end
-end
-
-function GM:BeginMenu()
-
-	if !IsValid(pedobearMenuBF) and !engine.IsPlayingDemo() then
-
-		pedobearMenuBF = vgui.Create("DFrame")
-		pedobearMenuBF:SetPos(ScrW() / 2 - 320, ScrH() / 2 - 240)
-		pedobearMenuBF:SetSize(640, 480)
-		pedobearMenuBF:SetTitle("Welcome to " .. (GAMEMODE.Name or "?") .. " V" .. (GAMEMODE.Version or "?") .. GAMEMODE:SeasonalEventStr() .. " | By " .. (GAMEMODE.Author or "?"))
-		pedobearMenuBF:SetVisible(true)
-		pedobearMenuBF:SetDraggable(true)
-		pedobearMenuBF:ShowCloseButton(true)
-		pedobearMenuBF:SetScreenLock(true)
-		pedobearMenuBF.Paint = function(self, w, h)
-			draw.RoundedBox(4, 0, 0, w, h, Color(0, 0, 0, 128))
-		end
-		pedobearMenuBF.Think = function(self)
-
-			if xpsc_anim2 and xpsc_anim2:Active() then xpsc_anim2:Run() end
-
-			local mousex = math.Clamp(gui.MouseX(), 1, ScrW() - 1)
-			local mousey = math.Clamp(gui.MouseY(), 1, ScrH() - 1)
-
-			if self.Dragging then
-
-				local x = mousex - self.Dragging[1]
-				local y = mousey - self.Dragging[2]
-
-				-- Lock to screen bounds if screenlock is enabled
-				if self:GetScreenLock() then
-
-					x = math.Clamp(x, 0, ScrW() - self:GetWide())
-					y = math.Clamp(y, 0, ScrH() - self:GetTall())
-
-				end
-
-				self:SetPos(x, y)
-
-			end
-
-			if self.Hovered and mousey < (self.y + 24) then
-				self:SetCursor("sizeall")
-				return
-			end
-
-			self:SetCursor("arrow")
-
-			if self.y < 0 then
-				self:SetPos(self.x, 0)
-			end
-
-		end
-		pedobearMenuBF:MakePopup()
-		pedobearMenuBF:SetKeyboardInputEnabled(false)
-
-		pedobearMenuBF.one = vgui.Create("DPanel")
-		pedobearMenuBF.one:SetParent(pedobearMenuBF)
-		pedobearMenuBF.one:SetPos(10, 30)
-		pedobearMenuBF.one:SetSize(305, 215)
-
-		local xpucp = vgui.Create("DButton")
-		xpucp:SetParent(pedobearMenuBF.one)
-		xpucp:SetText("Xperidia Account")
-		xpucp:SetPos(20, 190)
-		xpucp:SetSize(125, 20)
-		xpucp.DoClick = function()
-			gui.OpenURL("https://www.xperidia.com/UCP/")
-		end
-
-		local xpsteam = vgui.Create( "DButton" )
-		xpsteam:SetParent(pedobearMenuBF.one)
-		xpsteam:SetText("Xperidia's Steam Group")
-		xpsteam:SetPos(160, 190)
-		xpsteam:SetSize(125, 20)
-		xpsteam.DoClick = function()
-			gui.OpenURL("https://xperi.link/XP-SteamGroup")
-		end
-
-		local onelbl = vgui.Create( "DLabel" )
-		onelbl:SetParent(pedobearMenuBF.one)
-		onelbl:SetText("Welcome to " .. (GAMEMODE.Name or "?"))
-		onelbl:SetPos(10, 5)
-		onelbl:SetDark(1)
-		onelbl:SizeToContents()
-
-		local desclbl = vgui.Create("DLabel")
-		desclbl:SetParent(pedobearMenuBF.one)
-		desclbl:SetText("So you're on the Pedobear Gamemode by Xperidia!\n\nWhat could possibly go wrong?\n\nBy default you're playing as a victim which need to \nescape from Pedobear(s)\n\nThe Pedobears are automatically chosen by the \ngamemode and it should be fair enough so everyone \ncan play as a Pedobear")
-		desclbl:SetPos(20, 30)
-		desclbl:SetDark(1)
-		desclbl:SizeToContents()
-
-		local hflbl = vgui.Create("DLabel")
-		hflbl:SetParent(pedobearMenuBF.one)
-		hflbl:SetText("Have fun!")
-		hflbl:SetPos(130, 170)
-		hflbl:SetDark(1)
-		hflbl:SizeToContents()
-
-
-		pedobearMenuBF.controls = vgui.Create("DPanel")
-		pedobearMenuBF.controls:SetParent(pedobearMenuBF)
-		pedobearMenuBF.controls:SetPos(325, 30)
-		pedobearMenuBF.controls:SetSize(305, 215)
-
-		local controlslbl = vgui.Create("DLabel")
-		controlslbl:SetParent(pedobearMenuBF.controls)
-		controlslbl:SetText("Basic controls")
-		controlslbl:SetPos(10, 5)
-		controlslbl:SetDark(1)
-		controlslbl:SizeToContents()
-
-		local desclbl = vgui.Create("DLabel")
-		desclbl:SetParent(pedobearMenuBF.controls)
-		desclbl:SetText(GAMEMODE:CheckBind("+forward") .. ": Forward\n"
-		.. GAMEMODE:CheckBind("+moveleft") .. ": Left\n"
-		.. GAMEMODE:CheckBind("+moveright") .. ": Right\n"
-		.. GAMEMODE:CheckBind("+back") .. ": Back\n"
-		.. GAMEMODE:CheckBind("+duck") .. ": Duck\n"
-		.. GAMEMODE:CheckBind("+jump") .. ": Jump\n"
-		.. GAMEMODE:CheckBind("+speed") .. ": Sprint\n"
-		.. GAMEMODE:CheckBind("gm_showhelp") .. ": Gamemode menu\n"
-		.. GAMEMODE:CheckBind("gm_showteam") .. ": Change team\n"
-		.. GAMEMODE:CheckBind("gm_showspare1") .. ": Taunt menu\n"
-		.. "1-9: Quick taunt\n"
-		.. GAMEMODE:CheckBind("+menu") .. ": PedoVan (Shop)\n"
-		.. GAMEMODE:CheckBind("+menu_context") .. ": Toggle thirdperson" )
-		desclbl:SetPos(20, 30)
-		desclbl:SetDark(1)
-		desclbl:SizeToContents()
-
-
-		pedobearMenuBF.changelog = vgui.Create("DPanel")
-		pedobearMenuBF.changelog:SetParent(pedobearMenuBF)
-		pedobearMenuBF.changelog:SetPos(10, 255)
-		pedobearMenuBF.changelog:SetSize(620, 215)
-
-		local changeloglbl = vgui.Create("DLabel")
-		changeloglbl:SetParent(pedobearMenuBF.changelog)
-		changeloglbl:SetText("Changelog")
-		changeloglbl:SetPos(10, 5)
-		changeloglbl:SetDark(1)
-		changeloglbl:SizeToContents()
-
-		local changelog = vgui.Create("RichText", pedobearMenuBF.changelog)
-		changelog:SetPos(0, 20)
-		changelog:SetSize(620, 195)
-		function changelog:PerformLayout()
-			self:SetFontInternal("XP_Pedo_HUDname")
-			self:SetFGColor(Color(0, 0, 0))
-		end
-		changelog:AppendText("							/!\\ This is a dev build! /!\\\n")
-		changelog:AppendText("> Splash Screen tests\n")
-		changelog:AppendText("> Removed pedochance visibility\n")
-
-		local featuredbtn = vgui.Create("DButton")
-		featuredbtn:SetParent(pedobearMenuBF.changelog)
-		featuredbtn:SetText("Check the last dev vlog")
-		featuredbtn:SetPos(200, 0)
-		featuredbtn:SetSize(200, 20)
-		featuredbtn.DoClick = function()
-			gui.OpenURL("https://youtu.be/fFIhuDZjDCI")
-		end
-
-
-		if !GetConVar("pedobear_cl_disablexpsc"):GetBool() then
-
-			local xpsc = vgui.Create( "DHTML" )
-			xpsc:SetParent(pedobearMenuBF)
-			xpsc:SetPos(10, 480)
-			xpsc:SetSize(620, 128)
-			xpsc:SetAllowLua(true)
-			xpsc:OpenURL("https://xperidia.com/Showcase/?sys=pedobearMenu&zone=" .. tostring(GAMEMODE.Name) .. "&lang=" .. tostring(GetConVarString("gmod_language") or "en"))
-			xpsc:SetScrollbars(false)
-
-			xpsc_anim2 = Derma_Anim("xpsc_anim2", pedobearMenuBF, function(pnl, anim, delta, data)
-				pnl:SetSize( 640, 138 * delta + 480 )
-			end)
-
-		end
-
-	end
-
 end
 
 function GM:SplashScreen()
@@ -618,23 +404,31 @@ function GM:SplashScreen()
 		pedobearSplashScreenF.SplashScreen:SetPos(0, 0)
 		pedobearSplashScreenF.SplashScreen:SetSize(ScrW(), ScrH())
 		pedobearSplashScreenF.SplashScreen:SetAllowLua(true)
-		pedobearSplashScreenF.SplashScreen:OpenURL("https://dev.xperidia.com/SuperPedobear/?steamid=" .. LocalPlayer():SteamID64())
+		pedobearSplashScreenF.SplashScreen:OpenURL("https://www.xperidia.com/SuperPedobear/?steamid=" .. LocalPlayer():SteamID64())
 		--pedobearSplashScreenF.SplashScreen:SetScrollbars(false)
 		pedobearSplashScreenF.SplashScreen:Call('$("#controls").append("<h2><u>Controls</u></h2><table>'
-		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("+forward") .. "</td><td> Forward</td></tr>"
-		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("+moveleft") .. "</td><td> Left</td></tr>"
-		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("+moveright") .. "</td><td> Right</td></tr>"
-		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("+back") .. "</td><td> Back</td></tr>"
+		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("+forward") .. "</td><td> Move forward</td></tr>"
+		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("+moveleft") .. "</td><td> Move left (stafe)</td></tr>"
+		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("+moveright") .. "</td><td> Move right (strafe)</td></tr>"
+		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("+back") .. "</td><td> Move back</td></tr>"
 		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("+duck") .. "</td><td> Duck</td></tr>"
 		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("+jump") .. "</td><td> Jump</td></tr>"
-		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("+speed") .. "</td><td> Sprint</td></tr>"
-		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("gm_showhelp") .. "</td><td> Gamemode menu</td></tr>"
-		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("gm_showteam") .. "</td><td> Change team</td></tr>"
-		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("gm_showspare1") .. "</td><td> Taunt menu</td></tr>"
-		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("gm_showspare2") .. "</td><td> Jukebox menu (not implemented yet)</td></tr>"
+		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("+speed") .. "</td><td> Sprint (Move Quickly)</td></tr>"
+		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("gm_showhelp") .. "</td><td> Gamemode menu ('Show help')</td></tr>"
+		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("gm_showteam") .. "</td><td> Change team ('Team menu')</td></tr>"
+		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("gm_showspare1") .. "</td><td> Taunt menu ('Spare 1')</td></tr>"
+		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("gm_showspare2") .. "</td><td> Jukebox menu ('Spare 2')</td></tr>"
+		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("+menu") .. "</td><td> PedoVan ('Show Menu')</td></tr>"
+		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("+menu_context") .. "</td><td> Toggle thirdperson ('Show Context Menu')</td></tr>"
 		.. "<tr><td class='leftside'>1-9</td><td> Quick taunt</td></tr>"
-		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("+menu") .. "</td><td> PedoVan (Shop)</td></tr>"
-		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("+menu_context") .. "</td><td> Toggle thirdperson</td></tr>" .. '</table>");')
+		.. '</table>");')
+		pedobearSplashScreenF.SplashScreen:Call('$("#changelog").append("<h2><u>Changelog V' .. (GAMEMODE.Version or '?') .. '</u></h2><table>'
+		.. "<tr><td>> Welcome to this new Splash Screen</td></tr>"
+		.. "<tr><td>> Removed pedochance visibility</td></tr>"
+		.. "<tr><td>> New version of the Xperidia Rank system</td></tr>"
+		.. "<tr><td>> Rework of chat message visibility</td></tr>"
+		.. "<tr><td>> Removed music start when connecting</td></tr>"
+		.. '</table>");')
 
 		local closebtn = vgui.Create("DButton", pedobearSplashScreenF)
 		closebtn:SetText("X")

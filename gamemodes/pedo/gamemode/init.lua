@@ -216,9 +216,7 @@ function GM:PlayerStats()
 end
 
 function GM:KeyPress(ply, key)
-
 	if ply:Team() == TEAM_UNASSIGNED and !ply:KeyPressed(IN_SCORE) then
-		ply:SendLua("GAMEMODE:Stats()")
 		ply:SetTeam(TEAM_VICTIMS)
 		ply:Spawn()
 		if GAMEMODE.Vars.Round.Start then
@@ -227,7 +225,6 @@ function GM:KeyPress(ply, key)
 	elseif ply:Team() == TEAM_SPECTATOR or ply:Team() == TEAM_UNASSIGNED then
 		GAMEMODE:SpecControl(ply)
 	end
-
 end
 
 function GM:SpecControl(ply, manual)
@@ -762,17 +759,16 @@ function GM:PlayerShouldTakeDamage(ply, attacker)
 end
 
 function GM:ShowHelp(ply)
-
 	ply:SendLua("GAMEMODE:Menu()")
-
 end
 
 function GM:ShowSpare1(ply)
-
 	if ply:Team() != TEAM_VICTIMS and ply:Team() != TEAM_PEDOBEAR then return end
-
 	ply:SendLua("GAMEMODE:TauntMenuF()")
+end
 
+function GM:ShowSpare2(ply) --TODO Jukebox
+	ply:SendLua("GAMEMODE:Menu()")
 end
 
 net.Receive("XP_Pedo_Taunt", function(bits,ply)
@@ -858,7 +854,6 @@ function GM:PlayerRequestTeam(ply, teamid)
 
 	if !GAMEMODE:PlayerCanJoinTeam(ply, teamid) then return end
 
-	ply:SendLua("GAMEMODE:Stats()")
 	GAMEMODE:PlayerJoinTeam(ply, teamid)
 
 end

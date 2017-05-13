@@ -831,19 +831,17 @@ function GM:PlayerCanHearPlayersVoice(pListener, pTalker)
 end
 
 function GM:CreateDummy(ply)
-
 	if ply:Team() != TEAM_VICTIMS or !ply:OnGround() then return end
-
-	if !IsValid(ply.Dummy) then
-
+	if !IsValid(ply.Dummy) or (!ply.lastctime or ply.lastctime < CurTime()) then
+		if IsValid(ply.Dummy) then
+			ply.Dummy:Remove()
+		end
 		local ent = ents.Create("pedo_dummy")
 		ent:SetPlayer(ply)
 		ent:Spawn()
-
 		ply.Dummy = ent
-
+		ply.lastctime = CurTime() + 1
 	end
-
 end
 
 function GM:PlayerRequestTeam(ply, teamid)

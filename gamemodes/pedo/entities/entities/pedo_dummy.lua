@@ -11,8 +11,10 @@ function ENT:Initialize()
 	self:SetHealth(1)
 	self:SetCustomCollisionCheck( true )
 
-	self:SetPos(ply:GetPos())
-	self:SetAngles(Angle(0,ply:GetAngles()[2],0))
+	self.OPos = ply:GetPos()
+	self.OAngles = Angle(0, ply:GetAngles()[2], 0)
+	self:SetPos(self.OPos)
+	self:SetAngles(self.OAngles)
 
 	self:SetModel(ply:GetModel())
 
@@ -32,21 +34,14 @@ function ENT:Initialize()
 end
 
 function ENT:SetupDataTables()
-
-	self:NetworkVar( "Entity", 0, "Player" )
-
+	self:NetworkVar("Entity", 0, "Player")
 end
 
 function ENT:RunBehaviour()
-
 	while true do
-
-		coroutine.wait( 60 )
-
+		coroutine.wait(60)
 		coroutine.yield()
-
 	end
-
 end
 
 local function SameBodyGroups(self, ply)
@@ -63,6 +58,10 @@ function ENT:Think()
 	if !ply or !IsValid(ply) or !ply:Alive() or ply:Team() != TEAM_VICTIMS then
 		self:Remove()
 		return
+	end
+
+	if self:GetPos() != self.OPos then
+		self:SetPos(self.OPos)
 	end
 
 	if ply:GetModel() != self:GetModel() then
@@ -82,7 +81,7 @@ function ENT:Think()
 		self:SetSkin(ply:GetSkin())
 
 		for k, v in pairs(ply:GetBodyGroups()) do
-			self:SetBodygroup( v["id"], ply:GetBodygroup( v["id"] ) )
+			self:SetBodygroup(v["id"], ply:GetBodygroup(v["id"]))
 		end
 
 	end
@@ -97,26 +96,24 @@ function ENT:Think()
 end
 
 function ENT:StartSeq(str)
-
-	local iSeq = self:LookupSequence( str ) or 0
-	self:SetSequence( iSeq )
+	local iSeq = self:LookupSequence(str) or 0
+	self:SetSequence(iSeq)
 	self:ResetSequenceInfo()
 	self:SetCycle(0)
 	self:SetPlaybackRate(1)
-
 end
 
-function ENT:OnKilled( dmginfo )
+function ENT:OnKilled(dmginfo)
 
 	local att = dmginfo:GetAttacker()
 
-	hook.Call( "OnDummyKilled", GAMEMODE, self, att, dmginfo:GetInflictor() )
+	hook.Call("OnDummyKilled", GAMEMODE, self, att, dmginfo:GetInflictor())
 
 	local ply = self:GetPlayer()
 
 	ply:PrintMessage(HUD_PRINTTALK, "Your clone is dead!")
 
-	--self:BecomeRagdoll( dmginfo )
+	--self:BecomeRagdoll(dmginfo)
 
 	self:Remove()
 

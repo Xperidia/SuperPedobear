@@ -1,6 +1,6 @@
 AddCSLuaFile()
 
-SWEP.PrintName = "Victim"			
+SWEP.PrintName = "Victim"
 SWEP.Author = "Xperidia"
 SWEP.Spawnable = false
 
@@ -31,54 +31,51 @@ function SWEP:Initialize()
 end
 
 function SWEP:PrimaryAttack()
-	
+
 	if SERVER then
-		
-		local tr = util.GetPlayerTrace( self.Owner )
-		
-		local trace = util.TraceLine( tr )
-		
+
+		local tr = util.GetPlayerTrace(self.Owner)
+
+		local trace = util.TraceLine(tr)
+
 		if (!trace.Hit) then return end
-		
+
 		if (!trace.HitNonWorld) then
 			self.laste = nil
 			self.Owner:SetNWEntity("PedoWelding", self.Owner)
 			self.Owner:SetNWInt("PedoWeldingState", 0)
 			return
 		end
-		
-		if IsValid( trace.Entity ) && trace.Entity:IsPlayer() then return end
-		
+
+		if IsValid(trace.Entity) and trace.Entity:IsPlayer() then return end
+
 		if trace.HitPos:Distance(trace.StartPos) > 100 then
 			self.Owner:SetNWInt("PedoWeldingState", 2)
 			return
 		end
-		
+
 		if !util.IsValidPhysicsObject( trace.Entity, trace.PhysicsBone ) then return end
-		
+
 		local Phys = trace.Entity:GetPhysicsObjectNum( trace.PhysicsBone )
-		
+
 		if !self.laste then
-			
 			self.laste = { trace.Entity, trace.HitPos, Phys, trace.PhysicsBone, trace.HitNormal }
-			
 		else
-			
+
 			if trace.Entity:GetPos():Distance(self.laste[1]:GetPos()) > 100 then
 				self.Owner:SetNWInt("PedoWeldingState", 3)
 				return
 			end
-			
+
 			local Ent1, Ent2 = self.laste[1], trace.Entity
 			local Bone1, Bone2 = self.laste[4], trace.PhysicsBone
-			
-			constraint.Weld( Ent1, Ent2, Bone1, Bone2, 2147483647, false, false )
-			
-			
+
+			constraint.Weld(Ent1, Ent2, Bone1, Bone2, 2147483647, false, false)
+
 			self.laste = nil
-			
+
 		end
-		
+
 		if self.laste and IsValid(self.laste[1]) then
 			self.Owner:SetNWEntity("PedoWelding", self.laste[1])
 			self.Owner:SetNWInt("PedoWeldingState", 1)
@@ -86,31 +83,22 @@ function SWEP:PrimaryAttack()
 			self.Owner:SetNWEntity("PedoWelding", self.Owner)
 			self.Owner:SetNWInt("PedoWeldingState", 0)
 		end
-		
+
 	end
-	
+
 end
- 
+
 function SWEP:SecondaryAttack()
-	
 	if SERVER then
-		
 		self.laste = nil
 		self.Owner:SetNWEntity("PedoWelding", self.Owner)
 		self.Owner:SetNWInt("PedoWeldingState", 0)
-		
-		local tr = util.GetPlayerTrace( self.Owner )
-		
-		local trace = util.TraceLine( tr )
-		
+		local tr = util.GetPlayerTrace(self.Owner)
+		local trace = util.TraceLine(tr)
 		if (!trace.Hit) then return end
-		
 		if (!trace.HitNonWorld) then return end
-		
-		constraint.RemoveConstraints( trace.Entity, "Weld" )
-		
+		constraint.RemoveConstraints(trace.Entity, "Weld")
 	end
-	
 end
 
 function SWEP:Reload()
@@ -139,8 +127,3 @@ function SWEP:OnDrop()
 	end
 	self:Remove()
 end
-
-function SWEP:Think()
-	
-end
-

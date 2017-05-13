@@ -768,7 +768,7 @@ function GM:ShowSpare1(ply)
 end
 
 function GM:ShowSpare2(ply) --TODO Jukebox
-	ply:SendLua("GAMEMODE:Menu()")
+	ply:SendLua("GAMEMODE:JukeboxMenu()")
 end
 
 net.Receive("XP_Pedo_Taunt", function(bits,ply)

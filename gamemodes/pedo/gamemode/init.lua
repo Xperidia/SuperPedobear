@@ -33,6 +33,9 @@ util.AddNetworkString("XP_Pedo_MusicList")
 util.AddNetworkString("PlayerKilledDummy")
 util.AddNetworkString("NPCKilledDummy")
 util.AddNetworkString("XP_Pedo_List")
+util.AddNetworkString("XP_Pedo_MusicQueue")
+util.AddNetworkString("XP_Pedo_MusicAddToQueue")
+util.AddNetworkString("XP_Pedo_MusicQueueVote")
 
 local LegitUse
 
@@ -57,6 +60,7 @@ function GM:PlayerInitialSpawn(ply)
 
 	GAMEMODE:PedoVars(ply)
 	GAMEMODE:SendMusicIndex(ply)
+	GAMEMODE:SendMusicQueue(ply)
 
 end
 
@@ -157,6 +161,58 @@ function GM:PedoMusic(src, pre, ply, name)
 		net.WriteString(name or "")
 	if IsValid(ply) then net.Send(ply) else net.Broadcast() end
 
+end
+
+function GM:SendMusicQueue(ply)
+	net.Start("XP_Pedo_MusicQueue")
+		net.WriteTable(GAMEMODE.Vars.MusicQueue or {})
+	if IsValid(ply) then net.Send(ply) else net.Broadcast() end
+end
+
+net.Receive("XP_Pedo_MusicAddToQueue", function(bits, ply)
+	local music = net.ReadString()
+	GAMEMODE:MusicQueueAdd(ply, music)
+end)
+function GM:MusicQueueAdd(ply, musicsrc)
+	if !GAMEMODE.Vars.MusicQueue then GAMEMODE.Vars.MusicQueue = {} end
+	GAMEMODE.Vars.MusicQueue[ply] = {}
+	GAMEMODE.Vars.MusicQueue[ply].music = musicsrc
+	GAMEMODE.Vars.MusicQueue[ply].votes = {ply}
+	GAMEMODE:SendMusicQueue()
+end
+
+net.Receive("XP_Pedo_MusicQueueVote", function(bits, ply)
+	local qply = net.ReadEntity()
+	GAMEMODE:MusicQueueVote(ply, qply)
+end)
+function GM:MusicQueueVote(ply, qply)
+	if !IsValid(qply) then
+		return
+	end
+	if table.HasValue(GAMEMODE.Vars.MusicQueue[qply].votes, ply) then
+		table.RemoveByValue(GAMEMODE.Vars.MusicQueue[qply].votes, ply)
+	else
+		table.insert(GAMEMODE.Vars.MusicQueue[qply].votes, ply)
+	end
+	GAMEMODE:SendMusicQueue()
+end
+
+function GM:MusicQueueSelect()
+	if !GAMEMODE.Vars.MusicQueue then return nil end
+	local winner
+	local who
+	for k, v in RandomPairs(GAMEMODE.Vars.MusicQueue) do
+		if !winner or #v.votes > #winner.votes then
+			who = k
+			winner = v
+		end
+	end
+	if who and winner then
+		GAMEMODE.Vars.MusicQueue[who] = nil
+		GAMEMODE:SendMusicQueue()
+		return winner.music
+	end
+	return nil
 end
 
 function GM:PostPlayerDeath( ply )
@@ -536,7 +592,14 @@ function GM:RoundThink()
 				if custommusic then
 					GAMEMODE:PedoMusic(GAMEMODE.Vars.CurrentMusic, false, nil, GAMEMODE.Vars.CurrentMusicName)
 				else
-					GAMEMODE:SelectMusic()
+					local jukebox = GAMEMODE:MusicQueueSelect()
+					if jukebox then
+						GAMEMODE.Vars.CurrentMusic = jukebox
+						GAMEMODE.Vars.CurrentMusicName = nil
+						GAMEMODE:PedoMusic(GAMEMODE.Vars.CurrentMusic)
+					else
+						GAMEMODE:SelectMusic()
+					end
 				end
 
 				GAMEMODE:PlayerStats()

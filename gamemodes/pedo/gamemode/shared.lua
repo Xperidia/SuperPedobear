@@ -276,3 +276,17 @@ function GM:Log(str,tn,hardcore)
 	Msg("[" .. name .. "] " .. (str or "This was a log message, but something went wrong") .. "\n")
 
 end
+
+function GM:GetHost()
+	if GAMEMODE.Vars.Host and IsValid(GAMEMODE.Vars.Host) then
+		return GAMEMODE.Vars.Host
+	end
+	for k, v in pairs(player.GetAll()) do
+		local host = v:GetNWBool("IsListenServerHost", false)
+		if host then
+			GAMEMODE.Vars.Host = v
+			return v
+		end
+	end
+	return nil
+end

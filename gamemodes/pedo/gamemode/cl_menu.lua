@@ -455,7 +455,6 @@ function GM:JukeboxMenu()
 		end
 		SuperPedobearJukebox:MakePopup()
 		SuperPedobearJukebox:SetKeyboardInputEnabled(false)
-
 		local mw = w / 3 - 20
 
 
@@ -487,7 +486,6 @@ function GM:JukeboxMenu()
 		serv:SetMaxWidth(30)
 
 		local pre = GAMEMODE.Vars.Round.PreStart
-
 		local function CreateMusicList(pre)
 
 			SuperPedobearJukebox.MusicL.List:Clear()
@@ -535,10 +533,17 @@ function GM:JukeboxMenu()
 		end
 
 
+		local queue = {}
 		SuperPedobearJukebox.ServerQueue = vgui.Create("DPanel")
 		SuperPedobearJukebox.ServerQueue:SetParent(SuperPedobearJukebox)
 		SuperPedobearJukebox.ServerQueue:SetPos(w / 3 + 10, 30)
 		SuperPedobearJukebox.ServerQueue:SetSize(mw, h - 40)
+		SuperPedobearJukebox.ServerQueue.Think = function(self)
+			if GAMEMODE.Vars.MusicQueue and queue != GAMEMODE.Vars.MusicQueue then
+				queue = GAMEMODE.Vars.MusicQueue
+				SuperPedobearJukebox.ServerQueue.List.CreateQueueList()
+			end
+		end
 
 		SuperPedobearJukebox.ServerQueue.lbl = vgui.Create("DLabel")
 		SuperPedobearJukebox.ServerQueue.lbl:SetParent(SuperPedobearJukebox.ServerQueue)
@@ -553,15 +558,46 @@ function GM:JukeboxMenu()
 		SuperPedobearJukebox.ServerQueue.List:SetMultiSelect(false)
 		local name = SuperPedobearJukebox.ServerQueue.List:AddColumn("Music")
 		name:SetMinWidth(150)
+		local who = SuperPedobearJukebox.ServerQueue.List:AddColumn("Suggested by")
+		who:SetMinWidth(100)
 		local votes = SuperPedobearJukebox.ServerQueue.List:AddColumn("Votes")
-		votes:SetMinWidth(60)
-		votes:SetMaxWidth(60)
+		votes:SetMinWidth(40)
+		votes:SetMaxWidth(40)
 
-		local add2queue = vgui.Create("DTextEntry", SuperPedobearJukebox.ServerQueue)
-		add2queue:SetPos(0, h - 60)
-		add2queue:SetSize(mw, 20)
-		add2queue.OnEnter = function(self)
-			--self:GetValue()
+		function SuperPedobearJukebox.ServerQueue.List.CreateQueueList()
+			SuperPedobearJukebox.ServerQueue.List:Clear()
+			for k, v in pairs(queue) do
+				local line = SuperPedobearJukebox.ServerQueue.List:AddLine(v.music, k:Nick(), #v.votes)
+				line.owner = k
+			end
+			function SuperPedobearJukebox.ServerQueue.List:DoDoubleClick(lineID, line)
+				net.Start("XP_Pedo_MusicQueueVote")
+					net.WriteEntity(line.owner)
+				net.SendToServer()
+			end
+		end
+
+		local placeholder = "Enter a music path or URL (Mostly .mp3)"
+		SuperPedobearJukebox.ServerQueue.add2queue = vgui.Create("DTextEntry", SuperPedobearJukebox.ServerQueue)
+		SuperPedobearJukebox.ServerQueue.add2queue:SetPos(0, h - 60)
+		SuperPedobearJukebox.ServerQueue.add2queue:SetSize(mw, 20)
+		SuperPedobearJukebox.ServerQueue.add2queue:SetText(placeholder)
+		SuperPedobearJukebox.ServerQueue.add2queue.OnMousePressed = function(self, keycode)
+			if keycode == MOUSE_FIRST and !self:IsEditing() then
+				SuperPedobearJukebox:SetKeyboardInputEnabled(true)
+				if self:GetValue() == placeholder then
+					self:SetText("")
+				end
+			end
+		end
+		SuperPedobearJukebox.ServerQueue.add2queue.OnEnter = function(self)
+			net.Start("XP_Pedo_MusicAddToQueue")
+				net.WriteString(self:GetValue())
+			net.SendToServer()
+			self:SetText(placeholder)
+		end
+		SuperPedobearJukebox.ServerQueue.add2queue.OnLoseFocus = function(self)
+			SuperPedobearJukebox:SetKeyboardInputEnabled(false)
 		end
 
 

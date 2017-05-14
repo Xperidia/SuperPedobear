@@ -140,6 +140,10 @@ net.Receive("XP_Pedo_List", function( len )
 
 end)
 
+net.Receive("XP_Pedo_MusicQueue", function(len)
+	GAMEMODE.Vars.MusicQueue = net.ReadTable()
+end)
+
 hook.Add("HUDShouldDraw", "HideHUD", function( name )
 
 	local HUDhide = {
@@ -1104,6 +1108,7 @@ function GM:Music(src, pre, name, retry)
 				end
 			elseif orisrc != nil then
 				GAMEMODE:Log("Playing music \"" .. src .. "\"" .. Either(pre, " (pre round music)", "") .. " instead of " .. Either(orisrc != "", "\"" .. orisrc .. "\"", "nothing"))
+				GAMEMODE.Vars.CurrentMusicName = ""
 			else
 				GAMEMODE:Log("Playing music \"" .. src .. "\"" .. Either(pre, " (pre round music)", ""))
 			end

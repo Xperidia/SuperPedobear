@@ -1,3 +1,8 @@
+--[[---------------------------------------------------------------------------
+							Super Pedobear
+		Please don't copy, clone, redistribute or modify the code!
+-----------------------------------------------------------------------------]]
+
 include("shared.lua")
 include("cl_scoreboard.lua")
 include("cl_menu.lua")

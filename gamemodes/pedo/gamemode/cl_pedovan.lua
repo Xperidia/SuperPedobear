@@ -1,3 +1,8 @@
+--[[---------------------------------------------------------------------------
+							Super Pedobear
+		Please don't copy, clone, redistribute or modify the code!
+-----------------------------------------------------------------------------]]
+
 function GM:PedoVan()
 
 	if IsValid(GAMEMODE.PedoVanFrame) and GAMEMODE.PedoVanFrame.DoClose then
@@ -23,7 +28,7 @@ function GM:PedoVan()
 	self:SetBackgroundBlur(true)
 	--self.PedoVanFrame:SetScreenLock(true)
 	function self:Paint(w, h)
-		Derma_DrawBackgroundBlur( self, self.m_fCreateTime )
+		Derma_DrawBackgroundBlur(self, self.m_fCreateTime)
 		surface.SetDrawColor(255, 255, 255, 255)
 		surface.SetMaterial(GAMEMODE.Materials.PedoVan)
 		surface.DrawTexturedRect(0, 0, w, oh)

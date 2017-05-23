@@ -1,3 +1,8 @@
+--[[---------------------------------------------------------------------------
+							Super Pedobear
+		Please don't copy, clone, redistribute or modify the code!
+-----------------------------------------------------------------------------]]
+
 function GM:Menu()
 
 	if !IsValid(pedobearMenuF) and !engine.IsPlayingDemo() then

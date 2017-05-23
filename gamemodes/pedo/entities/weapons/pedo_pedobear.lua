@@ -1,3 +1,8 @@
+--[[---------------------------------------------------------------------------
+							Super Pedobear
+		Please don't copy, clone, redistribute or modify the code!
+-----------------------------------------------------------------------------]]
+
 AddCSLuaFile()
 
 SWEP.PrintName = "Pedobear"

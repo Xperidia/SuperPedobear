@@ -1,3 +1,8 @@
+--[[---------------------------------------------------------------------------
+							Super Pedobear
+		Please don't copy, clone, redistribute or modify the code!
+-----------------------------------------------------------------------------]]
+
 AddCSLuaFile()
 
 ENT.Base = "base_nextbot"
@@ -26,7 +31,7 @@ function ENT:Initialize()
 	self:SetSkin(ply:GetSkin())
 
 	for k, v in pairs(ply:GetBodyGroups()) do
-		self:SetBodygroup( v["id"], ply:GetBodygroup( v["id"] ) )
+		self:SetBodygroup(v["id"], ply:GetBodygroup(v["id"]))
 	end
 
 	self:StartSeq("idle_all_01")
@@ -46,7 +51,7 @@ end
 
 local function SameBodyGroups(self, ply)
 	for k, v in pairs(self:GetBodyGroups()) do
-		if self:GetBodygroup( v.id ) != ply:GetBodygroup( v.id ) then return false end
+		if self:GetBodygroup(v.id) != ply:GetBodygroup(v.id) then return false end
 	end
 	return true
 end
@@ -73,7 +78,7 @@ function ENT:Think()
 		self:SetSkin(ply:GetSkin())
 
 		for k,v in pairs(ply:GetBodyGroups()) do
-			self:SetBodygroup( v["id"], ply:GetBodygroup( v["id"] ) )
+			self:SetBodygroup(v["id"], ply:GetBodygroup(v["id"]))
 		end
 
 	elseif self:GetSkin() != ply:GetSkin() or !SameBodyGroups(self, ply) then

@@ -1,5 +1,10 @@
+--[[---------------------------------------------------------------------------
+							Super Pedobear
+		Please don't copy, clone, redistribute or modify the code!
+-----------------------------------------------------------------------------]]
+
 AddCSLuaFile()
-DEFINE_BASECLASS( "player_default" )
+DEFINE_BASECLASS("player_default")
 
 local PLAYER = {}
 
@@ -23,59 +28,42 @@ PLAYER.UseVMHands			= true		-- Uses viewmodel hands
 PLAYER.TauntCam = TauntCamera()
 
 function PLAYER:SetupDataTables()
-
-	BaseClass.SetupDataTables( self )
-
+	BaseClass.SetupDataTables(self)
 end
 
 function PLAYER:ShouldDrawLocal()
-
-	if ( self.TauntCam:ShouldDrawLocalPlayer( self.Player, self.Player:IsPlayingTaunt() ) ) then return true end
-
+	if self.TauntCam:ShouldDrawLocalPlayer(self.Player, self.Player:IsPlayingTaunt()) then return true end
 end
 
-function PLAYER:CreateMove( cmd )
-
-	if ( self.TauntCam:CreateMove( cmd, self.Player, self.Player:IsPlayingTaunt() ) ) then return true end
-
+function PLAYER:CreateMove(cmd)
+	if self.TauntCam:CreateMove(cmd, self.Player, self.Player:IsPlayingTaunt()) then return true end
 end
 
-function PLAYER:CalcView( view )
-
-	if ( self.TauntCam:CalcView( view, self.Player, self.Player:IsPlayingTaunt() ) ) then return true end
+function PLAYER:CalcView(view)
+	if self.TauntCam:CalcView(view, self.Player, self.Player:IsPlayingTaunt()) then return true end
 end
 
 function PLAYER:Loadout()
-
 	self.Player:RemoveAllItems()
-	self.Player:Give( "pedo_pedobear" )
-
+	self.Player:Give("pedo_pedobear")
 end
 
 function PLAYER:SetModel()
-
-	self.Player:SetModel( Model("models/player/pbear/pbear.mdl") )
-
+	self.Player:SetModel(Model("models/player/pbear/pbear.mdl"))
 end
 
 function PLAYER:Spawn()
-
-	BaseClass.Spawn( self )
-
-	self.Player:SetPlayerColor( Vector( 0.545098, 0.333333, 0.180392 ) )
-
-	self.Player:SetModelScale( 1, 0 )
-
+	BaseClass.Spawn(self)
+	self.Player:SetPlayerColor(Vector(0.545098, 0.333333, 0.180392))
+	self.Player:SetModelScale(1, 0)
 end
 
-function PLAYER:StartMove( mv )
-
-	if mv:KeyDown( IN_SPEED ) and !mv:GetVelocity():IsZero() then
+function PLAYER:StartMove(mv)
+	if mv:KeyDown(IN_SPEED) and !mv:GetVelocity():IsZero() then
 		self.Player.Sprinting = true
 	else
 		self.Player.Sprinting = false
 	end
-
 end
 
-player_manager.RegisterClass( "player_pedobear", PLAYER, "player_default" )
+player_manager.RegisterClass("player_pedobear", PLAYER, "player_default")

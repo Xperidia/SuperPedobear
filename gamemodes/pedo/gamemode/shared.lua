@@ -1,3 +1,8 @@
+--[[---------------------------------------------------------------------------
+							Super Pedobear
+		Please don't copy, clone, redistribute or modify the code!
+-----------------------------------------------------------------------------]]
+
 DEFINE_BASECLASS( "gamemode_base" )
 
 include( "player_class/player_victim.lua" )

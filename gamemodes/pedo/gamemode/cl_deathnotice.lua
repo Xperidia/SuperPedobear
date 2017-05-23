@@ -1,8 +1,13 @@
-local hud_deathnotice_time = GetConVar( "hud_deathnotice_time" )
+--[[---------------------------------------------------------------------------
+							Super Pedobear
+		Please don't copy, clone, redistribute or modify the code!
+-----------------------------------------------------------------------------]]
 
-local NPC_Color = Color( 250, 50, 50, 255 )
+local hud_deathnotice_time = GetConVar("hud_deathnotice_time")
 
-killicon.Add( "pedo_pedobear", "superpedobear/pedobear", Color( 255, 255, 255, 255 ) )
+local NPC_Color = Color(250, 50, 50, 255)
+
+killicon.Add("pedo_pedobear", "superpedobear/pedobear", Color(255, 255, 255, 255))
 
 local Deaths = {}
 
@@ -13,12 +18,12 @@ local function RecvPlayerKilledDummy()
 	local inflictor	= net.ReadString()
 	local attacker	= net.ReadEntity()
 
-	if ( !IsValid( attacker ) or !IsValid( victim ) ) then return end
+	if !IsValid(attacker) or !IsValid(victim) then return end
 
-	GAMEMODE:AddDeathNotice( attacker:Nick(), attacker:Team(), inflictor, victim:Nick(), victim:Team() )
+	GAMEMODE:AddDeathNotice(attacker:Nick(), attacker:Team(), inflictor, victim:Nick(), victim:Team())
 
 end
-net.Receive( "PlayerKilledDummy", RecvPlayerKilledDummy )
+net.Receive("PlayerKilledDummy", RecvPlayerKilledDummy)
 
 
 local function RecvNPCKilledNPC()
@@ -27,13 +32,13 @@ local function RecvNPCKilledNPC()
 	local inflictor	= net.ReadString()
 	local attacker	= "#" .. net.ReadString()
 
-	GAMEMODE:AddDeathNotice( attacker, -1, inflictor, victim:Nick(), victim:Team() )
+	GAMEMODE:AddDeathNotice(attacker, -1, inflictor, victim:Nick(), victim:Team())
 
 end
-net.Receive( "NPCKilledDummy", RecvNPCKilledDummy )
+net.Receive("NPCKilledDummy", RecvNPCKilledDummy)
 
 
-function GM:AddDeathNotice( Attacker, team1, Inflictor, Victim, team2 )
+function GM:AddDeathNotice(Attacker, team1, Inflictor, Victim, team2)
 
 	local Death = {}
 	Death.time		= CurTime()
@@ -42,54 +47,54 @@ function GM:AddDeathNotice( Attacker, team1, Inflictor, Victim, team2 )
 	Death.right		= Victim
 	Death.icon		= Inflictor
 
-	if ( team1 == -1 ) then Death.color1 = table.Copy( NPC_Color )
-	else Death.color1 = table.Copy( team.GetColor( team1 ) ) end
+	if team1 == -1 then Death.color1 = table.Copy(NPC_Color)
+	else Death.color1 = table.Copy(team.GetColor(team1)) end
 
-	if ( team2 == -1 ) then Death.color2 = table.Copy( NPC_Color )
-	else Death.color2 = table.Copy( team.GetColor( team2 ) ) end
+	if team2 == -1 then Death.color2 = table.Copy(NPC_Color)
+	else Death.color2 = table.Copy(team.GetColor(team2)) end
 
 	if (Death.left == Death.right) then
 		Death.left = nil
 		Death.icon = "suicide"
 	end
 
-	table.insert( Deaths, Death )
+	table.insert(Deaths, Death)
 
 end
 
 
-local function DrawDeath( x, y, death, hud_deathnotice_time )
+local function DrawDeath(x, y, death, hud_deathnotice_time)
 
-	local w, h = killicon.GetSize( death.icon )
-	if ( !w or !h ) then return end
+	local w, h = killicon.GetSize(death.icon)
+	if !w or !h then return end
 
-	local fadeout = ( death.time + hud_deathnotice_time ) - CurTime()
+	local fadeout = (death.time + hud_deathnotice_time) - CurTime()
 
-	local alpha = math.Clamp( fadeout * 255, 0, 255 )
+	local alpha = math.Clamp(fadeout * 255, 0, 255)
 	death.color1.a = alpha
 	death.color2.a = alpha
 
 	-- Draw Icon
-	killicon.Draw( x, y, death.icon, alpha )
+	killicon.Draw(x, y, death.icon, alpha)
 
 	-- Draw KILLER
-	if ( death.left ) then
-		draw.SimpleText( death.left, "XP_Pedo_HUDname", x - ( w / 2 ) - 17, y + 1, Color(0,0,0,alpha), TEXT_ALIGN_RIGHT )
-		draw.SimpleText( death.left, "XP_Pedo_HUDname", x - ( w / 2 ) - 16, y, death.color1, TEXT_ALIGN_RIGHT )
+	if death.left then
+		draw.SimpleText(death.left, "XP_Pedo_HUDname", x - ( w / 2 ) - 17, y + 1, Color(0, 0, 0, alpha), TEXT_ALIGN_RIGHT)
+		draw.SimpleText(death.left, "XP_Pedo_HUDname", x - ( w / 2 ) - 16, y, death.color1, TEXT_ALIGN_RIGHT)
 	end
 
 	-- Draw VICTIM
-	draw.SimpleText( death.right, "XP_Pedo_HUDname", x + ( w / 2 ) + 17, y + 1, Color(0,0,0,alpha), TEXT_ALIGN_LEFT )
-	draw.SimpleText( death.right, "XP_Pedo_HUDname", x + ( w / 2 ) + 16, y, death.color2, TEXT_ALIGN_LEFT )
+	draw.SimpleText(death.right, "XP_Pedo_HUDname", x + (w / 2) + 17, y + 1, Color(0, 0, 0, alpha), TEXT_ALIGN_LEFT)
+	draw.SimpleText(death.right, "XP_Pedo_HUDname", x + (w / 2) + 16, y, death.color2, TEXT_ALIGN_LEFT)
 
 	return y + h * 0.70
 
 end
 
 
-function GM:DrawDeathNotice( x, y )
+function GM:DrawDeathNotice(x, y)
 
-	if ( GetConVarNumber( "cl_drawhud" ) == 0 ) then return end
+	if GetConVarNumber("cl_drawhud") == 0 then return end
 
 	local hud_deathnotice_time = hud_deathnotice_time:GetFloat()
 
@@ -99,9 +104,9 @@ function GM:DrawDeathNotice( x, y )
 	-- Draw
 	for k, Death in pairs( Deaths ) do
 
-		if ( Death.time + hud_deathnotice_time > CurTime() ) then
+		if Death.time + hud_deathnotice_time > CurTime() then
 
-			if ( Death.lerp ) then
+			if Death.lerp then
 				x = x * 0.3 + Death.lerp.x * 0.7
 				y = y * 0.3 + Death.lerp.y * 0.7
 			end
@@ -119,8 +124,8 @@ function GM:DrawDeathNotice( x, y )
 	-- We want to maintain the order of the table so instead of removing
 	-- expired entries one by one we will just clear the entire table
 	-- once everything is expired.
-	for k, Death in pairs( Deaths ) do
-		if ( Death.time + hud_deathnotice_time > CurTime() ) then
+	for k, Death in pairs(Deaths) do
+		if Death.time + hud_deathnotice_time > CurTime() then
 			return
 		end
 	end

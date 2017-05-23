@@ -1,3 +1,8 @@
+--[[---------------------------------------------------------------------------
+							Super Pedobear
+		Please don't copy, clone, redistribute or modify the code!
+-----------------------------------------------------------------------------]]
+
 function GM:TauntMenuF()
 
 	if !IsValid(GAMEMODE.TauntMenu) and !engine.IsPlayingDemo() then

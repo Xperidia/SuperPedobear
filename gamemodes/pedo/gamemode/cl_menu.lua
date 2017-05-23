@@ -1,6 +1,10 @@
 --[[---------------------------------------------------------------------------
-							Super Pedobear
-		Please don't copy, clone, redistribute or modify the code!
+		⚠ This file is a part of the Super Pedobear source code ⚠
+		⚠ Please do not clone, redistribute or modify the code! ⚠
+	We do not obscurate the code or anything mostly to help bug reporting.
+	Please do not try to cheat, if you want something ask me directly...
+We're just indies making stuff so please support us instead of putting us down.
+So unless you're modifying it to improve it via a Pull request please do not.
 -----------------------------------------------------------------------------]]
 
 function GM:Menu()

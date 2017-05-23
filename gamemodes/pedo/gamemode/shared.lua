@@ -1,26 +1,30 @@
 --[[---------------------------------------------------------------------------
-							Super Pedobear
-		Please don't copy, clone, redistribute or modify the code!
+		⚠ This file is a part of the Super Pedobear source code ⚠
+		⚠ Please do not clone, redistribute or modify the code! ⚠
+	We do not obscurate the code or anything mostly to help bug reporting.
+	Please do not try to cheat, if you want something ask me directly...
+We're just indies making stuff so please support us instead of putting us down.
+So unless you're modifying it to improve it via a Pull request please do not.
 -----------------------------------------------------------------------------]]
 
-DEFINE_BASECLASS( "gamemode_base" )
+DEFINE_BASECLASS("gamemode_base")
 
-include( "player_class/player_victim.lua" )
-include( "player_class/player_pedobear.lua" )
+include("player_class/player_victim.lua")
+include("player_class/player_pedobear.lua")
 
-GM.Name 	= "Super Pedobear"
+GM.Name 		= "Super Pedobear"
 GM.ShortName 	= "SuperPedobear"
-GM.Author 	= "VictorienXP@Xperidia"
-GM.Website 	= "steamcommunity.com/sharedfiles/filedetails/?id=628449407"
-GM.Version 	= 0.252
-GM.TeamBased = true
+GM.Author 		= "VictorienXP@Xperidia"
+GM.Website 		= "steamcommunity.com/sharedfiles/filedetails/?id=628449407"
+GM.Version 		= 0.252
+GM.TeamBased 	= true
 
-TEAM_VICTIMS = 1
-TEAM_PEDOBEAR = 2
+TEAM_VICTIMS	= 1
+TEAM_PEDOBEAR	= 2
 
 GM.Sounds = {}
-GM.Sounds.YoureThePedo = Sound("superpedobear/yourethepedo.wav")
-GM.Sounds.HeartBeat = Sound("superpedobear/heartbeat.ogg")
+GM.Sounds.YoureThePedo	= Sound("superpedobear/yourethepedo.wav")
+GM.Sounds.HeartBeat		= Sound("superpedobear/heartbeat.ogg")
 
 GM.Sounds.Taunts = {}
 table.insert(GM.Sounds.Taunts, {"Goat Gentleman", Sound("superpedobear/taunts/s1.ogg"), 0, 16.5})
@@ -31,13 +35,13 @@ table.insert(GM.Sounds.Taunts, {"Thomas the tank engine", Sound("superpedobear/t
 table.insert(GM.Sounds.Taunts, {"Get your lollipops", Sound("superpedobear/taunts/p1.ogg"), TEAM_PEDOBEAR, 6})
 table.insert(GM.Sounds.Taunts, {"MY PEE PEE", Sound("superpedobear/taunts/s6.ogg"), 0, 20.5})
 
-GM.Sounds.Damage = GM.Sounds.Damage or {}
-GM.Sounds.Death = GM.Sounds.Death or {}
+GM.Sounds.Damage	= GM.Sounds.Damage or {}
+GM.Sounds.Death		= GM.Sounds.Death or {}
 
 GM.Materials = {}
-GM.Materials.Death = Material("superpedobear/pedoscare")
-GM.Materials.PedoVan = Material("superpedobear/pedovan")
-GM.Materials.PepperDeath = Material("superpedobear/pepperscare")
+GM.Materials.Death			= Material("superpedobear/pedoscare")
+GM.Materials.PedoVan		= Material("superpedobear/pedovan")
+GM.Materials.PepperDeath	= Material("superpedobear/pepperscare")
 
 GM.Vars = GM.Vars or {}
 GM.Vars.Round = GM.Vars.Round or {}
@@ -54,9 +58,7 @@ GM.SeasonalEvents = {
 }
 
 GM.PlayerMeta = GM.PlayerMeta or FindMetaTable("Player")
-
 GM.PlayerMeta.RealNick = GM.PlayerMeta.RealNick or GM.PlayerMeta.Nick
-
 function GM.PlayerMeta:Nick()
 	if GAMEMODE:IsSeasonalEvent("LennyFaceDay") then return "( ͡° ͜ʖ ͡°)" end
 	return self:RealNick()
@@ -68,54 +70,33 @@ GM.PlayerEasterEgg["76561198108011282"] = {Model("models/player/nachocheese.mdl"
 
 
 function GM:IsSeasonalEvent(str)
-
 	local Timestamp = os.time()
-
 	for _, v in pairs(GAMEMODE.SeasonalEvents) do
-
 		local i = 0
-
 		if str == v[1] then
-
 			while v[3 + i] do
-
 				if (os.date("%d/%m", Timestamp) == v[3 + i]) then
 					return true
 				end
-
 				i = i + 1
-
 			end
 		end
-
 	end
-
 	return false
-
 end
 
 function GM:SeasonalEventStr()
-
 	local Timestamp = os.time()
-
 	for _, v in pairs(GAMEMODE.SeasonalEvents) do
-
 		local i = 0
-
 		while v[3 + i] do
-
 			if (os.date("%d/%m", Timestamp) == v[3 + i]) then
 				return " - " .. v[2]
 			end
-
 			i = i + 1
-
 		end
-
 	end
-
 	return ""
-
 end
 
 function GM:Initialize()

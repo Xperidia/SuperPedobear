@@ -39,9 +39,7 @@ GM.Sounds.Damage	= GM.Sounds.Damage or {}
 GM.Sounds.Death		= GM.Sounds.Death or {}
 
 GM.Materials = {}
-GM.Materials.Death			= Material("superpedobear/pedoscare")
 GM.Materials.PedoVan		= Material("superpedobear/pedovan")
-GM.Materials.PepperDeath	= Material("superpedobear/pepperscare")
 
 GM.Vars = GM.Vars or {}
 GM.Vars.Round = GM.Vars.Round or {}
@@ -66,7 +64,7 @@ end
 
 GM.PlayerEasterEgg = {}
 --GM.PlayerEasterEgg["SteamID64"] = {<playermodel>, <jumpscare texture>, <custom music>, <custom announce>}
-GM.PlayerEasterEgg["76561198108011282"] = {Model("models/player/nachocheese.mdl"), GM.Materials.PepperDeath, "https://xperidia.com/PedoMusics/76561198108011282.mp3", "IT'S CHEEZY TIME WITH %s"} --Marco
+GM.PlayerEasterEgg["76561198108011282"] = {Model("models/player/nachocheese.mdl"), "superpedobear/pepperscare", "https://xperidia.com/PedoMusics/76561198108011282.mp3", "IT'S CHEEZY TIME WITH %s"} --Marco
 
 
 function GM:IsSeasonalEvent(str)

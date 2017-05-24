@@ -217,18 +217,8 @@ function GM:MusicQueueSelect()
 end
 
 function GM:PostPlayerDeath( ply )
-
-	local userid = ply:UserID()
-
-	timer.Create("XP_Pedo_RemJS" .. userid, 0.5, 1, function()
-		if IsValid(ply) then ply:ConCommand("pp_mat_overlay \"\"") end
-		timer.Remove("XP_Pedo_RemJS" .. userid)
-	end)
-
 	GAMEMODE:PlayerStats()
-
 	GAMEMODE:RetrieveXperidiaAccountRank(ply)
-
 end
 
 function GM:PlayerDeathSound()
@@ -788,9 +778,9 @@ function GM:DoPlayerDeath(ply, attacker, dmginfo)
 			attacker:SetNWInt("XP_Pedo_VictimsCurrency", attacker:GetNWInt("XP_Pedo_VictimsCurrency", 0) + 1)
 			if GAMEMODE:IsSeasonalEvent("Halloween") or ply:GetInfoNum("pedobear_cl_jumpscare", 0) == 1 then
 				if GAMEMODE.PlayerEasterEgg[attacker:SteamID64()] and GAMEMODE.PlayerEasterEgg[attacker:SteamID64()][2] then
-					ply:ConCommand("pp_mat_overlay " .. GAMEMODE.PlayerEasterEgg[attacker:SteamID64()][2])
+					ply:SendLua("GAMEMODE:CallJumpscare('" .. GAMEMODE.PlayerEasterEgg[attacker:SteamID64()][2] .. "')")
 				else
-					ply:ConCommand("pp_mat_overlay " .. tostring(GAMEMODE.Materials.Death))
+					ply:SendLua("GAMEMODE:CallJumpscare()")
 				end
 			end
 			GAMEMODE.Vars.downvictims = (GAMEMODE.Vars.downvictims or 0) + 1

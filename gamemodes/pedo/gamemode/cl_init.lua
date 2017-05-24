@@ -1304,26 +1304,23 @@ function GM:OnPlayerChat(player, strText, bTeamOnly, bPlayerIsDead)
 
 end
 
+function GM:CallJumpscare(jumpscare)
+	GAMEMODE.Vars.Jumpscare = jumpscare or "superpedobear/pedoscare"
+	GAMEMODE.Vars.JumpscareTime = CurTime() + 0.5
+end
+
 function GM:RenderScreenspaceEffects()
 
 	local ravemode = false
-
 	if GAMEMODE.Vars.Pedos and #GAMEMODE.Vars.Pedos > 0 then
-
 		for k, v in pairs(GAMEMODE.Vars.Pedos) do
-
 			if IsValid(v) and v:Alive() and v:SteamID64() == "76561198108011282" then
-
 				ravemode = true
-
 			end
-
 		end
-
 	end
 
 	if ravemode then
-
 		local x = CurTime() * 5
 		local tab = {
 			["$pp_colour_addr"] = 0,
@@ -1337,7 +1334,10 @@ function GM:RenderScreenspaceEffects()
 			["$pp_colour_mulb"] = (0.5 * math.sin(x + 1)) * 10
 		}
 		DrawColorModify(tab)
+	end
 
+	if GAMEMODE.Vars.Jumpscare and GAMEMODE.Vars.JumpscareTime > CurTime() then
+		DrawMaterialOverlay(GAMEMODE.Vars.Jumpscare, 0)
 	end
 
 	--DrawToyTown( 2, ScrH()/2 ) -- Pedo distance ?

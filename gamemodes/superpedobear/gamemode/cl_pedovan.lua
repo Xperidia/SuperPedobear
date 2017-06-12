@@ -78,7 +78,7 @@ function GM:PedoVan()
 
 	self.vc = vgui.Create("DLabel")
 	self.vc:SetParent(self)
-	self.vc:SetText(LocalPlayer():GetNWInt("XP_Pedo_VictimsCurrency", 0))
+	self.vc:SetText(LocalPlayer():GetNWInt("SuperPedobear_VictimsCurrency", 0))
 	self.vc:SetPos(scaleW(1610), scaleH(300))
 	self.vc:SetSize(scaleW(220), scaleH(100))
 	self.vc:SetDark(1)

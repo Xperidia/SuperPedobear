@@ -16,7 +16,7 @@ GM.Name 		= "Super Pedobear"
 GM.ShortName 	= "SuperPedobear"
 GM.Author 		= "VictorienXP@Xperidia"
 GM.Website 		= "steamcommunity.com/sharedfiles/filedetails/?id=628449407"
-GM.Version 		= 0.26
+GM.Version 		= 0.27
 GM.TeamBased 	= true
 
 TEAM_VICTIMS	= 1
@@ -100,7 +100,7 @@ end
 function GM:Initialize()
 
 	sound.Add({
-		name = "pedo_yourethepedo",
+		name = "superpedobear_yourethepedo",
 		channel = CHAN_STATIC,
 		volume = 1.0,
 		level = 0,
@@ -242,7 +242,7 @@ end
 
 function GM:ShouldCollide(Ent1, Ent2)
 
-	if Ent1:GetClass() == "pedo_dummy" or Ent2:GetClass() == "pedo_dummy" then
+	if Ent1:GetClass() == "superpedobear_dummy" or Ent2:GetClass() == "superpedobear_dummy" then
 		return false
 	end
 

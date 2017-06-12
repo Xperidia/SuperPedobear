@@ -18,7 +18,7 @@ function ENT:Initialize()
 	local ply = self:GetPlayer()
 
 	self:SetHealth(1)
-	self:SetCustomCollisionCheck( true )
+	self:SetCustomCollisionCheck(true)
 
 	self.OPos = ply:GetPos()
 	self.OAngles = Angle(0, ply:GetAngles()[2], 0)

@@ -1,4 +1,4 @@
-"pedo"
+"superpedobear"
 {
 	"base"		"base"
 	"title"		"Super Pedobear"

@@ -11,7 +11,7 @@ local hud_deathnotice_time = GetConVar("hud_deathnotice_time")
 
 local NPC_Color = Color(250, 50, 50, 255)
 
-killicon.Add("pedo_pedobear", "superpedobear/pedobear", Color(255, 255, 255, 255))
+killicon.Add("superpedobear_pedobear", "superpedobear/pedobear", Color(255, 255, 255, 255))
 
 local Deaths = {}
 
@@ -83,13 +83,13 @@ local function DrawDeath(x, y, death, hud_deathnotice_time)
 
 	-- Draw KILLER
 	if death.left then
-		draw.SimpleText(death.left, "XP_Pedo_HUDname", x - ( w / 2 ) - 17, y + 1, Color(0, 0, 0, alpha), TEXT_ALIGN_RIGHT)
-		draw.SimpleText(death.left, "XP_Pedo_HUDname", x - ( w / 2 ) - 16, y, death.color1, TEXT_ALIGN_RIGHT)
+		draw.SimpleText(death.left, "SuperPedobear_HUDname", x - ( w / 2 ) - 17, y + 1, Color(0, 0, 0, alpha), TEXT_ALIGN_RIGHT)
+		draw.SimpleText(death.left, "SuperPedobear_HUDname", x - ( w / 2 ) - 16, y, death.color1, TEXT_ALIGN_RIGHT)
 	end
 
 	-- Draw VICTIM
-	draw.SimpleText(death.right, "XP_Pedo_HUDname", x + (w / 2) + 17, y + 1, Color(0, 0, 0, alpha), TEXT_ALIGN_LEFT)
-	draw.SimpleText(death.right, "XP_Pedo_HUDname", x + (w / 2) + 16, y, death.color2, TEXT_ALIGN_LEFT)
+	draw.SimpleText(death.right, "SuperPedobear_HUDname", x + (w / 2) + 17, y + 1, Color(0, 0, 0, alpha), TEXT_ALIGN_LEFT)
+	draw.SimpleText(death.right, "SuperPedobear_HUDname", x + (w / 2) + 16, y, death.color2, TEXT_ALIGN_LEFT)
 
 	return y + h * 0.70
 

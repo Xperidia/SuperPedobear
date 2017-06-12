@@ -24,19 +24,19 @@ resource.AddWorkshop("481073360")
 resource.AddWorkshop("628449407")
 resource.AddWorkshop("232539187") --Marco
 
-util.AddNetworkString("XP_Pedo_Vars")
-util.AddNetworkString("XP_Pedo_PlayerStats")
-util.AddNetworkString("XP_Pedo_Notif")
-util.AddNetworkString("XP_Pedo_Taunt")
-util.AddNetworkString("XP_Pedo_Music")
-util.AddNetworkString("XP_Pedo_AFK")
-util.AddNetworkString("XP_Pedo_MusicList")
+util.AddNetworkString("SuperPedobear_Vars")
+util.AddNetworkString("SuperPedobear_PlayerStats")
+util.AddNetworkString("SuperPedobear_Notif")
+util.AddNetworkString("SuperPedobear_Taunt")
+util.AddNetworkString("SuperPedobear_Music")
+util.AddNetworkString("SuperPedobear_AFK")
+util.AddNetworkString("SuperPedobear_MusicList")
 util.AddNetworkString("PlayerKilledDummy")
 util.AddNetworkString("NPCKilledDummy")
-util.AddNetworkString("XP_Pedo_List")
-util.AddNetworkString("XP_Pedo_MusicQueue")
-util.AddNetworkString("XP_Pedo_MusicAddToQueue")
-util.AddNetworkString("XP_Pedo_MusicQueueVote")
+util.AddNetworkString("SuperPedobear_List")
+util.AddNetworkString("SuperPedobear_MusicQueue")
+util.AddNetworkString("SuperPedobear_MusicAddToQueue")
+util.AddNetworkString("SuperPedobear_MusicQueueVote")
 
 local LegitUse
 
@@ -46,7 +46,7 @@ function GM:PlayerInitialSpawn(ply)
 
 	if ply:IsBot() then
 		ply:SetTeam(TEAM_VICTIMS)
-		ply:SetNWFloat("XP_Pedo_PedoChance", 0)
+		ply:SetNWFloat("SuperPedobear_PedoChance", 0)
 	else
 		ply:SetTeam(TEAM_UNASSIGNED)
 		GAMEMODE:LoadChances(ply)
@@ -98,7 +98,7 @@ end
 
 function GM:PedoVars(ply)
 
-	net.Start("XP_Pedo_Vars")
+	net.Start("SuperPedobear_Vars")
 		net.WriteBool(GAMEMODE.Vars.Round.Start or false)
 		net.WriteBool(GAMEMODE.Vars.Round.PreStart or false)
 		net.WriteFloat(GAMEMODE.Vars.Round.PreStartTime or 0)
@@ -156,7 +156,7 @@ end
 
 function GM:PedoMusic(src, pre, ply, name)
 
-	net.Start("XP_Pedo_Music")
+	net.Start("SuperPedobear_Music")
 		net.WriteString(src or "")
 		net.WriteBool(pre or false)
 		net.WriteString(name or "")
@@ -165,12 +165,12 @@ function GM:PedoMusic(src, pre, ply, name)
 end
 
 function GM:SendMusicQueue(ply)
-	net.Start("XP_Pedo_MusicQueue")
+	net.Start("SuperPedobear_MusicQueue")
 		net.WriteTable(GAMEMODE.Vars.MusicQueue or {})
 	if IsValid(ply) then net.Send(ply) else net.Broadcast() end
 end
 
-net.Receive("XP_Pedo_MusicAddToQueue", function(bits, ply)
+net.Receive("SuperPedobear_MusicAddToQueue", function(bits, ply)
 	local music = net.ReadString()
 	GAMEMODE:MusicQueueAdd(ply, music)
 end)
@@ -182,7 +182,7 @@ function GM:MusicQueueAdd(ply, musicsrc)
 	GAMEMODE:SendMusicQueue()
 end
 
-net.Receive("XP_Pedo_MusicQueueVote", function(bits, ply)
+net.Receive("SuperPedobear_MusicQueueVote", function(bits, ply)
 	local qply = net.ReadEntity()
 	GAMEMODE:MusicQueueVote(ply, qply)
 end)
@@ -255,7 +255,7 @@ function GM:PlayerStats()
 		end
 	end
 
-	net.Start("XP_Pedo_PlayerStats")
+	net.Start("SuperPedobear_PlayerStats")
 		net.WriteInt(GAMEMODE.Vars.victims, 32)
 		net.WriteInt(GAMEMODE.Vars.downvictims or 0, 32)
 	net.Broadcast()
@@ -367,7 +367,7 @@ function GM:DoTheVictoryDance(wteam)
 
 		end
 
-		timer.Create("XP_Pedo_ReviewPlayers", 2, 0, function()
+		timer.Create("SuperPedobear_ReviewPlayers", 2, 0, function()
 
 			if GAMEMODE.Vars.Round.End or GAMEMODE.Vars.Round.TempEnd then
 
@@ -381,7 +381,7 @@ function GM:DoTheVictoryDance(wteam)
 
 			else
 
-				timer.Remove("XP_Pedo_ReviewPlayers")
+				timer.Remove("SuperPedobear_ReviewPlayers")
 
 			end
 
@@ -529,11 +529,11 @@ function GM:RoundThink()
 
 				for k, v in RandomPairs(plys) do
 
-					if !Pedos[PedoIndex] or (IsValid(Pedos[PedoIndex]) and (Pedos[PedoIndex]:GetNWFloat("XP_Pedo_PedoChance", 0) < v:GetNWFloat("XP_Pedo_PedoChance", 0))) then
+					if !Pedos[PedoIndex] or (IsValid(Pedos[PedoIndex]) and (Pedos[PedoIndex]:GetNWFloat("SuperPedobear_PedoChance", 0) < v:GetNWFloat("SuperPedobear_PedoChance", 0))) then
 						Pedos[PedoIndex] = v
 					end
 
-					GAMEMODE:Log(v:GetName() .. " have " .. (v:GetNWFloat("XP_Pedo_PedoChance", 0) * 100) .. "% chance to be a Pedobear" .. Either(Pedos[PedoIndex] == v, " and is currently selected", ""), nil, true)
+					GAMEMODE:Log(v:GetName() .. " have " .. (v:GetNWFloat("SuperPedobear_PedoChance", 0) * 100) .. "% chance to be a Pedobear" .. Either(Pedos[PedoIndex] == v, " and is currently selected", ""), nil, true)
 
 				end
 
@@ -542,7 +542,7 @@ function GM:RoundThink()
 				if IsValid(Pedos[PedoIndex]) then
 					Pedos[PedoIndex]:SetTeam(TEAM_PEDOBEAR)
 					Pedos[PedoIndex]:KillSilent()
-					Pedos[PedoIndex]:SetNWFloat("XP_Pedo_PedoChance", 0)
+					Pedos[PedoIndex]:SetNWFloat("SuperPedobear_PedoChance", 0)
 					PedoIndex = PedoIndex + 1
 				end
 
@@ -555,16 +555,16 @@ function GM:RoundThink()
 			for k, v in pairs(Pedos) do
 
 				--PrintMessage( HUD_PRINTTALK, v:Nick().." is "..tw.." pedobear!" )
-				v:SendLua([[LocalPlayer():EmitSound("pedo_yourethepedo") system.FlashWindow()]])
+				v:SendLua([[LocalPlayer():EmitSound("superpedobear_yourethepedo") system.FlashWindow()]])
 				GAMEMODE:PedoAFKCare(v)
 
 			end
 
-			net.Start("XP_Pedo_List")
+			net.Start("SuperPedobear_List")
 				net.WriteTable(Pedos)
 			net.Broadcast()
 
-			timer.Create("XP_Pedo_TempoStart", 0.2, 1, function()
+			timer.Create("SuperPedobear_TempoStart", 0.2, 1, function()
 
 				local custommusic = false
 
@@ -595,7 +595,7 @@ function GM:RoundThink()
 
 				GAMEMODE:PlayerStats()
 
-				timer.Remove("XP_Pedo_TempoStart")
+				timer.Remove("SuperPedobear_TempoStart")
 
 			end)
 
@@ -603,7 +603,7 @@ function GM:RoundThink()
 
 			GAMEMODE.Vars.Round.PreStart = false
 
-			net.Start("XP_Pedo_Notif")
+			net.Start("SuperPedobear_Notif")
 				net.WriteString("The gamemode is not registered!")
 				net.WriteInt(1, 3)
 				net.WriteFloat(5)
@@ -614,7 +614,7 @@ function GM:RoundThink()
 
 			GAMEMODE.Vars.Round.PreStart = false
 
-			net.Start("XP_Pedo_Notif")
+			net.Start("SuperPedobear_Notif")
 				net.WriteString("Not enough players!")
 				net.WriteInt(1, 3)
 				net.WriteFloat(5)
@@ -667,7 +667,7 @@ function GM:RoundThink()
 				MapVote.Start(nil, nil, nil, {"spb_", "ph_"})
 			end
 
-			timer.Create( "XP_Pedo_TempoPreEnd", 9.8, 1, function()
+			timer.Create( "SuperPedobear_TempoPreEnd", 9.8, 1, function()
 
 				for k, v in pairs(team.GetPlayers(TEAM_PEDOBEAR)) do
 					v:KillSilent()
@@ -677,11 +677,11 @@ function GM:RoundThink()
 					if v:Alive() then v:KillSilent() end
 				end
 
-				timer.Remove("XP_Pedo_TempoPreEnd")
+				timer.Remove("SuperPedobear_TempoPreEnd")
 
 			end)
 
-			timer.Create("XP_Pedo_TempoEnd", 10, 1, function()
+			timer.Create("SuperPedobear_TempoEnd", 10, 1, function()
 
 				GAMEMODE.Vars.Round.Start = false
 				GAMEMODE.Vars.Round.End = false
@@ -691,7 +691,7 @@ function GM:RoundThink()
 				GAMEMODE.Vars.CurrentMusic = nil
 				GAMEMODE.Vars.CurrentMusicName = nil
 
-				net.Start("XP_Pedo_List")
+				net.Start("SuperPedobear_List")
 					net.WriteTable({})
 				net.Broadcast()
 
@@ -701,7 +701,7 @@ function GM:RoundThink()
 
 				for k, v in pairs(team.GetPlayers(TEAM_VICTIMS)) do
 					if !v:Alive() then v:Spawn() end
-					if !v:IsBot() and !v.IsAFK then v:SetNWFloat("XP_Pedo_PedoChance", v:GetNWFloat("XP_Pedo_PedoChance", 0) + 0.01) end
+					if !v:IsBot() and !v.IsAFK then v:SetNWFloat("SuperPedobear_PedoChance", v:GetNWFloat("SuperPedobear_PedoChance", 0) + 0.01) end
 				end
 
 				for k, v in pairs(team.GetPlayers(TEAM_PEDOBEAR)) do
@@ -714,7 +714,7 @@ function GM:RoundThink()
 				GAMEMODE:PedoVars()
 				GAMEMODE:PlayerStats()
 
-				timer.Remove("XP_Pedo_TempoEnd")
+				timer.Remove("SuperPedobear_TempoEnd")
 
 			end)
 
@@ -774,8 +774,8 @@ function GM:DoPlayerDeath(ply, attacker, dmginfo)
 
 		if attacker != ply and attacker:Team() == TEAM_PEDOBEAR then
 			attacker:AddFrags(1)
-			attacker:SetNWInt("XP_Pedo_TotalVictims", attacker:GetNWInt("XP_Pedo_TotalVictims", 0) + 1)
-			attacker:SetNWInt("XP_Pedo_VictimsCurrency", attacker:GetNWInt("XP_Pedo_VictimsCurrency", 0) + 1)
+			attacker:SetNWInt("SuperPedobear_TotalVictims", attacker:GetNWInt("SuperPedobear_TotalVictims", 0) + 1)
+			attacker:SetNWInt("SuperPedobear_VictimsCurrency", attacker:GetNWInt("SuperPedobear_VictimsCurrency", 0) + 1)
 			if GAMEMODE:IsSeasonalEvent("Halloween") or ply:GetInfoNum("superpedobear_cl_jumpscare", 0) == 1 then
 				if GAMEMODE.PlayerEasterEgg[attacker:SteamID64()] and GAMEMODE.PlayerEasterEgg[attacker:SteamID64()][2] then
 					ply:SendLua("GAMEMODE:CallJumpscare('" .. GAMEMODE.PlayerEasterEgg[attacker:SteamID64()][2] .. "')")
@@ -825,7 +825,7 @@ function GM:ShowSpare2(ply) --TODO Jukebox
 	ply:SendLua("GAMEMODE:JukeboxMenu()")
 end
 
-net.Receive("XP_Pedo_Taunt", function(bits,ply)
+net.Receive("SuperPedobear_Taunt", function(bits,ply)
 	local tauntid = net.ReadInt(32)
 	taunt = GAMEMODE.Sounds.Taunts[tauntid]
 	GAMEMODE:Taunt(ply, taunt, tauntid)
@@ -890,7 +890,7 @@ function GM:CreateDummy(ply)
 		if IsValid(ply.Dummy) then
 			ply.Dummy:Remove()
 		end
-		local ent = ents.Create("pedo_dummy")
+		local ent = ents.Create("superpedobear_dummy")
 		ent:SetPlayer(ply)
 		ent:Spawn()
 		ply.Dummy = ent
@@ -963,11 +963,11 @@ function GM:AFKThink(ply, ucmd)
 
 			GAMEMODE:Log(ply:GetName() .. " is no longer afk!", nil, true)
 
-			net.Start("XP_Pedo_AFK")
+			net.Start("SuperPedobear_AFK")
 				net.WriteFloat(0)
 			net.Send(ply)
 
-			timer.Remove("XP_Pedo_AFK" .. ply:UserID())
+			timer.Remove("SuperPedobear_AFK" .. ply:UserID())
 
 		end
 
@@ -988,14 +988,14 @@ function GM:PedoAFKCare(ply)
 
 	if ply.IsAFK and ply:Team() == TEAM_PEDOBEAR then
 
-		net.Start("XP_Pedo_AFK")
+		net.Start("SuperPedobear_AFK")
 			net.WriteFloat(CurTime() + superpedobear_afk_action:GetInt())
 		net.Send(ply)
 
 		local userid = ply:UserID()
-		timer.Create("XP_Pedo_AFK" .. userid, superpedobear_afk_action:GetInt(), 1, function()
+		timer.Create("SuperPedobear_AFK" .. userid, superpedobear_afk_action:GetInt(), 1, function()
 			if IsValid(ply) and ply.IsAFK and ply:Alive() and ply:Team() == TEAM_PEDOBEAR then GAMEMODE:PlayerJoinTeam( ply, TEAM_VICTIMS ) end
-			timer.Remove("XP_Pedo_AFK" .. userid)
+			timer.Remove("SuperPedobear_AFK" .. userid)
 		end)
 
 	end
@@ -1029,7 +1029,7 @@ end
 
 function GM:SendMusicIndex(ply)
 
-	net.Start("XP_Pedo_MusicList")
+	net.Start("SuperPedobear_MusicList")
 		net.WriteTable(GAMEMODE.Musics.musics)
 		net.WriteTable(GAMEMODE.Musics.premusics)
 	if IsValid(ply) then net.Send(ply) else net.Broadcast() end
@@ -1156,11 +1156,11 @@ function GM:StoreChances(ply)
 
 		if pl:IsBot() then return end
 
-		local chance = pl:GetNWFloat("XP_Pedo_PedoChance", nil)
+		local chance = pl:GetNWFloat("SuperPedobear_PedoChance", nil)
 
 		if chance != nil then
 
-			pl:SetPData("XP_Pedo_PedoChance", math.floor(math.Clamp(chance, 0, 100) * 100))
+			pl:SetPData("SuperPedobear_PedoChance", math.floor(math.Clamp(chance, 0, 100) * 100))
 
 			GAMEMODE:Log("Saved the " .. (chance * 100) .. "% pedobear chance of " .. pl:GetName())
 
@@ -1192,19 +1192,19 @@ function GM:LoadChances(ply)
 
 		if pl:IsBot() then return end
 
-		local chance = pl:GetPData("XP_Pedo_PedoChance", nil)
+		local chance = pl:GetPData("SuperPedobear_PedoChance", nil)
 
 		if chance != nil then
 
 			chance = chance * 0.01
 
-			pl:SetNWFloat("XP_Pedo_PedoChance", chance)
+			pl:SetNWFloat("SuperPedobear_PedoChance", chance)
 
 			GAMEMODE:Log("Loaded the " .. (chance * 100) .. "% pedobear chance of " .. pl:GetName())
 
 		else
 
-			pl:SetNWFloat("XP_Pedo_PedoChance", 0.01)
+			pl:SetNWFloat("SuperPedobear_PedoChance", 0.01)
 
 			GAMEMODE:Log("No pedobear chance found for " .. pl:GetName() .. ", default was set")
 
@@ -1234,14 +1234,14 @@ function GM:StorePlayerInfo(ply)
 
 		if pl:IsBot() then return end
 
-		local totalvictims = pl:GetNWInt("XP_Pedo_TotalVictims", nil)
-		local victimscurrency = pl:GetNWInt("XP_Pedo_VictimsCurrency", nil)
+		local totalvictims = pl:GetNWInt("SuperPedobear_TotalVictims", nil)
+		local victimscurrency = pl:GetNWInt("SuperPedobear_VictimsCurrency", nil)
 
 		if totalvictims != nil then
-			pl:SetPData("XP_Pedo_TotalVictims", totalvictims)
+			pl:SetPData("SuperPedobear_TotalVictims", totalvictims)
 		end
 		if victimscurrency != nil then
-			pl:SetPData("XP_Pedo_VictimsCurrency", victimscurrency)
+			pl:SetPData("SuperPedobear_VictimsCurrency", victimscurrency)
 		end
 
 		GAMEMODE:Log("Saved the player info of " .. pl:GetName())
@@ -1270,8 +1270,8 @@ function GM:LoadPlayerInfo(ply)
 
 		if pl:IsBot() then return end
 
-		pl:SetNWInt("XP_Pedo_TotalVictims", pl:GetPData("XP_Pedo_TotalVictims", 0))
-		pl:SetNWInt("XP_Pedo_VictimsCurrency", pl:GetPData("XP_Pedo_VictimsCurrency", 0))
+		pl:SetNWInt("SuperPedobear_TotalVictims", pl:GetPData("SuperPedobear_TotalVictims", 0))
+		pl:SetNWInt("SuperPedobear_VictimsCurrency", pl:GetPData("SuperPedobear_VictimsCurrency", 0))
 
 		GAMEMODE:Log("Loaded the player info of " .. pl:GetName())
 

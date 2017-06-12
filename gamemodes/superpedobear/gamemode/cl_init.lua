@@ -17,7 +17,7 @@ include("cl_pedovan.lua")
 
 DEFINE_BASECLASS("gamemode_base")
 
-surface.CreateFont("XP_Pedo_TIME", {
+surface.CreateFont("SuperPedobear_TIME", {
 	font = "Roboto",
 	size = 75,
 	weight = 500,
@@ -33,7 +33,7 @@ surface.CreateFont("XP_Pedo_TIME", {
 	additive = false,
 	outline = false,
 })
-surface.CreateFont("XP_Pedo_RND", {
+surface.CreateFont("SuperPedobear_RND", {
 	font = "Roboto",
 	size = 50,
 	weight = 500,
@@ -49,7 +49,7 @@ surface.CreateFont("XP_Pedo_RND", {
 	additive = false,
 	outline = false,
 })
-surface.CreateFont("XP_Pedo_TXT", {
+surface.CreateFont("SuperPedobear_TXT", {
 	font = "Roboto",
 	size = 40,
 	weight = 500,
@@ -65,7 +65,7 @@ surface.CreateFont("XP_Pedo_TXT", {
 	additive = false,
 	outline = false,
 })
-surface.CreateFont("XP_Pedo_HT", {
+surface.CreateFont("SuperPedobear_HT", {
 	font = "Roboto",
 	size = 24,
 	weight = 500,
@@ -81,7 +81,7 @@ surface.CreateFont("XP_Pedo_HT", {
 	additive = false,
 	outline = false,
 })
-surface.CreateFont("XP_Pedo_HUDname", {
+surface.CreateFont("SuperPedobear_HUDname", {
 	font = "Roboto",
 	size = 20,
 	weight = 500,
@@ -98,14 +98,14 @@ surface.CreateFont("XP_Pedo_HUDname", {
 	outline = false,
 })
 
-net.Receive("XP_Pedo_PlayerStats", function( len )
+net.Receive("SuperPedobear_PlayerStats", function( len )
 
 	GAMEMODE.Vars.victims = net.ReadInt(32)
 	GAMEMODE.Vars.downvictims = net.ReadInt(32)
 
 end)
 
-net.Receive("XP_Pedo_Vars", function( len )
+net.Receive("SuperPedobear_Vars", function( len )
 
 	GAMEMODE.Vars.Round.Start = tobool(net.ReadBool())
 	GAMEMODE.Vars.Round.PreStart = tobool(net.ReadBool())
@@ -118,7 +118,7 @@ net.Receive("XP_Pedo_Vars", function( len )
 
 end)
 
-net.Receive("XP_Pedo_Music", function( len )
+net.Receive("SuperPedobear_Music", function( len )
 
 	local src = net.ReadString()
 	local pre = net.ReadBool()
@@ -128,7 +128,7 @@ net.Receive("XP_Pedo_Music", function( len )
 
 end)
 
-net.Receive("XP_Pedo_AFK", function( len )
+net.Receive("SuperPedobear_AFK", function( len )
 
 	GAMEMODE.Vars.AfkTime = net.ReadFloat()
 
@@ -136,20 +136,20 @@ net.Receive("XP_Pedo_AFK", function( len )
 
 end)
 
-net.Receive("XP_Pedo_MusicList", function( len )
+net.Receive("SuperPedobear_MusicList", function( len )
 
 	GAMEMODE.Musics.musics = net.ReadTable()
 	GAMEMODE.Musics.premusics = net.ReadTable()
 
 end)
 
-net.Receive("XP_Pedo_List", function( len )
+net.Receive("SuperPedobear_List", function( len )
 
 	GAMEMODE.Vars.Pedos = net.ReadTable()
 
 end)
 
-net.Receive("XP_Pedo_MusicQueue", function(len)
+net.Receive("SuperPedobear_MusicQueue", function(len)
 	GAMEMODE.Vars.MusicQueue = net.ReadTable()
 end)
 
@@ -272,7 +272,7 @@ function GM:HUDPaint()
 		TheTime = superpedobear_round_pretime:GetFloat()
 	end
 
-	draw.DrawText(GAMEMODE:FormatTime(TheTime), "XP_Pedo_TIME", ScrW() / 2, hudoffset, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER)
+	draw.DrawText(GAMEMODE:FormatTime(TheTime), "SuperPedobear_TIME", ScrW() / 2, hudoffset, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER)
 
 
 	--[[ THE ROUND COUNT ]]--
@@ -282,7 +282,7 @@ function GM:HUDPaint()
 		rnd = "∞"
 	end
 
-	draw.DrawText("Round " .. rnd, "XP_Pedo_RND", ScrW() / 2, 60 + hudoffset, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER)
+	draw.DrawText("Round " .. rnd, "SuperPedobear_RND", ScrW() / 2, 60 + hudoffset, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER)
 
 
 	--[[ THE ROUND STATUS ]]--
@@ -304,19 +304,19 @@ function GM:HUDPaint()
 		if txt != "" then
 
 			draw.RoundedBox(16, ScrW() / 2 - 300, 110 + hudoffset, 600, 40, Color(0, 0, 0, 200))
-			draw.DrawText(txt, "XP_Pedo_TXT", ScrW() / 2, 110 + hudoffset, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+			draw.DrawText(txt, "SuperPedobear_TXT", ScrW() / 2, 110 + hudoffset, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
 
 		end
 
 	elseif !Start and !PreStart and GAMEMODE.Vars.victims < 2 then
 
 		draw.RoundedBox(16, ScrW() / 2 - 200, 110 + hudoffset, 400, 55, Color(0, 0, 0, 200))
-		draw.DrawText("Waiting for players", "XP_Pedo_RND", ScrW() / 2, 110 + hudoffset, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+		draw.DrawText("Waiting for players", "SuperPedobear_RND", ScrW() / 2, 110 + hudoffset, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
 
 	elseif PreStart then
 
 		draw.RoundedBox(16, ScrW() / 2 - 125, 110 + hudoffset, 250, 55, Color(0, 0, 0, 200))
-		draw.DrawText("Preparing...", "XP_Pedo_RND", ScrW() / 2, 110 + hudoffset, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+		draw.DrawText("Preparing...", "SuperPedobear_RND", ScrW() / 2, 110 + hudoffset, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
 
 	end
 
@@ -349,10 +349,10 @@ function GM:HUDPaint()
 
 		if txt != "" then
 
-			surface.SetFont("XP_Pedo_HT")
+			surface.SetFont("SuperPedobear_HT")
 			w, h = surface.GetTextSize(txt)
 			draw.RoundedBoxEx(16, hudoffset, hudoffset, w + 16, h + 16, Color(0, 0, 0, 200), framerborder, framerborder, framerborder, true)
-			draw.DrawText(txt, "XP_Pedo_HT", hudoffset + 8 + w / 2, hudoffset + 8, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+			draw.DrawText(txt, "SuperPedobear_HT", hudoffset + 8 + w / 2, hudoffset + 8, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
 
 		end
 
@@ -363,7 +363,7 @@ function GM:HUDPaint()
 
 	if GAMEMODE.Vars.AfkTime and GAMEMODE.Vars.AfkTime - CurTime() >= 0 then
 		draw.RoundedBox(16, ScrW() / 2 - 300, 165, 600, 210, Color(0, 0, 0, 200))
-		draw.DrawText("Hey you're kind of afk!\nIf you're still afk in " .. GAMEMODE:FormatTime(GAMEMODE.Vars.AfkTime - CurTime()) .. "\nYou will be kicked out\n of the role of Pedobear", "XP_Pedo_RND", ScrW() / 2, 165, Color(255, yay(255), yay(255), 255), TEXT_ALIGN_CENTER)
+		draw.DrawText("Hey you're kind of afk!\nIf you're still afk in " .. GAMEMODE:FormatTime(GAMEMODE.Vars.AfkTime - CurTime()) .. "\nYou will be kicked out\n of the role of Pedobear", "SuperPedobear_RND", ScrW() / 2, 165, Color(255, yay(255), yay(255), 255), TEXT_ALIGN_CENTER)
 	end
 
 
@@ -371,11 +371,11 @@ function GM:HUDPaint()
 
 	if Start then
 
-		surface.SetFont("XP_Pedo_TXT")
+		surface.SetFont("SuperPedobear_TXT")
 		local stxt = "Victims Left: " .. (GAMEMODE.Vars.victims or 0) .. "\nVictims Captured: " .. (GAMEMODE.Vars.downvictims or 0)
 		local w, h = surface.GetTextSize(stxt)
 		draw.RoundedBoxEx(16, hudoffset, ScrH() / 2 - 10, w + 16, h + 20, Color(0, 0, 0, 200), framerborder, true, framerborder, true)
-		draw.DrawText(stxt, "XP_Pedo_TXT", w + hudoffset + 8, ScrH() / 2, Color(255, 255, 255, 255), TEXT_ALIGN_RIGHT)
+		draw.DrawText(stxt, "SuperPedobear_TXT", w + hudoffset + 8, ScrH() / 2, Color(255, 255, 255, 255), TEXT_ALIGN_RIGHT)
 
 	end
 
@@ -394,10 +394,10 @@ function GM:HUDPaint()
 	end
 
 	if tips != "" then
-		surface.SetFont("XP_Pedo_HT")
+		surface.SetFont("SuperPedobear_HT")
 		w, h = surface.GetTextSize(tips)
 		draw.RoundedBoxEx(8, ScrW() / 2 - w / 2 - 4, ScrH() - h - hudoffset, w + 8, h, Color(0, 0, 0, 200), true, true, framerborder, framerborder)
-		draw.DrawText(tips, "XP_Pedo_HT", ScrW() / 2, ScrH() - h - hudoffset, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+		draw.DrawText(tips, "SuperPedobear_HT", ScrW() / 2, ScrH() - h - hudoffset, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
 		if GAMEMODE:IsSeasonalEvent("AprilFool") then draw.DrawText("PedoTips™", "DermaDefault", ScrW() / 2 - w / 2, ScrH() - h, Color(255, 255, 255, 64), TEXT_ALIGN_LEFT) end
 	end
 
@@ -406,10 +406,10 @@ function GM:HUDPaint()
 
 	if plyTeam == TEAM_UNASSIGNED then
 		draw.RoundedBox(8, ScrW() / 2 - 160, ScrH() / 2 - 20, 320, 40, Color(0, 0, 0, yay(200)))
-		draw.DrawText("Press any key to join!", "XP_Pedo_TXT", ScrW() / 2, ScrH() / 2 - 20, Color(255, 255, 255, yay(255)), TEXT_ALIGN_CENTER)
+		draw.DrawText("Press any key to join!", "SuperPedobear_TXT", ScrW() / 2, ScrH() / 2 - 20, Color(255, 255, 255, yay(255)), TEXT_ALIGN_CENTER)
 	elseif plyTeam == TEAM_VICTIMS and !Start and !plyAlive then
 		draw.RoundedBox(8, ScrW() / 2 - 200, ScrH() / 2 - 20, 400, 40, Color(0, 0, 0, yay(200)))
-		draw.DrawText("Press any key to respawn!", "XP_Pedo_TXT", ScrW() / 2, ScrH() / 2 - 20, Color(255, 255, 255, yay(255)), TEXT_ALIGN_CENTER)
+		draw.DrawText("Press any key to respawn!", "SuperPedobear_TXT", ScrW() / 2, ScrH() / 2 - 20, Color(255, 255, 255, yay(255)), TEXT_ALIGN_CENTER)
 	end
 
 
@@ -420,17 +420,17 @@ function GM:HUDPaint()
 		if weldingstate == 2 then
 
 			draw.RoundedBox(8, ScrW() / 2 - 100, ScrH() / 2 + 100, 200, 26, Color(0, 0, 0, 200))
-			draw.DrawText("This prop is too far", "XP_Pedo_HT", ScrW() / 2, ScrH() / 2 + 100, Color(255, 0, 0, 255), TEXT_ALIGN_CENTER)
+			draw.DrawText("This prop is too far", "SuperPedobear_HT", ScrW() / 2, ScrH() / 2 + 100, Color(255, 0, 0, 255), TEXT_ALIGN_CENTER)
 
 		elseif weldingstate == 3 then
 
 			draw.RoundedBox(8, ScrW() / 2 - 150, ScrH() / 2 + 100, 300, 26, Color(0, 0, 0, 200) )
-			draw.DrawText("The props are too far each other", "XP_Pedo_HT", ScrW() / 2, ScrH() / 2 + 100, Color(255, 0, 0, 255), TEXT_ALIGN_CENTER)
+			draw.DrawText("The props are too far each other", "SuperPedobear_HT", ScrW() / 2, ScrH() / 2 + 100, Color(255, 0, 0, 255), TEXT_ALIGN_CENTER)
 
 		elseif IsValid(welding) then
 
 			draw.RoundedBox(8, ScrW() / 2 - 100, ScrH() / 2 + 100, 200, 26, Color(0, 0, 0, yay(200)))
-			draw.DrawText("Click another prop", "XP_Pedo_HT", ScrW() / 2, ScrH() / 2 + 100, Color(255, 255, 255, yay(255)), TEXT_ALIGN_CENTER)
+			draw.DrawText("Click another prop", "SuperPedobear_HT", ScrW() / 2, ScrH() / 2 + 100, Color(255, 255, 255, yay(255)), TEXT_ALIGN_CENTER)
 
 		end
 
@@ -448,9 +448,9 @@ function GM:HUDPaint()
 	end
 
 	if plyTeam != TEAM_UNASSIGNED and splyTeam != TEAM_SPECTATOR then
-		local splynick = GAMEMODE:LimitString(sply:Nick(), 200, "XP_Pedo_HUDname")
-		draw.DrawText(splynick, "XP_Pedo_HUDname", 100 + 1 + hudoffset, ScrH() - 200 + 1 - hudoffset, Color(0, 0, 0, 255), TEXT_ALIGN_CENTER)
-		draw.DrawText(splynick, "XP_Pedo_HUDname", 100 + hudoffset, ScrH() - 200 - hudoffset, col, TEXT_ALIGN_CENTER)
+		local splynick = GAMEMODE:LimitString(sply:Nick(), 200, "SuperPedobear_HUDname")
+		draw.DrawText(splynick, "SuperPedobear_HUDname", 100 + 1 + hudoffset, ScrH() - 200 + 1 - hudoffset, Color(0, 0, 0, 255), TEXT_ALIGN_CENTER)
+		draw.DrawText(splynick, "SuperPedobear_HUDname", 100 + hudoffset, ScrH() - 200 - hudoffset, col, TEXT_ALIGN_CENTER)
 	end
 
 
@@ -465,10 +465,10 @@ function GM:HUDPaint()
 		return "Draw game!"
 	end
 	if End then
-		surface.SetFont("XP_Pedo_TXT")
+		surface.SetFont("SuperPedobear_TXT")
 		local w, h = surface.GetTextSize(winstr(GAMEMODE.Vars.Round.Win))
 		draw.RoundedBox(16, ScrW() / 2 - w / 2 - 8, ScrH() / 2 - 80, w + 16, h, Color(0, 0, 0, 220))
-		draw.DrawText(winstr(GAMEMODE.Vars.Round.Win), "XP_Pedo_TXT", ScrW() / 2, ScrH() / 2 - 80, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+		draw.DrawText(winstr(GAMEMODE.Vars.Round.Win), "SuperPedobear_TXT", ScrW() / 2, ScrH() / 2 - 80, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
 	end
 
 
@@ -499,9 +499,9 @@ function GM:HUDPaint()
 			rtitle = GAMEMODE:PrettyMusicName(string.GetFileFromFilename(GAMEMODE.Vars.Music:GetFileName()))
 		end
 
-		local title = "♪ " .. GAMEMODE:LimitString(rtitle, 216, "XP_Pedo_HUDname") .. " ♪"
-		draw.DrawText(title, "XP_Pedo_HUDname", ScrW() - 127 - hudoffset, ScrH() - 99 + visspace - hudoffset, Color(0, 0, 0, 255), TEXT_ALIGN_CENTER)
-		draw.DrawText(title, "XP_Pedo_HUDname", ScrW() - 128 - hudoffset, ScrH() - 100 + visspace - hudoffset, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+		local title = "♪ " .. GAMEMODE:LimitString(rtitle, 216, "SuperPedobear_HUDname") .. " ♪"
+		draw.DrawText(title, "SuperPedobear_HUDname", ScrW() - 127 - hudoffset, ScrH() - 99 + visspace - hudoffset, Color(0, 0, 0, 255), TEXT_ALIGN_CENTER)
+		draw.DrawText(title, "SuperPedobear_HUDname", ScrW() - 128 - hudoffset, ScrH() - 100 + visspace - hudoffset, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
 
 		draw.RoundedBox(0, ScrW() - 256 - hudoffset, ScrH() - 80 + visspace - hudoffset, 256, 16, Color(0, 0, 0, 200)) --Timetrack
 		draw.RoundedBox(3, ScrW() - 256 - hudoffset, ScrH() - 77 + visspace - hudoffset, math.Remap(time, 0, totaltime, 0, 256), 10, Color(255, 255, 255, 200))
@@ -515,11 +515,11 @@ function GM:HUDPaint()
 		surface.DrawLine(ScrW() - 256 - hudoffset, ScrH() - 48 + visspace - hudoffset, ScrW() - hudoffset, ScrH() - 48 + visspace - hudoffset)
 
 		local timetxt = GAMEMODE:FormatTimeTri(time) .. "/" .. GAMEMODE:FormatTimeTri(totaltime) --Time
-		surface.SetFont("XP_Pedo_HUDname")
+		surface.SetFont("SuperPedobear_HUDname")
 		local tw, _ = surface.GetTextSize(timetxt)
 		draw.RoundedBox(4, ScrW() - 128 - tw / 2 - 4 - hudoffset, ScrH() - 80 + visspace - hudoffset, tw + 8, 16, Color(0, 0, 0, 220))
-		draw.DrawText(timetxt, "XP_Pedo_HUDname", ScrW() - 127 - hudoffset, ScrH() - 81 + visspace - hudoffset, Color(0, 0, 0, 255), TEXT_ALIGN_CENTER)
-		draw.DrawText(timetxt, "XP_Pedo_HUDname", ScrW() - 128 - hudoffset, ScrH() - 82 + visspace - hudoffset, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+		draw.DrawText(timetxt, "SuperPedobear_HUDname", ScrW() - 127 - hudoffset, ScrH() - 81 + visspace - hudoffset, Color(0, 0, 0, 255), TEXT_ALIGN_CENTER)
+		draw.DrawText(timetxt, "SuperPedobear_HUDname", ScrW() - 128 - hudoffset, ScrH() - 82 + visspace - hudoffset, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
 
 		if visuok then
 
@@ -611,19 +611,19 @@ function GM:HUDPaintBackground()
 		if stamina != 200 then
 			draw.RoundedBoxEx(2, 200 + hudoffset, ScrH() - 175 - hudoffset, 200, 50, Color(0, 0, 0, 200), false, true, false, true)
 			draw.RoundedBoxEx(2, 200 + hudoffset, ScrH() - 175 - hudoffset, stamina, 50, Color(col.r, col.g, col.b, 150 * life), false, true, false, true)
-			draw.DrawText("Stamina", "XP_Pedo_TXT", 300 + hudoffset, ScrH() - 170 - hudoffset, Either(sprintlock, Color(255, 0, 0, 255), Color(255, 255, 255, 255)), TEXT_ALIGN_CENTER)
+			draw.DrawText("Stamina", "SuperPedobear_TXT", 300 + hudoffset, ScrH() - 170 - hudoffset, Either(sprintlock, Color(255, 0, 0, 255), Color(255, 255, 255, 255)), TEXT_ALIGN_CENTER)
 		end
 
 		--[[if usedelay != 200 and plyTeam == TEAM_VICTIMS then
 			draw.RoundedBoxEx( 2, 200, ScrH()-125, 200, 50, Color( 0, 0, 0, 200 ), false, true, false, true )
 			draw.RoundedBoxEx( 2, 200, ScrH()-125, usedelay, 50, Color( col.r, col.g, col.b, 150*life ), false, true, false, true )
-			draw.DrawText( "", "XP_Pedo_TXT", 300, ScrH()-120, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
+			draw.DrawText( "", "SuperPedobear_TXT", 300, ScrH()-120, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
 		end]]
 
 		if taunt != 200 then
 			draw.RoundedBoxEx(2, 200 + hudoffset, ScrH() - 75 - hudoffset, 200, 50, Color(0, 0, 0, 200), false, true, false, true)
 			draw.RoundedBoxEx(2, 200 + hudoffset, ScrH() - 75 - hudoffset, taunt, 50, Color(col.r, col.g, col.b, 150 * life), false, true, false, true)
-			draw.DrawText("Taunt", "XP_Pedo_TXT", 300 + hudoffset, ScrH() - 70 - hudoffset, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+			draw.DrawText("Taunt", "SuperPedobear_TXT", 300 + hudoffset, ScrH() - 70 - hudoffset, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
 		end
 
 	end
@@ -748,7 +748,7 @@ function GM:DrawHealthFace(ply, x, y)
 	cam.IgnoreZ(false)
 end
 
-net.Receive("XP_Pedo_Notif", function(len)
+net.Receive("SuperPedobear_Notif", function(len)
 
 	local str = net.ReadString() or ""
 	local ne = net.ReadInt(3) or 0
@@ -782,7 +782,7 @@ function GM:HUDDrawTargetID()
 	local text = ""
 	local font = "DermaLarge"
 
-	if trace.Entity:IsPlayer() or trace.Entity:GetClass() == "pedo_dummy" then
+	if trace.Entity:IsPlayer() or trace.Entity:GetClass() == "superpedobear_dummy" then
 		text = trace.Entity:Nick()
 	end
 
@@ -799,7 +799,7 @@ function GM:HUDDrawTargetID()
 
 	draw.SimpleText(text, font, x + 1, y + 1, Color(0, 0, 0, 255))
 	draw.SimpleText(text, font, x + 2, y + 2, Color(0, 0, 0, 126))
-	if trace.Entity:IsPlayer() or trace.Entity:GetClass() == "pedo_dummy" then
+	if trace.Entity:IsPlayer() or trace.Entity:GetClass() == "superpedobear_dummy" then
 		local col = trace.Entity:GetPlayerColor():ToColor()
 		draw.SimpleText(text, font, x, y, col)
 	elseif trace.Entity:IsPlayer() then
@@ -836,14 +836,14 @@ hook.Add("PreDrawHalos", "fnafgmHalos", function()
 			end
 			halo.Add( tab, team.GetColor(TEAM_VICTIMS), 1, 1, 1, true, true )
 
-			for k,v in pairs(ents.FindByClass( "pedo_dummy" )) do
+			for k,v in pairs(ents.FindByClass( "superpedobear_dummy" )) do
 				table.insert(tab3, v)
 			end
 			halo.Add( tab3, Color(0,0,255), 1, 1, 1, true, true )
 
 		else
 
-			for k,v in pairs(ents.FindByClass( "pedo_dummy" )) do
+			for k,v in pairs(ents.FindByClass( "superpedobear_dummy" )) do
 				if v:GetPlayer() == ply then
 					table.insert(tab3, v)
 				end
@@ -1042,7 +1042,7 @@ function GM:StartTaunt(sel)
 
 		if GAMEMODE.Sounds.Taunts[sel][3] != 0 and GAMEMODE.Sounds.Taunts[sel][3] != ply:Team() then return end
 
-		net.Start( "XP_Pedo_Taunt" )
+		net.Start( "SuperPedobear_Taunt" )
 			net.WriteInt(sel,32)
 		net.SendToServer()
 
@@ -1159,7 +1159,7 @@ function GM:GetTeamColor(ent)
 
 	local team = TEAM_UNASSIGNED
 	if ent.Team then team = ent:Team() end
-	if ent:GetClass() == "pedo_dummy" then team = TEAM_VICTIMS end
+	if ent:GetClass() == "superpedobear_dummy" then team = TEAM_VICTIMS end
 	return GAMEMODE:GetTeamNumColor(team)
 
 end
@@ -1222,7 +1222,7 @@ function GM:OnSpawnMenuOpen()
 	GAMEMODE:PedoVan()
 end
 
-hook.Add("CalcView", "XP_Pedo_thirdperson", function(ply, pos, angles, fov)
+hook.Add("CalcView", "SuperPedobear_thirdperson", function(ply, pos, angles, fov)
 
 	if ply:Alive() and ply.ThirdPerson and !ply:IsPlayingTaunt() and ply:Team() != TEAM_SPECTATOR then
 

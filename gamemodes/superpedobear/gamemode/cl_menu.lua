@@ -416,13 +416,6 @@ function GM:SplashScreen()
 		.. "<tr><td class='leftside'>1-9</td><td> Quick taunt</td></tr>"
 		.. '</table>");')
 		pedobearSplashScreenF.SplashScreen:Call('$("#changelog").append("<h2><u>Changelog V' .. (GAMEMODE.Version or '?') .. '</u></h2><table>'
-		.. "<tr><td>> Welcome to this new Splash Screen</td></tr>"
-		.. "<tr><td>> Removed pedochance visibility</td></tr>"
-		.. "<tr><td>> New version of the Xperidia Rank system</td></tr>"
-		.. "<tr><td>> Rework of chat message visibility</td></tr>"
-		.. "<tr><td>> Removed music start when connecting</td></tr>"
-		.. "<tr><td>> Fixed clones positions</td></tr>"
-		.. "<tr><td>> Jukebox menu</td></tr>"
 		.. "<tr><td>> Preparing release</td></tr>"
 		.. '</table>");')
 
@@ -581,7 +574,7 @@ function GM:JukeboxMenu()
 				line.owner = k
 			end
 			function SuperPedobearJukebox.ServerQueue.List:DoDoubleClick(lineID, line)
-				net.Start("XP_Pedo_MusicQueueVote")
+				net.Start("SuperPedobear_MusicQueueVote")
 					net.WriteEntity(line.owner)
 				net.SendToServer()
 			end
@@ -601,7 +594,7 @@ function GM:JukeboxMenu()
 			end
 		end
 		SuperPedobearJukebox.ServerQueue.add2queue.OnEnter = function(self)
-			net.Start("XP_Pedo_MusicAddToQueue")
+			net.Start("SuperPedobear_MusicAddToQueue")
 				net.WriteString(self:GetValue())
 			net.SendToServer()
 			self:SetText(placeholder)

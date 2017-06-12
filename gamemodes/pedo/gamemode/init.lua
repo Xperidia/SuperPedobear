@@ -216,7 +216,7 @@ function GM:MusicQueueSelect()
 	return nil
 end
 
-function GM:PostPlayerDeath( ply )
+function GM:PostPlayerDeath(ply)
 	GAMEMODE:PlayerStats()
 	GAMEMODE:RetrieveXperidiaAccountRank(ply)
 end
@@ -225,7 +225,7 @@ function GM:PlayerDeathSound()
 	return true
 end
 
-function GM:PlayerDeathThink( ply )
+function GM:PlayerDeathThink(ply)
 
 	if ply:Team() == TEAM_PEDOBEAR and GAMEMODE.Vars.Round.Start and !GAMEMODE.Vars.Round.End and !GAMEMODE.Vars.Round.TempEnd then
 		ply:Spawn()
@@ -482,7 +482,7 @@ function GM:RoundThink()
 
 			GAMEMODE.Vars.Round.PreStart = true
 
-			GAMEMODE.Vars.Round.PreStartTime = CurTime() + pedobear_round_pretime:GetFloat()
+			GAMEMODE.Vars.Round.PreStartTime = CurTime() + superpedobear_round_pretime:GetFloat()
 
 			GAMEMODE:SelectMusic(true)
 
@@ -506,7 +506,7 @@ function GM:RoundThink()
 			GAMEMODE.Vars.Round.PreStart = false
 
 			GAMEMODE.Vars.Round.PreStartTime = 0
-			GAMEMODE.Vars.Round.Time = CurTime() + pedobear_round_time:GetFloat()
+			GAMEMODE.Vars.Round.Time = CurTime() + superpedobear_round_time:GetFloat()
 
 			local Pedos = {}
 			local WantedPedos = 1
@@ -664,7 +664,7 @@ function GM:RoundThink()
 			--GAMEMODE:PedoMusic("pause")
 
 			if MapVote and GAMEMODE.Vars.Rounds >= 8 then
-				MapVote.Start(nil, nil, nil, {"ph_", "spb_"})
+				MapVote.Start(nil, nil, nil, {"spb_", "ph_"})
 			end
 
 			timer.Create( "XP_Pedo_TempoPreEnd", 9.8, 1, function()
@@ -776,7 +776,7 @@ function GM:DoPlayerDeath(ply, attacker, dmginfo)
 			attacker:AddFrags(1)
 			attacker:SetNWInt("XP_Pedo_TotalVictims", attacker:GetNWInt("XP_Pedo_TotalVictims", 0) + 1)
 			attacker:SetNWInt("XP_Pedo_VictimsCurrency", attacker:GetNWInt("XP_Pedo_VictimsCurrency", 0) + 1)
-			if GAMEMODE:IsSeasonalEvent("Halloween") or ply:GetInfoNum("pedobear_cl_jumpscare", 0) == 1 then
+			if GAMEMODE:IsSeasonalEvent("Halloween") or ply:GetInfoNum("superpedobear_cl_jumpscare", 0) == 1 then
 				if GAMEMODE.PlayerEasterEgg[attacker:SteamID64()] and GAMEMODE.PlayerEasterEgg[attacker:SteamID64()][2] then
 					ply:SendLua("GAMEMODE:CallJumpscare('" .. GAMEMODE.PlayerEasterEgg[attacker:SteamID64()][2] .. "')")
 				else
@@ -973,7 +973,7 @@ function GM:AFKThink(ply, ucmd)
 
 	end
 
-	if !ply.IsAFK and ply.afkcheck != nil and ply.afkcheck < CurTime() - pedobear_afk_time:GetInt() then
+	if !ply.IsAFK and ply.afkcheck != nil and ply.afkcheck < CurTime() - superpedobear_afk_time:GetInt() then
 
 		ply.IsAFK = true
 		GAMEMODE:Log(ply:GetName() .. " is afk!", nil, true)
@@ -989,11 +989,11 @@ function GM:PedoAFKCare(ply)
 	if ply.IsAFK and ply:Team() == TEAM_PEDOBEAR then
 
 		net.Start("XP_Pedo_AFK")
-			net.WriteFloat(CurTime() + pedobear_afk_action:GetInt())
+			net.WriteFloat(CurTime() + superpedobear_afk_action:GetInt())
 		net.Send(ply)
 
 		local userid = ply:UserID()
-		timer.Create("XP_Pedo_AFK" .. userid, pedobear_afk_action:GetInt(), 1, function()
+		timer.Create("XP_Pedo_AFK" .. userid, superpedobear_afk_action:GetInt(), 1, function()
 			if IsValid(ply) and ply.IsAFK and ply:Alive() and ply:Team() == TEAM_PEDOBEAR then GAMEMODE:PlayerJoinTeam( ply, TEAM_VICTIMS ) end
 			timer.Remove("XP_Pedo_AFK" .. userid)
 		end)
@@ -1150,7 +1150,7 @@ end
 
 function GM:StoreChances(ply)
 
-	if !pedobear_save_chances:GetBool() then GAMEMODE:Log("Chances saving is disabled. Not saving pedobear chances.") return end
+	if !superpedobear_save_chances:GetBool() then GAMEMODE:Log("Chances saving is disabled. Not saving pedobear chances.") return end
 
 	local function savechance(pl)
 
@@ -1186,7 +1186,7 @@ end
 
 function GM:LoadChances(ply)
 
-	if !pedobear_save_chances:GetBool() then GAMEMODE:Log("Chances saving is disabled. Not loading pedobear chances.", nil, true) return end
+	if !superpedobear_save_chances:GetBool() then GAMEMODE:Log("Chances saving is disabled. Not loading pedobear chances.", nil, true) return end
 
 	local function loadchance(pl)
 

@@ -254,7 +254,7 @@ function GM:HUDPaint()
 		welding = nil
 	end
 	local weldingstate = sply:GetNWInt("PedoWeldingState")
-	local hudoffset = GetConVar("pedobear_cl_hud_offset"):GetInt()
+	local hudoffset = GetConVar("superpedobear_cl_hud_offset"):GetInt()
 	local framerborder = hudoffset != 0
 
 
@@ -269,7 +269,7 @@ function GM:HUDPaint()
 	elseif End or TempEnd then
 		TheTime = LastTime
 	elseif !Start and !PreStart then
-		TheTime = pedobear_round_pretime:GetFloat()
+		TheTime = superpedobear_round_pretime:GetFloat()
 	end
 
 	draw.DrawText(GAMEMODE:FormatTime(TheTime), "XP_Pedo_TIME", ScrW() / 2, hudoffset, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER)
@@ -481,7 +481,7 @@ function GM:HUDPaint()
 		local left, right = GAMEMODE.Vars.Music:GetLevel()
 		local function meh(mu) return math.Remap(mu, 0, 1, 0, 255) end
 		local function volcolor(mu) return Color( meh(mu), 255-meh(mu), 0, 200 ) end
-		local visuok = GetConVar("pedobear_cl_music_visualizer"):GetBool() and GAMEMODE.Vars.Music:GetState() == GMOD_CHANNEL_PLAYING
+		local visuok = GetConVar("superpedobear_cl_music_visualizer"):GetBool() and GAMEMODE.Vars.Music:GetState() == GMOD_CHANNEL_PLAYING
 		local visspace = 48
 		if visuok then
 			visspace = 0
@@ -556,7 +556,7 @@ function GM:HUDPaintBackground()
 	local plyTeam = ply:Team()
 	local splyAlive = sply:Alive()
 	local splyTeam = sply:Team()
-	local hudoffset = GetConVar("pedobear_cl_hud_offset"):GetInt()
+	local hudoffset = GetConVar("superpedobear_cl_hud_offset"):GetInt()
 	local framerborder = hudoffset != 0
 
 	draw.RoundedBoxEx(16, ScrW() / 2 - 100, hudoffset, 200, 110, Color(0, 0, 0, 200), framerborder, framerborder, GAMEMODE.Vars.Round.Start, GAMEMODE.Vars.Round.Start)
@@ -810,7 +810,7 @@ end
 
 hook.Add("PreDrawHalos", "fnafgmHalos", function()
 
-	if GetConVar("pedobear_cl_disablehalos"):GetBool() then return end
+	if GetConVar("superpedobear_cl_disablehalos"):GetBool() then return end
 
 	local ply = LocalPlayer()
 	local tab = {}
@@ -1012,9 +1012,9 @@ function GM:HeartBeat(ply)
 
 	for k, v in pairs(team.GetPlayers(TEAM_PEDOBEAR)) do
 
-		t = v:GetPos():Distance( ply:GetPos() )
+		t = v:GetPos():Distance(ply:GetPos())
 
-		if !distance or distance < t then
+		if (!distance or distance < t) --[[and ply:Visible(v)]] then --TODO: Visibility only
 			distance = t
 		end
 
@@ -1022,8 +1022,8 @@ function GM:HeartBeat(ply)
 
 	if distance and distance < 1000 then
 
-		nextheartbeat = math.Remap( distance, 0, 1000, 0.30, 2 )
-		volume = math.Remap( distance, 1000, 0, 0.30, 1 )
+		nextheartbeat = math.Remap(distance, 0, 1000, 0.30, 2)
+		volume = math.Remap(distance, 1000, 0, 0.30, 1)
 
 		if !ply.LastHeartBeat or ply.LastHeartBeat + nextheartbeat < CurTime() then
 			ply:EmitSound(GAMEMODE.Sounds.HeartBeat, 0, 100, volume, CHAN_AUTO)
@@ -1078,13 +1078,13 @@ function GM:Music(src, pre, name, retry)
 		GAMEMODE.Vars.Music = nil
 	end
 
-	if src != "stop" and src != "pause" and src != "play" and GetConVar("pedobear_cl_music_enable"):GetBool() then
+	if src != "stop" and src != "pause" and src != "play" and GetConVar("superpedobear_cl_music_enable"):GetBool() then
 
 		local exist = file.Exists(src, "GAME")
 		local isurl = false
 		local orisrc = nil
 
-		if src != "" and !exist and GetConVar("pedobear_cl_music_allowexternal"):GetBool() and string.match(src, "://") then
+		if src != "" and !exist and GetConVar("superpedobear_cl_music_allowexternal"):GetBool() and string.match(src, "://") then
 
 			isurl = true
 
@@ -1102,7 +1102,7 @@ function GM:Music(src, pre, name, retry)
 		local function domusicstuff(mus, errorID, errorName)
 
 			if IsValid(mus) then
-				mus:SetVolume(GetConVar("pedobear_cl_music_volume"):GetFloat())
+				mus:SetVolume(GetConVar("superpedobear_cl_music_volume"):GetFloat())
 				mus:EnableLooping(true)
 				GAMEMODE.Vars.Music = mus
 			end
@@ -1340,6 +1340,6 @@ function GM:RenderScreenspaceEffects()
 		DrawMaterialOverlay(GAMEMODE.Vars.Jumpscare, 0)
 	end
 
-	--DrawToyTown( 2, ScrH()/2 ) -- Pedo distance ?
+	--DrawToyTown(2, ScrH() / 3) -- Pedo distance ?
 
 end

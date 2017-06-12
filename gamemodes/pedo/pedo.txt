@@ -2,7 +2,7 @@
 {
 	"base"		"base"
 	"title"		"Super Pedobear"
-	"maps"		"^ph_|^spb_"
+	"maps"		"^spb_"
 	"menusystem"	"1"
 	"workshopid"	"628449407"
 }

@@ -16,7 +16,7 @@ GM.Name 		= "Super Pedobear"
 GM.ShortName 	= "SuperPedobear"
 GM.Author 		= "VictorienXP@Xperidia"
 GM.Website 		= "steamcommunity.com/sharedfiles/filedetails/?id=628449407"
-GM.Version 		= 0.252
+GM.Version 		= 0.26
 GM.TeamBased 	= true
 
 TEAM_VICTIMS	= 1
@@ -39,7 +39,7 @@ GM.Sounds.Damage	= GM.Sounds.Damage or {}
 GM.Sounds.Death		= GM.Sounds.Death or {}
 
 GM.Materials = {}
-GM.Materials.PedoVan		= Material("superpedobear/pedovan")
+GM.Materials.PedoVan = Material("superpedobear/pedovan")
 
 GM.Vars = GM.Vars or {}
 GM.Vars.Round = GM.Vars.Round or {}
@@ -107,12 +107,12 @@ function GM:Initialize()
 		sound = GAMEMODE.Sounds.YoureThePedo
 	})
 
-	pedobear_enabledevmode = CreateConVar("pedobear_enabledevmode", 0, FCVAR_NONE, "Dev mode and more logs.")
-	pedobear_round_time = CreateConVar("pedobear_round_time", 180, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Time of a round in second.")
-	pedobear_round_pretime = CreateConVar("pedobear_round_pretime", 30, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Time of the round preparation in second.")
-	pedobear_afk_time = CreateConVar("pedobear_afk_time", 30, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Time needed for a player to be consired afk.")
-	pedobear_afk_action = CreateConVar("pedobear_afk_action", 30, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Time needed for a player to be kick out of pedobear when afk.")
-	pedobear_save_chances = CreateConVar("pedobear_save_chances", 1, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Set if we should save the chances to be Pedobear.")
+	superpedobear_enabledevmode = CreateConVar("superpedobear_enabledevmode", 0, FCVAR_NONE, "Dev mode and more logs.")
+	superpedobear_round_time = CreateConVar("superpedobear_round_time", 180, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Time of a round in second.")
+	superpedobear_round_pretime = CreateConVar("superpedobear_round_pretime", 30, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Time of the round preparation in second.")
+	superpedobear_afk_time = CreateConVar("superpedobear_afk_time", 30, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Time needed for a player to be consired afk.")
+	superpedobear_afk_action = CreateConVar("superpedobear_afk_action", 30, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Time needed for a player to be kick out of pedobear when afk.")
+	superpedobear_save_chances = CreateConVar("superpedobear_save_chances", 1, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Set if we should save the chances to be Pedobear.")
 
 	local damagesnd = file.Find("sound/superpedobear/damage/*.ogg", "GAME")
 
@@ -132,23 +132,23 @@ function GM:Initialize()
 
 	if CLIENT then
 
-		CreateClientConVar("pedobear_cl_disablexpsc", 0, true, false)
-		CreateClientConVar("pedobear_cl_disabletauntmenuclose", 0, true, false)
-		CreateClientConVar("pedobear_cl_jumpscare", 0, true, true )
-		CreateClientConVar("pedobear_cl_disablehalos", 0, true, false)
-		CreateClientConVar("pedobear_cl_music_enable", 1, true, false)
-		CreateClientConVar("pedobear_cl_music_volume", 0.5, true, false)
-		CreateClientConVar("pedobear_cl_music_allowexternal", 1, true, false)
-		CreateClientConVar("pedobear_cl_music_visualizer", 1, true, false)
-		CreateClientConVar("pedobear_cl_hud_offset", 0, true, false)
+		CreateClientConVar("superpedobear_cl_disablexpsc", 0, true, false)
+		CreateClientConVar("superpedobear_cl_disabletauntmenuclose", 0, true, false)
+		CreateClientConVar("superpedobear_cl_jumpscare", 0, true, true )
+		CreateClientConVar("superpedobear_cl_disablehalos", 0, true, false)
+		CreateClientConVar("superpedobear_cl_music_enable", 1, true, false)
+		CreateClientConVar("superpedobear_cl_music_volume", 0.5, true, false)
+		CreateClientConVar("superpedobear_cl_music_allowexternal", 1, true, false)
+		CreateClientConVar("superpedobear_cl_music_visualizer", 1, true, false)
+		CreateClientConVar("superpedobear_cl_hud_offset", 0, true, false)
 
-		cvars.AddChangeCallback("pedobear_cl_music_volume", function(convar_name, value_old, value_new)
+		cvars.AddChangeCallback("superpedobear_cl_music_volume", function(convar_name, value_old, value_new)
 			if IsValid(GAMEMODE.Vars.Music) then
-				GAMEMODE.Vars.Music:SetVolume(GetConVar("pedobear_cl_music_volume"):GetFloat())
+				GAMEMODE.Vars.Music:SetVolume(GetConVar("superpedobear_cl_music_volume"):GetFloat())
 			end
 		end)
-		cvars.AddChangeCallback("pedobear_cl_music_enable", function(convar_name, value_old, value_new)
-			value_new = GetConVar("pedobear_cl_music_enable"):GetBool()
+		cvars.AddChangeCallback("superpedobear_cl_music_enable", function(convar_name, value_old, value_new)
+			value_new = GetConVar("superpedobear_cl_music_enable"):GetBool()
 			if IsValid(GAMEMODE.Vars.Music) and !value_new then
 				GAMEMODE.Vars.Music:Stop()
 				GAMEMODE.Vars.Music = nil
@@ -255,7 +255,7 @@ function GM:Log(str,tn,hardcore)
 	local name = GAMEMODE.ShortName or "SuperPedobear"
 	if tn then name = "SuperPedobear" end
 
-	if hardcore and !pedobear_enabledevmode:GetBool() then return end
+	if hardcore and !superpedobear_enabledevmode:GetBool() then return end
 
 	Msg("[" .. name .. "] " .. (str or "This was a log message, but something went wrong") .. "\n")
 

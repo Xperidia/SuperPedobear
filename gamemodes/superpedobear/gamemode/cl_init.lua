@@ -300,7 +300,6 @@ function GM:HUDPaint()
 	if Start and !PreStart then
 
 		local txt = ""
-		local size = 40
 		local w, h = 0, 0
 
 		if GAMEMODE.Vars.Pedos and #GAMEMODE.Vars.Pedos > 0 then
@@ -435,6 +434,21 @@ function GM:HUDPaint()
 		local w, h = surface.GetTextSize(winstr(GAMEMODE.Vars.Round.Win))
 		draw.RoundedBox(16, ScrW() / 2 - w / 2 - 8, ScrH() / 2 - 80, w + 16, h, Color(0, 0, 0, 220))
 		draw.DrawText(winstr(GAMEMODE.Vars.Round.Win), "SuperPedobear_TXT", ScrW() / 2, ScrH() / 2 - 80, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+	end
+
+
+	--[[ THE GAMEMODE STATUS ]]--
+
+	local txt = "Super Pedobear Early Access (" .. os.date("%d/%m/%Y", os.time()) .. ")"
+	local w, h = 0, 0
+
+	if txt != "" then
+
+		surface.SetFont("SuperPedobear_HT")
+		w, h = surface.GetTextSize(txt)
+		draw.RoundedBoxEx(16, ScrW() - 16 - w - hudoffset, hudoffset, w + 16, h + 16, Color(0, 0, 0, 200), framerborder, framerborder, true, framerborder)
+		draw.DrawText(txt, "SuperPedobear_HT", ScrW() - w - hudoffset - 8 + w / 2, hudoffset + 8, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+
 	end
 
 

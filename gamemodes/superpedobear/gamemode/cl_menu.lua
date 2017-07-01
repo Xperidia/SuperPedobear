@@ -1,10 +1,7 @@
 --[[---------------------------------------------------------------------------
-		⚠ This file is a part of the Super Pedobear source code ⚠
-		⚠ Please do not clone, redistribute or modify the code! ⚠
-	We do not obscurate the code or anything mostly to help bug reporting.
-	Please do not try to cheat, if you want something ask me directly...
-We're just indies making stuff so please support us instead of putting us down.
-So unless you're modifying it to improve it via a Pull request please do not.
+		⚠ This file is a part of the Super Pedobear gamemode ⚠
+	⚠ Please do not redistribute any version of it (edited or not)! ⚠
+	So please ask me directly or contribute on GitHub if you want something...
 -----------------------------------------------------------------------------]]
 
 function GM:Menu()
@@ -213,8 +210,6 @@ function GM:Menu()
 		pedobearMenuF.MusicL:SetPos(10, 255)
 		pedobearMenuF.MusicL:SetSize(305, 215)
 
-		local pre = GAMEMODE.Vars.Round.PreStart
-
 		pedobearMenuF.MusicL.lbl = vgui.Create("DLabel")
 		pedobearMenuF.MusicL.lbl:SetParent(pedobearMenuF.MusicL)
 		pedobearMenuF.MusicL.lbl:SetText("Music list")
@@ -222,60 +217,21 @@ function GM:Menu()
 		pedobearMenuF.MusicL.lbl:SetSize(289, 10)
 		pedobearMenuF.MusicL.lbl:SetDark(1)
 
-		pedobearMenuF.MusicL.List = vgui.Create("DListView", pedobearMenuF.MusicL)
-		pedobearMenuF.MusicL.List:SetPos(0, 20)
-		pedobearMenuF.MusicL.List:SetSize(305, 195)
-		pedobearMenuF.MusicL.List:SetMultiSelect(false)
-		local name = pedobearMenuF.MusicL.List:AddColumn("Music")
-		name:SetMinWidth(150)
-		local mp = pedobearMenuF.MusicL.List:AddColumn("Pack")
-		mp:SetMinWidth(30)
-		local loc = pedobearMenuF.MusicL.List:AddColumn("Local")
-		loc:SetMinWidth(30)
-		loc:SetMaxWidth(30)
-		local serv = pedobearMenuF.MusicL.List:AddColumn("Serv")
-		serv:SetMinWidth(30)
-		serv:SetMaxWidth(30)
+		local desclbl = vgui.Create("DLabel")
+		desclbl:SetParent(pedobearMenuF.MusicL)
+		desclbl:SetText("This module has been moved!\nPress F4 to go to all music related stuff!")
+		desclbl:SetPos(20, 30)
+		desclbl:SetDark(1)
+		desclbl:SizeToContents()
 
-		local function CreateMusicList(pre)
-
-			pedobearMenuF.MusicL.List:Clear()
-			pedobearMenuF.MusicL.lbl:SetText("Music list" .. Either(pre, " (Pre Round Musics)", ""))
-
-			local localmusics = Either(pre, GAMEMODE.LocalMusics.premusics, GAMEMODE.LocalMusics.musics)
-
-			local musiclist = {}
-
-			for k, v in pairs(localmusics) do
-				musiclist[v[1]] = { v[2], v[3], file.Exists("sound/superpedobear/" .. Either(pre, "premusics", "musics") .. "/" .. v[1], "GAME"), nil }
-			end
-
-			if Either(pre, GAMEMODE.Musics.premusics, GAMEMODE.Musics.musics) then
-				for k, v in pairs(Either(pre, GAMEMODE.Musics.premusics, GAMEMODE.Musics.musics)) do
-					if musiclist[v[1]] then
-						musiclist[v[1]] = { v[2], v[3], musiclist[v[1]][3], true }
-					else
-						musiclist[v[1]] = { v[2], v[3], file.Exists("sound/superpedobear/" .. Either(pre, "premusics", "musics") .. "/" .. v[1], "GAME"), true }
-					end
-				end
-			end
-
-			for k, v in SortedPairs(musiclist) do
-				pedobearMenuF.MusicL.List:AddLine(v[1] or GAMEMODE:PrettyMusicName(k), v[2], Either(string.match(k, "://"), "URL", Either(v[3], "✓", "❌")), Either(v[4], "✓", "❌"))
-			end
-
-		end
-		CreateMusicList(pre)
-
-		local switchbtn = vgui.Create("DButton")
-		switchbtn:SetParent(pedobearMenuF.MusicL)
-		switchbtn:SetText("Switch to " .. Either(pre, "Round", "Pre round"))
-		switchbtn:SetPos(200, 0)
-		switchbtn:SetSize(105, 20)
-		switchbtn.DoClick = function()
-			pre = !pre
-			switchbtn:SetText("Switch to " .. Either(pre, "Round", "Pre round"))
-			CreateMusicList(pre)
+		local gof4 = vgui.Create("DButton")
+		gof4:SetParent(pedobearMenuF.MusicL)
+		gof4:SetText("Go to the music window")
+		gof4:SetPos(90, 100)
+		gof4:SetSize(125, 20)
+		gof4.DoClick = function()
+			GAMEMODE:JukeboxMenu()
+			pedobearMenuF:Close()
 		end
 
 
@@ -291,32 +247,22 @@ function GM:Menu()
 		musicmenulbl:SetDark(1)
 		musicmenulbl:SizeToContents()
 
-		local enablemusic = vgui.Create("DCheckBoxLabel")
-		enablemusic:SetParent(pedobearMenuF.MusicCFG)
-		enablemusic:SetText(Either(GAMEMODE:IsSeasonalEvent("AprilFool"), "Enable the PedoRadio™", "Enable music"))
-		enablemusic:SetPos(15, 30)
-		enablemusic:SetDark(1)
-		enablemusic:SetConVar("superpedobear_cl_music_enable")
-		enablemusic:SetValue(GetConVar("superpedobear_cl_music_enable"):GetBool())
-		enablemusic:SizeToContents()
+		local desclbl = vgui.Create("DLabel")
+		desclbl:SetParent(pedobearMenuF.MusicCFG)
+		desclbl:SetText("This module has been moved!\nPress F4 to go to all music related stuff!")
+		desclbl:SetPos(20, 30)
+		desclbl:SetDark(1)
+		desclbl:SizeToContents()
 
-		local allowexternal = vgui.Create("DCheckBoxLabel")
-		allowexternal:SetParent(pedobearMenuF.MusicCFG)
-		allowexternal:SetText("Allow external musics (Loaded from url)")
-		allowexternal:SetPos(15, 50)
-		allowexternal:SetDark(1)
-		allowexternal:SetConVar("superpedobear_cl_music_allowexternal")
-		allowexternal:SetValue(GetConVar("superpedobear_cl_music_allowexternal"):GetBool())
-		allowexternal:SizeToContents()
-
-		local visualizer = vgui.Create("DCheckBoxLabel")
-		visualizer:SetParent(pedobearMenuF.MusicCFG)
-		visualizer:SetText("Enable visualizer (Downgrade performance)")
-		visualizer:SetPos(15, 70)
-		visualizer:SetDark(1)
-		visualizer:SetConVar("superpedobear_cl_music_visualizer")
-		visualizer:SetValue(GetConVar("superpedobear_cl_music_visualizer"):GetBool())
-		visualizer:SizeToContents()
+		local gof4 = vgui.Create("DButton")
+		gof4:SetParent(pedobearMenuF.MusicCFG)
+		gof4:SetText("Go to the music window")
+		gof4:SetPos(90, 100)
+		gof4:SetSize(125, 20)
+		gof4.DoClick = function()
+			GAMEMODE:JukeboxMenu()
+			pedobearMenuF:Close()
+		end
 
 		local playmusic = vgui.Create("DButton")
 		playmusic:SetParent(pedobearMenuF.MusicCFG)
@@ -445,7 +391,7 @@ function GM:JukeboxMenu()
 	if !IsValid(SuperPedobearJukebox) and !engine.IsPlayingDemo() then
 
 		SuperPedobearJukebox = vgui.Create("DFrame")
-		SuperPedobearJukebox:SetSize(ScrW() * 0.90, ScrH() * 0.75)
+		SuperPedobearJukebox:SetSize(ScrW() * 0.90, ScrH() * 0.40)
 		local w, h = SuperPedobearJukebox:GetSize()
 		SuperPedobearJukebox:SetPos(ScrW() / 2 - w / 2, ScrH() / 2 - h / 2)
 		SuperPedobearJukebox:SetTitle("Super Pedobear Jukebox")
@@ -453,6 +399,7 @@ function GM:JukeboxMenu()
 		SuperPedobearJukebox:SetDraggable(true)
 		SuperPedobearJukebox:ShowCloseButton(true)
 		SuperPedobearJukebox:SetScreenLock(true)
+		--SuperPedobearJukebox:SetSizable(true)
 		SuperPedobearJukebox.Paint = function(self, w, h)
 			draw.RoundedBox(4, 0, 0, w, h, Color(0, 0, 0, 128))
 		end
@@ -606,8 +553,8 @@ function GM:JukeboxMenu()
 
 		SuperPedobearJukebox.MusicCFG = vgui.Create("DPanel")
 		SuperPedobearJukebox.MusicCFG:SetParent(SuperPedobearJukebox)
-		SuperPedobearJukebox.MusicCFG:SetPos(w / 3 * 2 + 10, h / 2 + 30)
-		SuperPedobearJukebox.MusicCFG:SetSize(mw, h / 2 - 40)
+		SuperPedobearJukebox.MusicCFG:SetPos(w / 3 * 2 + 10, 30)
+		SuperPedobearJukebox.MusicCFG:SetSize(mw, h - 40)
 
 		local mcfgw, mcfgh = SuperPedobearJukebox.MusicCFG:GetSize()
 

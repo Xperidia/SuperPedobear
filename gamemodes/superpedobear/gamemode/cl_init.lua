@@ -1,10 +1,7 @@
 --[[---------------------------------------------------------------------------
-		⚠ This file is a part of the Super Pedobear source code ⚠
-		⚠ Please do not clone, redistribute or modify the code! ⚠
-	We do not obscurate the code or anything mostly to help bug reporting.
-	Please do not try to cheat, if you want something ask me directly...
-We're just indies making stuff so please support us instead of putting us down.
-So unless you're modifying it to improve it via a Pull request please do not.
+		⚠ This file is a part of the Super Pedobear gamemode ⚠
+	⚠ Please do not redistribute any version of it (edited or not)! ⚠
+	So please ask me directly or contribute on GitHub if you want something...
 -----------------------------------------------------------------------------]]
 
 include("shared.lua")
@@ -99,14 +96,11 @@ surface.CreateFont("SuperPedobear_HUDname", {
 })
 
 net.Receive("SuperPedobear_PlayerStats", function( len )
-
 	GAMEMODE.Vars.victims = net.ReadInt(32)
 	GAMEMODE.Vars.downvictims = net.ReadInt(32)
-
 end)
 
 net.Receive("SuperPedobear_Vars", function( len )
-
 	GAMEMODE.Vars.Round.Start = tobool(net.ReadBool())
 	GAMEMODE.Vars.Round.PreStart = tobool(net.ReadBool())
 	GAMEMODE.Vars.Round.PreStartTime = net.ReadFloat()
@@ -115,38 +109,27 @@ net.Receive("SuperPedobear_Vars", function( len )
 	GAMEMODE.Vars.Round.Win = net.ReadInt(32)
 	GAMEMODE.Vars.Rounds = net.ReadInt(32)
 	GAMEMODE.Vars.Round.LastTime = net.ReadFloat()
-
 end)
 
 net.Receive("SuperPedobear_Music", function( len )
-
 	local src = net.ReadString()
 	local pre = net.ReadBool()
 	local name = net.ReadString()
-
 	GAMEMODE:Music(src, pre, name)
-
 end)
 
 net.Receive("SuperPedobear_AFK", function( len )
-
 	GAMEMODE.Vars.AfkTime = net.ReadFloat()
-
 	if GAMEMODE.Vars.AfkTime != 0 then system.FlashWindow() chat.PlaySound() end
-
 end)
 
 net.Receive("SuperPedobear_MusicList", function( len )
-
 	GAMEMODE.Musics.musics = net.ReadTable()
 	GAMEMODE.Musics.premusics = net.ReadTable()
-
 end)
 
 net.Receive("SuperPedobear_List", function( len )
-
 	GAMEMODE.Vars.Pedos = net.ReadTable()
-
 end)
 
 net.Receive("SuperPedobear_MusicQueue", function(len)
@@ -154,7 +137,6 @@ net.Receive("SuperPedobear_MusicQueue", function(len)
 end)
 
 hook.Add("HUDShouldDraw", "HideHUD", function( name )
-
 	local HUDhide = {
 		CHudHealth = true,
 		CHudBattery = true,
@@ -167,13 +149,10 @@ hook.Add("HUDShouldDraw", "HideHUD", function( name )
 	elseif ( HUDhide[ name ] ) then
 		return false
 	end
-
 end)
 
 function GM:FormatTime(time)
-
 	local timet = string.FormattedTime( time )
-
 	if timet.h >= 999 then
 		return "∞"
 	elseif timet.h >= 1 then
@@ -183,19 +162,14 @@ function GM:FormatTime(time)
 	else
 		return string.format("%02i.%02i", timet.s, math.Clamp(timet.ms, 0, 99))
 	end
-
 end
 
 function GM:FormatTimeTri(time)
-
 	local timet = string.FormattedTime( time )
-
 	if timet.h > 0 then
 		return string.format("%02i:%02i:%02i", timet.h, timet.m, timet.s)
 	end
-
 	return string.format("%02i:%02i", timet.m, timet.s)
-
 end
 
 function GM:PrettyMusicName(snd)
@@ -416,24 +390,16 @@ function GM:HUDPaint()
 	--[[ THE PERFORMING WELD MESSAGE ]]--
 
 	if splyAlive and splyTeam == TEAM_VICTIMS then
-
 		if weldingstate == 2 then
-
 			draw.RoundedBox(8, ScrW() / 2 - 100, ScrH() / 2 + 100, 200, 26, Color(0, 0, 0, 200))
 			draw.DrawText("This prop is too far", "SuperPedobear_HT", ScrW() / 2, ScrH() / 2 + 100, Color(255, 0, 0, 255), TEXT_ALIGN_CENTER)
-
 		elseif weldingstate == 3 then
-
 			draw.RoundedBox(8, ScrW() / 2 - 150, ScrH() / 2 + 100, 300, 26, Color(0, 0, 0, 200) )
 			draw.DrawText("The props are too far each other", "SuperPedobear_HT", ScrW() / 2, ScrH() / 2 + 100, Color(255, 0, 0, 255), TEXT_ALIGN_CENTER)
-
 		elseif IsValid(welding) then
-
 			draw.RoundedBox(8, ScrW() / 2 - 100, ScrH() / 2 + 100, 200, 26, Color(0, 0, 0, yay(200)))
 			draw.DrawText("Click another prop", "SuperPedobear_HT", ScrW() / 2, ScrH() / 2 + 100, Color(255, 255, 255, yay(255)), TEXT_ALIGN_CENTER)
-
 		end
-
 	end
 
 
@@ -808,7 +774,7 @@ function GM:HUDDrawTargetID()
 
 end
 
-hook.Add("PreDrawHalos", "fnafgmHalos", function()
+function GM:PreDrawHalos()
 
 	if GetConVar("superpedobear_cl_disablehalos"):GetBool() then return end
 
@@ -834,21 +800,21 @@ hook.Add("PreDrawHalos", "fnafgmHalos", function()
 					table.insert(tab, v)
 				end
 			end
-			halo.Add( tab, team.GetColor(TEAM_VICTIMS), 1, 1, 1, true, true )
+			halo.Add(tab, team.GetColor(TEAM_VICTIMS), 1, 1, 1, true, true)
 
-			for k,v in pairs(ents.FindByClass( "superpedobear_dummy" )) do
+			for k,v in pairs(ents.FindByClass("superpedobear_dummy")) do
 				table.insert(tab3, v)
 			end
-			halo.Add( tab3, Color(0,0,255), 1, 1, 1, true, true )
+			halo.Add(tab3, Color(0, 0, 255), 1, 1, 1, true, true)
 
 		else
 
-			for k,v in pairs(ents.FindByClass( "superpedobear_dummy" )) do
+			for k,v in pairs(ents.FindByClass("superpedobear_dummy")) do
 				if v:GetPlayer() == ply then
 					table.insert(tab3, v)
 				end
 			end
-			halo.Add( tab3, Color(0,0,255), 1, 1, 1, true, true )
+			halo.Add(tab3, Color(0, 0, 255), 1, 1, 1, true, true)
 
 		end
 
@@ -857,11 +823,11 @@ hook.Add("PreDrawHalos", "fnafgmHalos", function()
 				table.insert(tab2, v)
 			end
 		end
-		halo.Add( tab2, team.GetColor(TEAM_PEDOBEAR), 1, 1, 1, true, !ply:Alive() )
+		halo.Add(tab2, team.GetColor(TEAM_PEDOBEAR), 1, 1, 1, true, !ply:Alive())
 
 		if IsValid(welding) then
 
-			halo.Add( { welding }, Color(255,255,255), 1, 1, 1, true, false )
+			halo.Add({ welding }, Color(255, 255, 255), 1, 1, 1, true, false)
 
 		end
 
@@ -893,41 +859,41 @@ hook.Add("PreDrawHalos", "fnafgmHalos", function()
 
 	end
 
-end )
+end
 
 function GM:ShowTeam()
 
 	if !IsValid(self.TeamSelectFrame) then
 
-		self.TeamSelectFrame = vgui.Create( "DFrame" )
-		self.TeamSelectFrame:SetTitle( "Pick Team" )
+		self.TeamSelectFrame = vgui.Create("DFrame")
+		self.TeamSelectFrame:SetTitle("Pick Team")
 
 		local AllTeams = team.GetAllTeams()
 		local x = 4
 		local y = 156
-		for ID, TeamInfo in pairs ( AllTeams ) do
+		for ID, TeamInfo in pairs (AllTeams) do
 
 			if (ID != TEAM_CONNECTING and ID != TEAM_UNASSIGNED) and team.Joinable(ID) then
 
-				local Team = vgui.Create( "DButton", self.TeamSelectFrame )
+				local Team = vgui.Create("DButton", self.TeamSelectFrame)
 				function Team.DoClick() self:HideTeam() RunConsoleCommand("changeteam", ID) end
 				Team:SetPos(x, 24)
 				Team:SetSize(256, 128)
 				Team:SetText(TeamInfo.Name)
 				Team:SetTextColor(TeamInfo.Color)
 				Team:SetFont("DermaLarge")
-				Team:SetExpensiveShadow( 1, Color(0,0,0,255) )
+				Team:SetExpensiveShadow(1, Color(0,0,0,255))
 
 				if IsValid(LocalPlayer()) and LocalPlayer():Team() == ID then
 					Team:SetDisabled(true)
 					Team:SetTextColor(Color(40, 40, 40))
 					Team.Paint = function(self, w, h)
-						draw.RoundedBox(4, 4, 4, w-8, h-8, Color(0, 0, 0, 150))
+						draw.RoundedBox(4, 4, 4, w - 8, h - 8, Color(0, 0, 0, 150))
 					end
 				else
 					Team:SetTextColor(TeamInfo.Color)
 					Team.Paint = function(self, w, h)
-						draw.RoundedBox(4, 4, 4, w-8, h-8, Color(255, 255, 255, 150))
+						draw.RoundedBox(4, 4, 4, w - 8, h - 8, Color(255, 255, 255, 150))
 					end
 				end
 
@@ -947,7 +913,7 @@ function GM:ShowTeam()
 			Team:SetTextColor(GAMEMODE.Colors_default)
 			Team:SetFont("DermaLarge")
 			Team.Paint = function(self, w, h)
-				draw.RoundedBox(4, 4, 4, w-8, h-8, Color(255, 255, 255, 150))
+				draw.RoundedBox(4, 4, 4, w - 8, h - 8, Color(255, 255, 255, 150))
 			end
 
 			y = y + 32
@@ -996,9 +962,7 @@ function GM:Think()
 	end
 
 	if ply:Team() == TEAM_VICTIMS and ply:Alive() and GAMEMODE.Vars.Round.Start and !GAMEMODE.Vars.Round.End and !GAMEMODE.Vars.Round.TempEnd then
-
 		GAMEMODE:HeartBeat(ply)
-
 	end
 
 end
@@ -1125,14 +1089,10 @@ function GM:Music(src, pre, name, retry)
 		end
 
 		if !isurl and src != "" then
-
 			sound.PlayFile(src, "noblock", domusicstuff)
-
 		elseif isurl then
-
 			GAMEMODE:Log("Downloading external music... \"" .. src .. "\"")
 			sound.PlayURL(src, "noblock", domusicstuff)
-
 		end
 
 		GAMEMODE.Vars.CurrentMusicName = name
@@ -1142,26 +1102,19 @@ function GM:Music(src, pre, name, retry)
 end
 
 function GM:StartChat(teamsay)
-
 	GAMEMODE.ChatOpen = true
-
 	return false
-
 end
 
 function GM:FinishChat()
-
 	GAMEMODE.ChatOpen = false
-
 end
 
 function GM:GetTeamColor(ent)
-
 	local team = TEAM_UNASSIGNED
 	if ent.Team then team = ent:Team() end
 	if ent:GetClass() == "superpedobear_dummy" then team = TEAM_VICTIMS end
 	return GAMEMODE:GetTeamNumColor(team)
-
 end
 
 function GM:InitPostEntity()
@@ -1278,12 +1231,10 @@ function GM:OnPlayerChat(player, strText, bTeamOnly, bPlayerIsDead)
 	if IsValid(player) then
 		local rankid = player:GetNWInt("XperidiaRank", 0)
 		local rankname = player:GetNWString("XperidiaRankName", "<Unknown rank name>")
+		local rankcolor = player:GetNWString("XperidiaRankColor", "255 255 255 255")
 		if rankid > 0 then
-			if rankid < 200 then
-				table.insert(tab, Color(255, 170, 0))
-			else
-				table.insert(tab, Color(85, 255, 255))
-			end
+			print(string.ToColor(rankcolor))
+			table.insert(tab, string.ToColor(rankcolor))
 			table.insert(tab, "{Xperidia " .. rankname .. "} ")
 		end
 		if player:GetUserGroup() != "user" then

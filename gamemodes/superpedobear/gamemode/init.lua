@@ -1,10 +1,7 @@
 --[[---------------------------------------------------------------------------
-		⚠ This file is a part of the Super Pedobear source code ⚠
-		⚠ Please do not clone, redistribute or modify the code! ⚠
-	We do not obscurate the code or anything mostly to help bug reporting.
-	Please do not try to cheat, if you want something ask me directly...
-We're just indies making stuff so please support us instead of putting us down.
-So unless you're modifying it to improve it via a Pull request please do not.
+		⚠ This file is a part of the Super Pedobear gamemode ⚠
+	⚠ Please do not redistribute any version of it (edited or not)! ⚠
+	So please ask me directly or contribute on GitHub if you want something...
 -----------------------------------------------------------------------------]]
 
 AddCSLuaFile("shared.lua")
@@ -1129,6 +1126,7 @@ function GM:RetrieveXperidiaAccountRank(ply)
 					ply.XperidiaRank = rank_info
 					ply:SetNWInt("XperidiaRank", rank_info.id)
 					ply:SetNWString("XperidiaRankName", rank_info.name)
+					ply:SetNWString("XperidiaRankColor", tonumber("0x" .. rank_info.color:sub(1,2)) .. " " .. tonumber("0x" .. rank_info.color:sub(3,4)) .. " " .. tonumber("0x" .. rank_info.color:sub(5,6)) .. " 255")
 					ply.XperidiaRankLastTime = SysTime()
 					if rank_info.id != 0 and rank_info.name then
 						GAMEMODE:Log("The Xperidia Rank for " .. ply:GetName() .. " is " .. rank_info.name .. " (" .. rank_info.id .. ")")

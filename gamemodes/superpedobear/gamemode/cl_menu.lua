@@ -62,10 +62,11 @@ function GM:Menu()
 
 		local desclbl = vgui.Create("DLabel")
 		desclbl:SetParent(pedobearMenuF.one)
-		desclbl:SetText("Some controls:\n\n" .. GAMEMODE:CheckBind("gm_showhelp") .. ": This window\n"
+		desclbl:SetText("Some controls:\n" .. GAMEMODE:CheckBind("gm_showhelp") .. ": This window\n"
 		.. GAMEMODE:CheckBind("gm_showteam") .. ": Change team\n"
 		.. GAMEMODE:CheckBind("gm_showspare1") .. ": Taunt menu\n"
-		.. GAMEMODE:CheckBind("gm_showspare2") .. ": Jukebox menu\n"
+		.. GAMEMODE:CheckBind("gm_showspare2") .. ": Jukebox/music menu\n"
+		.. GAMEMODE:CheckBind("+reload") .. ": Power-UP\n"
 		.. GAMEMODE:CheckBind("+menu") .. ": PedoVan (Shop)\n"
 		.. GAMEMODE:CheckBind("+menu_context") .. ": Toggle thirdperson\n"
 		.. "1-9: Quick taunt")
@@ -199,7 +200,7 @@ function GM:Menu()
 		hudoffset:SetSize(300, 16)
 		hudoffset:SetText("HUD Offset")
 		hudoffset:SetMin(0)
-		hudoffset:SetMax(64)
+		hudoffset:SetMax(ScrW() / 10)
 		hudoffset:SetDecimals(0)
 		hudoffset:SetDark(1)
 		hudoffset:SetConVar("superpedobear_cl_hud_offset")
@@ -356,7 +357,8 @@ function GM:SplashScreen()
 		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("gm_showhelp") .. "</td><td> Gamemode menu ('Show help')</td></tr>"
 		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("gm_showteam") .. "</td><td> Change team ('Team menu')</td></tr>"
 		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("gm_showspare1") .. "</td><td> Taunt menu ('Spare 1')</td></tr>"
-		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("gm_showspare2") .. "</td><td> Jukebox menu ('Spare 2')</td></tr>"
+		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("gm_showspare2") .. "</td><td> Jukebox/music menu ('Spare 2')</td></tr>"
+		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("+reload") .. "</td><td> Power-UP ('Reload weapon')</td></tr>"
 		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("+menu") .. "</td><td> PedoVan ('Show Menu')</td></tr>"
 		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("+menu_context") .. "</td><td> Toggle thirdperson ('Show Context Menu')</td></tr>"
 		.. "<tr><td class='leftside'>1-9</td><td> Quick taunt</td></tr>"

@@ -882,8 +882,9 @@ function GM:PlayerCanHearPlayersVoice(pListener, pTalker)
 end
 
 function GM:CreateDummy(ply)
+	local cd = 1
 	if ply:Team() != TEAM_VICTIMS or !ply:OnGround() then return end
-	if !IsValid(ply.Dummy) or (!ply.lastctime or ply.lastctime < CurTime()) then
+	if !IsValid(ply.Dummy) or (!ply.tnextpowerup or ply.tnextpowerup < CurTime()) then
 		if IsValid(ply.Dummy) then
 			ply.Dummy:Remove()
 		end
@@ -891,7 +892,9 @@ function GM:CreateDummy(ply)
 		ent:SetPlayer(ply)
 		ent:Spawn()
 		ply.Dummy = ent
-		ply.lastctime = CurTime() + 1
+		ply.tnextpowerup = CurTime() + cd
+		ply:SetNWInt("tnextpowerup", ply.tnextpowerup)
+		ply:SetNWInt("ttnextpowerup", cd)
 	end
 end
 

@@ -194,8 +194,8 @@ function GM:HUDPaint()
 
 	if GetConVarNumber("cl_drawhud") == 0 then return end
 
-	hook.Run( "HUDDrawTargetID" )
-	hook.Run( "DrawDeathNotice", 0.85, 0.04 )
+	hook.Run("HUDDrawTargetID")
+	hook.Run("DrawDeathNotice", 0.85, 0.04)
 
 	--[[ THE INDEX ZONE ]]--
 
@@ -261,9 +261,9 @@ function GM:HUDPaint()
 	local function addrndtxt(txt)
 		surface.SetFont("SuperPedobear_RND")
 		local w, h = surface.GetTextSize(txt)
-		draw.RoundedBox(0, ScrW() / 2 - w / 2 - 8, 110 + hudoffset + rndtxth, w + 16, h + 20, Color(0, 0, 0, 200))
-		draw.DrawText(txt, "SuperPedobear_RND", ScrW() / 2, 120 + hudoffset + rndtxth, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
-		rndtxth = rndtxth + h + 20
+		draw.RoundedBox(0, ScrW() / 2 - w / 2 - 8, 110 + hudoffset + rndtxth, w + 16, h, Color(0, 0, 0, 200))
+		draw.DrawText(txt, "SuperPedobear_RND", ScrW() / 2, 110 + hudoffset + rndtxth, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+		rndtxth = rndtxth + h
 	end
 
 	if Start and !PreStart and GAMEMODE.Vars.Pedos and #GAMEMODE.Vars.Pedos > 0 then
@@ -438,11 +438,9 @@ function GM:HUDPaint()
 			if Start and splyTeam == TEAM_VICTIMS then
 				MakeBar("STAMINA", stamina, sprintlock)
 			end
-
 			if splyTeam == TEAM_VICTIMS then --TODO: Stuff
 				MakeBar("POWER-UP", powerup)
 			end
-
 			if taunt != 200 then
 				MakeBar("TAUNT", taunt)
 			end

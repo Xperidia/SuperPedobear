@@ -213,14 +213,14 @@ function GM:Menu()
 
 		pedobearMenuF.MusicL.lbl = vgui.Create("DLabel")
 		pedobearMenuF.MusicL.lbl:SetParent(pedobearMenuF.MusicL)
-		pedobearMenuF.MusicL.lbl:SetText("Music list")
+		pedobearMenuF.MusicL.lbl:SetText("Music stuff")
 		pedobearMenuF.MusicL.lbl:SetPos(10, 5)
 		pedobearMenuF.MusicL.lbl:SetSize(289, 10)
 		pedobearMenuF.MusicL.lbl:SetDark(1)
 
 		local desclbl = vgui.Create("DLabel")
 		desclbl:SetParent(pedobearMenuF.MusicL)
-		desclbl:SetText("This module has been moved!\nPress F4 to go to all music related stuff!")
+		desclbl:SetText("All the music related stuff has been moved!\nPress F4 to go to all music related stuff!")
 		desclbl:SetPos(20, 30)
 		desclbl:SetDark(1)
 		desclbl:SizeToContents()
@@ -236,64 +236,35 @@ function GM:Menu()
 		end
 
 
-		pedobearMenuF.MusicCFG = vgui.Create("DPanel")
-		pedobearMenuF.MusicCFG:SetParent(pedobearMenuF)
-		pedobearMenuF.MusicCFG:SetPos(325, 255)
-		pedobearMenuF.MusicCFG:SetSize(305, 215)
+		pedobearMenuF.AdminCFG = vgui.Create("DPanel")
+		pedobearMenuF.AdminCFG:SetParent(pedobearMenuF)
+		pedobearMenuF.AdminCFG:SetPos(325, 255)
+		pedobearMenuF.AdminCFG:SetSize(305, 215)
 
-		local musicmenulbl = vgui.Create("DLabel")
-		musicmenulbl:SetParent(pedobearMenuF.MusicCFG)
-		musicmenulbl:SetText( Either(GAMEMODE:IsSeasonalEvent("AprilFool"), "PedoRadio™", "Music") .. " configuration")
-		musicmenulbl:SetPos(10, 5)
-		musicmenulbl:SetDark(1)
-		musicmenulbl:SizeToContents()
+		local adminmenulbl = vgui.Create("DLabel", pedobearMenuF.AdminCFG)
+		adminmenulbl:SetText("Quick Admin Configs & Debug Utils")
+		adminmenulbl:SetPos(10, 5)
+		adminmenulbl:SetDark(1)
+		adminmenulbl:SizeToContents()
 
-		local desclbl = vgui.Create("DLabel")
-		desclbl:SetParent(pedobearMenuF.MusicCFG)
-		desclbl:SetText("This module has been moved!\nPress F4 to go to all music related stuff!")
-		desclbl:SetPos(20, 30)
-		desclbl:SetDark(1)
-		desclbl:SizeToContents()
-
-		local gof4 = vgui.Create("DButton")
-		gof4:SetParent(pedobearMenuF.MusicCFG)
-		gof4:SetText("Go to the music window")
-		gof4:SetPos(90, 100)
-		gof4:SetSize(125, 20)
-		gof4.DoClick = function()
-			GAMEMODE:JukeboxMenu()
-			pedobearMenuF:Close()
+		local eh = 0
+		local function docheckbox(str, cvar)
+			local disablexpsc = vgui.Create("DCheckBoxLabel")
+			disablexpsc:SetParent(pedobearMenuF.AdminCFG)
+			disablexpsc:SetText(str)
+			disablexpsc:SetPos(15, 30 + eh)
+			disablexpsc:SetDark(1)
+			disablexpsc:SetConVar(cvar)
+			disablexpsc:SetValue(GetConVar(cvar):GetBool())
+			disablexpsc:SetEnabled(LocalPlayer():GetNWBool("IsListenServerHost", true))
+			disablexpsc:SizeToContents()
+			eh = eh + 20
 		end
 
-		local playmusic = vgui.Create("DButton")
-		playmusic:SetParent(pedobearMenuF.MusicCFG)
-		playmusic:SetText("Auto play local file")
-		playmusic:SetPos(90, 190)
-		playmusic:SetSize(125, 20)
-		playmusic:SetDisabled(!GAMEMODE.Vars.Round.PreStart and !GAMEMODE.Vars.Round.Start)
-		playmusic.DoClick = function()
-			GAMEMODE:Music("", GAMEMODE.Vars.Round.PreStart)
-		end
-
-		local vollbl = vgui.Create("DLabel")
-		vollbl:SetParent(pedobearMenuF.MusicCFG)
-		vollbl:SetText("Volume")
-		vollbl:SetPos(125, 140)
-		vollbl:SetDark(1)
-		vollbl:SizeToContents()
-
-		local vol = GetConVar("superpedobear_cl_music_volume")
-		local musivol = vgui.Create("Slider")
-		musivol:SetParent(pedobearMenuF.MusicCFG)
-		musivol:SetPos(15, 150)
-		musivol:SetSize(300, 40)
-		musivol:SetValue(vol:GetFloat())
-		musivol.OnValueChanged = function(panel, value)
-			vol:SetFloat(value)
-		end
+		docheckbox("Dev mode (Mostly a lot of logs)", "superpedobear_enabledevmode")
+		docheckbox("Save chances", "superpedobear_save_chances")
 
 		if !GetConVar("superpedobear_cl_disablexpsc"):GetBool() then
-
 			local xpsc = vgui.Create("DHTML")
 			xpsc:SetParent(pedobearMenuF)
 			xpsc:SetPos(10, 480)
@@ -305,7 +276,6 @@ function GM:Menu()
 			xpsc_anim = Derma_Anim("xpsc_anim", pedobearMenuF, function(pnl, anim, delta, data)
 				pnl:SetSize(640, 138 * delta + 480)
 			end)
-
 		end
 
 

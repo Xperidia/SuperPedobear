@@ -90,7 +90,7 @@ function GM:TauntMenuF()
 
 			GAMEMODE:StartTaunt(lineID)
 
-			if !GetConVar("pedobear_cl_disabletauntmenuclose"):GetBool() then GAMEMODE.TauntMenu:Close() end
+			if !GetConVar("superpedobear_cl_disabletauntmenuclose"):GetBool() then GAMEMODE.TauntMenu:Close() end
 
 		end
 
@@ -117,7 +117,7 @@ function GM:TauntMenuF()
 		GAMEMODE.TauntMenu.play.DoClick = function()
 			local taunt = AppList:GetSelectedLine()
 			GAMEMODE:StartTaunt(taunt)
-			if !GetConVar("pedobear_cl_disabletauntmenuclose"):GetBool() then GAMEMODE.TauntMenu:Close() end
+			if !GetConVar("superpedobear_cl_disabletauntmenuclose"):GetBool() then GAMEMODE.TauntMenu:Close() end
 		end
 
 		GAMEMODE.TauntMenu.random = vgui.Create("DButton", GAMEMODE.TauntMenu)
@@ -129,20 +129,16 @@ function GM:TauntMenuF()
 			local sel = {}
 
 			for k,v in pairs(GAMEMODE.Sounds.Taunts) do
-
 				if v[3] == ply:Team() or v[3] == 0 then
-
 					table.insert(sel, v)
-
 				end
-
 			end
 
 			local selid = math.random(1, #sel)
 
 			GAMEMODE:StartTaunt(selid)
 
-			if !GetConVar("pedobear_cl_disabletauntmenuclose"):GetBool() then GAMEMODE.TauntMenu:Close() end
+			if !GetConVar("superpedobear_cl_disabletauntmenuclose"):GetBool() then GAMEMODE.TauntMenu:Close() end
 
 		end
 

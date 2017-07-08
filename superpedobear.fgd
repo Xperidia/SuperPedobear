@@ -1,0 +1,10 @@
+//-------------------------------------------------------------------------
+//
+// Super Pedobear FGD V0 by VictorienXP@Xperidia
+//
+//-------------------------------------------------------------------------
+
+@include "base.fgd"
+
+@PointClass base(PlayerClass, Angles) studio("models/editor/playerstart.mdl") = superpedobear_pedobearstart : "Spawn point for the Pedobears"
+[]

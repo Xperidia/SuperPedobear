@@ -882,7 +882,7 @@ function GM:PlayerCanHearPlayersVoice(pListener, pTalker)
 end
 
 function GM:CreateDummy(ply)
-	local cd = 1
+	local cd = 4
 	if ply:Team() != TEAM_VICTIMS or !ply:OnGround() then return end
 	if !IsValid(ply.Dummy) or (!ply.tnextpowerup or ply.tnextpowerup < CurTime()) then
 		if IsValid(ply.Dummy) then
@@ -893,8 +893,6 @@ function GM:CreateDummy(ply)
 		ent:Spawn()
 		ply.Dummy = ent
 		ply.tnextpowerup = CurTime() + cd
-		ply:SetNWInt("tnextpowerup", ply.tnextpowerup)
-		ply:SetNWInt("ttnextpowerup", cd)
 	end
 end
 
@@ -1160,27 +1158,18 @@ function GM:StoreChances(ply)
 		local chance = pl:GetNWFloat("SuperPedobear_PedoChance", nil)
 
 		if chance != nil then
-
 			pl:SetPData("SuperPedobear_PedoChance", math.floor(math.Clamp(chance, 0, 100) * 100))
-
 			GAMEMODE:Log("Saved the " .. (chance * 100) .. "% pedobear chance of " .. pl:GetName())
-
 		end
 
 	end
 
 	if IsValid(ply) then
-
 		savechance(ply)
-
 	elseif ply == nil then
-
 		for _, v in pairs(player.GetAll()) do
-
 			savechance(v)
-
 		end
-
 	end
 
 end
@@ -1196,35 +1185,22 @@ function GM:LoadChances(ply)
 		local chance = pl:GetPData("SuperPedobear_PedoChance", nil)
 
 		if chance != nil then
-
 			chance = chance * 0.01
-
 			pl:SetNWFloat("SuperPedobear_PedoChance", chance)
-
 			GAMEMODE:Log("Loaded the " .. (chance * 100) .. "% pedobear chance of " .. pl:GetName())
-
 		else
-
 			pl:SetNWFloat("SuperPedobear_PedoChance", 0.01)
-
 			GAMEMODE:Log("No pedobear chance found for " .. pl:GetName() .. ", default was set")
-
 		end
 
 	end
 
 	if IsValid(ply) then
-
 		loadchance(ply)
-
 	elseif ply == nil then
-
 		for _, v in pairs(player.GetAll()) do
-
 			loadchance(v)
-
 		end
-
 	end
 
 end
@@ -1241,6 +1217,7 @@ function GM:StorePlayerInfo(ply)
 		if totalvictims != nil then
 			pl:SetPData("SuperPedobear_TotalVictims", totalvictims)
 		end
+
 		if victimscurrency != nil then
 			pl:SetPData("SuperPedobear_VictimsCurrency", victimscurrency)
 		end
@@ -1250,46 +1227,28 @@ function GM:StorePlayerInfo(ply)
 	end
 
 	if IsValid(ply) then
-
 		saveinfo(ply)
-
 	elseif ply == nil then
-
 		for _, v in pairs(player.GetAll()) do
-
 			saveinfo(v)
-
 		end
-
 	end
 
 end
 
 function GM:LoadPlayerInfo(ply)
-
 	local function loadinfo(pl)
-
 		if pl:IsBot() then return end
-
 		pl:SetNWInt("SuperPedobear_TotalVictims", pl:GetPData("SuperPedobear_TotalVictims", 0))
 		pl:SetNWInt("SuperPedobear_VictimsCurrency", pl:GetPData("SuperPedobear_VictimsCurrency", 0))
-
 		GAMEMODE:Log("Loaded the player info of " .. pl:GetName())
-
 	end
-
 	if IsValid(ply) then
-
 		loadinfo(ply)
-
 	elseif ply == nil then
-
 		for _, v in pairs(player.GetAll()) do
-
 			loadinfo(v)
-
 		end
-
 	end
 
 end

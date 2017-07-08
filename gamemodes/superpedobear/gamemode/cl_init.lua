@@ -218,7 +218,7 @@ function GM:HUDPaint()
 	local splyAlive = sply:Alive()
 	local splyTeam = sply:Team()
 	local col = sply:GetPlayerColor():ToColor()
-	if !splyAlive then col = team.GetColor( splyTeam ) end
+	if !splyAlive then col = team.GetColor(splyTeam) end
 	local wi = true
 	if !splyAlive or (splyTeam != TEAM_PEDOBEAR and splyTeam != TEAM_VICTIMS) then
 		wi = false
@@ -229,6 +229,17 @@ function GM:HUDPaint()
 	end
 	local weldingstate = sply:GetNWInt("PedoWeldingState")
 	local hudoffset = GetConVar("superpedobear_cl_hud_offset"):GetInt()
+
+
+	--[[ THE GAMEMODE STATUS ]]--
+
+	local htxt = "Super Pedobear Early Access\nV" .. GAMEMODE.Version .. " - " .. os.date("%d/%m/%Y", os.time())
+	surface.SetFont("SuperPedobear_HT")
+	local tw, th = surface.GetTextSize(htxt)
+	surface.SetDrawColor(Color(0, 0, 0, 200))
+	surface.DrawRect(ScrW() / 2 - 8 - tw / 2 - hudoffset, hudoffset, tw + 8, th + 8)
+	th = th + 8
+	draw.DrawText(htxt, "SuperPedobear_HT", ScrW() / 2 - hudoffset - 4, hudoffset + 4, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
 
 
 	--[[ THE CLOCK AND ROUND COUNT ]]--
@@ -250,19 +261,20 @@ function GM:HUDPaint()
 		rnd = "∞"
 	end
 
-	draw.RoundedBox(0, ScrW() / 2 - 100, hudoffset, 200, 110, Color(0, 0, 0, 200))
-	draw.DrawText(GAMEMODE:FormatTime(TheTime), "SuperPedobear_TIME", ScrW() / 2, hudoffset, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER)
-	draw.DrawText("Round " .. rnd, "SuperPedobear_RND", ScrW() / 2, 60 + hudoffset, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER)
+	surface.SetDrawColor(Color(0, 0, 0, 200))
+	surface.DrawRect(ScrW() / 2 - 100, hudoffset + th, 200, 110)
+	draw.DrawText(GAMEMODE:FormatTime(TheTime), "SuperPedobear_TIME", ScrW() / 2, hudoffset + th, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+	draw.DrawText("Round " .. rnd, "SuperPedobear_RND", ScrW() / 2, 60 + hudoffset + th, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
 
 
 	--[[ THE ROUND STATUS ]]--
 
 	local rndtxth = 0
-	local function addrndtxt(txt)
+	local function addrndtxt(str)
 		surface.SetFont("SuperPedobear_RND")
-		local w, h = surface.GetTextSize(txt)
-		draw.RoundedBox(0, ScrW() / 2 - w / 2 - 8, 110 + hudoffset + rndtxth, w + 16, h, Color(0, 0, 0, 200))
-		draw.DrawText(txt, "SuperPedobear_RND", ScrW() / 2, 110 + hudoffset + rndtxth, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+		local w, h = surface.GetTextSize(str)
+		draw.RoundedBox(0, ScrW() / 2 - w / 2 - 8, 110 + hudoffset + th + rndtxth, w + 16, h, Color(0, 0, 0, 200))
+		draw.DrawText(str, "SuperPedobear_RND", ScrW() / 2, 110 + hudoffset + th + rndtxth, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
 		rndtxth = rndtxth + h
 	end
 
@@ -386,7 +398,6 @@ function GM:HUDPaint()
 		if !splyAlive then col = team.GetColor(splyTeam) end
 		local life = Either(splyAlive, 1, 0)
 		local stamina = 200
-		local powerup = 200
 		local taunt = 200
 		local sprintlock = false
 		local fcolor = Color(col.r, col.g, col.b, 150 * life)
@@ -411,14 +422,6 @@ function GM:HUDPaint()
 			taunt = math.Remap(ply.TauntCooldown - CurTime(), 0, ply.TauntCooldownF, 200, 1)
 		end
 
-		if splyAlive then
-			local t = sply:GetNWInt("tnextpowerup", 0)
-			local tt = sply:GetNWInt("ttnextpowerup", 0)
-			if t != 0 and t > CurTime() then
-				powerup = math.Remap(t - CurTime(), 0, tt, 200, 1)
-			end
-		end
-
 		draw.RoundedBox(0, hudoffset, ScrH() - 200 - hudoffset, 200, 200, Color(0, 0, 0, 200))
 
 		draw.RoundedBox(0, hudoffset, ScrH() - 200 - hudoffset, 200, 200, Color(col.r * life, col.g * life, col.b * life, 150 * life))
@@ -438,9 +441,6 @@ function GM:HUDPaint()
 			if Start and splyTeam == TEAM_VICTIMS then
 				MakeBar("STAMINA", stamina, sprintlock)
 			end
-			if splyTeam == TEAM_VICTIMS then --TODO: Stuff
-				MakeBar("POWER-UP", powerup)
-			end
 			if taunt != 200 then
 				MakeBar("TAUNT", taunt)
 			end
@@ -452,8 +452,12 @@ function GM:HUDPaint()
 		surface.SetDrawColor(255, 255, 255, 255)
 		surface.SetMaterial(Material("superpedobear/pedobear"))
 		surface.DrawTexturedRectUV(hudoffset, ScrH() - 200 - hudoffset, 200, 200, 0, 0, 1, 1)
+		surface.SetDrawColor(Color(0, 0, 0, 255))
+		surface.DrawOutlinedRect(hudoffset, ScrH() - 200 - hudoffset, 200, 200)
 	elseif plyTeam != TEAM_UNASSIGNED and splyTeam != TEAM_SPECTATOR then
 		self:DrawHealthFace(sply, hudoffset, ScrH() - 200 - hudoffset)
+		surface.SetDrawColor(Color(0, 0, 0, 255))
+		surface.DrawOutlinedRect(hudoffset, ScrH() - 200 - hudoffset, 200, 200)
 	end
 
 	if plyTeam != TEAM_UNASSIGNED and splyTeam != TEAM_SPECTATOR then
@@ -461,22 +465,6 @@ function GM:HUDPaint()
 		draw.DrawText(splynick, "SuperPedobear_HUDname", 100 + 1 + hudoffset, ScrH() - 200 + 1 - hudoffset, Color(0, 0, 0, 255), TEXT_ALIGN_CENTER)
 		draw.DrawText(splynick, "SuperPedobear_HUDname", 100 + hudoffset, ScrH() - 200 - hudoffset, col, TEXT_ALIGN_CENTER)
 	end
-
-	surface.SetDrawColor(Color(0, 0, 0, 255))
-	surface.DrawOutlinedRect(hudoffset, ScrH() - 200 - hudoffset, 200, 200)
-
-
-	--[[ THE GAMEMODE STATUS ]]--
-
-	local txt = "Super Pedobear Early Access (" .. os.date("%d/%m/%Y", os.time()) .. ")"
-	local w, h = 0, 0
-
-	if txt != "" then
-
-		surface.SetFont("SuperPedobear_HT")
-		w, h = surface.GetTextSize(txt)
-		draw.RoundedBox(0, ScrW() - 16 - w - hudoffset, hudoffset, w + 16, h + 16, Color(0, 0, 0, 200))
-		draw.DrawText(txt, "SuperPedobear_HT", ScrW() - w - hudoffset - 8 + w / 2, hudoffset + 8, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
 
 	end
 
@@ -550,7 +538,7 @@ function GM:HUDPaint()
 
 	end
 
-	draw.DrawText(GAMEMODE.Name .. " V" .. GAMEMODE.Version, "DermaDefault", ScrW() / 2, hudoffset, Color(255, 255, 255, 64), TEXT_ALIGN_CENTER)
+	--draw.DrawText(GAMEMODE.Name .. " V" .. GAMEMODE.Version, "DermaDefault", ScrW() / 2, hudoffset, Color(255, 255, 255, 64), TEXT_ALIGN_CENTER)
 
 end
 
@@ -1141,6 +1129,7 @@ hook.Add("CalcView", "SuperPedobear_thirdperson", function(ply, pos, angles, fov
 		traceData.endpos = traceData.start + angles:Forward() * -100
 		traceData.endpos = traceData.endpos + angles:Right()
 		traceData.endpos = traceData.endpos + angles:Up()
+		traceData.collisiongroup = COLLISION_GROUP_DEBRIS
 		traceData.filter = ply
 
 		local trace = util.TraceLine(traceData)

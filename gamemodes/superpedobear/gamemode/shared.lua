@@ -157,11 +157,9 @@ function GM:Initialize()
 	end
 
 	if SERVER then
-
 		if Pinion and Pinion.GamemodesSupportingInterrupt then
-			table.insert(Pinion.GamemodesSupportingInterrupt, "pedo")
+			table.insert(Pinion.GamemodesSupportingInterrupt, "superpedobear")
 		end
-
 	end
 
 	GAMEMODE:BuildMusicIndex()
@@ -225,11 +223,11 @@ end
 function GM:CreateTeams()
 
 	team.SetUp(TEAM_VICTIMS, "Victims", Color(247, 127, 190))
-	team.SetSpawnPoint(TEAM_VICTIMS, "info_player_terrorist")
+	team.SetSpawnPoint(TEAM_VICTIMS, {"info_player_start", "info_player_terrorist"})
 	team.SetClass(TEAM_VICTIMS, {"player_victim"})
 
 	team.SetUp(TEAM_PEDOBEAR, "Pedobear", Color(139, 85, 46), false)
-	team.SetSpawnPoint(TEAM_PEDOBEAR, "info_player_counterterrorist")
+	team.SetSpawnPoint(TEAM_PEDOBEAR, {"superpedobear_pedobearstart", "info_player_counterterrorist"})
 	team.SetClass(TEAM_PEDOBEAR, {"player_pedobear"})
 
 	team.SetSpawnPoint(TEAM_SPECTATOR, "worldspawn")
@@ -247,7 +245,7 @@ function GM:ShouldCollide(Ent1, Ent2)
 
 end
 
-function GM:Log(str,tn,hardcore)
+function GM:Log(str, tn, hardcore)
 
 	local name = GAMEMODE.ShortName or "SuperPedobear"
 	if tn then name = "SuperPedobear" end

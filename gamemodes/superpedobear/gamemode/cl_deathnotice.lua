@@ -103,7 +103,7 @@ function GM:DrawDeathNotice(x, y)
 	y = y * ScrH()
 
 	-- Draw
-	for k, Death in pairs( Deaths ) do
+	for k, Death in pairs(Deaths) do
 
 		if Death.time + hud_deathnotice_time > CurTime() then
 

@@ -466,7 +466,13 @@ function GM:HUDPaint()
 		draw.DrawText(splynick, "SuperPedobear_HUDname", 100 + hudoffset, ScrH() - 200 - hudoffset, col, TEXT_ALIGN_CENTER)
 	end
 
-	end
+	--[[if something then
+		surface.SetDrawColor(Color(0, 0, 0, 200))
+		surface.DrawRect(50 + hudoffset, ScrH() - 300 - hudoffset, 100, 100)
+		draw.DrawText("CLONE", "SuperPedobear_HT", 100 + hudoffset, ScrH() - 265 - hudoffset, Either(nope, Color(255, 0, 0, 255), Color(255, 255, 255, 255)), TEXT_ALIGN_CENTER)
+		surface.SetDrawColor(Color(0, 0, 0, 255))
+		surface.DrawOutlinedRect(50 + hudoffset, ScrH() - 300 - hudoffset, 100, 100)
+	end]]
 
 
 	--[[ THE MUSICS STUFF ]]--

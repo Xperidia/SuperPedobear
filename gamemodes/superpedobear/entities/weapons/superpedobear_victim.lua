@@ -109,7 +109,7 @@ end
 
 function SWEP:Reload()
 	if SERVER then
-		GAMEMODE:CreateDummy(self.Owner)
+		self.Owner:UsePowerUP()
 	end
 end
 

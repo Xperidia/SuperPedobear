@@ -52,6 +52,10 @@ GM.SeasonalEvents = {
 	{"LennyFaceDay", "Lenny Face Anniversary", "18/11"}
 }
 
+GM.PowerUps = {
+	clone = {"Clone", TEAM_VICTIMS}
+}
+
 GM.PlayerMeta = GM.PlayerMeta or FindMetaTable("Player")
 GM.PlayerMeta.RealNick = GM.PlayerMeta.RealNick or GM.PlayerMeta.Nick
 function GM.PlayerMeta:Nick()
@@ -247,12 +251,9 @@ end
 
 function GM:Log(str, tn, hardcore)
 
-	local name = GAMEMODE.ShortName or "SuperPedobear"
-	if tn then name = "SuperPedobear" end
-
 	if hardcore and !superpedobear_enabledevmode:GetBool() then return end
 
-	Msg("[" .. name .. "] " .. (str or "This was a log message, but something went wrong") .. "\n")
+	Msg("[SuperPedobear] " .. (str or "This was a log message, but something went wrong") .. "\n")
 
 end
 
@@ -268,4 +269,24 @@ function GM:GetHost()
 		end
 	end
 	return nil
+end
+
+function GM.PlayerMeta:GetPowerUP()
+	if CLIENT then return self:GetNWString("SuperPedobear_PowerUP", "none") end
+	return self.SPB_PowerUP
+end
+
+function GM.PlayerMeta:HasPowerUP()
+	if CLIENT then
+		if self:GetNWString("SuperPedobear_PowerUP", "none") != "none" then
+			return true
+		else
+			return false
+		end
+	end
+	if self.SPB_PowerUP and self.SPB_PowerUP != "none" then
+		return true
+	else
+		return false
+	end
 end

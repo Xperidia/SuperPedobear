@@ -261,7 +261,7 @@ function GM:Menu()
 			eh = eh + 20
 		end
 
-		docheckbox("Dev mode (Mostly a lot of logs)", "superpedobear_enabledevmode")
+		docheckbox("Dev mode (You shoudn't use this)", "superpedobear_enabledevmode")
 		docheckbox("Save chances", "superpedobear_save_chances")
 
 		if !GetConVar("superpedobear_cl_disablexpsc"):GetBool() then

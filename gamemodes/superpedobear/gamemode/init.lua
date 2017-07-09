@@ -882,18 +882,11 @@ function GM:PlayerCanHearPlayersVoice(pListener, pTalker)
 end
 
 function GM:CreateDummy(ply)
-	local cd = 4
-	if ply:Team() != TEAM_VICTIMS or !ply:OnGround() then return end
-	if !IsValid(ply.Dummy) or (!ply.tnextpowerup or ply.tnextpowerup < CurTime()) then
-		if IsValid(ply.Dummy) then
-			ply.Dummy:Remove()
-		end
-		local ent = ents.Create("superpedobear_dummy")
-		ent:SetPlayer(ply)
-		ent:Spawn()
-		ply.Dummy = ent
-		ply.tnextpowerup = CurTime() + cd
-	end
+	if ply:Team() != TEAM_VICTIMS or !ply:OnGround() then return false end
+	local ent = ents.Create("superpedobear_dummy")
+	ent:SetPlayer(ply)
+	ent:Spawn()
+	return ent
 end
 
 function GM:PlayerRequestTeam(ply, teamid)
@@ -1250,5 +1243,37 @@ function GM:LoadPlayerInfo(ply)
 			loadinfo(v)
 		end
 	end
+end
 
+function GM:CreatePowerUP(ply)
+	if !ply:IsListenServerHost() and !ply:IsSuperAdmin() then return end
+	local ent = ents.Create("superpedobear_powerup")
+	ent:SetPos(ply:GetPos())
+	ent:Spawn()
+end
+concommand.Add("superpedobear_dev_create_powerup", function(ply)
+	GAMEMODE:CreatePowerUP(ply)
+end)
+
+function GM.PlayerMeta:SetPowerUP(powerupstr)
+	if GAMEMODE.PowerUps[powerupstr] then
+		self.SPB_PowerUP = powerupstr
+		self:SetNWString("SuperPedobear_PowerUP", powerupstr)
+		--self.SPB_PowerUP_Delay = CurTime() + 3
+		GAMEMODE:Log(self:GetName() .. " has gained the " .. self.SPB_PowerUP .. " power-up", nil, true)
+	end
+end
+
+function GM.PlayerMeta:UsePowerUP()
+	local result
+	if self.SPB_PowerUP and GAMEMODE.PowerUps[self.SPB_PowerUP] and (!self.SPB_PowerUP_Delay or self.SPB_PowerUP_Delay < CurTime()) then
+		if self.SPB_PowerUP == "clone" then
+			result = GAMEMODE:CreateDummy(self)
+		end
+		if result then
+			GAMEMODE:Log(self:GetName() .. " has used the " .. self.SPB_PowerUP .. " power-up", nil, true)
+			self.SPB_PowerUP = nil
+			self:SetNWString("SuperPedobear_PowerUP", "none")
+		end
+	end
 end

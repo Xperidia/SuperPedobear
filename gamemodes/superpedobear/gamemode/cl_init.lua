@@ -424,7 +424,7 @@ function GM:HUDPaint()
 
 		draw.RoundedBox(0, hudoffset, ScrH() - 200 - hudoffset, 200, 200, Color(0, 0, 0, 200))
 
-		draw.RoundedBox(0, hudoffset, ScrH() - 200 - hudoffset, 200, 200, Color(col.r * life, col.g * life, col.b * life, 150 * life))
+		draw.RoundedBox(0, hudoffset, ScrH() - 200 - hudoffset, 200, 200, fcolor)
 
 		local function MakeBar(name, value, nope)
 			surface.SetDrawColor(Color(0, 0, 0, 200))
@@ -450,8 +450,8 @@ function GM:HUDPaint()
 
 	if wi and (sply:GetModel() == "models/player/pbear/pbear.mdl" or sply:GetModel() == "models/player/kuristaja/pbear/pbear.mdl") then
 		surface.SetDrawColor(255, 255, 255, 255)
-		surface.SetMaterial(Material("superpedobear/pedobear"))
-		surface.DrawTexturedRectUV(hudoffset, ScrH() - 200 - hudoffset, 200, 200, 0, 0, 1, 1)
+		surface.SetMaterial(GAMEMODE.Materials.Pedobear)
+		surface.DrawTexturedRect(hudoffset, ScrH() - 200 - hudoffset, 200, 200)
 		surface.SetDrawColor(Color(0, 0, 0, 255))
 		surface.DrawOutlinedRect(hudoffset, ScrH() - 200 - hudoffset, 200, 200)
 	elseif plyTeam != TEAM_UNASSIGNED and splyTeam != TEAM_SPECTATOR then
@@ -467,11 +467,22 @@ function GM:HUDPaint()
 	end
 
 	if sply:HasPowerUP() then
+		local powerup = GAMEMODE.PowerUps[sply:GetPowerUP()]
 		surface.SetDrawColor(Color(0, 0, 0, 200))
-		surface.DrawRect(50 + hudoffset, ScrH() - 300 - hudoffset, 100, 100)
-		draw.DrawText(string.upper(GAMEMODE.PowerUps[sply:GetPowerUP()][1]), "SuperPedobear_HT", 100 + hudoffset, ScrH() - 265 - hudoffset, Either(nope, Color(255, 0, 0, 255), Color(255, 255, 255, 255)), TEXT_ALIGN_CENTER)
+		surface.DrawRect(25 + hudoffset, ScrH() - 350 - hudoffset, 150, 150)
+		if powerup[3] then
+			if powerup[4] and IsColor(powerup[4]) then
+				surface.SetDrawColor(powerup[4])
+			else
+				surface.SetDrawColor(Color(52, 190, 236, 255))
+			end
+			surface.SetMaterial(powerup[3])
+			surface.DrawTexturedRect(25 + hudoffset, ScrH() - 350 - hudoffset, 150, 150)
+		else
+			draw.DrawText(string.upper(powerup[1]), "SuperPedobear_HT", 100 + hudoffset, ScrH() - 265 - hudoffset, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+		end
 		surface.SetDrawColor(Color(0, 0, 0, 255))
-		surface.DrawOutlinedRect(50 + hudoffset, ScrH() - 300 - hudoffset, 100, 100)
+		surface.DrawOutlinedRect(25 + hudoffset, ScrH() - 350 - hudoffset, 150, 150)
 	end
 
 
@@ -1183,7 +1194,6 @@ function GM:OnPlayerChat(player, strText, bTeamOnly, bPlayerIsDead)
 		local rankname = player:GetNWString("XperidiaRankName", "<Unknown rank name>")
 		local rankcolor = player:GetNWString("XperidiaRankColor", "255 255 255 255")
 		if rankid > 0 then
-			print(string.ToColor(rankcolor))
 			table.insert(tab, string.ToColor(rankcolor))
 			table.insert(tab, "{Xperidia " .. rankname .. "} ")
 		end

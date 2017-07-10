@@ -65,12 +65,18 @@ function SWEP:OnDrop()
 	self:Remove()
 end
 
+function SWEP:Reload()
+	if SERVER then
+		self.Owner:UsePowerUP()
+	end
+end
+
 function SWEP:GangBang(ent, attacker)
 	local d = DamageInfo()
 	d:SetDamage(2147483647)
 	d:SetDamageType(DMG_DIRECT)
 	d:SetAttacker(attacker)
-	d:SetDamageForce(attacker:EyeAngles():Forward() * 10 ^ 8)
+	d:SetDamageForce(Vector(0, 0, -100000))
 	d:SetDamagePosition(attacker:GetPos())
 	d:SetMaxDamage(2147483647)
 	if IsValid(ent) and ent:Health() > 0 then ent:TakeDamageInfo(d) end

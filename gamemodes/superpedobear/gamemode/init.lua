@@ -229,6 +229,18 @@ function GM:PlayerDeathThink(ply)
 		return
 	end
 
+	if ply:Team() == TEAM_VICTIMS and GAMEMODE.Vars.Round.Start and ply.Clones and #ply.Clones > 0 then
+		for k, v in pairs(ply.Clones) do
+			if IsValid(v) then
+				ply:Spawn()
+				ply:SetPos(v:GetPos())
+				ply:SetAngles(v:GetAngles())
+				v:BRemove(ply)
+				return
+			end
+		end
+	end
+
 	if ply:Team() == TEAM_VICTIMS or ply:Team() == TEAM_PEDOBEAR then GAMEMODE:SpecControl(ply) end
 
 	if GAMEMODE.Vars.Round.Start then return end
@@ -349,7 +361,10 @@ function GM:DoTheVictoryDance(wteam)
 
 		for k, v in pairs(player.GetAll()) do
 
-			if v:Alive() and v:Team() != wteam then v:KillSilent() end
+			if v:Alive() and v:Team() != wteam then
+				v:DropPowerUP()
+				v:KillSilent()
+			end
 
 			if v:Team() != wteam and v:Team() != TEAM_UNASSIGNED and v:Team() != TEAM_SPECTATOR then
 
@@ -537,6 +552,7 @@ function GM:RoundThink()
 				GAMEMODE:Log(Pedos[PedoIndex]:GetName() .. " has been selected to be Pedobear " .. PedoIndex, nil, true)
 
 				if IsValid(Pedos[PedoIndex]) then
+					Pedos[PedoIndex]:DropPowerUP()
 					Pedos[PedoIndex]:SetTeam(TEAM_PEDOBEAR)
 					Pedos[PedoIndex]:KillSilent()
 					Pedos[PedoIndex]:SetNWFloat("SuperPedobear_PedoChance", 0)
@@ -664,14 +680,18 @@ function GM:RoundThink()
 				MapVote.Start(nil, nil, nil, {"spb_", "ph_"})
 			end
 
-			timer.Create( "SuperPedobear_TempoPreEnd", 9.8, 1, function()
+			timer.Create("SuperPedobear_TempoPreEnd", 9.8, 1, function()
 
 				for k, v in pairs(team.GetPlayers(TEAM_PEDOBEAR)) do
+					v:DropPowerUP()
 					v:KillSilent()
 				end
 
 				for k, v in pairs(team.GetPlayers(TEAM_VICTIMS)) do
-					if v:Alive() then v:KillSilent() end
+					if v:Alive() then
+						v:DropPowerUP()
+						v:KillSilent()
+					end
 				end
 
 				timer.Remove("SuperPedobear_TempoPreEnd")
@@ -699,6 +719,7 @@ function GM:RoundThink()
 				for k, v in pairs(team.GetPlayers(TEAM_VICTIMS)) do
 					if !v:Alive() then v:Spawn() end
 					if !v:IsBot() and !v.IsAFK then v:SetNWFloat("SuperPedobear_PedoChance", v:GetNWFloat("SuperPedobear_PedoChance", 0) + 0.01) end
+					if v.Clones and #v.Clones > 0 then table.Empty(v.Clones) end
 				end
 
 				for k, v in pairs(team.GetPlayers(TEAM_PEDOBEAR)) do
@@ -721,7 +742,7 @@ function GM:RoundThink()
 
 end
 
-function GM:OnPlayerChangedTeam( ply, oldteam, newteam )
+function GM:OnPlayerChangedTeam(ply, oldteam, newteam)
 
 	if newteam == TEAM_SPECTATOR then
 
@@ -737,18 +758,14 @@ function GM:OnPlayerChangedTeam( ply, oldteam, newteam )
 
 	end
 
+	ply:DropPowerUP()
+
 	if oldteam == TEAM_PEDOBEAR then
-
 		PrintMessage(HUD_PRINTTALK, Format("%s left the Pedobear role!", ply:Nick()))
-
 	elseif newteam == TEAM_VICTIMS then
-
 		PrintMessage(HUD_PRINTTALK, Format("%s joined the game!", ply:Nick()))
-
 	else
-
 		PrintMessage(HUD_PRINTTALK, Format("%s joined '%s'", ply:Nick(), team.GetName(newteam)))
-
 	end
 
 end
@@ -756,19 +773,24 @@ end
 function GM:DoPlayerDeath(ply, attacker, dmginfo)
 
 	ply:CreateRagdoll()
+	ply:DropPowerUP()
 
 	ply:AddDeaths(1)
 
 	if ply:Team() == TEAM_VICTIMS and GAMEMODE.Vars.Round.Start then
-
 		if #GAMEMODE.Sounds.Death > 0 then
 			ply:EmitSound(GAMEMODE.Sounds.Death[math.random(1, #GAMEMODE.Sounds.Death)], 100, 100, 1, CHAN_AUTO)
 		end
-
+		if ply.Clones and #ply.Clones > 0 then
+			for k, v in pairs(ply.Clones) do
+				if IsValid(v) then
+					return
+				end
+			end
+		end
 	end
 
 	if attacker:IsValid() and attacker:IsPlayer() then
-
 		if attacker != ply and attacker:Team() == TEAM_PEDOBEAR then
 			attacker:AddFrags(1)
 			attacker:SetNWInt("SuperPedobear_TotalVictims", attacker:GetNWInt("SuperPedobear_TotalVictims", 0) + 1)
@@ -782,7 +804,6 @@ function GM:DoPlayerDeath(ply, attacker, dmginfo)
 			end
 			GAMEMODE.Vars.downvictims = (GAMEMODE.Vars.downvictims or 0) + 1
 		end
-
 	end
 
 	GAMEMODE.Vars.victims = 0
@@ -886,6 +907,10 @@ function GM:CreateDummy(ply)
 	local ent = ents.Create("superpedobear_dummy")
 	ent:SetPlayer(ply)
 	ent:Spawn()
+	if !ply.Clones then
+		ply.Clones = {}
+	end
+	table.insert(ply.Clones, ent)
 	return ent
 end
 
@@ -1245,23 +1270,38 @@ function GM:LoadPlayerInfo(ply)
 	end
 end
 
-function GM:CreatePowerUP(ply)
+function GM:CreatePowerUP(ply, powerupstr)
 	if !ply:IsListenServerHost() and !ply:IsSuperAdmin() then return end
 	local ent = ents.Create("superpedobear_powerup")
 	ent:SetPos(ply:GetPos())
+	if powerupstr == "dothetrap" then
+		ent.Trap = ply
+		ent:SetNWBool("Trap", true)
+		ent.ForcedPowerUP = "none"
+	else
+		ent.ForcedPowerUP = powerupstr
+	end
 	ent:Spawn()
+	return ent
 end
-concommand.Add("superpedobear_dev_create_powerup", function(ply)
-	GAMEMODE:CreatePowerUP(ply)
+concommand.Add("superpedobear_dev_create_powerup", function(ply, cmd, args)
+	GAMEMODE:CreatePowerUP(ply, args[1])
 end)
 
 function GM.PlayerMeta:SetPowerUP(powerupstr)
-	if GAMEMODE.PowerUps[powerupstr] then
+	if GAMEMODE.PowerUps[powerupstr] and GAMEMODE.PowerUps[powerupstr][2] == self:Team() then
 		self.SPB_PowerUP = powerupstr
 		self:SetNWString("SuperPedobear_PowerUP", powerupstr)
 		--self.SPB_PowerUP_Delay = CurTime() + 3
 		GAMEMODE:Log(self:GetName() .. " has gained the " .. self.SPB_PowerUP .. " power-up", nil, true)
+		return self.SPB_PowerUP
+	elseif powerupstr == "none" then
+		self.SPB_PowerUP = powerupstr
+		self:SetNWString("SuperPedobear_PowerUP", powerupstr)
+		GAMEMODE:Log(self:GetName() .. " has lost their power-up", nil, true)
+		return self.SPB_PowerUP
 	end
+	return nil
 end
 
 function GM.PlayerMeta:UsePowerUP()
@@ -1269,11 +1309,49 @@ function GM.PlayerMeta:UsePowerUP()
 	if self.SPB_PowerUP and GAMEMODE.PowerUps[self.SPB_PowerUP] and (!self.SPB_PowerUP_Delay or self.SPB_PowerUP_Delay < CurTime()) then
 		if self.SPB_PowerUP == "clone" then
 			result = GAMEMODE:CreateDummy(self)
+		elseif self.SPB_PowerUP == "trap" then
+			result = GAMEMODE:CreatePowerUP(self, "dothetrap")
+		elseif self.SPB_PowerUP == "boost" then
+			self.SprintV = 200
+			result = true
 		end
 		if result then
 			GAMEMODE:Log(self:GetName() .. " has used the " .. self.SPB_PowerUP .. " power-up", nil, true)
 			self.SPB_PowerUP = nil
 			self:SetNWString("SuperPedobear_PowerUP", "none")
+		elseif result == nil then
+			GAMEMODE:Log(self:GetName() .. " has tried to use the " .. self.SPB_PowerUP .. " power-up but no result was found!")
+			self.SPB_PowerUP = nil
+			self:SetNWString("SuperPedobear_PowerUP", "none")
 		end
 	end
+	return result
+end
+
+function GM:SelectRandomPowerUP(ply)
+	for k, v in RandomPairs(GAMEMODE.PowerUps) do
+		if v[2] == ply:Team() then
+			return k
+		end
+	end
+	return nil
+end
+
+function GM.PlayerMeta:PickPowerUP(powerupstr)
+	if !self:HasPowerUP() then
+		if powerupstr and GAMEMODE.PowerUps[powerupstr][2] == self:Team() then
+			return self:SetPowerUP(powerupstr)
+		end
+		return self:SetPowerUP(GAMEMODE:SelectRandomPowerUP(self))
+	end
+	return false
+end
+
+function GM.PlayerMeta:DropPowerUP()
+	if self:HasPowerUP() then
+		GAMEMODE:CreatePowerUP(self, self:GetPowerUP())
+		self:SetPowerUP("none")
+		return true
+	end
+	return false
 end

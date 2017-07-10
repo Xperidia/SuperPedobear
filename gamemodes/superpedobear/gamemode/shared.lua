@@ -37,6 +37,7 @@ GM.Sounds.Death		= GM.Sounds.Death or {}
 
 GM.Materials = {}
 GM.Materials.PedoVan = Material("superpedobear/pedovan")
+GM.Materials.Pedobear = Material("superpedobear/pedobear")
 
 GM.Vars = GM.Vars or {}
 GM.Vars.Round = GM.Vars.Round or {}
@@ -53,7 +54,12 @@ GM.SeasonalEvents = {
 }
 
 GM.PowerUps = {
-	clone = {"Clone", TEAM_VICTIMS}
+	clone = {"Clone", TEAM_VICTIMS, Material("superpedobear/powerup/clone")},
+	boost = {"Boost", TEAM_VICTIMS, Material("superpedobear/powerup/boost"), Color(255, 128, 0, 255)},
+	--vdisguise = {"Disguise", TEAM_VICTIMS, Material("superpedobear/powerup/vdisguise")},
+	--pdisguise = {"Disguise", TEAM_PEDOBEAR, Material("superpedobear/powerup/pdisguise")},
+	--radar = {"Radar", TEAM_PEDOBEAR, Material("superpedobear/powerup/radar")},
+	trap = {"False Power-UP", TEAM_PEDOBEAR, Material("superpedobear/powerup/trap"), Color(255, 64, 64, 255)}
 }
 
 GM.PlayerMeta = GM.PlayerMeta or FindMetaTable("Player")
@@ -209,17 +215,12 @@ function GM:BuildMusicIndex()
 	local premusiclist = ReadMusicInfo(true)
 
 	if SERVER then
-
 		GAMEMODE.Musics.musics = musiclist
 		GAMEMODE.Musics.premusics = premusiclist
-
 		if !game.IsDedicated() then GAMEMODE:SendMusicIndex() end
-
 	else
-
 		GAMEMODE.LocalMusics.musics = musiclist
 		GAMEMODE.LocalMusics.premusics = premusiclist
-
 	end
 
 end
@@ -240,21 +241,15 @@ function GM:CreateTeams()
 end
 
 function GM:ShouldCollide(Ent1, Ent2)
-
 	if Ent1:GetClass() == "superpedobear_dummy" or Ent2:GetClass() == "superpedobear_dummy" then
 		return false
 	end
-
 	return true
-
 end
 
 function GM:Log(str, tn, hardcore)
-
 	if hardcore and !superpedobear_enabledevmode:GetBool() then return end
-
 	Msg("[SuperPedobear] " .. (str or "This was a log message, but something went wrong") .. "\n")
-
 end
 
 function GM:GetHost()

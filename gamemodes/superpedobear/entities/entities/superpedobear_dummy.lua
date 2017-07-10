@@ -61,8 +61,8 @@ function ENT:Think()
 
 	local ply = self:GetPlayer()
 
-	if !ply or !IsValid(ply) or !ply:Alive() or ply:Team() != TEAM_VICTIMS then
-		self:Remove()
+	if !ply or !IsValid(ply) or ply:Team() != TEAM_VICTIMS then
+		self:BRemove(ply)
 		return
 	end
 
@@ -117,10 +117,15 @@ function ENT:OnKilled(dmginfo)
 
 	local ply = self:GetPlayer()
 
-	ply:PrintMessage(HUD_PRINTTALK, "Your clone is dead!")
+	self:BecomeRagdoll(dmginfo)
 
-	--self:BecomeRagdoll(dmginfo)
+	self:BRemove(ply)
 
+end
+
+function ENT:BRemove(ply)
+	if IsValid(ply) then
+		table.RemoveByValue(ply.Clones, self)
+	end
 	self:Remove()
-
 end

@@ -6,5 +6,10 @@
 
 @include "base.fgd"
 
-@PointClass base(PlayerClass, Angles) studio("models/editor/playerstart.mdl") = superpedobear_pedobearstart : "Spawn point for the Pedobears"
+@PointClass base(PlayerClass, Angles) studio("models/editor/playerstart.mdl") = superpedobear_pedobearstart : "Spawn point for the Pedobears."
 []
+
+@PointClass base(Targetname) size(-16 -16 0, 16 16 8) = superpedobear_powerup_spawn : "Spawn point for Power-UPs."
+[
+	PowerUP(string) : "Force the spawn of a specific Power-UP."
+]

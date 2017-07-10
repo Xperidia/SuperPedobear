@@ -261,6 +261,13 @@ function GM:PlayerStats()
 	for k, v in pairs(team.GetPlayers(TEAM_VICTIMS)) do
 		if IsValid(v) and v:Alive() then
 			GAMEMODE.Vars.victims = GAMEMODE.Vars.victims + 1
+		elseif IsValid(v) and v.Clones and #v.Clones > 0 then
+			for _, c in pairs(v.Clones) do
+				if IsValid(c) then
+					GAMEMODE.Vars.victims = GAMEMODE.Vars.victims + 1
+					break
+				end
+			end
 		end
 	end
 
@@ -523,7 +530,6 @@ function GM:RoundThink()
 			local Pedos = {}
 			local WantedPedos = 1
 			local PedoIndex = 1
-			local tw = "the"
 
 			if GAMEMODE.Vars.victims >= 64 then
 				WantedPedos = 4
@@ -561,16 +567,9 @@ function GM:RoundThink()
 
 			end
 
-			if #Pedos > 1 then
-				tw = "a"
-			end
-
 			for k, v in pairs(Pedos) do
-
-				--PrintMessage( HUD_PRINTTALK, v:Nick().." is "..tw.." pedobear!" )
 				v:SendLua([[LocalPlayer():EmitSound("superpedobear_yourethepedo") system.FlashWindow()]])
 				GAMEMODE:PedoAFKCare(v)
-
 			end
 
 			net.Start("SuperPedobear_List")
@@ -803,14 +802,6 @@ function GM:DoPlayerDeath(ply, attacker, dmginfo)
 				end
 			end
 			GAMEMODE.Vars.downvictims = (GAMEMODE.Vars.downvictims or 0) + 1
-		end
-	end
-
-	GAMEMODE.Vars.victims = 0
-
-	for k, v in pairs(team.GetPlayers(TEAM_VICTIMS)) do
-		if IsValid(v) and v:Alive() then
-			GAMEMODE.Vars.victims = GAMEMODE.Vars.victims + 1
 		end
 	end
 
@@ -1270,21 +1261,22 @@ function GM:LoadPlayerInfo(ply)
 	end
 end
 
-function GM:CreatePowerUP(ply, powerupstr)
-	if !ply:IsListenServerHost() and !ply:IsSuperAdmin() then return end
-	local ent = ents.Create("superpedobear_powerup")
-	ent:SetPos(ply:GetPos())
+function GM:CreatePowerUP(ent, powerupstr, respawn)
+	local PowerUp = ents.Create("superpedobear_powerup")
+	PowerUp:SetPos(ent:GetPos())
 	if powerupstr == "dothetrap" then
-		ent.Trap = ply
-		ent:SetNWBool("Trap", true)
-		ent.ForcedPowerUP = "none"
+		PowerUp.Trap = ent
+		PowerUp:SetNWBool("Trap", true)
+		PowerUp.ForcedPowerUP = "none"
+		PowerUp.Respawn = respawn
 	else
-		ent.ForcedPowerUP = powerupstr
+		PowerUp.ForcedPowerUP = powerupstr
 	end
-	ent:Spawn()
-	return ent
+	PowerUp:Spawn()
+	return PowerUp
 end
 concommand.Add("superpedobear_dev_create_powerup", function(ply, cmd, args)
+	if !superpedobear_enabledevmode:GetBool() and !ply:IsListenServerHost() and !ply:IsSuperAdmin() then return end
 	GAMEMODE:CreatePowerUP(ply, args[1])
 end)
 

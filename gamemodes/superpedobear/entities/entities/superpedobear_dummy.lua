@@ -17,10 +17,12 @@ function ENT:Initialize()
 	self:SetHealth(1)
 	self:SetCustomCollisionCheck(true)
 
-	self.OPos = ply:GetPos()
-	self.OAngles = Angle(0, ply:GetAngles()[2], 0)
-	self:SetPos(self.OPos)
-	self:SetAngles(self.OAngles)
+	if SERVER then
+		self:SetLePos(ply:GetPos())
+		self:SetLeAngle(Angle(0, ply:GetAngles()[2], 0))
+	end
+	self:SetPos(self:GetLePos())
+	self:SetAngles(self:GetLeAngle())
 
 	self:SetModel(ply:GetModel())
 
@@ -41,11 +43,13 @@ end
 
 function ENT:SetupDataTables()
 	self:NetworkVar("Entity", 0, "Player")
+	self:NetworkVar("Vector", 0, "LePos")
+	self:NetworkVar("Angle", 0, "LeAngle")
 end
 
 function ENT:RunBehaviour()
 	while true do
-		coroutine.wait(60)
+		coroutine.wait(180)
 		coroutine.yield()
 	end
 end
@@ -66,9 +70,8 @@ function ENT:Think()
 		return
 	end
 
-	if self:GetPos() != self.OPos then
-		self:SetPos(self.OPos)
-	end
+	self:SetPos(self:GetLePos())
+	self:SetAngles(self:GetLeAngle())
 
 	if ply:GetModel() != self:GetModel() then
 

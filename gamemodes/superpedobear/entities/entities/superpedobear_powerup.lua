@@ -12,23 +12,25 @@ ENT.Author = "Xperidia"
 ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
 
 function ENT:Initialize()
+	if SERVER then
+		self:SetTrigger(true)
+		self:SetUseType(SIMPLE_USE)
+		self:SetLePos(self:GetPos() + Vector(0, 0, 35.5))
+	end
 	self:SetModel("models/hunter/blocks/cube05x105x05.mdl")
 	self:SetSolid(SOLID_VPHYSICS)
 	self:DrawShadow(false)
-	self:SetPos(self:GetPos() + Vector(0, 0, 35.5))
-	self:SetAngles(Angle(0, 0, 90))
 	self:SetCollisionGroup(COLLISION_GROUP_WORLD)
 	self:SetColor(Color(255, 128, 0, 255))
 	self:SetRenderMode(RENDERMODE_TRANSALPHA)
 	self:SetMaterial("models/wireframe")
-	if SERVER then
-		self:SetTrigger(true)
-		self:SetUseType(SIMPLE_USE)
-	end
+	self:SetPos(self:GetLePos())
+	self:SetAngles(Angle(0, 0, 90))
+	if self.Respawn then self:EmitSound("npc/roller/mine/combine_mine_deploy1.wav", 75, 100, 1, CHAN_AUTO) end
 end
 
-function ENT:Think()
-	--if CLIENT then self:SetAngles(self:GetAngles() + Angle(0, 0.1, 0)) end
+function ENT:SetupDataTables()
+	self:NetworkVar("Vector", 0, "LePos")
 end
 
 local sprite = Material("sprites/physg_glow1")
@@ -36,23 +38,26 @@ function ENT:Draw()
 	if superpedobear_enabledevmode:GetBool() then self:DrawModel() end
 	if !IsValid(self.PU) then
 		self.PU = ClientsideModel("models/maxofs2d/hover_rings.mdl")
-		self.PU.origin = self:GetPos() + Vector(0, 0, -30)
-		self.PU:SetPos(self.PU.origin)
+		self.PU:SetNoDraw(true)
+		self.PU:SetPos(self:GetPos() + Vector(0, 0, -30))
 		self.PU:SetColor(Color(255, 128, 0, 255))
 		self.PU:SetRenderMode(RENDERMODE_TRANSALPHA)
 	end
 	if IsValid(self.PU) then
 		local x = 0.5 * (math.sin(CurTime() * 2) + 1)
+		local pos = self:GetPos() + Vector(0, 0, 0)
 		--self.PU:SetAngles(self.PU:GetAngles() + Angle(0.1, 0.1, 0.1))
 		--self.PU:SetColor(Color(255, 128, 0, math.Remap(x, 0, 1, 128, 255)))
 		if self:GetNWBool("Trap", false) then
 			self.PU:SetColor(Color(255, 64, 0, 255))
 			self:SetColor(Color(255, 0, 0, 255))
-			self.PU:SetPos(self.PU.origin + Vector(0, 0, math.sin(CurTime()) * 2))
+			self.PU:SetPos(pos + Vector(0, 0, math.sin(CurTime()) * 2))
+			self.PU:DrawModel()
 			render.SetMaterial(sprite)
 			render.DrawSprite(self.PU:GetPos(), 32, 32, Color(255, 64, 0, math.Remap(x, 0, 1, 128, 255)))
 		else
-			self.PU:SetPos(self.PU.origin + Vector(0, 0, math.sin(CurTime() * 2) * 2))
+			self.PU:SetPos(pos + Vector(0, 0, math.sin(CurTime() * 2) * 2))
+			self.PU:DrawModel()
 			render.SetMaterial(sprite)
 			render.DrawSprite(self.PU:GetPos(), 32, 32, Color(255, 128, 0, math.Remap(x, 0, 1, 128, 255)))
 			self.light = DynamicLight(self:EntIndex())
@@ -79,10 +84,11 @@ function ENT:OnRemove()
 end
 
 function ENT:PickUP(ent)
-	if IsValid(ent) and ent:IsPlayer() and ent:Alive() then
+	if IsValid(ent) and ent:IsPlayer() and ent:Alive() and self:GetCreationTime() + 1 < CurTime() then
 		if !self.Trap then
 			local result = ent:PickPowerUP(self.ForcedPowerUP)
 			if result or result == nil then
+				ent:EmitSound("items/battery_pickup.wav", 75, 100, 1, CHAN_AUTO)
 				self:Remove()
 			end
 		elseif ent:Team() == TEAM_VICTIMS then

@@ -85,7 +85,7 @@ end
 function SWEP:Think()
 	if SERVER and GAMEMODE.Vars.Round.Start then
 		local attacker = self.Owner
-		for k, v in pairs (ents.FindInSphere(self.Owner:GetPos(), 26)) do
+		for k, v in pairs (ents.FindInSphere(self.Owner:GetPos() + Vector(0,0,16), 26)) do
 			if IsValid(v) and ((v:IsPlayer() and v:Alive() and v:Team() == TEAM_VICTIMS and v != self.Owner) or v:GetClass() == "superpedobear_dummy") and v:Health() > 0 then
 				if !IsValid(attacker) then attacker = self end
 				self:GangBang(v, attacker)

@@ -115,11 +115,11 @@ function ENT:OnKilled(dmginfo)
 
 	hook.Call("OnDummyKilled", GAMEMODE, self, att, dmginfo:GetInflictor())
 
-	local ply = self:GetPlayer()
+	if #GAMEMODE.Sounds.Death > 0 then
+		self:EmitSound(GAMEMODE.Sounds.Death[math.random(1, #GAMEMODE.Sounds.Death)], 100, 100, 1, CHAN_AUTO)
+	end
 
-	self:BecomeRagdoll(dmginfo)
-
-	self:BRemove(ply)
+	self:BRemove(self:GetPlayer())
 
 end
 

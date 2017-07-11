@@ -148,6 +148,7 @@ function GM:Initialize()
 		CreateClientConVar("superpedobear_cl_music_allowexternal", 1, true, false)
 		CreateClientConVar("superpedobear_cl_music_visualizer", 1, true, false)
 		CreateClientConVar("superpedobear_cl_hud_offset", 0, true, false)
+		CreateClientConVar("superpedobear_cl_hide_tips", 0, true, false)
 
 		cvars.AddChangeCallback("superpedobear_cl_music_volume", function(convar_name, value_old, value_new)
 			if IsValid(GAMEMODE.Vars.Music) then
@@ -284,4 +285,13 @@ function GM.PlayerMeta:HasPowerUP()
 	else
 		return false
 	end
+end
+
+function GM:SelectRandomPowerUP(ply)
+	for k, v in RandomPairs(GAMEMODE.PowerUps) do
+		if !IsValid(ply) or (IsValid(ply) and v[2] == ply:Team()) then
+			return k
+		end
+	end
+	return nil
 end

@@ -1268,9 +1268,10 @@ function GM:CreatePowerUP(ent, powerupstr, respawn)
 		PowerUp.Trap = ent
 		PowerUp:SetNWBool("Trap", true)
 		PowerUp.ForcedPowerUP = "none"
-		PowerUp.Respawn = respawn
 	else
 		PowerUp.ForcedPowerUP = powerupstr
+		PowerUp.IsRespawn = respawn
+		PowerUp.WasDropped = ent:IsPlayer()
 	end
 	PowerUp:Spawn()
 	return PowerUp
@@ -1284,7 +1285,8 @@ function GM.PlayerMeta:SetPowerUP(powerupstr)
 	if GAMEMODE.PowerUps[powerupstr] and GAMEMODE.PowerUps[powerupstr][2] == self:Team() then
 		self.SPB_PowerUP = powerupstr
 		self:SetNWString("SuperPedobear_PowerUP", powerupstr)
-		--self.SPB_PowerUP_Delay = CurTime() + 3
+		self.SPB_PowerUP_Delay = CurTime() + 2
+		self:SetNWFloat("SuperPedobear_PowerUP_Delay", self.SPB_PowerUP_Delay)
 		GAMEMODE:Log(self:GetName() .. " has gained the " .. self.SPB_PowerUP .. " power-up", nil, true)
 		return self.SPB_PowerUP
 	elseif powerupstr == "none" then
@@ -1305,6 +1307,7 @@ function GM.PlayerMeta:UsePowerUP()
 			result = GAMEMODE:CreatePowerUP(self, "dothetrap")
 		elseif self.SPB_PowerUP == "boost" then
 			self.SprintV = 200
+			self:EmitSound("player/suit_sprint.wav", 75, 100, 1, CHAN_AUTO)
 			result = true
 		end
 		if result then
@@ -1318,15 +1321,6 @@ function GM.PlayerMeta:UsePowerUP()
 		end
 	end
 	return result
-end
-
-function GM:SelectRandomPowerUP(ply)
-	for k, v in RandomPairs(GAMEMODE.PowerUps) do
-		if v[2] == ply:Team() then
-			return k
-		end
-	end
-	return nil
 end
 
 function GM.PlayerMeta:PickPowerUP(powerupstr)

@@ -152,7 +152,7 @@ hook.Add("HUDShouldDraw", "HideHUD", function( name )
 end)
 
 function GM:FormatTime(time)
-	local timet = string.FormattedTime( time )
+	local timet = string.FormattedTime(time)
 	if timet.h >= 999 then
 		return "∞"
 	elseif timet.h >= 1 then
@@ -229,28 +229,42 @@ function GM:HUDPaint()
 	end
 	local weldingstate = sply:GetNWInt("PedoWeldingState")
 	local hudoffset = GetConVar("superpedobear_cl_hud_offset"):GetInt()
+	local hide_tips = GetConVar("superpedobear_cl_hide_tips"):GetBool()
 
 
 	--[[ THE GAMEMODE STATUS ]]--
 
-	local htxt = "Super Pedobear Early Access\nV" .. GAMEMODE.Version .. " - " .. os.date("%d/%m/%Y", os.time())
+	local htxt = "Super Pedobear - Early Access\n      V" .. GAMEMODE.Version .. " - " .. os.date("%d/%m/%Y", os.time())
 	surface.SetFont("SuperPedobear_HT")
 	local tw, th = surface.GetTextSize(htxt)
 	surface.SetDrawColor(Color(0, 0, 0, 200))
-	surface.DrawRect(ScrW() / 2 - 8 - tw / 2 - hudoffset, hudoffset, tw + 8, th + 8)
+	surface.DrawRect(ScrW() / 2 - 8 - tw / 2, hudoffset, tw + 8, th + 8)
 	th = th + 8
-	draw.DrawText(htxt, "SuperPedobear_HT", ScrW() / 2 - hudoffset - 4, hudoffset + 4, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+	draw.DrawText(htxt, "SuperPedobear_HT", ScrW() / 2 - 4, hudoffset + 4, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+	surface.SetDrawColor(Color(0, 0, 0, 255))
+	surface.DrawOutlinedRect(ScrW() / 2 - 8 - tw / 2, hudoffset, tw + 8, th)
 
 
 	--[[ THE CLOCK AND ROUND COUNT ]]--
 
 	local TheTime = 0
 	local rnd = GAMEMODE.Vars.Rounds or 0
+	local time_color = Color(255, 255, 255, 255)
 
 	if PreStartTime and PreStartTime - CurTime() >= 0 then
 		TheTime = PreStartTime - CurTime()
+		if TheTime < 15 then
+			time_color = Color(255, 255, 0, Either(TheTime < 5, yay(255), 255))
+		end
 	elseif Time and Time - CurTime() >= 0 then
 		TheTime = Time - CurTime()
+		if TheTime < 60 and plyTeam == TEAM_VICTIMS then
+			time_color = Color(0, 255, 0, Either(TheTime < 30, yay(255), 255))
+		elseif TheTime < 60 and plyTeam == TEAM_PEDOBEAR then
+			time_color = Color(255, 0, 0, Either(TheTime < 30, yay(255), 255))
+		elseif TheTime < 60 then
+			time_color = Color(255, 255, 0, Either(TheTime < 30, yay(255), 255))
+		end
 	elseif End or TempEnd then
 		TheTime = LastTime
 	elseif !Start and !PreStart then
@@ -263,8 +277,10 @@ function GM:HUDPaint()
 
 	surface.SetDrawColor(Color(0, 0, 0, 200))
 	surface.DrawRect(ScrW() / 2 - 100, hudoffset + th, 200, 110)
-	draw.DrawText(GAMEMODE:FormatTime(TheTime), "SuperPedobear_TIME", ScrW() / 2, hudoffset + th, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+	draw.DrawText(GAMEMODE:FormatTime(TheTime), "SuperPedobear_TIME", ScrW() / 2, hudoffset + th, time_color, TEXT_ALIGN_CENTER)
 	draw.DrawText("Round " .. rnd, "SuperPedobear_RND", ScrW() / 2, 60 + hudoffset + th, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+	surface.SetDrawColor(Color(0, 0, 0, 255))
+	surface.DrawOutlinedRect(ScrW() / 2 - 100, hudoffset + th, 200, 110)
 
 
 	--[[ THE ROUND STATUS ]]--
@@ -273,8 +289,11 @@ function GM:HUDPaint()
 	local function addrndtxt(str)
 		surface.SetFont("SuperPedobear_RND")
 		local w, h = surface.GetTextSize(str)
-		draw.RoundedBox(0, ScrW() / 2 - w / 2 - 8, 110 + hudoffset + th + rndtxth, w + 16, h, Color(0, 0, 0, 200))
+		surface.SetDrawColor(Color(0, 0, 0, 200))
+		surface.DrawRect(ScrW() / 2 - w / 2 - 8, 110 + hudoffset + th + rndtxth, w + 16, h)
 		draw.DrawText(str, "SuperPedobear_RND", ScrW() / 2, 110 + hudoffset + th + rndtxth, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+		surface.SetDrawColor(Color(0, 0, 0, 255))
+		surface.DrawOutlinedRect(ScrW() / 2 - w / 2 - 8, 110 + hudoffset + th + rndtxth, w + 16, h)
 		rndtxth = rndtxth + h
 	end
 
@@ -336,57 +355,88 @@ function GM:HUDPaint()
 	--[[ THE AFK MESSAGE ]]--
 
 	if GAMEMODE.Vars.AfkTime and GAMEMODE.Vars.AfkTime - CurTime() >= 0 then
-		draw.RoundedBox(0, ScrW() / 2 - 300, 165, 600, 210, Color(0, 0, 0, 200))
-		draw.DrawText("Hey you're kind of afk!\nIf you're still afk in " .. GAMEMODE:FormatTime(GAMEMODE.Vars.AfkTime - CurTime()) .. "\nYou will be kicked out\n of the role of Pedobear", "SuperPedobear_RND", ScrW() / 2, 165, Color(255, yay(255), yay(255), 255), TEXT_ALIGN_CENTER)
+		local txt = "Hey you're kind of afk!\nIf you're still afk in " .. GAMEMODE:FormatTime(GAMEMODE.Vars.AfkTime - CurTime()) .. "\nYou will be kicked out\n of the role of Pedobear"
+		surface.SetFont("SuperPedobear_RND")
+		local w, h = surface.GetTextSize(txt)
+		surface.SetDrawColor(Color(0, 0, 0, 200))
+		surface.DrawRect(ScrW() / 2 - w / 2 - 4, ScrH() / 2 - h / 2, w + 8, h)
+		draw.DrawText(txt, "SuperPedobear_RND", ScrW() / 2, ScrH() / 2 - h / 2, Color(255, yay(255), yay(255), 255), TEXT_ALIGN_CENTER)
+		surface.SetDrawColor(Color(255, 0, 0, 255))
+		surface.DrawOutlinedRect(ScrW() / 2 - w / 2 - 4, ScrH() / 2 - h / 2, w + 8, h)
 	end
 
 
-	--[[ THE TIPS MESSAGES ]]--
+	if !hide_tips then --[[ ALL GENERIC TIPS ]]--
 
-	local w, h = 0, 0
-	local tips = ""
+		--[[ THE TIPS MESSAGES ]]--
 
-	if (plyTeam == TEAM_VICTIMS and Start and !plyAlive) or plyTeam == TEAM_SPECTATOR then
-		tips = GAMEMODE:CheckBind("+attack") .. " next player\n" .. GAMEMODE:CheckBind("+attack2") .. " previous player\n" .. GAMEMODE:CheckBind("+jump") .. " spectate mode (1st person/Chase/Free)"
-	elseif plyAlive and !Start and plyTeam == TEAM_VICTIMS then
-		tips = GAMEMODE:CheckBind("+attack") .. " to weld a prop to another\n" .. GAMEMODE:CheckBind("+attack2") .. " to unweld a prop\n" .. GAMEMODE:CheckBind("+reload") .. " to use your power-up"
-	elseif plyAlive and plyTeam == TEAM_PEDOBEAR then
-		tips = "You're a Pedobear!\n" .. GAMEMODE:CheckBind("+attack") .. " to break props\nNow start chasing some little girls! ( ͡° ͜ʖ ͡°)"
-	end
+		local w, h = 0, 0
+		local tips = ""
 
-	if tips != "" then
-		surface.SetFont("SuperPedobear_HT")
-		w, h = surface.GetTextSize(tips)
-		draw.RoundedBox(0, ScrW() / 2 - w / 2 - 4, ScrH() - h - hudoffset, w + 8, h, Color(0, 0, 0, 200))
-		draw.DrawText(tips, "SuperPedobear_HT", ScrW() / 2, ScrH() - h - hudoffset, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
-		if GAMEMODE:IsSeasonalEvent("AprilFool") then draw.DrawText("PedoTips™", "DermaDefault", ScrW() / 2 - w / 2, ScrH() - h, Color(255, 255, 255, 64), TEXT_ALIGN_LEFT) end
-	end
-
-
-	--[[ THE QUICK TIPS ]]--
-
-	if plyTeam == TEAM_UNASSIGNED then
-		draw.RoundedBox(0, ScrW() / 2 - 160, ScrH() / 2 - 20, 320, 40, Color(0, 0, 0, yay(200)))
-		draw.DrawText("Press any key to join!", "SuperPedobear_TXT", ScrW() / 2, ScrH() / 2 - 20, Color(255, 255, 255, yay(255)), TEXT_ALIGN_CENTER)
-	elseif plyTeam == TEAM_VICTIMS and !Start and !plyAlive then
-		draw.RoundedBox(0, ScrW() / 2 - 200, ScrH() / 2 - 20, 400, 40, Color(0, 0, 0, yay(200)))
-		draw.DrawText("Press any key to respawn!", "SuperPedobear_TXT", ScrW() / 2, ScrH() / 2 - 20, Color(255, 255, 255, yay(255)), TEXT_ALIGN_CENTER)
-	end
-
-
-	--[[ THE PERFORMING WELD MESSAGE ]]--
-
-	if splyAlive and splyTeam == TEAM_VICTIMS then
-		if weldingstate == 2 then
-			draw.RoundedBox(0, ScrW() / 2 - 100, ScrH() / 2 + 100, 200, 26, Color(0, 0, 0, 200))
-			draw.DrawText("This prop is too far", "SuperPedobear_HT", ScrW() / 2, ScrH() / 2 + 100, Color(255, 0, 0, 255), TEXT_ALIGN_CENTER)
-		elseif weldingstate == 3 then
-			draw.RoundedBox(0, ScrW() / 2 - 150, ScrH() / 2 + 100, 300, 26, Color(0, 0, 0, 200) )
-			draw.DrawText("The props are too far each other", "SuperPedobear_HT", ScrW() / 2, ScrH() / 2 + 100, Color(255, 0, 0, 255), TEXT_ALIGN_CENTER)
-		elseif IsValid(welding) then
-			draw.RoundedBox(0, ScrW() / 2 - 100, ScrH() / 2 + 100, 200, 26, Color(0, 0, 0, yay(200)))
-			draw.DrawText("Click another prop", "SuperPedobear_HT", ScrW() / 2, ScrH() / 2 + 100, Color(255, 255, 255, yay(255)), TEXT_ALIGN_CENTER)
+		if (plyTeam == TEAM_VICTIMS and Start and !plyAlive) or plyTeam == TEAM_SPECTATOR then
+			tips = GAMEMODE:CheckBind("+attack") .. " next player\n" .. GAMEMODE:CheckBind("+attack2") .. " previous player\n" .. GAMEMODE:CheckBind("+jump") .. " spectate mode (1st person/Chase/Free)"
+		elseif plyAlive and plyTeam == TEAM_VICTIMS then
+			tips = GAMEMODE:CheckBind("+attack") .. " to weld a prop to another\n" .. GAMEMODE:CheckBind("+attack2") .. " to unweld a prop"
+		elseif plyAlive and plyTeam == TEAM_PEDOBEAR then
+			tips = GAMEMODE:CheckBind("+attack") .. " to break props"
 		end
+
+		if tips != "" then
+			surface.SetFont("SuperPedobear_HT")
+			w, h = surface.GetTextSize(tips)
+			surface.SetDrawColor(Color(0, 0, 0, 200))
+			surface.DrawRect(ScrW() / 2 - w / 2 - 4, ScrH() - 100 - h - hudoffset, w + 8, h)
+			draw.DrawText(tips, "SuperPedobear_HT", ScrW() / 2, ScrH() - 100 - h - hudoffset, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+			surface.SetDrawColor(Color(0, 0, 0, 255))
+			surface.DrawOutlinedRect(ScrW() / 2 - w / 2 - 4, ScrH() - 100 - h - hudoffset, w + 8, h)
+		end
+
+
+		--[[ THE QUICK TIPS ]]--
+
+		local qtips
+		local w, h = 0, 0
+
+		if plyTeam == TEAM_UNASSIGNED then
+			qtips = "Press any key to join!"
+		elseif plyTeam == TEAM_VICTIMS and !Start and !plyAlive then
+			qtips = "Press any key to respawn!"
+		end
+		if qtips then
+			surface.SetFont("SuperPedobear_TXT")
+			w, h = surface.GetTextSize(qtips)
+			surface.SetDrawColor(Color(0, 0, 0, yay(200)))
+			surface.DrawRect(ScrW() / 2 - w / 2 - 4, ScrH() / 2 - h, w + 8, h)
+			draw.DrawText(qtips, "SuperPedobear_TXT", ScrW() / 2, ScrH() / 2 - h, Color(255, 255, 255, yay(255)), TEXT_ALIGN_CENTER)
+			surface.SetDrawColor(Color(0, 0, 0, yay(255)))
+			surface.DrawOutlinedRect(ScrW() / 2 - w / 2 - 4, ScrH() / 2 - h, w + 8, h)
+		end
+
+
+		--[[ THE PERFORMING WELD MESSAGE ]]--
+
+		if splyAlive and splyTeam == TEAM_VICTIMS then
+
+			local function WeldInfo(str, warn)
+				surface.SetFont("SuperPedobear_HT")
+				local w, h = surface.GetTextSize(str)
+				surface.SetDrawColor(Either(warn, Color(0, 0, 0, 225), Color(0, 0, 0, yay(225))))
+				surface.DrawRect(ScrW() / 2 - w / 2 - 4, ScrH() / 2 + 100 - h, w + 8, h)
+				draw.DrawText(str, "SuperPedobear_HT", ScrW() / 2, ScrH() / 2 + 100 - h, Either(warn, Color(255, 0, 0, 255), Color(255, 255, 255, yay(255))), TEXT_ALIGN_CENTER)
+				surface.SetDrawColor(Either(warn, Color(255, 0, 0, yay(255)), Color(0, 0, 0, yay(255))))
+				surface.DrawOutlinedRect(ScrW() / 2 - w / 2 - 4, ScrH() / 2 + 100 - h, w + 8, h)
+			end
+
+			if weldingstate == 2 then
+				WeldInfo("This prop is too far!", true)
+			elseif weldingstate == 3 then
+				WeldInfo("The props are too far each other!", true)
+			elseif IsValid(welding) then
+				WeldInfo("Click another prop")
+			end
+
+		end
+
 	end
 
 
@@ -466,23 +516,68 @@ function GM:HUDPaint()
 		draw.DrawText(splynick, "SuperPedobear_HUDname", 100 + hudoffset, ScrH() - 200 - hudoffset, col, TEXT_ALIGN_CENTER)
 	end
 
-	if sply:HasPowerUP() then
+
+	--[[ THE POWER-UP ]]--
+
+	if sply:HasPowerUP() or Start then
+
 		local powerup = GAMEMODE.PowerUps[sply:GetPowerUP()]
+		local anim_time = sply:GetNWFloat("SuperPedobear_PowerUP_Delay", nil)
+		local anim_progress = anim_time and anim_time > CurTime()
+		local ox, oy = 25 + hudoffset, ScrH() - 400 - hudoffset
+		local ow, oh = 150, 150
+		surface.SetFont("SuperPedobear_HUDname")
+
+		local title = "Power-UP"
+		local tw, th = surface.GetTextSize(title)
 		surface.SetDrawColor(Color(0, 0, 0, 200))
-		surface.DrawRect(25 + hudoffset, ScrH() - 350 - hudoffset, 150, 150)
-		if powerup[3] then
+		surface.DrawRect(ox + ow / 2 - tw / 2 - 4, oy - th, tw + 8, th)
+		draw.DrawText(title, "SuperPedobear_HUDname", ox + ow / 2, oy - th, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+		surface.SetDrawColor(Color(0, 0, 0, 255))
+		surface.DrawOutlinedRect(ox + ow / 2 - tw / 2 - 4, oy - th, tw + 8, th)
+
+		surface.SetDrawColor(Color(0, 0, 0, 200))
+		surface.DrawRect(ox, oy, ow, oh)
+
+		if anim_progress then
+			for k, v in RandomPairs(GAMEMODE.PowerUps) do
+				if v[4] and IsColor(v[4]) then
+					surface.SetDrawColor(v[4])
+				else
+					surface.SetDrawColor(Color(52, 190, 236, 255))
+				end
+				surface.SetMaterial(v[3])
+				surface.DrawTexturedRect(ox, oy, ow, oh)
+				break
+			end
+		elseif sply:HasPowerUP() then
 			if powerup[4] and IsColor(powerup[4]) then
 				surface.SetDrawColor(powerup[4])
 			else
 				surface.SetDrawColor(Color(52, 190, 236, 255))
 			end
 			surface.SetMaterial(powerup[3])
-			surface.DrawTexturedRect(25 + hudoffset, ScrH() - 350 - hudoffset, 150, 150)
-		else
-			draw.DrawText(string.upper(powerup[1]), "SuperPedobear_HT", 100 + hudoffset, ScrH() - 265 - hudoffset, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+			surface.DrawTexturedRect(ox + yay(25) / 2, oy + yay(25) / 2, ow - yay(25), oh - yay(25))
 		end
+
 		surface.SetDrawColor(Color(0, 0, 0, 255))
-		surface.DrawOutlinedRect(25 + hudoffset, ScrH() - 350 - hudoffset, 150, 150)
+		surface.DrawOutlinedRect(ox, oy, ow, oh)
+
+		if !hide_tips then
+			local usetip
+			if sply:HasPowerUP() and !anim_progress then
+				usetip = "Press " .. GAMEMODE:CheckBind("+reload") .. " to use"
+			end
+			if usetip then
+				local tw, th = surface.GetTextSize(usetip)
+				surface.SetDrawColor(Color(0, 0, 0, 200))
+				surface.DrawRect(ox + ow / 2 - tw / 2 - 4, oy + oh, tw + 8, th)
+				draw.DrawText(usetip, "SuperPedobear_HUDname", ox + ow / 2, oy + oh, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+				surface.SetDrawColor(Color(0, 0, 0, 255))
+				surface.DrawOutlinedRect(ox + ow / 2 - tw / 2 - 4, oy + oh, tw + 8, th)
+			end
+		end
+
 	end
 
 

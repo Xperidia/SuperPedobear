@@ -39,6 +39,8 @@ function ENT:Initialize()
 
 	self:StartSeq("idle_all_01")
 
+	self:EmitSound("garrysmod/balloon_pop_cute.wav", 75, 100, 1, CHAN_AUTO)
+
 end
 
 function ENT:SetupDataTables()

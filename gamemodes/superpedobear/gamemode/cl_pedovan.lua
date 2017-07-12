@@ -89,7 +89,7 @@ function GM:PedoVan()
 
 	self.wip = vgui.Create("DLabel")
 	self.wip:SetParent(self)
-	self.wip:SetText("WIP")
+	self.wip:SetText("The store is currently closed!\nPlease come back later!")
 	self.wip:SetPos(scaleW(800), scaleH(30))
 	self.wip:SetSize(scaleW(970), scaleH(220))
 	self.wip:SetDark(1)

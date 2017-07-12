@@ -289,7 +289,7 @@ end
 
 function GM:SelectRandomPowerUP(ply)
 	for k, v in RandomPairs(GAMEMODE.PowerUps) do
-		if !IsValid(ply) or (IsValid(ply) and v[2] == ply:Team()) then
+		if !IsValid(ply) or v[2] == ply:Team() then
 			return k
 		end
 	end

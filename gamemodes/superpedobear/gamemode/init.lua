@@ -387,23 +387,15 @@ function GM:DoTheVictoryDance(wteam)
 		end
 
 		timer.Create("SuperPedobear_ReviewPlayers", 2, 0, function()
-
 			if GAMEMODE.Vars.Round.End or GAMEMODE.Vars.Round.TempEnd then
-
 				for k, v in pairs(player.GetAll()) do
-
 					if !v:Alive() then
 						GAMEMODE:SpecControl(v, true)
 					end
-
 				end
-
 			else
-
 				timer.Remove("SuperPedobear_ReviewPlayers")
-
 			end
-
 		end)
 
 	end
@@ -427,7 +419,6 @@ function GM:Think()
 	end
 
 	for k, v in pairs(team.GetPlayers(TEAM_VICTIMS)) do
-
 		if v:Alive() then
 			local a = math.Clamp(v:Health(), 0, 100) / 100
 			local doffset = v:EntIndex()
@@ -435,7 +426,6 @@ function GM:Think()
 										(0.5 * (math.sin(CurTime() * a + doffset) + 1)) * a,
 										(0.5 * (math.sin((CurTime() * a + doffset) + 1) + 1)) * a ) )
 		end
-
 	end
 
 	if !GAMEMODE.Vars.CheckTime or GAMEMODE.Vars.CheckTime + 0.1 <= CurTime() then
@@ -453,7 +443,6 @@ function GM:Think()
 				end
 
 				if v.SprintV then
-
 					if v.SprintV <= 0 and !v.SprintLock then
 						v.SprintLock = true
 						v:SetRunSpeed(200)
@@ -461,17 +450,13 @@ function GM:Think()
 						v.SprintLock = false
 						v:SetRunSpeed(400)
 					end
-
 					v:SetNWInt("SprintV", v.SprintV)
 					v:SetNWInt("SprintLock", v.SprintLock)
-
 				end
 
 			elseif (!v.SprintV or v.SprintV != 100) then
-
 				v.SprintV = 100
 				v:SetNWInt("SprintV", v.SprintV)
-
 			end
 
 		end
@@ -1285,7 +1270,7 @@ function GM.PlayerMeta:SetPowerUP(powerupstr)
 	if GAMEMODE.PowerUps[powerupstr] and GAMEMODE.PowerUps[powerupstr][2] == self:Team() then
 		self.SPB_PowerUP = powerupstr
 		self:SetNWString("SuperPedobear_PowerUP", powerupstr)
-		self.SPB_PowerUP_Delay = CurTime() + 2
+		self.SPB_PowerUP_Delay = CurTime() + 3
 		self:SetNWFloat("SuperPedobear_PowerUP_Delay", self.SPB_PowerUP_Delay)
 		GAMEMODE:Log(self:GetName() .. " has gained the " .. self.SPB_PowerUP .. " power-up", nil, true)
 		return self.SPB_PowerUP

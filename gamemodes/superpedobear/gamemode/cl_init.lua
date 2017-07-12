@@ -539,16 +539,40 @@ function GM:HUDPaint()
 		surface.SetDrawColor(Color(0, 0, 0, 200))
 		surface.DrawRect(ox, oy, ow, oh)
 
-		if anim_progress then
-			for k, v in RandomPairs(GAMEMODE.PowerUps) do
-				if v[4] and IsColor(v[4]) then
-					surface.SetDrawColor(v[4])
+		if anim_progress and sply.AnimSetup and table.Count(sply.AnimSetup) > 0 then
+			for k, v in pairs(sply.AnimSetup) do
+				if v.Color and IsColor(v.Color) then
+					surface.SetDrawColor(v.Color)
 				else
 					surface.SetDrawColor(Color(52, 190, 236, 255))
 				end
-				surface.SetMaterial(v[3])
-				surface.DrawTexturedRect(ox, oy, ow, oh)
-				break
+				surface.SetMaterial(v.Mat)
+				if v.Offset < 0 then
+					local tstart = math.Remap(math.Clamp(v.Offset, -oh, 0), -oh, 0, 1, 0)
+					local toff = math.Remap(math.Clamp(v.Offset, -oh, 0), -oh, 0, 0, 1)
+					surface.DrawTexturedRectUV(ox, oy, ow, oh * toff, 0, tstart, 1, 1)
+				elseif v.Offset >= 0 then
+					local tend = math.Remap(math.Clamp(v.Offset, 0, oh), 0, oh, 1, 0)
+					surface.DrawTexturedRectUV(ox, oy + v.Offset, ow, oh * tend, 0, 0, 1, tend)
+				end
+				if anim_time - 1 > CurTime() or (anim_time - 1 <= CurTime() and sply.AnimSetup[sply:GetPowerUP()].Offset != 0) then
+					if sply.AnimSetup[k].Offset > oh * (table.Count(sply.AnimSetup) - 1) then
+						sply.AnimSetup[k].Offset = -oh
+					else
+						sply.AnimSetup[k].Offset = sply.AnimSetup[k].Offset + 10
+					end
+				end
+			end
+		elseif anim_progress then
+			local offset = 0
+			if !sply.AnimSetup then sply.AnimSetup = {} else table.Empty(sply.AnimSetup) end
+			--sply.AnimStart = CurTime()
+			for k, v in RandomPairs(GAMEMODE.PowerUps) do
+				sply.AnimSetup[k] = {}
+				sply.AnimSetup[k].Mat = v[3]
+				sply.AnimSetup[k].Color = v[4]
+				sply.AnimSetup[k].Offset = offset
+				offset = offset + oh
 			end
 		elseif sply:HasPowerUP() then
 			if powerup[4] and IsColor(powerup[4]) then
@@ -558,6 +582,7 @@ function GM:HUDPaint()
 			end
 			surface.SetMaterial(powerup[3])
 			surface.DrawTexturedRect(ox + yay(25) / 2, oy + yay(25) / 2, ow - yay(25), oh - yay(25))
+			if sply.AnimSetup and table.Count(sply.AnimSetup) > 0 then table.Empty(sply.AnimSetup) end
 		end
 
 		surface.SetDrawColor(Color(0, 0, 0, 255))

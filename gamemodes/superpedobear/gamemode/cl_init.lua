@@ -347,6 +347,8 @@ function GM:HUDPaint()
 			w, h = surface.GetTextSize(txt)
 			draw.RoundedBox(0, hudoffset, hudoffset, w + 16, h + 16, Color(0, 0, 0, 200))
 			draw.DrawText(txt, "SuperPedobear_HT", hudoffset + 8 + w / 2, hudoffset + 8, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+			surface.SetDrawColor(Color(0, 0, 0, 255))
+			surface.DrawOutlinedRect(hudoffset, hudoffset, w + 16, h + 16)
 		end
 
 	end
@@ -454,7 +456,7 @@ function GM:HUDPaint()
 		local ib = 0
 
 		if splyAlive and splyTeam == TEAM_VICTIMS then
-			stamina = math.Remap(sply:GetNWInt("SprintV", 100), 0, 100, 1, 200)
+			stamina = math.Remap(sply:GetNWInt("SprintV", 100), 0, 100, 0, 200)
 			sprintlock = sply:GetNWInt("SprintLock", false)
 		end
 
@@ -465,7 +467,7 @@ function GM:HUDPaint()
 			local TauntCooldownF = sply:GetNWInt("TauntCooldownF", 5)
 
 			if LastTaunt > 0 and TauntCooldown > 0 then
-				taunt = math.Remap(TauntCooldown, 0, TauntCooldownF, 200, 1)
+				taunt = math.Remap(TauntCooldown, 0, TauntCooldownF, 200, 0)
 			end
 
 		elseif plyAlive and ply.LastTaunt and ply.TauntCooldown-CurTime() > 0 then
@@ -488,7 +490,7 @@ function GM:HUDPaint()
 		end
 
 		if splyAlive then
-			if Start and splyTeam == TEAM_VICTIMS then
+			if (Start or stamina != 200) and splyTeam == TEAM_VICTIMS then
 				MakeBar("STAMINA", stamina, sprintlock)
 			end
 			if taunt != 200 then
@@ -519,7 +521,7 @@ function GM:HUDPaint()
 
 	--[[ THE POWER-UP ]]--
 
-	if sply:HasPowerUP() or Start then
+	if sply:HasPowerUP() then
 
 		local powerup = GAMEMODE.PowerUps[sply:GetPowerUP()]
 		local anim_time = sply:GetNWFloat("SuperPedobear_PowerUP_Delay", nil)
@@ -657,6 +659,9 @@ function GM:HUDPaint()
 		draw.DrawText(timetxt, "SuperPedobear_HUDname", ScrW() - 127 - hudoffset, ScrH() - 81 + visspace - hudoffset, Color(0, 0, 0, 255), TEXT_ALIGN_CENTER)
 		draw.DrawText(timetxt, "SuperPedobear_HUDname", ScrW() - 128 - hudoffset, ScrH() - 82 + visspace - hudoffset, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
 
+		surface.SetDrawColor(Color(0, 0, 0, 255))
+		surface.DrawOutlinedRect(ScrW() - 256 - hudoffset, ScrH() - 100 + visspace - hudoffset, 256, 100 - visspace)
+
 		if visuok then
 
 			local eqd = {}
@@ -672,6 +677,9 @@ function GM:HUDPaint()
 				surface.SetDrawColor(volcolor(b))
 				surface.DrawRect(ScrW() - 256 + (k - 1) * 2 - hudoffset, ScrH() - on - hudoffset, 2, on)
 			end
+
+			surface.SetDrawColor(Color(0, 0, 0, 255))
+			surface.DrawOutlinedRect(ScrW() - 256 - hudoffset, ScrH() - 48 - hudoffset, 256, 48)
 
 		end
 

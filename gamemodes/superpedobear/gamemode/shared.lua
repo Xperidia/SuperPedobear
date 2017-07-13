@@ -54,7 +54,7 @@ GM.SeasonalEvents = {
 }
 
 GM.PowerUps = {
-	clone = {"Clone", TEAM_VICTIMS, Material("superpedobear/powerup/clone")},
+	clone = {"Clone", TEAM_VICTIMS, Material("superpedobear/powerup/clone"), Color(255, 200, 50, 255)},
 	boost = {"Boost", TEAM_VICTIMS, Material("superpedobear/powerup/boost"), Color(255, 128, 0, 255)},
 	--vdisguise = {"Disguise", TEAM_VICTIMS, Material("superpedobear/powerup/vdisguise")},
 	--pdisguise = {"Disguise", TEAM_PEDOBEAR, Material("superpedobear/powerup/pdisguise")},

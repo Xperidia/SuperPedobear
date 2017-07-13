@@ -539,7 +539,7 @@ function GM:HUDPaint()
 		surface.SetDrawColor(Color(0, 0, 0, 200))
 		surface.DrawRect(ox, oy, ow, oh)
 
-		if anim_progress and sply.AnimSetup and table.Count(sply.AnimSetup) > 0 then
+		if sply:HasPowerUP() and anim_progress and sply.AnimSetup and table.Count(sply.AnimSetup) > 0 then
 			for k, v in pairs(sply.AnimSetup) do
 				if v.Color and IsColor(v.Color) then
 					surface.SetDrawColor(v.Color)
@@ -563,7 +563,7 @@ function GM:HUDPaint()
 					end
 				end
 			end
-		elseif anim_progress then
+		elseif sply:HasPowerUP() and anim_progress then
 			local offset = 0
 			if !sply.AnimSetup then sply.AnimSetup = {} else table.Empty(sply.AnimSetup) end
 			--sply.AnimStart = CurTime()
@@ -583,6 +583,8 @@ function GM:HUDPaint()
 			surface.SetMaterial(powerup[3])
 			surface.DrawTexturedRect(ox + yay(25) / 2, oy + yay(25) / 2, ow - yay(25), oh - yay(25))
 			if sply.AnimSetup and table.Count(sply.AnimSetup) > 0 then table.Empty(sply.AnimSetup) end
+		elseif sply.AnimSetup and table.Count(sply.AnimSetup) > 0 then
+			table.Empty(sply.AnimSetup)
 		end
 
 		surface.SetDrawColor(Color(0, 0, 0, 255))

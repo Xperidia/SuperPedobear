@@ -59,7 +59,7 @@ GM.PowerUps = {
 	boost = {"Boost", TEAM_VICTIMS, Material("superpedobear/powerup/boost"), Color(255, 128, 0, 255)},
 	--vdisguise = {"Disguise", TEAM_VICTIMS, Material("superpedobear/powerup/vdisguise")},
 	--pdisguise = {"Disguise", TEAM_PEDOBEAR, Material("superpedobear/powerup/pdisguise")},
-	--radar = {"Radar", TEAM_PEDOBEAR, Material("superpedobear/powerup/radar")},
+	radar = {"Radar", TEAM_PEDOBEAR, Material("superpedobear/powerup/radar")},
 	trap = {"False Power-UP", TEAM_PEDOBEAR, Material("superpedobear/powerup/trap"), Color(255, 64, 64, 255)}
 }
 
@@ -117,7 +117,8 @@ function GM:Initialize()
 
 	superpedobear_enabledevmode = CreateConVar("superpedobear_enabledevmode", 0, FCVAR_NONE, "Dev mode and more logs.")
 	superpedobear_round_time = CreateConVar("superpedobear_round_time", 180, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Time of a round in second.")
-	superpedobear_round_pretime = CreateConVar("superpedobear_round_pretime", 30, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Time of the round preparation in second.")
+	superpedobear_round_pretime = CreateConVar("superpedobear_round_pretime", 15, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Time of the player waiting time in second.")
+	superpedobear_round_pre2time = CreateConVar("superpedobear_round_pre2time", 15, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Time before pedobear spawn.")
 	superpedobear_afk_time = CreateConVar("superpedobear_afk_time", 30, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Time needed for a player to be consired afk.")
 	superpedobear_afk_action = CreateConVar("superpedobear_afk_action", 30, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Time needed for a player to be kick out of pedobear when afk.")
 	superpedobear_save_chances = CreateConVar("superpedobear_save_chances", 1, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Set if we should save the chances to be Pedobear.")
@@ -166,12 +167,6 @@ function GM:Initialize()
 			end
 		end)
 
-	end
-
-	if SERVER then
-		if Pinion and Pinion.GamemodesSupportingInterrupt then
-			table.insert(Pinion.GamemodesSupportingInterrupt, "superpedobear")
-		end
 	end
 
 	GAMEMODE:BuildMusicIndex()

@@ -343,7 +343,7 @@ function GM:SplashScreen()
 		.. "<tr><td class='leftside'>1-9</td><td> Quick taunt</td></tr>"
 		.. '</table>");')
 		pedobearSplashScreenF.SplashScreen:Call('$("#changelog").append("<h2><u>Changelog V' .. (GAMEMODE.Version or '?') .. '</u></h2><table>'
-		.. "<tr><td>> Preparing release</td></tr>"
+		.. "<tr><td>> Welcome to the first public release!</td></tr>"
 		.. '</table>");')
 
 		local closebtn = vgui.Create("DButton", pedobearSplashScreenF)

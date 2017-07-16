@@ -104,6 +104,8 @@ net.Receive("SuperPedobear_Vars", function( len )
 	GAMEMODE.Vars.Round.Start = tobool(net.ReadBool())
 	GAMEMODE.Vars.Round.PreStart = tobool(net.ReadBool())
 	GAMEMODE.Vars.Round.PreStartTime = net.ReadFloat()
+	GAMEMODE.Vars.Round.Pre2Start = tobool(net.ReadBool())
+	GAMEMODE.Vars.Round.Pre2Time = net.ReadFloat()
 	GAMEMODE.Vars.Round.Time = net.ReadFloat()
 	GAMEMODE.Vars.Round.End = tobool(net.ReadBool())
 	GAMEMODE.Vars.Round.Win = net.ReadInt(32)
@@ -201,6 +203,8 @@ function GM:HUDPaint()
 
 	local PreStartTime = GAMEMODE.Vars.Round.PreStartTime
 	local PreStart = GAMEMODE.Vars.Round.PreStart
+	local Pre2Time = GAMEMODE.Vars.Round.Pre2Time
+	local Pre2Start = GAMEMODE.Vars.Round.Pre2Start
 	local Time = GAMEMODE.Vars.Round.Time
 	local End = GAMEMODE.Vars.Round.End
 	local LastTime = GAMEMODE.Vars.Round.LastTime
@@ -251,27 +255,40 @@ function GM:HUDPaint()
 	local rnd = GAMEMODE.Vars.Rounds or 0
 	local time_color = Color(255, 255, 255, 255)
 
-	if PreStartTime and PreStartTime - CurTime() >= 0 then
+	if Pre2Time and Pre2Time - CurTime() >= 0 then
+		TheTime = Pre2Time - CurTime()
+		if plyTeam == TEAM_VICTIMS then
+			time_color = Color(255, 0, 0, 255)
+		elseif plyTeam == TEAM_PEDOBEAR then
+			time_color = Color(0, 255, 0, 255)
+		else
+			time_color = Color(255, 255, 0, 255)
+		end
+	elseif PreStartTime and PreStartTime - CurTime() >= 0 then
 		TheTime = PreStartTime - CurTime()
-		if TheTime < 15 then
-			time_color = Color(255, 255, 0, Either(TheTime < 5, yay(255), 255))
+		if TheTime < 10 then
+			time_color = Color(255, 255, 0, 255)
 		end
 	elseif Time and Time - CurTime() >= 0 then
 		TheTime = Time - CurTime()
 		if TheTime < 60 and plyTeam == TEAM_VICTIMS then
-			time_color = Color(0, 255, 0, Either(TheTime < 30, yay(255), 255))
+			time_color = Color(0, 255, 0, 255)
 		elseif TheTime < 60 and plyTeam == TEAM_PEDOBEAR then
-			time_color = Color(255, 0, 0, Either(TheTime < 30, yay(255), 255))
+			time_color = Color(255, 0, 0, 255)
 		elseif TheTime < 60 then
-			time_color = Color(255, 255, 0, Either(TheTime < 30, yay(255), 255))
+			time_color = Color(255, 255, 0, 255)
 		end
 	elseif End or TempEnd then
 		TheTime = LastTime
 	elseif !Start and !PreStart then
-		TheTime = superpedobear_round_pretime:GetFloat()
+		if rnd <= 1 then
+			TheTime = 40
+		else
+			TheTime = superpedobear_round_pretime:GetFloat()
+		end
 	end
 
-	if GAMEMODE.Vars.Rounds and GAMEMODE.Vars.Rounds > 999 then
+	if rnd > 999 then
 		rnd = "∞"
 	end
 
@@ -300,7 +317,18 @@ function GM:HUDPaint()
 	if game.SinglePlayer() then
 		addrndtxt("You can't play in \"Single Player\" mode!")
 		addrndtxt("Start a new game and select at least \"2 Players\"")
-	elseif Start and !PreStart and GAMEMODE.Vars.Pedos and #GAMEMODE.Vars.Pedos > 0 then
+	elseif PreStart then
+		addrndtxt("Waiting for players")
+	elseif Pre2Start then
+		if plyTeam == TEAM_VICTIMS then
+			addrndtxt("You don't got much time to hide")
+		elseif plyTeam == TEAM_PEDOBEAR then
+			addrndtxt("You have been selected to be a Pedobear")
+			addrndtxt("Spawning soon")
+		else
+			addrndtxt("The game will start soon")
+		end
+	elseif Start and GAMEMODE.Vars.Pedos and #GAMEMODE.Vars.Pedos > 0 then
 
 		addrndtxt((GAMEMODE.Vars.victims or 0) .. "|" .. (GAMEMODE.Vars.downvictims or 0))
 
@@ -310,19 +338,17 @@ function GM:HUDPaint()
 			end
 		end
 
-	elseif !Start and !PreStart and GAMEMODE.Vars.victims < 2 then
+	elseif !Start and GAMEMODE.Vars.victims < 2 then
 		addrndtxt("Waiting for players")
-	elseif PreStart then
-		addrndtxt("Preparing...")
 	end
 	if End then
 		local function winstr(WinTeam)
 			if WinTeam == TEAM_VICTIMS then
-				return "The victims wins!"
+				return "The victims wins"
 			elseif WinTeam == TEAM_PEDOBEAR then
-				return "Pedobear captured everyone!"
+				return "Pedobear captured everyone"
 			end
-			return "Draw game!"
+			return "Draw game"
 		end
 		addrndtxt(winstr(GAMEMODE.Vars.Round.Win))
 	end
@@ -454,6 +480,7 @@ function GM:HUDPaint()
 		local life = Either(splyAlive, 1, 0)
 		local stamina = 200
 		local taunt = 200
+		local radar = 200
 		local sprintlock = false
 		local fcolor = Color(col.r, col.g, col.b, 150 * life)
 		local ib = 0
@@ -474,7 +501,14 @@ function GM:HUDPaint()
 			end
 
 		elseif plyAlive and ply.LastTaunt and ply.TauntCooldown-CurTime() > 0 then
-			taunt = math.Remap(ply.TauntCooldown - CurTime(), 0, ply.TauntCooldownF, 200, 1)
+			taunt = math.Remap(ply.TauntCooldown - CurTime(), 0, ply.TauntCooldownF, 200, 0)
+		end
+
+		if splyTeam == TEAM_PEDOBEAR then
+			local radartime = sply:GetNWFloat("SuperPedobear_Radar_Time", 0)
+			if radartime != 0 and radartime > CurTime() then
+				radar = math.Remap(radartime - CurTime(), 0, 2, 0, 200)
+			end
 		end
 
 		draw.RoundedBox(0, hudoffset, ScrH() - 200 - hudoffset, 200, 200, Color(0, 0, 0, 200))
@@ -499,11 +533,14 @@ function GM:HUDPaint()
 			if taunt != 200 then
 				MakeBar("TAUNT", taunt)
 			end
+			if radar != 200 then
+				MakeBar("RADAR", radar)
+			end
 		end
 
 	end
 
-	if wi and (sply:GetModel() == "models/player/pbear/pbear.mdl" or sply:GetModel() == "models/player/kuristaja/pbear/pbear.mdl") then
+	if (sply:GetModel() == "models/player/pbear/pbear.mdl" or sply:GetModel() == "models/player/kuristaja/pbear/pbear.mdl") then
 		surface.SetDrawColor(255, 255, 255, 255)
 		surface.SetMaterial(GAMEMODE.Materials.Pedobear)
 		surface.DrawTexturedRect(hudoffset, ScrH() - 200 - hudoffset, 200, 200)
@@ -533,13 +570,13 @@ function GM:HUDPaint()
 		local ow, oh = 150, 150
 		surface.SetFont("SuperPedobear_HUDname")
 
-		local title = "Power-UP"
+		--[[local title = "Power-UP"
 		local tw, th = surface.GetTextSize(title)
 		surface.SetDrawColor(Color(0, 0, 0, 200))
 		surface.DrawRect(ox + ow / 2 - tw / 2 - 4, oy - th, tw + 8, th)
 		draw.DrawText(title, "SuperPedobear_HUDname", ox + ow / 2, oy - th, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
 		surface.SetDrawColor(Color(0, 0, 0, 255))
-		surface.DrawOutlinedRect(ox + ow / 2 - tw / 2 - 4, oy - th, tw + 8, th)
+		surface.DrawOutlinedRect(ox + ow / 2 - tw / 2 - 4, oy - th, tw + 8, th)]]
 
 		surface.SetDrawColor(Color(0, 0, 0, 200))
 		surface.DrawRect(ox, oy, ow, oh)
@@ -597,7 +634,7 @@ function GM:HUDPaint()
 
 		if !hide_tips then
 			local usetip
-			if sply:HasPowerUP() and !anim_progress then
+			if ply:HasPowerUP() and !anim_progress then
 				usetip = "Press " .. GAMEMODE:CheckBind("+reload") .. " to use"
 			end
 			if usetip then
@@ -938,12 +975,17 @@ function GM:PreDrawHalos()
 
 	elseif ply:Team() == TEAM_PEDOBEAR then
 
+		local radartime = sply:GetNWFloat("SuperPedobear_Radar_Time", 0)
+		local showvictims = radartime != 0 and radartime > CurTime()
 		for k,v in pairs(player.GetAll()) do
 			if v:Team() == TEAM_PEDOBEAR and v:Alive() then
 				table.insert(tab, v)
+			elseif showvictims and v:Team() == TEAM_VICTIMS and v:Alive() then
+				table.insert(tab2, v)
 			end
 		end
 		halo.Add(tab, team.GetColor(TEAM_PEDOBEAR), 1, 1, 1, true, true)
+		halo.Add(tab2, team.GetColor(TEAM_VICTIMS), 1, 1, 1, true, true)
 
 	elseif ply:Team() == TEAM_SPECTATOR then
 
@@ -1080,13 +1122,12 @@ function GM:HeartBeat(ply)
 	local volume = 1
 
 	for k, v in pairs(team.GetPlayers(TEAM_PEDOBEAR)) do
-
-		t = v:GetPos():Distance(ply:GetPos())
-
-		if (!distance or distance < t) --[[and ply:Visible(v)]] then --TODO: Visibility only
-			distance = t
+		if v:Alive() then
+			t = v:GetPos():Distance(ply:GetPos())
+			if (!distance or distance < t) --[[and ply:Visible(v)]] then --TODO: Visibility only
+				distance = t
+			end
 		end
-
 	end
 
 	if distance and distance < 1000 then

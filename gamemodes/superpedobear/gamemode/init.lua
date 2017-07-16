@@ -38,6 +38,7 @@ util.AddNetworkString("SuperPedobear_MusicQueueVote")
 local LegitUse
 
 function GM:InitPostEntity()
+	GAMEMODE.Vars.ThereIsPowerUPSpawns = #ents.FindByClass("superpedobear_powerup_spawn") > 0
 end
 
 function GM:PlayerInitialSpawn(ply)
@@ -102,6 +103,8 @@ function GM:PedoVars(ply)
 		net.WriteBool(GAMEMODE.Vars.Round.Start or false)
 		net.WriteBool(GAMEMODE.Vars.Round.PreStart or false)
 		net.WriteFloat(GAMEMODE.Vars.Round.PreStartTime or 0)
+		net.WriteBool(GAMEMODE.Vars.Round.Pre2Start or false)
+		net.WriteFloat(GAMEMODE.Vars.Round.Pre2Time or 0)
 		net.WriteFloat(GAMEMODE.Vars.Round.Time or 0)
 		net.WriteBool(GAMEMODE.Vars.Round.End or false)
 		net.WriteInt(tonumber(GAMEMODE.Vars.Round.Win) or 0, 32)
@@ -227,8 +230,10 @@ end
 
 function GM:PlayerDeathThink(ply)
 
-	if ply:Team() == TEAM_PEDOBEAR and GAMEMODE.Vars.Round.Start and !GAMEMODE.Vars.Round.End and !GAMEMODE.Vars.Round.TempEnd then
+	if ply:Team() == TEAM_PEDOBEAR and GAMEMODE.Vars.Round.Start and !GAMEMODE.Vars.Round.End and !GAMEMODE.Vars.Round.TempEnd and !GAMEMODE.Vars.Round.Pre2Start then
 		ply:Spawn()
+		return
+	elseif ply:Team() == TEAM_PEDOBEAR and GAMEMODE.Vars.Round.Pre2Start then
 		return
 	end
 
@@ -491,7 +496,11 @@ function GM:RoundThink()
 
 			GAMEMODE.Vars.Round.PreStart = true
 
-			GAMEMODE.Vars.Round.PreStartTime = CurTime() + superpedobear_round_pretime:GetFloat()
+			if !GAMEMODE.Vars.Rounds or GAMEMODE.Vars.Rounds <= 1 then
+				GAMEMODE.Vars.Round.PreStartTime = CurTime() + 40
+			else
+				GAMEMODE.Vars.Round.PreStartTime = CurTime() + superpedobear_round_pretime:GetFloat()
+			end
 
 			GAMEMODE:SelectMusic(true)
 
@@ -513,9 +522,11 @@ function GM:RoundThink()
 
 			GAMEMODE.Vars.Round.Start = true
 			GAMEMODE.Vars.Round.PreStart = false
+			GAMEMODE.Vars.Round.Pre2Start = true
 
 			GAMEMODE.Vars.Round.PreStartTime = 0
-			GAMEMODE.Vars.Round.Time = CurTime() + superpedobear_round_time:GetFloat()
+			GAMEMODE.Vars.Round.Pre2Time = CurTime() + superpedobear_round_pre2time:GetFloat()
+			GAMEMODE.Vars.Round.Time = GAMEMODE.Vars.Round.Pre2Time + superpedobear_round_time:GetFloat()
 
 			local Pedos = {}
 			local WantedPedos = 1
@@ -552,21 +563,19 @@ function GM:RoundThink()
 					Pedos[PedoIndex]:SetTeam(TEAM_PEDOBEAR)
 					Pedos[PedoIndex]:KillSilent()
 					Pedos[PedoIndex]:SetNWFloat("SuperPedobear_PedoChance", 0)
+					Pedos[PedoIndex]:ScreenFade(SCREENFADE.OUT, color_black, 0.5, superpedobear_round_pre2time:GetFloat())
 					PedoIndex = PedoIndex + 1
 				end
 
-			end
-
-			for k, v in pairs(Pedos) do
-				v:SendLua([[LocalPlayer():EmitSound("superpedobear_yourethepedo") system.FlashWindow()]])
-				GAMEMODE:PedoAFKCare(v)
 			end
 
 			net.Start("SuperPedobear_List")
 				net.WriteTable(Pedos)
 			net.Broadcast()
 
-			timer.Create("SuperPedobear_TempoStart", 0.2, 1, function()
+			timer.Create("SuperPedobear_TempoStart", superpedobear_round_pre2time:GetFloat(), 1, function()
+
+				GAMEMODE.Vars.Round.Pre2Start = false
 
 				local custommusic = false
 
@@ -591,11 +600,29 @@ function GM:RoundThink()
 					end
 				end
 
+				for k, v in pairs(Pedos) do
+					v:SendLua([[LocalPlayer():EmitSound("superpedobear_yourethepedo") system.FlashWindow()]])
+					GAMEMODE:PedoAFKCare(v)
+					v:ScreenFade(SCREENFADE.IN, Color(0, 0, 0, 255), 0.3, 1)
+					if !GAMEMODE.Vars.ThereIsPowerUPSpawns then
+						v:PickPowerUP()
+					end
+				end
+
 				GAMEMODE:PlayerStats()
+				GAMEMODE:PedoVars()
 
 				timer.Remove("SuperPedobear_TempoStart")
 
 			end)
+
+			if !GAMEMODE.Vars.ThereIsPowerUPSpawns then
+				for k, v in pairs(team.GetPlayers(TEAM_VICTIMS)) do
+					if v:Alive() then
+						v:PickPowerUP()
+					end
+				end
+			end
 
 		elseif !LegitUse then
 
@@ -644,7 +671,7 @@ function GM:RoundThink()
 			GAMEMODE.Vars.Round.End = true
 			GAMEMODE.Vars.Round.Win = TEAM_VICTIMS
 			GAMEMODE.Vars.Round.LastTime = 0
-			team.AddScore( TEAM_VICTIMS, 1 )
+			team.AddScore(TEAM_VICTIMS, 1)
 
 			GAMEMODE:DoTheVictoryDance(TEAM_VICTIMS)
 
@@ -657,7 +684,7 @@ function GM:RoundThink()
 			GAMEMODE:PedoVars()
 			GAMEMODE.Vars.Round.End = false
 			GAMEMODE.Vars.Round.Win = 0
-			GAMEMODE.Vars.Rounds = (GAMEMODE.Vars.Rounds or 0) + 1
+			GAMEMODE.Vars.Rounds = (GAMEMODE.Vars.Rounds or 1) + 1
 
 			--GAMEMODE:PedoMusic("pause")
 
@@ -753,19 +780,16 @@ function GM:SlowMo()
 		local scale = 1
 
 		for k, v in pairs(team.GetPlayers(TEAM_PEDOBEAR)) do
-
-			t = v:GetPos():Distance(ply:GetPos())
-
-			if (!distance or distance < t) then
-				distance = t
+			if v:Alive() then
+				t = v:GetPos():Distance(ply:GetPos())
+				if (!distance or distance < t) then
+					distance = t
+				end
+				if distance and distance < 400 then
+					scale = math.Clamp(math.Remap(distance, 0, 400, 0.1, 1), 0.1, 1)
+				end
+				game.SetTimeScale(scale)
 			end
-
-			if distance and distance < 300 then
-				scale = math.Clamp(math.Remap(distance, 0, 300, 0.1, 1), 0.1, 1)
-			end
-
-			game.SetTimeScale(scale)
-
 		end
 
 	elseif game.GetTimeScale() != 1 then
@@ -1336,14 +1360,17 @@ function GM.PlayerMeta:UsePowerUP()
 	if self.SPB_PowerUP and GAMEMODE.PowerUps[self.SPB_PowerUP] and (!self.SPB_PowerUP_Delay or self.SPB_PowerUP_Delay < CurTime()) then
 		if self.SPB_PowerUP == "clone" then
 			result = GAMEMODE:CreateDummy(self)
-		elseif self.SPB_PowerUP == "trap" then
-			result = GAMEMODE:CreatePowerUP(self, "dothetrap")
 		elseif self.SPB_PowerUP == "boost" then
 			self.SprintV = 200
 			self:EmitSound("player/suit_sprint.wav", 75, 100, 1, CHAN_AUTO)
 			result = true
 		elseif self.SPB_PowerUP == "vdisguise" then
 			result = GAMEMODE:DisguiseAsProp(self)
+		elseif self.SPB_PowerUP == "radar" then
+			self:SetNWFloat("SuperPedobear_Radar_Time", CurTime() + 2)
+			result = true
+		elseif self.SPB_PowerUP == "trap" then
+			result = GAMEMODE:CreatePowerUP(self, "dothetrap")
 		end
 		if result then
 			GAMEMODE:Log(self:GetName() .. " has used the " .. self.SPB_PowerUP .. " power-up", nil, true)

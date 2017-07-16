@@ -975,7 +975,7 @@ function GM:PreDrawHalos()
 
 	elseif ply:Team() == TEAM_PEDOBEAR then
 
-		local radartime = sply:GetNWFloat("SuperPedobear_Radar_Time", 0)
+		local radartime = ply:GetNWFloat("SuperPedobear_Radar_Time", 0)
 		local showvictims = radartime != 0 and radartime > CurTime()
 		for k,v in pairs(player.GetAll()) do
 			if v:Team() == TEAM_PEDOBEAR and v:Alive() then

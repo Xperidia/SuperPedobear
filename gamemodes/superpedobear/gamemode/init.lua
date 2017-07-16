@@ -37,6 +37,9 @@ util.AddNetworkString("SuperPedobear_MusicQueueVote")
 
 local LegitUse
 
+function GM:InitPostEntity()
+end
+
 function GM:PlayerInitialSpawn(ply)
 
 	GAMEMODE:RetrieveXperidiaAccountRank(ply)
@@ -407,14 +410,14 @@ function GM:Think()
 	for k, v in pairs(player.GetAll()) do
 		if v:Team() == TEAM_PEDOBEAR then
 			if GAMEMODE.PlayerEasterEgg[v:SteamID64()] and GAMEMODE.PlayerEasterEgg[v:SteamID64()][1] and v:GetModel() != GAMEMODE.PlayerEasterEgg[v:SteamID64()][1] then
-				v:SetModel( GAMEMODE.PlayerEasterEgg[v:SteamID64()][1] )
+				v:SetModel(GAMEMODE.PlayerEasterEgg[v:SteamID64()][1])
 			elseif (!GAMEMODE.PlayerEasterEgg[v:SteamID64()] or (GAMEMODE.PlayerEasterEgg[v:SteamID64()] and !GAMEMODE.PlayerEasterEgg[v:SteamID64()][1])) and v:GetModel() != "models/player/pbear/pbear.mdl" then
 				v:SetModel(Model("models/player/pbear/pbear.mdl"))
 			end
 		elseif v:Team() == TEAM_VICTIMS and v:Alive() then
-				if v:GetModel() == "models/player/pbear/pbear.mdl" then
-					v:SetModel(Model("models/jazzmcfly/magica/homura_mg.mdl"))
-				end
+			if v:GetModel() == "models/player/pbear/pbear.mdl" then
+				v:SetModel(Model("models/jazzmcfly/magica/homura_mg.mdl"))
+			end
 		end
 	end
 
@@ -422,9 +425,9 @@ function GM:Think()
 		if v:Alive() then
 			local a = math.Clamp(v:Health(), 0, 100) / 100
 			local doffset = v:EntIndex()
-			v:SetPlayerColor( Vector(   (0.5 * (math.sin((CurTime() * a + doffset) - 1) + 1)) * a,
+			v:SetPlayerColor(Vector(	(0.5 * (math.sin((CurTime() * a + doffset) - 1) + 1)) * a,
 										(0.5 * (math.sin(CurTime() * a + doffset) + 1)) * a,
-										(0.5 * (math.sin((CurTime() * a + doffset) + 1) + 1)) * a ) )
+										(0.5 * (math.sin((CurTime() * a + doffset) + 1) + 1)) * a))
 		end
 	end
 
@@ -471,6 +474,8 @@ function GM:Think()
 	end
 
 	GAMEMODE:RoundThink()
+
+	GAMEMODE:SlowMo()
 
 	if GAMEMODE:IsSeasonalEvent("AprilFool") then
 		physenv.SetGravity(Vector(math.Rand(-4096, 4096), math.Rand(-4096, 4096), math.Rand(-4096, 4096)))
@@ -566,15 +571,11 @@ function GM:RoundThink()
 				local custommusic = false
 
 				for k, v in pairs(team.GetPlayers(TEAM_PEDOBEAR)) do
-
 					if GAMEMODE.PlayerEasterEgg[v:SteamID64()] and GAMEMODE.PlayerEasterEgg[v:SteamID64()][3] then
-
 						GAMEMODE.Vars.CurrentMusic = GAMEMODE.PlayerEasterEgg[v:SteamID64()][3]
 						GAMEMODE.Vars.CurrentMusicName = v:Nick()
 						custommusic = true
-
 					end
-
 				end
 
 				if custommusic then
@@ -722,6 +723,53 @@ function GM:RoundThink()
 
 		end
 
+	end
+
+end
+
+function GM:SlowMo()
+
+	local ply
+
+	for k, v in pairs(team.GetPlayers(TEAM_VICTIMS)) do
+		if v:Alive() and IsValid(ply) then
+			return
+		elseif v:Alive() then
+			if v.Clones and #v.Clones > 0 then
+				for k, v in pairs(v.Clones) do
+					if IsValid(v) then
+						return
+					end
+				end
+			end
+			ply = v
+		end
+	end
+
+	if IsValid(ply) then
+
+		local distance
+		local t
+		local scale = 1
+
+		for k, v in pairs(team.GetPlayers(TEAM_PEDOBEAR)) do
+
+			t = v:GetPos():Distance(ply:GetPos())
+
+			if (!distance or distance < t) then
+				distance = t
+			end
+
+			if distance and distance < 300 then
+				scale = math.Clamp(math.Remap(distance, 0, 300, 0.1, 1), 0.1, 1)
+			end
+
+			game.SetTimeScale(scale)
+
+		end
+
+	elseif game.GetTimeScale() != 1 then
+		game.SetTimeScale(1)
 	end
 
 end
@@ -1294,6 +1342,8 @@ function GM.PlayerMeta:UsePowerUP()
 			self.SprintV = 200
 			self:EmitSound("player/suit_sprint.wav", 75, 100, 1, CHAN_AUTO)
 			result = true
+		elseif self.SPB_PowerUP == "vdisguise" then
+			result = GAMEMODE:DisguiseAsProp(self)
 		end
 		if result then
 			GAMEMODE:Log(self:GetName() .. " has used the " .. self.SPB_PowerUP .. " power-up", nil, true)
@@ -1325,4 +1375,9 @@ function GM.PlayerMeta:DropPowerUP()
 		return true
 	end
 	return false
+end
+
+function GM:DisguiseAsProp(ply)
+	if ply:Team() != TEAM_VICTIMS or !ply:OnGround() then return false end
+	return nil
 end

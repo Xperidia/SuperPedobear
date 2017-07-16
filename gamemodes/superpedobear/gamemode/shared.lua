@@ -14,6 +14,7 @@ GM.ShortName 	= "SuperPedobear"
 GM.Author 		= "VictorienXP@Xperidia"
 GM.Website 		= "steamcommunity.com/sharedfiles/filedetails/?id=628449407"
 GM.Version 		= 0.27
+GM.VersionName	= "The first public release"
 GM.TeamBased 	= true
 
 TEAM_VICTIMS	= 1

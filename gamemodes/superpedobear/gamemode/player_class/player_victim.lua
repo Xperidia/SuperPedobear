@@ -63,8 +63,39 @@ function PLAYER:SetModel()
 	local avmodels = player_manager.AllValidModels()
 
 	if cl_playermodel == "none" or !avmodels[cl_playermodel] then
-		local models = {"models/jazzmcfly/magica/homura_mg.mdl", "models/jazzmcfly/magica/kyouko_mg.mdl", "models/jazzmcfly/magica/madoka_mg.mdl", "models/jazzmcfly/magica/mami_mg.mdl", "models/jazzmcfly/magica/sayaka_mg.mdl"}
-		self.Player:SetModel(models[math.random(1, #models)])
+
+		local models = {}
+		if avmodels["Homura Akemi"] then
+			table.Merge(models, {"Homura Akemi", "Kyouko Sakura", "Madoka Kaname", "Mami Tomoe", "Sayaka Miki"})
+		end
+		if avmodels["Tda Chibi Haku Append (v2)"] then
+			table.insert(models, "Tda Chibi Haku Append (v2)")
+		end
+		if avmodels["Tda Chibi Miku Append (v2)"] then
+			table.insert(models, "Tda Chibi Miku Append (v2)")
+		end
+		if avmodels["Tda Chibi Neru Append (v2)"] then
+			table.insert(models, "Tda Chibi Neru Append (v2)")
+		end
+		if avmodels["Tda Chibi Teto Append (v2)"] then
+			table.insert(models, "Tda Chibi Teto Append (v2)")
+		end
+		if avmodels["RAM"] then
+			table.insert(models, "RAM")
+		end
+		if avmodels["Rom"] then
+			table.insert(models, "Rom")
+		end
+		if avmodels["WH"] then
+			table.insert(models, "WH")
+		end
+
+		if #models > 0 then
+			self.Player:SetModel(player_manager.TranslatePlayerModel(models[math.random(1, #models)]))
+		else
+			self.Player:SetModel(player_manager.TranslatePlayerModel("chell"))
+		end
+
 	else
 
 		local modelname = player_manager.TranslatePlayerModel(cl_playermodel)

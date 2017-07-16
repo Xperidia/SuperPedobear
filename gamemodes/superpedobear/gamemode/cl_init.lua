@@ -234,7 +234,7 @@ function GM:HUDPaint()
 
 	--[[ THE GAMEMODE STATUS ]]--
 
-	local htxt = "Super Pedobear - Early Access\n      V" .. GAMEMODE.Version .. " - " .. os.date("%d/%m/%Y", os.time())
+	local htxt = "Super Pedobear - Early Access (" ..  os.date("%d/%m/%Y", os.time()) .. ")\nV" .. GAMEMODE.Version .. ": " .. GAMEMODE.VersionName
 	surface.SetFont("SuperPedobear_HT")
 	local tw, th = surface.GetTextSize(htxt)
 	surface.SetDrawColor(Color(0, 0, 0, 200))
@@ -297,7 +297,10 @@ function GM:HUDPaint()
 		rndtxth = rndtxth + h
 	end
 
-	if Start and !PreStart and GAMEMODE.Vars.Pedos and #GAMEMODE.Vars.Pedos > 0 then
+	if game.SinglePlayer() then
+		addrndtxt("You can't play in \"Single Player\" mode!")
+		addrndtxt("Start a new game and select at least \"2 Players\"")
+	elseif Start and !PreStart and GAMEMODE.Vars.Pedos and #GAMEMODE.Vars.Pedos > 0 then
 
 		addrndtxt((GAMEMODE.Vars.victims or 0) .. "|" .. (GAMEMODE.Vars.downvictims or 0))
 
@@ -683,6 +686,18 @@ function GM:HUDPaint()
 
 		end
 
+		if !hide_tips then
+			local usetip = "Press " .. GAMEMODE:CheckBind("gm_showspare2") .. " for options"
+			if usetip then
+				local tw, th = surface.GetTextSize(usetip)
+				surface.SetDrawColor(Color(0, 0, 0, 200))
+				surface.DrawRect(ScrW() - 128 - hudoffset - tw / 2 - 4, ScrH() - 100 + visspace - hudoffset - 20, tw + 8, th)
+				draw.DrawText(usetip, "SuperPedobear_HUDname", ScrW() - 128 - hudoffset, ScrH() - 100 + visspace - hudoffset - 20, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+				surface.SetDrawColor(Color(0, 0, 0, 255))
+				surface.DrawOutlinedRect(ScrW() - 128 - hudoffset - tw / 2 - 4, ScrH() - 100 + visspace - hudoffset - 20, tw + 8, th)
+			end
+		end
+
 	end
 
 	--draw.DrawText(GAMEMODE.Name .. " V" .. GAMEMODE.Version, "DermaDefault", ScrW() / 2, hudoffset, Color(255, 255, 255, 64), TEXT_ALIGN_CENTER)
@@ -845,7 +860,7 @@ function GM:HUDDrawTargetID()
 	surface.SetFont(font)
 	local w, h = surface.GetTextSize(text)
 
-	local MouseX, MouseY = ScrW() / 2, ScrH() * 0.7
+	local MouseX, MouseY = ScrW() / 2, ScrH() * 0.5
 
 	local x = MouseX
 	local y = MouseY

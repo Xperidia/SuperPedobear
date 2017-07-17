@@ -691,13 +691,9 @@ function GM:RoundThink()
 
 			timer.Create("SuperPedobear_TempoPreEnd", 9.8, 1, function()
 
-				for k, v in pairs(team.GetPlayers(TEAM_PEDOBEAR)) do
-					v:DropPowerUP()
-					v:KillSilent()
-				end
-
-				for k, v in pairs(team.GetPlayers(TEAM_VICTIMS)) do
-					if v:Alive() then
+				for k, v in pairs(player.GetAll()) do
+					if v:Alive() and (v:Team() == TEAM_VICTIMS or v:Team() == TEAM_PEDOBEAR) then
+						v.Clones = nil
 						v:DropPowerUP()
 						v:KillSilent()
 					end
@@ -1190,7 +1186,7 @@ function GM:RetrieveXperidiaAccountRank(ply)
 					ply.XperidiaRank = rank_info
 					ply:SetNWInt("XperidiaRank", rank_info.id)
 					ply:SetNWString("XperidiaRankName", rank_info.name)
-					ply:SetNWString("XperidiaRankColor", tonumber("0x" .. rank_info.color:sub(1,2)) .. " " .. tonumber("0x" .. rank_info.color:sub(3,4)) .. " " .. tonumber("0x" .. rank_info.color:sub(5,6)) .. " 255")
+					if rank_info.color then ply:SetNWString("XperidiaRankColor", tonumber("0x" .. rank_info.color:sub(1,2)) .. " " .. tonumber("0x" .. rank_info.color:sub(3,4)) .. " " .. tonumber("0x" .. rank_info.color:sub(5,6)) .. " 255") end
 					ply.XperidiaRankLastTime = SysTime()
 					if rank_info.id != 0 and rank_info.name then
 						GAMEMODE:Log("The Xperidia Rank for " .. ply:GetName() .. " is " .. rank_info.name .. " (" .. rank_info.id .. ")")

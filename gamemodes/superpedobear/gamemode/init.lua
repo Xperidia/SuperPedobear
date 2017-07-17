@@ -16,9 +16,6 @@ include("shared.lua")
 
 DEFINE_BASECLASS("gamemode_base")
 
-resource.AddWorkshop("111603898")
-resource.AddWorkshop("481073360")
-resource.AddWorkshop("628449407")
 resource.AddWorkshop("232539187") --Marco
 
 util.AddNetworkString("SuperPedobear_Vars")
@@ -688,7 +685,7 @@ function GM:RoundThink()
 
 			--GAMEMODE:PedoMusic("pause")
 
-			if MapVote and GAMEMODE.Vars.Rounds >= 8 then
+			if MapVote and GAMEMODE.Vars.Rounds > 8 then
 				MapVote.Start(nil, nil, nil, {"spb_", "ph_"})
 			end
 

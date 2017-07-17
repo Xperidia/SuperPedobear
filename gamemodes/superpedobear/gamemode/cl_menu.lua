@@ -66,7 +66,6 @@ function GM:Menu()
 		.. GAMEMODE:CheckBind("gm_showteam") .. ": Change team\n"
 		.. GAMEMODE:CheckBind("gm_showspare1") .. ": Taunt menu\n"
 		.. GAMEMODE:CheckBind("gm_showspare2") .. ": Jukebox/music menu\n"
-		.. GAMEMODE:CheckBind("+reload") .. ": Power-UP\n"
 		.. GAMEMODE:CheckBind("+menu") .. ": PedoVan (Shop)\n"
 		.. GAMEMODE:CheckBind("+menu_context") .. ": Toggle thirdperson\n"
 		.. "1-9: Quick taunt")
@@ -94,6 +93,46 @@ function GM:Menu()
 			pedobearMenuF:Close()
 		end
 
+		local support = vgui.Create("DButton")
+		support:SetParent(pedobearMenuF.one)
+		support:SetText("Support")
+		support:SetPos(160, 165)
+		support:SetSize(125, 20)
+		support.DoClick = function()
+			gui.OpenURL("https://xperi.link/XP-DSupport")
+			pedobearMenuF:Close()
+		end
+
+		local SplashScreen = vgui.Create("DButton")
+		SplashScreen:SetParent(pedobearMenuF.one)
+		SplashScreen:SetText("Splash Screen")
+		SplashScreen:SetPos(20, 165)
+		SplashScreen:SetSize(125, 20)
+		SplashScreen.DoClick = function()
+			GAMEMODE:SplashScreen()
+			pedobearMenuF:Close()
+		end
+
+		local Discord = vgui.Create("DButton")
+		Discord:SetParent(pedobearMenuF.one)
+		Discord:SetText("Discord channel")
+		Discord:SetPos(160, 140)
+		Discord:SetSize(125, 20)
+		Discord.DoClick = function()
+			gui.OpenURL("https://discord.gg/Ub9TEdt")
+			pedobearMenuF:Close()
+		end
+
+		local Workshop = vgui.Create("DButton")
+		Workshop:SetParent(pedobearMenuF.one)
+		Workshop:SetText("Workshop page")
+		Workshop:SetPos(20, 140)
+		Workshop:SetSize(125, 20)
+		Workshop.DoClick = function()
+			gui.OpenURL("https://xperi.link/SuperPedobear")
+			pedobearMenuF:Close()
+		end
+
 		local playermodelselection = vgui.Create("DButton")
 		playermodelselection:SetParent(pedobearMenuF.one)
 		playermodelselection:SetText("Outfitter")
@@ -113,26 +152,6 @@ function GM:Menu()
 		playermodelselection:SetEnabled(concommand.GetTable()["playermodel_selector"] and (GetConVar("sv_playermodel_selector_gamemodes"):GetBool() or LocalPlayer():IsAdmin()))
 		playermodelselection.DoClick = function()
 			RunConsoleCommand("playermodel_selector")
-			pedobearMenuF:Close()
-		end
-
-		local support = vgui.Create("DButton")
-		support:SetParent(pedobearMenuF.one)
-		support:SetText("Support")
-		support:SetPos(160, 165)
-		support:SetSize(125, 20)
-		support.DoClick = function()
-			gui.OpenURL("https://xperi.link/XP-DSupport")
-			pedobearMenuF:Close()
-		end
-
-		local SplashScreen = vgui.Create("DButton")
-		SplashScreen:SetParent(pedobearMenuF.one)
-		SplashScreen:SetText("Splash Screen")
-		SplashScreen:SetPos(20, 165)
-		SplashScreen:SetSize(125, 20)
-		SplashScreen.DoClick = function()
-			GAMEMODE:SplashScreen()
 			pedobearMenuF:Close()
 		end
 

@@ -71,6 +71,9 @@ function PLAYER:SetModel()
 		if avmodels["Tda Chibi Haku Append (v2)"] then
 			table.insert(models, "Tda Chibi Haku Append (v2)")
 		end
+		if avmodels["Tda Chibi Luka Append (v2)"] then
+			table.insert(models, "Tda Chibi Luka Append (v2)")
+		end
 		if avmodels["Tda Chibi Miku Append (v2)"] then
 			table.insert(models, "Tda Chibi Miku Append (v2)")
 		end

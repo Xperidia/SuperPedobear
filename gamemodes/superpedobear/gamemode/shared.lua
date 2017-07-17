@@ -12,7 +12,7 @@ include("player_class/player_pedobear.lua")
 GM.Name 		= "Super Pedobear"
 GM.ShortName 	= "SuperPedobear"
 GM.Author 		= "VictorienXP@Xperidia"
-GM.Website 		= "steamcommunity.com/sharedfiles/filedetails/?id=628449407"
+GM.Website 		= "xperi.link/SuperPedobear"
 GM.Version 		= 0.27
 GM.VersionName	= "The first public release"
 GM.TeamBased 	= true

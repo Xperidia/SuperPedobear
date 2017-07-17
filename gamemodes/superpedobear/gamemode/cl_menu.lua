@@ -277,15 +277,15 @@ function GM:Menu()
 
 		local eh = 0
 		local function docheckbox(str, cvar)
-			local disablexpsc = vgui.Create("DCheckBoxLabel")
-			disablexpsc:SetParent(pedobearMenuF.AdminCFG)
-			disablexpsc:SetText(str)
-			disablexpsc:SetPos(15, 30 + eh)
-			disablexpsc:SetDark(1)
-			disablexpsc:SetConVar(cvar)
-			disablexpsc:SetValue(GetConVar(cvar):GetBool())
-			disablexpsc:SetEnabled(LocalPlayer():GetNWBool("IsListenServerHost", true))
-			disablexpsc:SizeToContents()
+			local checkbox = vgui.Create("DCheckBoxLabel")
+			checkbox:SetParent(pedobearMenuF.AdminCFG)
+			checkbox:SetText(str)
+			checkbox:SetPos(15, 30 + eh)
+			checkbox:SetDark(1)
+			checkbox:SetConVar(cvar)
+			checkbox:SetValue(GetConVar(cvar):GetBool())
+			checkbox:SetEnabled(LocalPlayer():GetNWBool("IsListenServerHost", false))
+			checkbox:SizeToContents()
 			eh = eh + 20
 		end
 

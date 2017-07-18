@@ -1313,8 +1313,9 @@ function GM:CreatePowerUP(ent, powerupstr, respawn)
 	return PowerUp
 end
 concommand.Add("superpedobear_dev_create_powerup", function(ply, cmd, args)
-	if !superpedobear_enabledevmode:GetBool() and !ply:IsListenServerHost() and !ply:IsSuperAdmin() then return end
-	GAMEMODE:CreatePowerUP(ply, args[1])
+	if superpedobear_enabledevmode:GetBool() and (ply:IsListenServerHost() or ply:IsSuperAdmin()) then
+		GAMEMODE:CreatePowerUP(ply, args[1])
+	end
 end)
 
 function GM.PlayerMeta:SetPowerUP(powerupstr)

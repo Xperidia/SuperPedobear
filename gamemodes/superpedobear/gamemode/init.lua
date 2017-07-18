@@ -754,22 +754,14 @@ function GM:SlowMo()
 
 	if IsValid(ply) then
 
-		local distance
-		local t
+		local _, distance = GAMEMODE:GetClosestPlayer(ply, TEAM_PEDOBEAR)
 		local scale = 1
 
-		for k, v in pairs(team.GetPlayers(TEAM_PEDOBEAR)) do
-			if v:Alive() then
-				t = v:GetPos():Distance(ply:GetPos())
-				if (!distance or distance < t) then
-					distance = t
-				end
-				if distance and distance < 400 then
-					scale = math.Clamp(math.Remap(distance, 0, 400, 0.1, 1), 0.1, 1)
-				end
-				game.SetTimeScale(scale)
-			end
+		if distance and distance < 200 then
+			scale = math.Clamp(math.Remap(distance, 64, 200, 0.2, 1), 0.2, 1)
 		end
+
+		game.SetTimeScale(scale)
 
 	elseif game.GetTimeScale() != 1 then
 		game.SetTimeScale(1)
@@ -1297,6 +1289,11 @@ function GM:LoadPlayerInfo(ply)
 	end
 end
 
+function GM:PlayerNoClip(ply, on)
+	if !on then return true end
+	return IsValid(ply) and (ply:IsListenServerHost() or ply:IsSuperAdmin()) and ply:Alive()
+end
+
 function GM:CreatePowerUP(ent, powerupstr, respawn)
 	local PowerUp = ents.Create("superpedobear_powerup")
 	PowerUp:SetPos(ent:GetPos())
@@ -1313,7 +1310,7 @@ function GM:CreatePowerUP(ent, powerupstr, respawn)
 	return PowerUp
 end
 concommand.Add("superpedobear_dev_create_powerup", function(ply, cmd, args)
-	if superpedobear_enabledevmode:GetBool() and (ply:IsListenServerHost() or ply:IsSuperAdmin()) then
+	if superpedobear_enabledevmode:GetBool() and IsValid(ply) and (ply:IsListenServerHost() or ply:IsSuperAdmin()) then
 		GAMEMODE:CreatePowerUP(ply, args[1])
 	end
 end)

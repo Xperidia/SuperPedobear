@@ -1116,19 +1116,9 @@ end
 
 function GM:HeartBeat(ply)
 
-	local distance
-	local t
+	local _, distance = GAMEMODE:GetClosestPlayer(ply, TEAM_PEDOBEAR)
 	local nextheartbeat = 1
 	local volume = 1
-
-	for k, v in pairs(team.GetPlayers(TEAM_PEDOBEAR)) do
-		if v:Alive() then
-			t = v:GetPos():Distance(ply:GetPos())
-			if (!distance or distance < t) --[[and ply:Visible(v)]] then --TODO: Visibility only
-				distance = t
-			end
-		end
-	end
 
 	if distance and distance < 1000 then
 

@@ -67,9 +67,11 @@ function ENT:Think()
 
 	local ply = self:GetPlayer()
 
-	if !ply or !IsValid(ply) or ply:Team() != TEAM_VICTIMS then
-		self:BRemove(ply)
-		return
+	if SERVER then
+		if !ply or !IsValid(ply) or ply:Team() != TEAM_VICTIMS then
+			self:BRemove(ply)
+			return
+		end
 	end
 
 	self:SetPos(self:GetLePos())
@@ -129,6 +131,7 @@ function ENT:OnKilled(dmginfo)
 end
 
 function ENT:BRemove(ply)
+	if !SERVER then return end
 	if IsValid(ply) then
 		table.RemoveByValue(ply.Clones, self)
 	end

@@ -291,3 +291,20 @@ function GM:SelectRandomPowerUP(ply)
 	end
 	return nil
 end
+
+function GM:GetClosestPlayer(ply, pteam)
+	local pedobear
+	local distance
+	local t
+	local list = team.GetPlayers(pteam)
+	for k, v in pairs(list) do
+		if v:Alive() then
+			t = v:GetPos():Distance(ply:GetPos())
+			if (!distance or distance < t) then
+				distance = t
+				pedobear = v
+			end
+		end
+	end
+	return pedobear, distance
+end

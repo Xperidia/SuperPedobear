@@ -120,7 +120,6 @@ local function Registration()
 				LegitUse = resp.response.success
 			elseif resp and resp.response then
 				GAMEMODE:Log(resp.response.message)
-				LegitUse = false
 			else
 				GAMEMODE:Log("Error " .. statusCode .. " while trying registering...")
 			end
@@ -505,9 +504,7 @@ function GM:RoundThink()
 
 			GAMEMODE:Log("The game will start at " .. GAMEMODE.Vars.Round.PreStartTime, nil, true)
 
-			if !LegitUse and !game.IsDedicated() then
-				LegitUse = true
-			elseif !LegitUse then
+			if game.IsDedicated() and !LegitUse then
 				Registration()
 			end
 
@@ -515,7 +512,7 @@ function GM:RoundThink()
 
 	elseif !GAMEMODE.Vars.Round.Start and GAMEMODE.Vars.Round.PreStart and GAMEMODE.Vars.Round.PreStartTime and GAMEMODE.Vars.Round.PreStartTime < CurTime() then -- Starting Round
 
-		if GAMEMODE.Vars.victims and GAMEMODE.Vars.victims >= 2 and LegitUse then
+		if GAMEMODE.Vars.victims and GAMEMODE.Vars.victims >= 2 then
 
 			GAMEMODE.Vars.Round.Start = true
 			GAMEMODE.Vars.Round.PreStart = false
@@ -620,17 +617,6 @@ function GM:RoundThink()
 					end
 				end
 			end
-
-		elseif !LegitUse then
-
-			GAMEMODE.Vars.Round.PreStart = false
-
-			net.Start("SuperPedobear_Notif")
-				net.WriteString("The gamemode is not registered!")
-				net.WriteInt(1, 3)
-				net.WriteFloat(5)
-				net.WriteBit(true)
-			net.Broadcast()
 
 		else
 
@@ -1186,7 +1172,7 @@ function GM:RetrieveXperidiaAccountRank(ply)
 					ply.XperidiaRank = rank_info
 					ply:SetNWInt("XperidiaRank", rank_info.id)
 					ply:SetNWString("XperidiaRankName", rank_info.name)
-					if rank_info.color then ply:SetNWString("XperidiaRankColor", tonumber("0x" .. rank_info.color:sub(1,2)) .. " " .. tonumber("0x" .. rank_info.color:sub(3,4)) .. " " .. tonumber("0x" .. rank_info.color:sub(5,6)) .. " 255") end
+					if rank_info.color and #rank_info.color == 6 then ply:SetNWString("XperidiaRankColor", tonumber("0x" .. rank_info.color:sub(1,2)) .. " " .. tonumber("0x" .. rank_info.color:sub(3,4)) .. " " .. tonumber("0x" .. rank_info.color:sub(5,6)) .. " 255") end
 					ply.XperidiaRankLastTime = SysTime()
 					if rank_info.id != 0 and rank_info.name then
 						GAMEMODE:Log("The Xperidia Rank for " .. ply:GetName() .. " is " .. rank_info.name .. " (" .. rank_info.id .. ")")

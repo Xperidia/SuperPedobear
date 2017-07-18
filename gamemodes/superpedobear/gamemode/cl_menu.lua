@@ -298,7 +298,7 @@ function GM:Menu()
 			xpsc:SetPos(10, 480)
 			xpsc:SetSize(620, 128)
 			xpsc:SetAllowLua(true)
-			xpsc:OpenURL("https://xperidia.com/Showcase/?sys=pedobearMenu&zone=" .. tostring(GAMEMODE.Name) .. "&lang=" .. tostring(GetConVarString("gmod_language") or "en"))
+			xpsc:OpenURL("https://xperidia.com/Showcase/?sys=pedobearMenu&zone=" .. tostring(GAMEMODE.ShortName) .. "&lang=" .. tostring(GetConVarString("gmod_language") or "en"))
 			xpsc:SetScrollbars(false)
 
 			xpsc_anim = Derma_Anim("xpsc_anim", pedobearMenuF, function(pnl, anim, delta, data)
@@ -362,7 +362,8 @@ function GM:SplashScreen()
 		.. "<tr><td class='leftside'>1-9</td><td> Quick taunt</td></tr>"
 		.. '</table>");')
 		pedobearSplashScreenF.SplashScreen:Call('$("#changelog").append("<h2><u>Changelog V' .. (GAMEMODE.Version or '?') .. '</u></h2><table>'
-		.. "<tr><td>> Welcome to the first public release!</td></tr>"
+		.. "<tr><td>> Little change with the Showcase</td></tr>"
+		.. "<tr><td>> Fixed various bugs</td></tr>"
 		.. '</table>");')
 
 		local closebtn = vgui.Create("DButton", pedobearSplashScreenF)

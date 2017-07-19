@@ -1364,7 +1364,7 @@ end
 
 function GM.PlayerMeta:PickPowerUP(powerupstr)
 	if !self:HasPowerUP() then
-		if powerupstr and GAMEMODE.PowerUps[powerupstr][2] == self:Team() then
+		if powerupstr and GAMEMODE.PowerUps[powerupstr] and GAMEMODE.PowerUps[powerupstr][2] == self:Team() then
 			return self:SetPowerUP(powerupstr)
 		end
 		return self:SetPowerUP(GAMEMODE:SelectRandomPowerUP(self))

@@ -238,7 +238,7 @@ function GM:HUDPaint()
 
 	--[[ THE GAMEMODE STATUS ]]--
 
-	local htxt = "Super Pedobear - Early Access (" ..  os.date("%d/%m/%Y", os.time()) .. ")\nV" .. GAMEMODE.Version .. ": " .. GAMEMODE.VersionName
+	local htxt = "Super Pedobear V" .. GAMEMODE.Version .. "\nEarly Access (" ..  os.date("%d/%m/%Y", os.time()) .. ")"
 	surface.SetFont("SuperPedobear_HT")
 	local tw, th = surface.GetTextSize(htxt)
 	surface.SetDrawColor(Color(0, 0, 0, 200))

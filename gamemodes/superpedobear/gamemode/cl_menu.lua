@@ -364,6 +364,7 @@ function GM:SplashScreen()
 		pedobearSplashScreenF.SplashScreen:Call('$("#changelog").append("<h2><u>Changelog V' .. (GAMEMODE.Version or '?') .. '</u></h2><table>'
 		.. "<tr><td>> Little change with the Showcase</td></tr>"
 		.. "<tr><td>> Fixed various bugs</td></tr>"
+		.. "<tr><td>> Removed easter eggs playermodels</td></tr>"
 		.. '</table>");')
 
 		local closebtn = vgui.Create("DButton", pedobearSplashScreenF)

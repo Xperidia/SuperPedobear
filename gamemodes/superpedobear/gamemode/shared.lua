@@ -13,8 +13,7 @@ GM.Name 		= "Super Pedobear"
 GM.ShortName 	= "SuperPedobear"
 GM.Author 		= "VictorienXP@Xperidia"
 GM.Website 		= "xperi.link/SuperPedobear"
-GM.Version 		= 0.271
-GM.VersionName	= "Dev instensifies"
+GM.Version 		= 0.28
 GM.TeamBased 	= true
 
 TEAM_VICTIMS	= 1

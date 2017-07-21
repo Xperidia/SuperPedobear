@@ -71,8 +71,8 @@ function GM.PlayerMeta:Nick()
 end
 
 GM.PlayerEasterEgg = {}
---GM.PlayerEasterEgg["SteamID64"] = {<playermodel>, <jumpscare texture>, <custom music>, <custom announce>}
-GM.PlayerEasterEgg["76561198108011282"] = {Model("models/player/nachocheese.mdl"), "superpedobear/pepperscare", "https://xperidia.com/PedoMusics/76561198108011282.mp3", "IT'S CHEEZY TIME WITH %s"} --Marco
+--GM.PlayerEasterEgg["SteamID64"] = {<removed>, <jumpscare texture>, <custom music>, <custom announce>}
+GM.PlayerEasterEgg["76561198108011282"] = {nil, "superpedobear/pepperscare", "https://xperidia.com/PedoMusics/76561198108011282.mp3", "IT'S CHEEZY TIME WITH %s"} --Marco
 
 
 function GM:IsSeasonalEvent(str)

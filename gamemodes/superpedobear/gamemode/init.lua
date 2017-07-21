@@ -16,8 +16,6 @@ include("shared.lua")
 
 DEFINE_BASECLASS("gamemode_base")
 
-resource.AddWorkshop("232539187") --Marco
-
 util.AddNetworkString("SuperPedobear_Vars")
 util.AddNetworkString("SuperPedobear_PlayerStats")
 util.AddNetworkString("SuperPedobear_Notif")
@@ -410,9 +408,7 @@ function GM:Think()
 
 	for k, v in pairs(player.GetAll()) do
 		if v:Team() == TEAM_PEDOBEAR then
-			if GAMEMODE.PlayerEasterEgg[v:SteamID64()] and GAMEMODE.PlayerEasterEgg[v:SteamID64()][1] and v:GetModel() != GAMEMODE.PlayerEasterEgg[v:SteamID64()][1] then
-				v:SetModel(GAMEMODE.PlayerEasterEgg[v:SteamID64()][1])
-			elseif (!GAMEMODE.PlayerEasterEgg[v:SteamID64()] or (GAMEMODE.PlayerEasterEgg[v:SteamID64()] and !GAMEMODE.PlayerEasterEgg[v:SteamID64()][1])) and v:GetModel() != "models/player/pbear/pbear.mdl" then
+			if v:GetModel() != "models/player/pbear/pbear.mdl" then
 				v:SetModel(Model("models/player/pbear/pbear.mdl"))
 			end
 		elseif v:Team() == TEAM_VICTIMS and v:Alive() then

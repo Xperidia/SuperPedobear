@@ -13,7 +13,7 @@ GM.Name 		= "Super Pedobear"
 GM.ShortName 	= "SuperPedobear"
 GM.Author 		= "VictorienXP@Xperidia"
 GM.Website 		= "xperi.link/SuperPedobear"
-GM.Version 		= 0.28
+GM.Version 		= 0.281
 GM.TeamBased 	= true
 
 TEAM_VICTIMS	= 1
@@ -166,6 +166,10 @@ function GM:Initialize()
 			end
 		end)
 
+	end
+
+	if SERVER then
+		RunConsoleCommand("sv_playermodel_selector_force", "0") --This is needed so Pedobear won't get overriden
 	end
 
 	GAMEMODE:BuildMusicIndex()

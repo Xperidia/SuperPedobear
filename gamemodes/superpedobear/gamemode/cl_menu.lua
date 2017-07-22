@@ -362,9 +362,7 @@ function GM:SplashScreen()
 		.. "<tr><td class='leftside'>1-9</td><td> Quick taunt</td></tr>"
 		.. '</table>");')
 		pedobearSplashScreenF.SplashScreen:Call('$("#changelog").append("<h2><u>Changelog V' .. (GAMEMODE.Version or '?') .. '</u></h2><table>'
-		.. "<tr><td>> Little change with the Showcase</td></tr>"
-		.. "<tr><td>> Fixed various bugs</td></tr>"
-		.. "<tr><td>> Removed easter eggs playermodels</td></tr>"
+		.. "<tr><td>> Prevent overriding from Enhanced PlayerModel Selector</td></tr>"
 		.. '</table>");')
 
 		local closebtn = vgui.Create("DButton", pedobearSplashScreenF)

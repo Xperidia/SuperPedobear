@@ -396,6 +396,20 @@ function GM:HUDPaint()
 		surface.DrawOutlinedRect(ScrW() / 2 - w / 2 - 4, ScrH() / 2 - h / 2, w + 8, h)
 	end
 
+	--[[ FPS WARNING ]]
+
+	local fps = math.Round(1 / FrameTime())
+	if fps < 60 then
+		local txt = "FPS LOW"
+		surface.SetFont("SuperPedobear_TXT")
+		local w, h = surface.GetTextSize(txt)
+		surface.SetDrawColor(Color(0, 0, 0, 200))
+		surface.DrawRect(ScrW() / 2 - w / 2 - 4, ScrH() - h, w + 8, h)
+		draw.DrawText(txt, "SuperPedobear_TXT", ScrW() / 2, ScrH() - h, Color(255, 0, 0, 255), TEXT_ALIGN_CENTER)
+		surface.SetDrawColor(Color(255, 0, 0, 255))
+		surface.DrawOutlinedRect(ScrW() / 2 - w / 2 - 4, ScrH() - h, w + 8, h)
+	end
+
 
 	if !hide_tips then --[[ ALL GENERIC TIPS ]]--
 

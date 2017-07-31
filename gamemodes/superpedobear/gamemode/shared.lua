@@ -138,6 +138,10 @@ function GM:Initialize()
 		file.CreateDir("superpedobear")
 	end
 
+	if game.GetMap() == "spb_tutorial" then
+		GAMEMODE.Vars.Tutorial = true
+	end
+
 	if CLIENT then
 
 		CreateClientConVar("superpedobear_cl_disablexpsc", 0, true, false)

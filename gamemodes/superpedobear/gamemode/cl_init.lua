@@ -281,14 +281,16 @@ function GM:HUDPaint()
 	elseif End or TempEnd then
 		TheTime = LastTime
 	elseif !Start and !PreStart then
-		if rnd <= 1 then
+		if GAMEMODE.Vars.Tutorial then
+			TheTime = 2147483647
+		elseif rnd <= 1 then
 			TheTime = 40
 		else
 			TheTime = superpedobear_round_pretime:GetFloat()
 		end
 	end
 
-	if rnd > 999 then
+	if rnd > 999 or GAMEMODE.Vars.Tutorial then
 		rnd = "∞"
 	end
 
@@ -317,6 +319,8 @@ function GM:HUDPaint()
 	if game.SinglePlayer() then
 		addrndtxt("You can't play in \"Single Player\" mode!")
 		addrndtxt("Start a new game and select at least \"2 Players\"")
+	elseif GAMEMODE.Vars.Tutorial then
+		addrndtxt("Welcome to the tutorial")
 	elseif PreStart then
 		addrndtxt("Waiting for players")
 	elseif Pre2Start then

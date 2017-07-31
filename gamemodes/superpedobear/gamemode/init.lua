@@ -794,13 +794,6 @@ function GM:DoPlayerDeath(ply, attacker, dmginfo)
 			attacker:AddFrags(1)
 			attacker:SetNWInt("SuperPedobear_TotalVictims", attacker:GetNWInt("SuperPedobear_TotalVictims", 0) + 1)
 			attacker:SetNWInt("SuperPedobear_VictimsCurrency", attacker:GetNWInt("SuperPedobear_VictimsCurrency", 0) + 1)
-			if GAMEMODE:IsSeasonalEvent("Halloween") or ply:GetInfoNum("superpedobear_cl_jumpscare", 0) == 1 then
-				if GAMEMODE.PlayerEasterEgg[attacker:SteamID64()] and GAMEMODE.PlayerEasterEgg[attacker:SteamID64()][2] then
-					ply:SendLua("GAMEMODE:CallJumpscare('" .. GAMEMODE.PlayerEasterEgg[attacker:SteamID64()][2] .. "')")
-				else
-					ply:SendLua("GAMEMODE:CallJumpscare()")
-				end
-			end
 			GAMEMODE.Vars.downvictims = (GAMEMODE.Vars.downvictims or 0) + 1
 		end
 	end
@@ -943,11 +936,9 @@ function GM:PlayerCanSeePlayersChat(text, teamOnly, listener, speaker)
 end
 
 function GM:StartCommand(ply, ucmd)
-
 	if !ply:IsBot() then
 		GAMEMODE:AFKThink(ply, ucmd)
 	end
-
 end
 
 function GM:AFKThink(ply, ucmd)

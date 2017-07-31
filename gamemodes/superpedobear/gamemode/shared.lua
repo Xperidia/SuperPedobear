@@ -70,8 +70,8 @@ function GM.PlayerMeta:Nick()
 end
 
 GM.PlayerEasterEgg = {}
---GM.PlayerEasterEgg["SteamID64"] = {<removed>, <jumpscare texture>, <custom music>, <custom announce>}
-GM.PlayerEasterEgg["76561198108011282"] = {nil, "superpedobear/pepperscare", "https://xperidia.com/PedoMusics/76561198108011282.mp3", "IT'S CHEEZY TIME WITH %s"} --Marco
+--GM.PlayerEasterEgg["SteamID64"] = {<removed>, <removed>, <custom music>, <custom announce>}
+GM.PlayerEasterEgg["76561198108011282"] = {nil, nil, "https://xperidia.com/PedoMusics/76561198108011282.mp3", "IT'S CHEEZY TIME WITH %s"} --Marco
 
 
 function GM:IsSeasonalEvent(str)
@@ -146,7 +146,6 @@ function GM:Initialize()
 
 		CreateClientConVar("superpedobear_cl_disablexpsc", 0, true, false)
 		CreateClientConVar("superpedobear_cl_disabletauntmenuclose", 0, true, false)
-		CreateClientConVar("superpedobear_cl_jumpscare", 0, true, true )
 		CreateClientConVar("superpedobear_cl_disablehalos", 0, true, false)
 		CreateClientConVar("superpedobear_cl_music_enable", 1, true, false)
 		CreateClientConVar("superpedobear_cl_music_volume", 0.5, true, false)

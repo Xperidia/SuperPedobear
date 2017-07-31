@@ -30,8 +30,6 @@ util.AddNetworkString("SuperPedobear_MusicQueue")
 util.AddNetworkString("SuperPedobear_MusicAddToQueue")
 util.AddNetworkString("SuperPedobear_MusicQueueVote")
 
-local LegitUse
-
 function GM:InitPostEntity()
 	GAMEMODE.Vars.ThereIsPowerUPSpawns = #ents.FindByClass("superpedobear_powerup_spawn") > 0
 end
@@ -107,24 +105,6 @@ function GM:PedoVars(ply)
 		net.WriteFloat(GAMEMODE.Vars.Round.LastTime or 0)
 	if IsValid(ply) then net.Send(ply) else net.Broadcast() end
 
-end
-
-local function Registration()
-	http.Post("https://xperidia.com/monitor.php", { kind = "SuperPedobear", version = tostring(GAMEMODE.Version), key = file.Read("superpedobear/key.txt"), ip = game.GetIPAddress(), servername = GetHostName() },
-		function(responseText, contentLength, responseHeaders, statusCode)
-			local resp = util.JSONToTable(responseText)
-			if statusCode == 200 and resp and resp.response and resp.response.success then
-				GAMEMODE:Log(resp.response.message)
-				LegitUse = resp.response.success
-			elseif resp and resp.response then
-				GAMEMODE:Log(resp.response.message)
-			else
-				GAMEMODE:Log("Error " .. statusCode .. " while trying registering...")
-			end
-		end,
-		function(errorMessage)
-			GAMEMODE:Log(errorMessage)
-		end)
 end
 
 function GM:SelectMusic(pre)
@@ -499,10 +479,6 @@ function GM:RoundThink()
 			GAMEMODE:PedoVars()
 
 			GAMEMODE:Log("The game will start at " .. GAMEMODE.Vars.Round.PreStartTime, nil, true)
-
-			if game.IsDedicated() and !LegitUse then
-				Registration()
-			end
 
 		end
 

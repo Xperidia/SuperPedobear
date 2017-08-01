@@ -4,5 +4,5 @@
 	"title"		"Super Pedobear"
 	"maps"		"^spb_"
 	"menusystem"	"1"
-	"workshopid"	"1077282558"
+	"workshopid"	"628449407"
 }

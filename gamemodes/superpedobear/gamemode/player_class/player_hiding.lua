@@ -1,9 +1,3 @@
---[[---------------------------------------------------------------------------
-		⚠ This file is a part of the Super Pedobear gamemode ⚠
-	⚠ Please do not redistribute any version of it (edited or not)! ⚠
-	So please ask me directly or contribute on GitHub if you want something...
------------------------------------------------------------------------------]]
-
 AddCSLuaFile()
 DEFINE_BASECLASS("player_default")
 
@@ -46,7 +40,7 @@ end
 
 function PLAYER:Loadout()
 	self.Player:RemoveAllItems()
-	self.Player:Give("superpedobear_victim")
+	self.Player:Give("spb_hiding")
 end
 
 function PLAYER:Spawn()
@@ -126,4 +120,4 @@ function PLAYER:StartMove(mv)
 	end
 end
 
-player_manager.RegisterClass("player_victim", PLAYER, "player_default")
+player_manager.RegisterClass("player_hiding", PLAYER, "player_default")

@@ -1,9 +1,3 @@
---[[---------------------------------------------------------------------------
-		⚠ This file is a part of the Super Pedobear gamemode ⚠
-	⚠ Please do not redistribute any version of it (edited or not)! ⚠
-	So please ask me directly or contribute on GitHub if you want something...
------------------------------------------------------------------------------]]
-
 AddCSLuaFile()
 
 ENT.Base = "base_anim"
@@ -43,7 +37,7 @@ end
 
 local sprite = Material("sprites/physg_glow1")
 function ENT:Draw()
-	if superpedobear_enabledevmode:GetBool() then self:DrawModel() end
+	if spb_enabledevmode:GetBool() then self:DrawModel() end
 	if !IsValid(self.PU) then
 		self.PU = ClientsideModel("models/maxofs2d/hover_rings.mdl")
 		self.PU:SetNoDraw(true)
@@ -99,7 +93,7 @@ function ENT:PickUP(ent)
 				ent:EmitSound("items/battery_pickup.wav", 75, 100, 1, CHAN_AUTO)
 				self:Remove()
 			end
-		elseif ent:Team() == TEAM_VICTIMS then
+		elseif ent:Team() == TEAM_HIDING then
 			local d = DamageInfo()
 			d:SetDamage(2147483647)
 			d:SetDamageType(DMG_DIRECT)

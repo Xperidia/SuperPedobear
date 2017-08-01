@@ -1,9 +1,3 @@
---[[---------------------------------------------------------------------------
-		⚠ This file is a part of the Super Pedobear gamemode ⚠
-	⚠ Please do not redistribute any version of it (edited or not)! ⚠
-	So please ask me directly or contribute on GitHub if you want something...
------------------------------------------------------------------------------]]
-
 surface.CreateFont("ScoreboardDefault", {
 	font	= "Roboto",
 	size	= 22,
@@ -147,10 +141,10 @@ local PLAYER_LINE = {
 			self.Name:SetText(self.PName)
 		end
 
-		if self.Player:Team() == TEAM_PEDOBEAR and (self.PColor == nil or self.PColor != team.GetColor(self.Player:Team())) then
+		if self.Player:Team() == TEAM_BEAR and (self.PColor == nil or self.PColor != team.GetColor(self.Player:Team())) then
 			self.PColor = team.GetColor(self.Player:Team())
 			self.Name:SetTextColor(self.PColor)
-		elseif self.Player:Team() != TEAM_PEDOBEAR and (self.PColor == nil or self.PColor != Color(255, 255, 255)) then
+		elseif self.Player:Team() != TEAM_BEAR and (self.PColor == nil or self.PColor != Color(255, 255, 255)) then
 			self.PColor = Color(255, 255, 255)
 			self.Name:SetTextColor(self.PColor)
 		end
@@ -220,7 +214,7 @@ local PLAYER_LINE = {
 
 		end
 
-		if self.Player:Team() == TEAM_PEDOBEAR then
+		if self.Player:Team() == TEAM_BEAR then
 			self:SetZPos(-2000 + self.Player:EntIndex())
 			return
 		end

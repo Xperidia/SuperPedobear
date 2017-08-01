@@ -1,16 +1,10 @@
---[[---------------------------------------------------------------------------
-		⚠ This file is a part of the Super Pedobear gamemode ⚠
-	⚠ Please do not redistribute any version of it (edited or not)! ⚠
-	So please ask me directly or contribute on GitHub if you want something...
------------------------------------------------------------------------------]]
+function GM:Van()
 
-function GM:PedoVan()
-
-	if IsValid(GAMEMODE.PedoVanFrame) and GAMEMODE.PedoVanFrame.DoClose then
-		GAMEMODE.PedoVanFrame:DoClose()
+	if IsValid(GAMEMODE.VanFrame) and GAMEMODE.VanFrame.DoClose then
+		GAMEMODE.VanFrame:DoClose()
 		return
-	elseif IsValid(GAMEMODE.PedoVanFrame) then
-		GAMEMODE.PedoVanFrame:Close()
+	elseif IsValid(GAMEMODE.VanFrame) then
+		GAMEMODE.VanFrame:Close()
 		return
 	end
 
@@ -18,8 +12,8 @@ function GM:PedoVan()
 	local scaleW = function(px) return ScrW() * (px / 1920) end
 	local scaleH = function(px) return ScrH() * (px / 1080) end
 
-	GAMEMODE.PedoVanFrame = vgui.Create("DFrame")
-	local self = GAMEMODE.PedoVanFrame
+	GAMEMODE.VanFrame = vgui.Create("DFrame")
+	local self = GAMEMODE.VanFrame
 	self:SetPos(0, ScrH() / 2 - h / 2)
 	self:SetSize(w, h)
 	self:SetTitle("")
@@ -27,11 +21,11 @@ function GM:PedoVan()
 	self:SetDraggable(false)
 	self:ShowCloseButton(false)
 	self:SetBackgroundBlur(true)
-	--self.PedoVanFrame:SetScreenLock(true)
+	--self:SetScreenLock(true)
 	function self:Paint(w, h)
 		Derma_DrawBackgroundBlur(self, self.m_fCreateTime)
 		surface.SetDrawColor(255, 255, 255, 255)
-		surface.SetMaterial(GAMEMODE.Materials.PedoVan)
+		surface.SetMaterial(GAMEMODE.Materials.Van)
 		surface.DrawTexturedRect(0, 0, w, oh)
 	end
 	local openanim = Derma_Anim("openanim", self, function(pnl, anim, delta, data)
@@ -47,13 +41,13 @@ function GM:PedoVan()
 	self.DoClose = function()
 		if closeanim:Active() then
 			if IsValid(self) then self:Close() end
-			timer.Remove("ClosePedoVan")
+			timer.Remove("CloseVan")
 			return
 		end
 		closeanim:Start(0.50)
-		timer.Create("ClosePedoVan", 0.5, 1, function()
+		timer.Create("CloseVan", 0.5, 1, function()
 			if IsValid(self) then self:Close() end
-			timer.Remove("ClosePedoVan")
+			timer.Remove("CloseVan")
 		end)
 	end
 	self:MakePopup()
@@ -75,7 +69,7 @@ function GM:PedoVan()
 
 	self.vc = vgui.Create("DLabel")
 	self.vc:SetParent(self)
-	self.vc:SetText(LocalPlayer():GetNWInt("SuperPedobear_VictimsCurrency", 0))
+	self.vc:SetText(LocalPlayer():GetNWInt("spb_VictimsCurrency", 0))
 	self.vc:SetPos(scaleW(1610), scaleH(300))
 	self.vc:SetSize(scaleW(220), scaleH(100))
 	self.vc:SetDark(1)

@@ -1,9 +1,3 @@
---[[---------------------------------------------------------------------------
-		⚠ This file is a part of the Super Pedobear gamemode ⚠
-	⚠ Please do not redistribute any version of it (edited or not)! ⚠
-	So please ask me directly or contribute on GitHub if you want something...
------------------------------------------------------------------------------]]
-
 function GM:TauntMenuF()
 
 	if !IsValid(GAMEMODE.TauntMenu) and !engine.IsPlayingDemo() then
@@ -24,7 +18,7 @@ function GM:TauntMenuF()
 		end
 		GAMEMODE.TauntMenu.Think = function(self)
 
-			if !ply:Alive() or (ply:Team() != TEAM_VICTIMS and ply:Team() != TEAM_PEDOBEAR) then
+			if !ply:Alive() or (ply:Team() != TEAM_HIDING and ply:Team() != TEAM_BEAR) then
 				GAMEMODE.TauntMenu:SetTitle("Taunt menu (You can't taunt now!)")
 				GAMEMODE.TauntMenu.play:SetEnabled(false)
 				GAMEMODE.TauntMenu.random:SetEnabled(false)
@@ -90,7 +84,7 @@ function GM:TauntMenuF()
 
 			GAMEMODE:StartTaunt(lineID)
 
-			if !GetConVar("superpedobear_cl_disabletauntmenuclose"):GetBool() then GAMEMODE.TauntMenu:Close() end
+			if !GetConVar("spb_cl_disabletauntmenuclose"):GetBool() then GAMEMODE.TauntMenu:Close() end
 
 		end
 
@@ -100,9 +94,9 @@ function GM:TauntMenuF()
 
 			if v[3] == 0 then
 				whostr = "Everyone"
-			elseif v[3] == TEAM_VICTIMS then
+			elseif v[3] == TEAM_HIDING then
 				whostr = "Victims"
-			elseif v[3] == TEAM_PEDOBEAR then
+			elseif v[3] == TEAM_BEAR then
 				whostr = "Pedobear"
 			end
 
@@ -117,7 +111,7 @@ function GM:TauntMenuF()
 		GAMEMODE.TauntMenu.play.DoClick = function()
 			local taunt = AppList:GetSelectedLine()
 			GAMEMODE:StartTaunt(taunt)
-			if !GetConVar("superpedobear_cl_disabletauntmenuclose"):GetBool() then GAMEMODE.TauntMenu:Close() end
+			if !GetConVar("spb_cl_disabletauntmenuclose"):GetBool() then GAMEMODE.TauntMenu:Close() end
 		end
 
 		GAMEMODE.TauntMenu.random = vgui.Create("DButton", GAMEMODE.TauntMenu)
@@ -138,7 +132,7 @@ function GM:TauntMenuF()
 
 			GAMEMODE:StartTaunt(selid)
 
-			if !GetConVar("superpedobear_cl_disabletauntmenuclose"):GetBool() then GAMEMODE.TauntMenu:Close() end
+			if !GetConVar("spb_cl_disabletauntmenuclose"):GetBool() then GAMEMODE.TauntMenu:Close() end
 
 		end
 

@@ -1,9 +1,3 @@
---[[---------------------------------------------------------------------------
-		⚠ This file is a part of the Super Pedobear gamemode ⚠
-	⚠ Please do not redistribute any version of it (edited or not)! ⚠
-	So please ask me directly or contribute on GitHub if you want something...
------------------------------------------------------------------------------]]
-
 AddCSLuaFile()
 
 ENT.Base = "base_nextbot"
@@ -68,7 +62,7 @@ function ENT:Think()
 	local ply = self:GetPlayer()
 
 	if SERVER then
-		if !ply or !IsValid(ply) or ply:Team() != TEAM_VICTIMS then
+		if !ply or !IsValid(ply) or ply:Team() != TEAM_HIDING then
 			self:BRemove(ply)
 			return
 		end

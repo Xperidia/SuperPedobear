@@ -1,9 +1,3 @@
---[[---------------------------------------------------------------------------
-		⚠ This file is a part of the Super Pedobear gamemode ⚠
-	⚠ Please do not redistribute any version of it (edited or not)! ⚠
-	So please ask me directly or contribute on GitHub if you want something...
------------------------------------------------------------------------------]]
-
 local PANEL = {}
 local PlayerVoicePanels = {}
 
@@ -54,7 +48,7 @@ function PANEL:Think()
 
 	if IsValid(self.ply) then
 		self.LabelName:SetText(self.ply:Nick())
-		if self.ply:Alive() and self.ply:Team() == TEAM_VICTIMS then
+		if self.ply:Alive() and self.ply:Team() == TEAM_HIDING then
 			self.LabelName:SetTextColor(self.ply:GetPlayerColor():ToColor())
 		else
 			self.LabelName:SetTextColor(team.GetColor(self.ply:Team()))

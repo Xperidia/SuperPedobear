@@ -1,26 +1,20 @@
---[[---------------------------------------------------------------------------
-		⚠ This file is a part of the Super Pedobear gamemode ⚠
-	⚠ Please do not redistribute any version of it (edited or not)! ⚠
-	So please ask me directly or contribute on GitHub if you want something...
------------------------------------------------------------------------------]]
-
 DEFINE_BASECLASS("gamemode_base")
 
-include("player_class/player_victim.lua")
-include("player_class/player_pedobear.lua")
+include("player_class/player_hiding.lua")
+include("player_class/player_bear.lua")
 
 GM.Name 		= "Super Pedobear"
 GM.ShortName 	= "SuperPedobear"
 GM.Author 		= "VictorienXP@Xperidia"
-GM.Website 		= "xperi.link/SuperPedobear"
-GM.Version 		= 0.281
+GM.Website 		= "steamcommunity.com/sharedfiles/filedetails/?id=628449407"
+GM.Version 		= 0.282
 GM.TeamBased 	= true
 
-TEAM_VICTIMS	= 1
-TEAM_PEDOBEAR	= 2
+TEAM_HIDING	= 1
+TEAM_BEAR	= 2
 
 GM.Sounds = {}
-GM.Sounds.YoureThePedo	= Sound("superpedobear/yourethepedo.wav")
+GM.Sounds.YoureTheBear	= Sound("superpedobear/yourethebear.wav")
 GM.Sounds.HeartBeat		= Sound("superpedobear/heartbeat.ogg")
 
 GM.Sounds.Taunts = {}
@@ -29,15 +23,15 @@ table.insert(GM.Sounds.Taunts, {"Makka Pakka", Sound("superpedobear/taunts/s2.og
 table.insert(GM.Sounds.Taunts, {"Stampy Intro", Sound("superpedobear/taunts/s3.ogg"), 0, 7})
 table.insert(GM.Sounds.Taunts, {"Buttsauce", Sound("superpedobear/taunts/s4.ogg"), 0, 1})
 table.insert(GM.Sounds.Taunts, {"Thomas the tank engine", Sound("superpedobear/taunts/s5.ogg"), 0, 7})
-table.insert(GM.Sounds.Taunts, {"Get your lollipops", Sound("superpedobear/taunts/p1.ogg"), TEAM_PEDOBEAR, 6})
+table.insert(GM.Sounds.Taunts, {"Get your lollipops", Sound("superpedobear/taunts/p1.ogg"), TEAM_BEAR, 6})
 table.insert(GM.Sounds.Taunts, {"MY PEE PEE", Sound("superpedobear/taunts/s6.ogg"), 0, 20.5})
 
 GM.Sounds.Damage	= GM.Sounds.Damage or {}
 GM.Sounds.Death		= GM.Sounds.Death or {}
 
 GM.Materials = {}
-GM.Materials.PedoVan = Material("superpedobear/pedovan")
-GM.Materials.Pedobear = Material("superpedobear/pedobear")
+GM.Materials.Van = Material("superpedobear/van")
+GM.Materials.Bear = Material("superpedobear/bear")
 
 GM.Vars = GM.Vars or {}
 GM.Vars.Round = GM.Vars.Round or {}
@@ -54,12 +48,12 @@ GM.SeasonalEvents = {
 }
 
 GM.PowerUps = {
-	clone = {"Clone", TEAM_VICTIMS, Material("superpedobear/powerup/clone"), Color(255, 200, 50, 255)},
-	boost = {"Boost", TEAM_VICTIMS, Material("superpedobear/powerup/boost"), Color(255, 128, 0, 255)},
-	--vdisguise = {"Disguise", TEAM_VICTIMS, Material("superpedobear/powerup/vdisguise")},
-	--pdisguise = {"Disguise", TEAM_PEDOBEAR, Material("superpedobear/powerup/pdisguise")},
-	radar = {"Radar", TEAM_PEDOBEAR, Material("superpedobear/powerup/radar")},
-	trap = {"False Power-UP", TEAM_PEDOBEAR, Material("superpedobear/powerup/trap"), Color(255, 64, 64, 255)}
+	clone = {"Clone", TEAM_HIDING, Material("superpedobear/powerup/clone"), Color(255, 200, 50, 255)},
+	boost = {"Boost", TEAM_HIDING, Material("superpedobear/powerup/boost"), Color(255, 128, 0, 255)},
+	--vdisguise = {"Disguise", TEAM_HIDING, Material("superpedobear/powerup/vdisguise")},
+	--pdisguise = {"Disguise", TEAM_BEAR, Material("superpedobear/powerup/pdisguise")},
+	radar = {"Radar", TEAM_BEAR, Material("superpedobear/powerup/radar")},
+	trap = {"False Power-UP", TEAM_BEAR, Material("superpedobear/powerup/trap"), Color(255, 64, 64, 255)}
 }
 
 GM.PlayerMeta = GM.PlayerMeta or FindMetaTable("Player")
@@ -107,20 +101,20 @@ end
 function GM:Initialize()
 
 	sound.Add({
-		name = "superpedobear_yourethepedo",
+		name = "spb_yourethebear",
 		channel = CHAN_STATIC,
 		volume = 1.0,
 		level = 0,
-		sound = GAMEMODE.Sounds.YoureThePedo
+		sound = GAMEMODE.Sounds.YoureTheBear
 	})
 
-	superpedobear_enabledevmode = CreateConVar("superpedobear_enabledevmode", 0, FCVAR_NONE, "Dev mode and more logs.")
-	superpedobear_round_time = CreateConVar("superpedobear_round_time", 180, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Time of a round in second.")
-	superpedobear_round_pretime = CreateConVar("superpedobear_round_pretime", 15, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Time of the player waiting time in second.")
-	superpedobear_round_pre2time = CreateConVar("superpedobear_round_pre2time", 15, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Time before pedobear spawn.")
-	superpedobear_afk_time = CreateConVar("superpedobear_afk_time", 30, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Time needed for a player to be consired afk.")
-	superpedobear_afk_action = CreateConVar("superpedobear_afk_action", 30, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Time needed for a player to be kick out of pedobear when afk.")
-	superpedobear_save_chances = CreateConVar("superpedobear_save_chances", 1, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Set if we should save the chances to be Pedobear.")
+	spb_enabledevmode = CreateConVar("spb_enabledevmode", 0, FCVAR_NONE, "Dev mode and more logs.")
+	spb_round_time = CreateConVar("spb_round_time", 180, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Time of a round in second.")
+	spb_round_pretime = CreateConVar("spb_round_pretime", 15, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Time of the player waiting time in second.")
+	spb_round_pre2time = CreateConVar("spb_round_pre2time", 15, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Time before bear spawn.")
+	spb_afk_time = CreateConVar("spb_afk_time", 30, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Time needed for a player to be consired afk.")
+	spb_afk_action = CreateConVar("spb_afk_action", 30, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Time needed for a player to be kick out of bear when afk.")
+	spb_save_chances = CreateConVar("spb_save_chances", 1, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Set if we should save the chances to be bear.")
 
 	local damagesnd = file.Find("sound/superpedobear/damage/*.ogg", "GAME")
 
@@ -144,23 +138,22 @@ function GM:Initialize()
 
 	if CLIENT then
 
-		CreateClientConVar("superpedobear_cl_disablexpsc", 0, true, false)
-		CreateClientConVar("superpedobear_cl_disabletauntmenuclose", 0, true, false)
-		CreateClientConVar("superpedobear_cl_disablehalos", 0, true, false)
-		CreateClientConVar("superpedobear_cl_music_enable", 1, true, false)
-		CreateClientConVar("superpedobear_cl_music_volume", 0.5, true, false)
-		CreateClientConVar("superpedobear_cl_music_allowexternal", 1, true, false)
-		CreateClientConVar("superpedobear_cl_music_visualizer", 1, true, false)
-		CreateClientConVar("superpedobear_cl_hud_offset", 0, true, false)
-		CreateClientConVar("superpedobear_cl_hide_tips", 0, true, false)
+		CreateClientConVar("spb_cl_disabletauntmenuclose", 0, true, false)
+		CreateClientConVar("spb_cl_disablehalos", 0, true, false)
+		CreateClientConVar("spb_cl_music_enable", 1, true, false)
+		CreateClientConVar("spb_cl_music_volume", 0.5, true, false)
+		CreateClientConVar("spb_cl_music_allowexternal", 1, true, false)
+		CreateClientConVar("spb_cl_music_visualizer", 1, true, false)
+		CreateClientConVar("spb_cl_hud_offset", 0, true, false)
+		CreateClientConVar("spb_cl_hide_tips", 0, true, false)
 
-		cvars.AddChangeCallback("superpedobear_cl_music_volume", function(convar_name, value_old, value_new)
+		cvars.AddChangeCallback("spb_cl_music_volume", function(convar_name, value_old, value_new)
 			if IsValid(GAMEMODE.Vars.Music) then
-				GAMEMODE.Vars.Music:SetVolume(GetConVar("superpedobear_cl_music_volume"):GetFloat())
+				GAMEMODE.Vars.Music:SetVolume(GetConVar("spb_cl_music_volume"):GetFloat())
 			end
 		end)
-		cvars.AddChangeCallback("superpedobear_cl_music_enable", function(convar_name, value_old, value_new)
-			value_new = GetConVar("superpedobear_cl_music_enable"):GetBool()
+		cvars.AddChangeCallback("spb_cl_music_enable", function(convar_name, value_old, value_new)
+			value_new = GetConVar("spb_cl_music_enable"):GetBool()
 			if IsValid(GAMEMODE.Vars.Music) and !value_new then
 				GAMEMODE.Vars.Music:Stop()
 				GAMEMODE.Vars.Music = nil
@@ -172,7 +165,7 @@ function GM:Initialize()
 	end
 
 	if SERVER then
-		RunConsoleCommand("sv_playermodel_selector_force", "0") --This is needed so Pedobear won't get overriden
+		RunConsoleCommand("sv_playermodel_selector_force", "0") --This is needed so bears won't get overriden
 	end
 
 	GAMEMODE:BuildMusicIndex()
@@ -230,13 +223,13 @@ end
 
 function GM:CreateTeams()
 
-	team.SetUp(TEAM_VICTIMS, "Victims", Color(247, 127, 190))
-	team.SetSpawnPoint(TEAM_VICTIMS, {"info_player_start", "info_player_terrorist"})
-	team.SetClass(TEAM_VICTIMS, {"player_victim"})
+	team.SetUp(TEAM_HIDING, "Hiding", Color(247, 127, 190))
+	team.SetSpawnPoint(TEAM_HIDING, {"info_player_start", "info_player_terrorist"})
+	team.SetClass(TEAM_HIDING, {"player_hiding"})
 
-	team.SetUp(TEAM_PEDOBEAR, "Pedobear", Color(139, 85, 46), false)
-	team.SetSpawnPoint(TEAM_PEDOBEAR, {"superpedobear_pedobearstart", "info_player_counterterrorist"})
-	team.SetClass(TEAM_PEDOBEAR, {"player_pedobear"})
+	team.SetUp(TEAM_BEAR, "Bear", Color(139, 85, 46), false)
+	team.SetSpawnPoint(TEAM_BEAR, {"spb_bearstart", "info_player_counterterrorist"})
+	team.SetClass(TEAM_BEAR, {"player_bear"})
 
 	team.SetSpawnPoint(TEAM_SPECTATOR, "worldspawn")
 	team.SetSpawnPoint(TEAM_UNASSIGNED, "worldspawn")
@@ -244,15 +237,15 @@ function GM:CreateTeams()
 end
 
 function GM:ShouldCollide(Ent1, Ent2)
-	if Ent1:GetClass() == "superpedobear_dummy" or Ent2:GetClass() == "superpedobear_dummy" then
+	if Ent1:GetClass() == "spb_dummy" or Ent2:GetClass() == "spb_dummy" then
 		return false
 	end
 	return true
 end
 
 function GM:Log(str, tn, hardcore)
-	if hardcore and !superpedobear_enabledevmode:GetBool() then return end
-	Msg("[SuperPedobear] " .. (str or "This was a log message, but something went wrong") .. "\n")
+	if hardcore and !spb_enabledevmode:GetBool() then return end
+	Msg("[" .. GAMEMODE.ShortName .. "] " .. (str or "This was a log message, but something went wrong") .. "\n")
 end
 
 function GM:GetHost()
@@ -270,13 +263,13 @@ function GM:GetHost()
 end
 
 function GM.PlayerMeta:GetPowerUP()
-	if CLIENT then return self:GetNWString("SuperPedobear_PowerUP", "none") end
+	if CLIENT then return self:GetNWString("spb_PowerUP", "none") end
 	return self.SPB_PowerUP
 end
 
 function GM.PlayerMeta:HasPowerUP()
 	if CLIENT then
-		if self:GetNWString("SuperPedobear_PowerUP", "none") != "none" then
+		if self:GetNWString("spb_PowerUP", "none") != "none" then
 			return true
 		else
 			return false
@@ -299,7 +292,7 @@ function GM:SelectRandomPowerUP(ply)
 end
 
 function GM:GetClosestPlayer(ply, pteam)
-	local pedobear
+	local bear
 	local distance
 	local t
 	local list = team.GetPlayers(pteam)
@@ -308,9 +301,9 @@ function GM:GetClosestPlayer(ply, pteam)
 			t = v:GetPos():Distance(ply:GetPos())
 			if (!distance or distance < t) then
 				distance = t
-				pedobear = v
+				bear = v
 			end
 		end
 	end
-	return pedobear, distance
+	return bear, distance
 end

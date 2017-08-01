@@ -1,37 +1,31 @@
---[[---------------------------------------------------------------------------
-		⚠ This file is a part of the Super Pedobear gamemode ⚠
-	⚠ Please do not redistribute any version of it (edited or not)! ⚠
-	So please ask me directly or contribute on GitHub if you want something...
------------------------------------------------------------------------------]]
-
 AddCSLuaFile("shared.lua")
 AddCSLuaFile("cl_scoreboard.lua")
 AddCSLuaFile("cl_menu.lua")
 AddCSLuaFile("cl_tauntmenu.lua")
 AddCSLuaFile("cl_voice.lua")
 AddCSLuaFile("cl_deathnotice.lua")
-AddCSLuaFile("cl_pedovan.lua")
+AddCSLuaFile("cl_van.lua")
 
 include("shared.lua")
 
 DEFINE_BASECLASS("gamemode_base")
 
-util.AddNetworkString("SuperPedobear_Vars")
-util.AddNetworkString("SuperPedobear_PlayerStats")
-util.AddNetworkString("SuperPedobear_Notif")
-util.AddNetworkString("SuperPedobear_Taunt")
-util.AddNetworkString("SuperPedobear_Music")
-util.AddNetworkString("SuperPedobear_AFK")
-util.AddNetworkString("SuperPedobear_MusicList")
+util.AddNetworkString("spb_Vars")
+util.AddNetworkString("spb_PlayerStats")
+util.AddNetworkString("spb_Notif")
+util.AddNetworkString("spb_Taunt")
+util.AddNetworkString("spb_Music")
+util.AddNetworkString("spb_AFK")
+util.AddNetworkString("spb_MusicList")
 util.AddNetworkString("PlayerKilledDummy")
 util.AddNetworkString("NPCKilledDummy")
-util.AddNetworkString("SuperPedobear_List")
-util.AddNetworkString("SuperPedobear_MusicQueue")
-util.AddNetworkString("SuperPedobear_MusicAddToQueue")
-util.AddNetworkString("SuperPedobear_MusicQueueVote")
+util.AddNetworkString("spb_List")
+util.AddNetworkString("spb_MusicQueue")
+util.AddNetworkString("spb_MusicAddToQueue")
+util.AddNetworkString("spb_MusicQueueVote")
 
 function GM:InitPostEntity()
-	GAMEMODE.Vars.ThereIsPowerUPSpawns = #ents.FindByClass("superpedobear_powerup_spawn") > 0
+	GAMEMODE.Vars.ThereIsPowerUPSpawns = #ents.FindByClass("spb_powerup_spawn") > 0
 end
 
 function GM:PlayerInitialSpawn(ply)
@@ -39,8 +33,8 @@ function GM:PlayerInitialSpawn(ply)
 	GAMEMODE:RetrieveXperidiaAccountRank(ply)
 
 	if ply:IsBot() then
-		ply:SetTeam(TEAM_VICTIMS)
-		ply:SetNWFloat("SuperPedobear_PedoChance", 0)
+		ply:SetTeam(TEAM_HIDING)
+		ply:SetNWFloat("spb_BearChance", 0)
 	else
 		ply:SetTeam(TEAM_UNASSIGNED)
 		GAMEMODE:LoadChances(ply)
@@ -53,7 +47,7 @@ function GM:PlayerInitialSpawn(ply)
 		end
 	end
 
-	GAMEMODE:PedoVars(ply)
+	GAMEMODE:UpVars(ply)
 	GAMEMODE:SendMusicIndex(ply)
 	GAMEMODE:SendMusicQueue(ply)
 
@@ -66,7 +60,7 @@ function GM:PlayerSpawn(ply)
 		GAMEMODE:PlayerSpawnAsSpectator(ply)
 		ply:SetPos(ply:GetPos() + Vector(0, 0, 32))
 
-	elseif ply:Team() == TEAM_VICTIMS or ply:Team() == TEAM_PEDOBEAR then
+	elseif ply:Team() == TEAM_HIDING or ply:Team() == TEAM_BEAR then
 
 		local pteam = ply:Team()
 		local spawnpoints = team.GetSpawnPoints(pteam)
@@ -90,9 +84,9 @@ function GM:PlayerDisconnected(ply)
 	GAMEMODE:StorePlayerInfo(ply)
 end
 
-function GM:PedoVars(ply)
+function GM:UpVars(ply)
 
-	net.Start("SuperPedobear_Vars")
+	net.Start("spb_Vars")
 		net.WriteBool(GAMEMODE.Vars.Round.Start or false)
 		net.WriteBool(GAMEMODE.Vars.Round.PreStart or false)
 		net.WriteFloat(GAMEMODE.Vars.Round.PreStartTime or 0)
@@ -127,13 +121,13 @@ function GM:SelectMusic(pre)
 
 	end
 
-	GAMEMODE:PedoMusic(GAMEMODE.Vars.CurrentMusic, pre, nil, GAMEMODE.Vars.CurrentMusicName)
+	GAMEMODE:Music(GAMEMODE.Vars.CurrentMusic, pre, nil, GAMEMODE.Vars.CurrentMusicName)
 
 end
 
-function GM:PedoMusic(src, pre, ply, name)
+function GM:Music(src, pre, ply, name)
 
-	net.Start("SuperPedobear_Music")
+	net.Start("spb_Music")
 		net.WriteString(src or "")
 		net.WriteBool(pre or false)
 		net.WriteString(name or "")
@@ -142,12 +136,12 @@ function GM:PedoMusic(src, pre, ply, name)
 end
 
 function GM:SendMusicQueue(ply)
-	net.Start("SuperPedobear_MusicQueue")
+	net.Start("spb_MusicQueue")
 		net.WriteTable(GAMEMODE.Vars.MusicQueue or {})
 	if IsValid(ply) then net.Send(ply) else net.Broadcast() end
 end
 
-net.Receive("SuperPedobear_MusicAddToQueue", function(bits, ply)
+net.Receive("spb_MusicAddToQueue", function(bits, ply)
 	local music = net.ReadString()
 	GAMEMODE:MusicQueueAdd(ply, music)
 end)
@@ -159,7 +153,7 @@ function GM:MusicQueueAdd(ply, musicsrc)
 	GAMEMODE:SendMusicQueue()
 end
 
-net.Receive("SuperPedobear_MusicQueueVote", function(bits, ply)
+net.Receive("spb_MusicQueueVote", function(bits, ply)
 	local qply = net.ReadEntity()
 	GAMEMODE:MusicQueueVote(ply, qply)
 end)
@@ -204,14 +198,14 @@ end
 
 function GM:PlayerDeathThink(ply)
 
-	if ply:Team() == TEAM_PEDOBEAR and GAMEMODE.Vars.Round.Start and !GAMEMODE.Vars.Round.End and !GAMEMODE.Vars.Round.TempEnd and !GAMEMODE.Vars.Round.Pre2Start then
+	if ply:Team() == TEAM_BEAR and GAMEMODE.Vars.Round.Start and !GAMEMODE.Vars.Round.End and !GAMEMODE.Vars.Round.TempEnd and !GAMEMODE.Vars.Round.Pre2Start then
 		ply:Spawn()
 		return
-	elseif ply:Team() == TEAM_PEDOBEAR and GAMEMODE.Vars.Round.Pre2Start then
+	elseif ply:Team() == TEAM_BEAR and GAMEMODE.Vars.Round.Pre2Start then
 		return
 	end
 
-	if ply:Team() == TEAM_VICTIMS and GAMEMODE.Vars.Round.Start and ply.Clones and #ply.Clones > 0 then
+	if ply:Team() == TEAM_HIDING and GAMEMODE.Vars.Round.Start and ply.Clones and #ply.Clones > 0 then
 		for k, v in pairs(ply.Clones) do
 			if IsValid(v) then
 				ply:Spawn()
@@ -223,7 +217,7 @@ function GM:PlayerDeathThink(ply)
 		end
 	end
 
-	if ply:Team() == TEAM_VICTIMS or ply:Team() == TEAM_PEDOBEAR then GAMEMODE:SpecControl(ply) end
+	if ply:Team() == TEAM_HIDING or ply:Team() == TEAM_BEAR then GAMEMODE:SpecControl(ply) end
 
 	if GAMEMODE.Vars.Round.Start then return end
 
@@ -240,7 +234,7 @@ function GM:PlayerStats()
 
 	GAMEMODE.Vars.victims = 0
 
-	for k, v in pairs(team.GetPlayers(TEAM_VICTIMS)) do
+	for k, v in pairs(team.GetPlayers(TEAM_HIDING)) do
 		if IsValid(v) and v:Alive() then
 			GAMEMODE.Vars.victims = GAMEMODE.Vars.victims + 1
 		elseif IsValid(v) and v.Clones and #v.Clones > 0 then
@@ -253,7 +247,7 @@ function GM:PlayerStats()
 		end
 	end
 
-	net.Start("SuperPedobear_PlayerStats")
+	net.Start("spb_PlayerStats")
 		net.WriteInt(GAMEMODE.Vars.victims, 32)
 		net.WriteInt(GAMEMODE.Vars.downvictims or 0, 32)
 	net.Broadcast()
@@ -262,7 +256,7 @@ end
 
 function GM:KeyPress(ply, key)
 	if ply:Team() == TEAM_UNASSIGNED and !ply:KeyPressed(IN_SCORE) then
-		ply:SetTeam(TEAM_VICTIMS)
+		ply:SetTeam(TEAM_HIDING)
 		ply:Spawn()
 		if GAMEMODE.Vars.Round.Start then
 			ply:KillSilent()
@@ -278,7 +272,7 @@ function GM:SpecControl(ply, manual)
 
 	for k, v in pairs(player.GetAll()) do
 		local vteam = v:Team()
-		if v:Alive() and (vteam == TEAM_VICTIMS or vteam == TEAM_PEDOBEAR) and v != ply and vteam != TEAM_UNASSIGNED and vteam != TEAM_SPECTATOR then
+		if v:Alive() and (vteam == TEAM_HIDING or vteam == TEAM_BEAR) and v != ply and vteam != TEAM_UNASSIGNED and vteam != TEAM_SPECTATOR then
 			table.insert(players, v)
 		end
 	end
@@ -368,7 +362,7 @@ function GM:DoTheVictoryDance(wteam)
 
 		end
 
-		timer.Create("SuperPedobear_ReviewPlayers", 2, 0, function()
+		timer.Create("spb_ReviewPlayers", 2, 0, function()
 			if GAMEMODE.Vars.Round.End or GAMEMODE.Vars.Round.TempEnd then
 				for k, v in pairs(player.GetAll()) do
 					if !v:Alive() then
@@ -376,7 +370,7 @@ function GM:DoTheVictoryDance(wteam)
 					end
 				end
 			else
-				timer.Remove("SuperPedobear_ReviewPlayers")
+				timer.Remove("spb_ReviewPlayers")
 			end
 		end)
 
@@ -387,18 +381,18 @@ end
 function GM:Think()
 
 	for k, v in pairs(player.GetAll()) do
-		if v:Team() == TEAM_PEDOBEAR then
+		if v:Team() == TEAM_BEAR then
 			if v:GetModel() != "models/player/pbear/pbear.mdl" then
 				v:SetModel(Model("models/player/pbear/pbear.mdl"))
 			end
-		elseif v:Team() == TEAM_VICTIMS and v:Alive() then
+		elseif v:Team() == TEAM_HIDING and v:Alive() then
 			if v:GetModel() == "models/player/pbear/pbear.mdl" then
 				v:SetModel(Model("models/jazzmcfly/magica/homura_mg.mdl"))
 			end
 		end
 	end
 
-	for k, v in pairs(team.GetPlayers(TEAM_VICTIMS)) do
+	for k, v in pairs(team.GetPlayers(TEAM_HIDING)) do
 		if v:Alive() then
 			local a = math.Clamp(v:Health(), 0, 100) / 100
 			local doffset = v:EntIndex()
@@ -412,7 +406,7 @@ function GM:Think()
 
 		for k, v in pairs(player.GetAll()) do
 
-			if v:Team() == TEAM_VICTIMS then
+			if v:Team() == TEAM_HIDING then
 
 				if v:Alive() and GAMEMODE.Vars.Round.Start and v.Sprinting and (!v.SprintV or v.SprintV > 0) and !v.SprintLock then
 					v.SprintV = (v.SprintV or 100) - 1
@@ -430,13 +424,13 @@ function GM:Think()
 						v.SprintLock = false
 						v:SetRunSpeed(400)
 					end
-					v:SetNWInt("SprintV", v.SprintV)
-					v:SetNWInt("SprintLock", v.SprintLock)
+					v:SetNWInt("spb_SprintV", v.SprintV)
+					v:SetNWInt("spb_SprintLock", v.SprintLock)
 				end
 
 			elseif (!v.SprintV or v.SprintV != 100) then
 				v.SprintV = 100
-				v:SetNWInt("SprintV", v.SprintV)
+				v:SetNWInt("spb_SprintV", v.SprintV)
 			end
 
 		end
@@ -445,8 +439,8 @@ function GM:Think()
 
 	end
 
-	if !GAMEMODE.Vars.LastCount or GAMEMODE.Vars.LastCount != #team.GetPlayers(TEAM_VICTIMS) then
-		GAMEMODE.Vars.LastCount = #team.GetPlayers(TEAM_VICTIMS)
+	if !GAMEMODE.Vars.LastCount or GAMEMODE.Vars.LastCount != #team.GetPlayers(TEAM_HIDING) then
+		GAMEMODE.Vars.LastCount = #team.GetPlayers(TEAM_HIDING)
 		GAMEMODE:PlayerStats()
 	end
 
@@ -471,12 +465,12 @@ function GM:RoundThink()
 			if !GAMEMODE.Vars.Rounds or GAMEMODE.Vars.Rounds <= 1 then
 				GAMEMODE.Vars.Round.PreStartTime = CurTime() + 40
 			else
-				GAMEMODE.Vars.Round.PreStartTime = CurTime() + superpedobear_round_pretime:GetFloat()
+				GAMEMODE.Vars.Round.PreStartTime = CurTime() + spb_round_pretime:GetFloat()
 			end
 
 			GAMEMODE:SelectMusic(true)
 
-			GAMEMODE:PedoVars()
+			GAMEMODE:UpVars()
 
 			GAMEMODE:Log("The game will start at " .. GAMEMODE.Vars.Round.PreStartTime, nil, true)
 
@@ -491,61 +485,61 @@ function GM:RoundThink()
 			GAMEMODE.Vars.Round.Pre2Start = true
 
 			GAMEMODE.Vars.Round.PreStartTime = 0
-			GAMEMODE.Vars.Round.Pre2Time = CurTime() + superpedobear_round_pre2time:GetFloat()
-			GAMEMODE.Vars.Round.Time = GAMEMODE.Vars.Round.Pre2Time + superpedobear_round_time:GetFloat()
+			GAMEMODE.Vars.Round.Pre2Time = CurTime() + spb_round_pre2time:GetFloat()
+			GAMEMODE.Vars.Round.Time = GAMEMODE.Vars.Round.Pre2Time + spb_round_time:GetFloat()
 
-			local Pedos = {}
-			local WantedPedos = 1
-			local PedoIndex = 1
+			local Bears = {}
+			local WantedBears = 1
+			local BearIndex = 1
 
 			if GAMEMODE.Vars.victims >= 64 then
-				WantedPedos = 4
+				WantedBears = 4
 			elseif GAMEMODE.Vars.victims >= 32 then
-				WantedPedos = 3
+				WantedBears = 3
 			elseif GAMEMODE.Vars.victims >= 24 then
-				WantedPedos = 2
+				WantedBears = 2
 			end
 
-			GAMEMODE:Log(WantedPedos .. " pedobear(s) will be selected", nil, true)
+			GAMEMODE:Log(WantedBears .. " pedobear(s) will be selected", nil, true)
 
-			while #Pedos != WantedPedos do
+			while #Bears != WantedBears do
 
-				local plys = team.GetPlayers(TEAM_VICTIMS)
+				local plys = team.GetPlayers(TEAM_HIDING)
 
 				for k, v in RandomPairs(plys) do
 
-					if !Pedos[PedoIndex] or (IsValid(Pedos[PedoIndex]) and (Pedos[PedoIndex]:GetNWFloat("SuperPedobear_PedoChance", 0) < v:GetNWFloat("SuperPedobear_PedoChance", 0))) then
-						Pedos[PedoIndex] = v
+					if !Bears[BearIndex] or (IsValid(Bears[BearIndex]) and (Bears[BearIndex]:GetNWFloat("spb_BearChance", 0) < v:GetNWFloat("spb_BearChance", 0))) then
+						Bears[BearIndex] = v
 					end
 
-					GAMEMODE:Log(v:GetName() .. " have " .. (v:GetNWFloat("SuperPedobear_PedoChance", 0) * 100) .. "% chance to be a Pedobear" .. Either(Pedos[PedoIndex] == v, " and is currently selected", ""), nil, true)
+					GAMEMODE:Log(v:GetName() .. " have " .. (v:GetNWFloat("spb_BearChance", 0) * 100) .. "% chance to be a Pedobear" .. Either(Bears[BearIndex] == v, " and is currently selected", ""), nil, true)
 
 				end
 
-				GAMEMODE:Log(Pedos[PedoIndex]:GetName() .. " has been selected to be Pedobear " .. PedoIndex, nil, true)
+				GAMEMODE:Log(Bears[BearIndex]:GetName() .. " has been selected to be a bear " .. BearIndex, nil, true)
 
-				if IsValid(Pedos[PedoIndex]) then
-					Pedos[PedoIndex]:DropPowerUP()
-					Pedos[PedoIndex]:SetTeam(TEAM_PEDOBEAR)
-					Pedos[PedoIndex]:KillSilent()
-					Pedos[PedoIndex]:SetNWFloat("SuperPedobear_PedoChance", 0)
-					Pedos[PedoIndex]:ScreenFade(SCREENFADE.OUT, color_black, 0.5, superpedobear_round_pre2time:GetFloat())
-					PedoIndex = PedoIndex + 1
+				if IsValid(Bears[BearIndex]) then
+					Bears[BearIndex]:DropPowerUP()
+					Bears[BearIndex]:SetTeam(TEAM_BEAR)
+					Bears[BearIndex]:KillSilent()
+					Bears[BearIndex]:SetNWFloat("spb_BearChance", 0)
+					Bears[BearIndex]:ScreenFade(SCREENFADE.OUT, color_black, 0.5, spb_round_pre2time:GetFloat())
+					BearIndex = BearIndex + 1
 				end
 
 			end
 
-			net.Start("SuperPedobear_List")
-				net.WriteTable(Pedos)
+			net.Start("spb_List")
+				net.WriteTable(Bears)
 			net.Broadcast()
 
-			timer.Create("SuperPedobear_TempoStart", superpedobear_round_pre2time:GetFloat(), 1, function()
+			timer.Create("spb_TempoStart", spb_round_pre2time:GetFloat(), 1, function()
 
 				GAMEMODE.Vars.Round.Pre2Start = false
 
 				local custommusic = false
 
-				for k, v in pairs(team.GetPlayers(TEAM_PEDOBEAR)) do
+				for k, v in pairs(team.GetPlayers(TEAM_BEAR)) do
 					if GAMEMODE.PlayerEasterEgg[v:SteamID64()] and GAMEMODE.PlayerEasterEgg[v:SteamID64()][3] then
 						GAMEMODE.Vars.CurrentMusic = GAMEMODE.PlayerEasterEgg[v:SteamID64()][3]
 						GAMEMODE.Vars.CurrentMusicName = v:Nick()
@@ -554,21 +548,21 @@ function GM:RoundThink()
 				end
 
 				if custommusic then
-					GAMEMODE:PedoMusic(GAMEMODE.Vars.CurrentMusic, false, nil, GAMEMODE.Vars.CurrentMusicName)
+					GAMEMODE:Music(GAMEMODE.Vars.CurrentMusic, false, nil, GAMEMODE.Vars.CurrentMusicName)
 				else
 					local jukebox = GAMEMODE:MusicQueueSelect()
 					if jukebox then
 						GAMEMODE.Vars.CurrentMusic = jukebox
 						GAMEMODE.Vars.CurrentMusicName = nil
-						GAMEMODE:PedoMusic(GAMEMODE.Vars.CurrentMusic)
+						GAMEMODE:Music(GAMEMODE.Vars.CurrentMusic)
 					else
 						GAMEMODE:SelectMusic()
 					end
 				end
 
-				for k, v in pairs(Pedos) do
-					v:SendLua([[LocalPlayer():EmitSound("superpedobear_yourethepedo") system.FlashWindow()]])
-					GAMEMODE:PedoAFKCare(v)
+				for k, v in pairs(Bears) do
+					v:SendLua([[LocalPlayer():EmitSound("spb_yourethebear") system.FlashWindow()]])
+					GAMEMODE:BearAFKCare(v)
 					v:ScreenFade(SCREENFADE.IN, Color(0, 0, 0, 255), 0.3, 1)
 					if !GAMEMODE.Vars.ThereIsPowerUPSpawns then
 						v:PickPowerUP()
@@ -576,14 +570,14 @@ function GM:RoundThink()
 				end
 
 				GAMEMODE:PlayerStats()
-				GAMEMODE:PedoVars()
+				GAMEMODE:UpVars()
 
-				timer.Remove("SuperPedobear_TempoStart")
+				timer.Remove("spb_TempoStart")
 
 			end)
 
 			if !GAMEMODE.Vars.ThereIsPowerUPSpawns then
-				for k, v in pairs(team.GetPlayers(TEAM_VICTIMS)) do
+				for k, v in pairs(team.GetPlayers(TEAM_HIDING)) do
 					if v:Alive() then
 						v:PickPowerUP()
 					end
@@ -594,7 +588,7 @@ function GM:RoundThink()
 
 			GAMEMODE.Vars.Round.PreStart = false
 
-			net.Start("SuperPedobear_Notif")
+			net.Start("spb_Notif")
 				net.WriteString("Not enough players!")
 				net.WriteInt(1, 3)
 				net.WriteFloat(5)
@@ -603,11 +597,11 @@ function GM:RoundThink()
 
 		end
 
-		GAMEMODE:PedoVars()
+		GAMEMODE:UpVars()
 
 	elseif GAMEMODE.Vars.Round.Start and !GAMEMODE.Vars.Round.TempEnd then -- Round end
 
-		if #team.GetPlayers(TEAM_PEDOBEAR) == 0 then
+		if #team.GetPlayers(TEAM_BEAR) == 0 then
 
 			GAMEMODE.Vars.Round.End = true
 			GAMEMODE.Vars.Round.LastTime = GAMEMODE.Vars.Round.Time - CurTime()
@@ -615,20 +609,20 @@ function GM:RoundThink()
 		elseif GAMEMODE.Vars.victims and GAMEMODE.Vars.victims <= 0 then
 
 			GAMEMODE.Vars.Round.End = true
-			GAMEMODE.Vars.Round.Win = TEAM_PEDOBEAR
+			GAMEMODE.Vars.Round.Win = TEAM_BEAR
 			GAMEMODE.Vars.Round.LastTime = GAMEMODE.Vars.Round.Time - CurTime()
-			team.AddScore(TEAM_PEDOBEAR, 1)
+			team.AddScore(TEAM_BEAR, 1)
 
-			GAMEMODE:DoTheVictoryDance(TEAM_PEDOBEAR)
+			GAMEMODE:DoTheVictoryDance(TEAM_BEAR)
 
 		elseif GAMEMODE.Vars.Round.Time < CurTime() then
 
 			GAMEMODE.Vars.Round.End = true
-			GAMEMODE.Vars.Round.Win = TEAM_VICTIMS
+			GAMEMODE.Vars.Round.Win = TEAM_HIDING
 			GAMEMODE.Vars.Round.LastTime = 0
-			team.AddScore(TEAM_VICTIMS, 1)
+			team.AddScore(TEAM_HIDING, 1)
 
-			GAMEMODE:DoTheVictoryDance(TEAM_VICTIMS)
+			GAMEMODE:DoTheVictoryDance(TEAM_HIDING)
 
 		end
 
@@ -636,32 +630,32 @@ function GM:RoundThink()
 
 			GAMEMODE.Vars.Round.TempEnd = true
 			GAMEMODE.Vars.Round.Time = 0
-			GAMEMODE:PedoVars()
+			GAMEMODE:UpVars()
 			GAMEMODE.Vars.Round.End = false
 			GAMEMODE.Vars.Round.Win = 0
 			GAMEMODE.Vars.Rounds = (GAMEMODE.Vars.Rounds or 1) + 1
 
-			--GAMEMODE:PedoMusic("pause")
+			--GAMEMODE:Music("pause")
 
 			if MapVote and GAMEMODE.Vars.Rounds > 8 then
 				MapVote.Start(nil, nil, nil, {"spb_", "ph_"})
 			end
 
-			timer.Create("SuperPedobear_TempoPreEnd", 9.8, 1, function()
+			timer.Create("spb_TempoPreEnd", 9.8, 1, function()
 
 				for k, v in pairs(player.GetAll()) do
-					if v:Alive() and (v:Team() == TEAM_VICTIMS or v:Team() == TEAM_PEDOBEAR) then
+					if v:Alive() and (v:Team() == TEAM_HIDING or v:Team() == TEAM_BEAR) then
 						v.Clones = nil
 						v:DropPowerUP()
 						v:KillSilent()
 					end
 				end
 
-				timer.Remove("SuperPedobear_TempoPreEnd")
+				timer.Remove("spb_TempoPreEnd")
 
 			end)
 
-			timer.Create("SuperPedobear_TempoEnd", 10, 1, function()
+			timer.Create("spb_TempoEnd", 10, 1, function()
 
 				GAMEMODE.Vars.Round.Start = false
 				GAMEMODE.Vars.Round.End = false
@@ -671,31 +665,31 @@ function GM:RoundThink()
 				GAMEMODE.Vars.CurrentMusic = nil
 				GAMEMODE.Vars.CurrentMusicName = nil
 
-				net.Start("SuperPedobear_List")
+				net.Start("spb_List")
 					net.WriteTable({})
 				net.Broadcast()
 
-				GAMEMODE:PedoMusic("stop")
+				GAMEMODE:Music("stop")
 
 				game.CleanUpMap()
 
-				for k, v in pairs(team.GetPlayers(TEAM_VICTIMS)) do
+				for k, v in pairs(team.GetPlayers(TEAM_HIDING)) do
 					if !v:Alive() then v:Spawn() end
-					if !v:IsBot() and !v.IsAFK then v:SetNWFloat("SuperPedobear_PedoChance", v:GetNWFloat("SuperPedobear_PedoChance", 0) + 0.01) end
+					if !v:IsBot() and !v.IsAFK then v:SetNWFloat("spb_BearChance", v:GetNWFloat("spb_BearChance", 0) + 0.01) end
 					if v.Clones and #v.Clones > 0 then table.Empty(v.Clones) end
 				end
 
-				for k, v in pairs(team.GetPlayers(TEAM_PEDOBEAR)) do
-					v:SetTeam(TEAM_VICTIMS)
+				for k, v in pairs(team.GetPlayers(TEAM_BEAR)) do
+					v:SetTeam(TEAM_HIDING)
 					v:Spawn()
 				end
 
 				GAMEMODE:StoreChances()
 				GAMEMODE:StorePlayerInfo(ply)
-				GAMEMODE:PedoVars()
+				GAMEMODE:UpVars()
 				GAMEMODE:PlayerStats()
 
-				timer.Remove("SuperPedobear_TempoEnd")
+				timer.Remove("spb_TempoEnd")
 
 			end)
 
@@ -709,7 +703,7 @@ function GM:SlowMo()
 
 	local ply
 
-	for k, v in pairs(team.GetPlayers(TEAM_VICTIMS)) do
+	for k, v in pairs(team.GetPlayers(TEAM_HIDING)) do
 		if v:Alive() and IsValid(ply) then
 			return
 		elseif v:Alive() then
@@ -726,7 +720,7 @@ function GM:SlowMo()
 
 	if IsValid(ply) then
 
-		local _, distance = GAMEMODE:GetClosestPlayer(ply, TEAM_PEDOBEAR)
+		local _, distance = GAMEMODE:GetClosestPlayer(ply, TEAM_BEAR)
 		local scale = 1
 
 		if distance and distance < 200 then
@@ -751,7 +745,7 @@ function GM:OnPlayerChangedTeam(ply, oldteam, newteam)
 		ply:Spawn()
 		ply:SetPos(Pos)
 
-	elseif newteam == TEAM_VICTIMS and GAMEMODE.Vars.Round.Start then
+	elseif newteam == TEAM_HIDING and GAMEMODE.Vars.Round.Start then
 
 		ply:KillSilent()
 
@@ -759,9 +753,9 @@ function GM:OnPlayerChangedTeam(ply, oldteam, newteam)
 
 	ply:DropPowerUP()
 
-	if oldteam == TEAM_PEDOBEAR then
+	if oldteam == TEAM_BEAR then
 		PrintMessage(HUD_PRINTTALK, Format("%s left the Pedobear role!", ply:Nick()))
-	elseif newteam == TEAM_VICTIMS then
+	elseif newteam == TEAM_HIDING then
 		PrintMessage(HUD_PRINTTALK, Format("%s joined the game!", ply:Nick()))
 	else
 		PrintMessage(HUD_PRINTTALK, Format("%s joined '%s'", ply:Nick(), team.GetName(newteam)))
@@ -776,7 +770,7 @@ function GM:DoPlayerDeath(ply, attacker, dmginfo)
 
 	ply:AddDeaths(1)
 
-	if ply:Team() == TEAM_VICTIMS and GAMEMODE.Vars.Round.Start then
+	if ply:Team() == TEAM_HIDING and GAMEMODE.Vars.Round.Start then
 		if #GAMEMODE.Sounds.Death > 0 then
 			ply:EmitSound(GAMEMODE.Sounds.Death[math.random(1, #GAMEMODE.Sounds.Death)], 100, 100, 1, CHAN_AUTO)
 		end
@@ -790,10 +784,10 @@ function GM:DoPlayerDeath(ply, attacker, dmginfo)
 	end
 
 	if attacker:IsValid() and attacker:IsPlayer() then
-		if attacker != ply and attacker:Team() == TEAM_PEDOBEAR then
+		if attacker != ply and attacker:Team() == TEAM_BEAR then
 			attacker:AddFrags(1)
-			attacker:SetNWInt("SuperPedobear_TotalVictims", attacker:GetNWInt("SuperPedobear_TotalVictims", 0) + 1)
-			attacker:SetNWInt("SuperPedobear_VictimsCurrency", attacker:GetNWInt("SuperPedobear_VictimsCurrency", 0) + 1)
+			attacker:SetNWInt("spb_TotalVictims", attacker:GetNWInt("spb_TotalVictims", 0) + 1)
+			attacker:SetNWInt("spb_VictimsCurrency", attacker:GetNWInt("spb_VictimsCurrency", 0) + 1)
 			GAMEMODE.Vars.downvictims = (GAMEMODE.Vars.downvictims or 0) + 1
 		end
 	end
@@ -819,7 +813,7 @@ function GM:ShowHelp(ply)
 end
 
 function GM:ShowSpare1(ply)
-	if ply:Team() != TEAM_VICTIMS and ply:Team() != TEAM_PEDOBEAR then return end
+	if ply:Team() != TEAM_HIDING and ply:Team() != TEAM_BEAR then return end
 	ply:SendLua("GAMEMODE:TauntMenuF()")
 end
 
@@ -827,14 +821,14 @@ function GM:ShowSpare2(ply) --TODO Jukebox
 	ply:SendLua("GAMEMODE:JukeboxMenu()")
 end
 
-net.Receive("SuperPedobear_Taunt", function(bits,ply)
+net.Receive("spb_Taunt", function(bits,ply)
 	local tauntid = net.ReadInt(32)
 	taunt = GAMEMODE.Sounds.Taunts[tauntid]
 	GAMEMODE:Taunt(ply, taunt, tauntid)
 end)
 function GM:Taunt(ply, taunt, tauntid)
 
-	if !ply:Alive() or (ply:Team() != TEAM_VICTIMS and ply:Team() != TEAM_PEDOBEAR) then return end
+	if !ply:Alive() or (ply:Team() != TEAM_HIDING and ply:Team() != TEAM_BEAR) then return end
 
 	if !ply.TauntCooldown then
 		ply.TauntCooldown = 0
@@ -854,11 +848,11 @@ function GM:Taunt(ply, taunt, tauntid)
 
 			ply.TauntCooldown = CurTime() + cd
 
-			ply:SetNWInt("LastTaunt", tauntid)
-			ply:SetNWInt("TauntCooldown", ply.TauntCooldown)
-			ply:SetNWInt("TauntCooldownF", cd)
+			ply:SetNWInt("spb_LastTaunt", tauntid)
+			ply:SetNWInt("spb_TauntCooldown", ply.TauntCooldown)
+			ply:SetNWInt("spb_TauntCooldownF", cd)
 
-			if PS and GAMEMODE.Vars.Round.Start and !GAMEMODE.Vars.Round.End and !GAMEMODE.Vars.Round.TempEnd and ply:Team() != TEAM_PEDOBEAR then
+			if PS and GAMEMODE.Vars.Round.Start and !GAMEMODE.Vars.Round.End and !GAMEMODE.Vars.Round.TempEnd and ply:Team() != TEAM_BEAR then
 				local points = 10
 				ply:PS_GivePoints(points)
 				ply:PS_Notify("You've been given " .. points .. " " .. PS.Config.PointsName .. " for taunting!")
@@ -887,8 +881,8 @@ function GM:PlayerCanHearPlayersVoice(pListener, pTalker)
 end
 
 function GM:CreateDummy(ply)
-	if ply:Team() != TEAM_VICTIMS or !ply:OnGround() then return false end
-	local ent = ents.Create("superpedobear_dummy")
+	if ply:Team() != TEAM_HIDING or !ply:OnGround() then return false end
+	local ent = ents.Create("spb_dummy")
 	ent:SetPlayer(ply)
 	ent:Spawn()
 	if !ply.Clones then
@@ -926,7 +920,7 @@ function GM:PlayerCanSeePlayersChat(text, teamOnly, listener, speaker)
 	end
 
 	if GAMEMODE.Vars.Round.Start and !GAMEMODE.Vars.Round.End and !teamOnly then
-		if speaker:Team() == TEAM_VICTIMS and !speaker:Alive() and listener:Team() == TEAM_PEDOBEAR then
+		if speaker:Team() == TEAM_HIDING and !speaker:Alive() and listener:Team() == TEAM_BEAR then
 			return false
 		end
 	end
@@ -961,39 +955,39 @@ function GM:AFKThink(ply, ucmd)
 
 			GAMEMODE:Log(ply:GetName() .. " is no longer afk!", nil, true)
 
-			net.Start("SuperPedobear_AFK")
+			net.Start("spb_AFK")
 				net.WriteFloat(0)
 			net.Send(ply)
 
-			timer.Remove("SuperPedobear_AFK" .. ply:UserID())
+			timer.Remove("spb_AFK" .. ply:UserID())
 
 		end
 
 	end
 
-	if !ply.IsAFK and ply.afkcheck != nil and ply.afkcheck < CurTime() - superpedobear_afk_time:GetInt() then
+	if !ply.IsAFK and ply.afkcheck != nil and ply.afkcheck < CurTime() - spb_afk_time:GetInt() then
 
 		ply.IsAFK = true
 		GAMEMODE:Log(ply:GetName() .. " is afk!", nil, true)
 
-		GAMEMODE:PedoAFKCare(ply)
+		GAMEMODE:BearAFKCare(ply)
 
 	end
 
 end
 
-function GM:PedoAFKCare(ply)
+function GM:BearAFKCare(ply)
 
-	if ply.IsAFK and ply:Team() == TEAM_PEDOBEAR then
+	if ply.IsAFK and ply:Team() == TEAM_BEAR then
 
-		net.Start("SuperPedobear_AFK")
-			net.WriteFloat(CurTime() + superpedobear_afk_action:GetInt())
+		net.Start("spb_AFK")
+			net.WriteFloat(CurTime() + spb_afk_action:GetInt())
 		net.Send(ply)
 
 		local userid = ply:UserID()
-		timer.Create("SuperPedobear_AFK" .. userid, superpedobear_afk_action:GetInt(), 1, function()
-			if IsValid(ply) and ply.IsAFK and ply:Alive() and ply:Team() == TEAM_PEDOBEAR then GAMEMODE:PlayerJoinTeam( ply, TEAM_VICTIMS ) end
-			timer.Remove("SuperPedobear_AFK" .. userid)
+		timer.Create("spb_AFK" .. userid, spb_afk_action:GetInt(), 1, function()
+			if IsValid(ply) and ply.IsAFK and ply:Alive() and ply:Team() == TEAM_BEAR then GAMEMODE:PlayerJoinTeam( ply, TEAM_HIDING ) end
+			timer.Remove("spb_AFK" .. userid)
 		end)
 
 	end
@@ -1002,7 +996,7 @@ end
 
 function GM:GetFallDamage(ply, flFallSpeed)
 
-	if ply:Team() == TEAM_PEDOBEAR then return 0 end
+	if ply:Team() == TEAM_BEAR then return 0 end
 
 	if !GAMEMODE.Vars.Round.Start then return 0 end
 
@@ -1015,7 +1009,7 @@ end
 
 function GM:EntityTakeDamage(target, dmg)
 
-	if target:IsPlayer() and target:Team() == TEAM_VICTIMS and target:Health() - dmg:GetDamage() > 0 then
+	if target:IsPlayer() and target:Team() == TEAM_HIDING and target:Health() - dmg:GetDamage() > 0 then
 
 		if #GAMEMODE.Sounds.Damage > 0 then
 			target:EmitSound(GAMEMODE.Sounds.Damage[math.random(1, #GAMEMODE.Sounds.Damage)], 90, 100, 1, CHAN_AUTO)
@@ -1027,7 +1021,7 @@ end
 
 function GM:SendMusicIndex(ply)
 
-	net.Start("SuperPedobear_MusicList")
+	net.Start("spb_MusicList")
 		net.WriteTable(GAMEMODE.Musics.musics)
 		net.WriteTable(GAMEMODE.Musics.premusics)
 	if IsValid(ply) then net.Send(ply) else net.Broadcast() end
@@ -1093,18 +1087,17 @@ function GM:PlayerUse(ply, ent)
 		return false
 	end
 
-	if (ply:Team() == TEAM_VICTIMS and IsValid(ent) and string.match(ent:GetClass(), "door")) then
+	if (ply:Team() == TEAM_HIDING and IsValid(ent) and string.match(ent:GetClass(), "door")) then
 
-		if !ply.PedoUseDelay then
-			ply.PedoUseDelay = 0
+		if !ply.UseDelay then
+			ply.UseDelay = 0
 		end
 
-		if ply.PedoUseDelay > CurTime() then
+		if ply.UseDelay > CurTime() then
 			return false
 		end
 
-		ply.PedoUseDelay = CurTime() + 0.75
-		--ply:SetNWFloat("PedoUseDelay", ply.PedoUseDelay)
+		ply.UseDelay = CurTime() + 0.75
 
 	end
 
@@ -1149,16 +1142,16 @@ end
 
 function GM:StoreChances(ply)
 
-	if !superpedobear_save_chances:GetBool() then GAMEMODE:Log("Chances saving is disabled. Not saving pedobear chances.") return end
+	if !spb_save_chances:GetBool() then GAMEMODE:Log("Chances saving is disabled. Not saving pedobear chances.") return end
 
 	local function savechance(pl)
 
 		if pl:IsBot() then return end
 
-		local chance = pl:GetNWFloat("SuperPedobear_PedoChance", nil)
+		local chance = pl:GetNWFloat("spb_BearChance", nil)
 
 		if chance != nil then
-			pl:SetPData("SuperPedobear_PedoChance", math.floor(math.Clamp(chance, 0, 100) * 100))
+			pl:SetPData("spb_PedoChance", math.floor(math.Clamp(chance, 0, 100) * 100))
 			GAMEMODE:Log("Saved the " .. (chance * 100) .. "% pedobear chance of " .. pl:GetName())
 		end
 
@@ -1176,20 +1169,20 @@ end
 
 function GM:LoadChances(ply)
 
-	if !superpedobear_save_chances:GetBool() then GAMEMODE:Log("Chances saving is disabled. Not loading pedobear chances.", nil, true) return end
+	if !spb_save_chances:GetBool() then GAMEMODE:Log("Chances saving is disabled. Not loading pedobear chances.", nil, true) return end
 
 	local function loadchance(pl)
 
 		if pl:IsBot() then return end
 
-		local chance = pl:GetPData("SuperPedobear_PedoChance", nil)
+		local chance = pl:GetPData("spb_PedoChance", nil)
 
 		if chance != nil then
 			chance = chance * 0.01
-			pl:SetNWFloat("SuperPedobear_PedoChance", chance)
+			pl:SetNWFloat("spb_BearChance", chance)
 			GAMEMODE:Log("Loaded the " .. (chance * 100) .. "% pedobear chance of " .. pl:GetName())
 		else
-			pl:SetNWFloat("SuperPedobear_PedoChance", 0.01)
+			pl:SetNWFloat("spb_BearChance", 0.01)
 			GAMEMODE:Log("No pedobear chance found for " .. pl:GetName() .. ", default was set")
 		end
 
@@ -1211,15 +1204,15 @@ function GM:StorePlayerInfo(ply)
 
 		if pl:IsBot() then return end
 
-		local totalvictims = pl:GetNWInt("SuperPedobear_TotalVictims", nil)
-		local victimscurrency = pl:GetNWInt("SuperPedobear_VictimsCurrency", nil)
+		local totalvictims = pl:GetNWInt("spb_TotalVictims", nil)
+		local victimscurrency = pl:GetNWInt("spb_VictimsCurrency", nil)
 
 		if totalvictims != nil then
-			pl:SetPData("SuperPedobear_TotalVictims", totalvictims)
+			pl:SetPData("spb_TotalVictims", totalvictims)
 		end
 
 		if victimscurrency != nil then
-			pl:SetPData("SuperPedobear_VictimsCurrency", victimscurrency)
+			pl:SetPData("spb_VictimsCurrency", victimscurrency)
 		end
 
 		GAMEMODE:Log("Saved the player info of " .. pl:GetName())
@@ -1239,8 +1232,8 @@ end
 function GM:LoadPlayerInfo(ply)
 	local function loadinfo(pl)
 		if pl:IsBot() then return end
-		pl:SetNWInt("SuperPedobear_TotalVictims", pl:GetPData("SuperPedobear_TotalVictims", 0))
-		pl:SetNWInt("SuperPedobear_VictimsCurrency", pl:GetPData("SuperPedobear_VictimsCurrency", 0))
+		pl:SetNWInt("spb_TotalVictims", pl:GetPData("spb_TotalVictims", 0))
+		pl:SetNWInt("spb_VictimsCurrency", pl:GetPData("spb_VictimsCurrency", 0))
 		GAMEMODE:Log("Loaded the player info of " .. pl:GetName())
 	end
 	if IsValid(ply) then
@@ -1258,7 +1251,7 @@ function GM:PlayerNoClip(ply, on)
 end
 
 function GM:CreatePowerUP(ent, powerupstr, respawn)
-	local PowerUp = ents.Create("superpedobear_powerup")
+	local PowerUp = ents.Create("spb_powerup")
 	PowerUp:SetPos(ent:GetPos())
 	if powerupstr == "dothetrap" then
 		PowerUp.Trap = ent
@@ -1272,8 +1265,8 @@ function GM:CreatePowerUP(ent, powerupstr, respawn)
 	PowerUp:Spawn()
 	return PowerUp
 end
-concommand.Add("superpedobear_dev_create_powerup", function(ply, cmd, args)
-	if superpedobear_enabledevmode:GetBool() and IsValid(ply) and (ply:IsListenServerHost() or ply:IsSuperAdmin()) then
+concommand.Add("spb_dev_create_powerup", function(ply, cmd, args)
+	if spb_enabledevmode:GetBool() and IsValid(ply) and (ply:IsListenServerHost() or ply:IsSuperAdmin()) then
 		GAMEMODE:CreatePowerUP(ply, args[1])
 	end
 end)
@@ -1281,14 +1274,14 @@ end)
 function GM.PlayerMeta:SetPowerUP(powerupstr)
 	if GAMEMODE.PowerUps[powerupstr] and GAMEMODE.PowerUps[powerupstr][2] == self:Team() then
 		self.SPB_PowerUP = powerupstr
-		self:SetNWString("SuperPedobear_PowerUP", powerupstr)
+		self:SetNWString("spb_PowerUP", powerupstr)
 		self.SPB_PowerUP_Delay = CurTime() + 3
-		self:SetNWFloat("SuperPedobear_PowerUP_Delay", self.SPB_PowerUP_Delay)
+		self:SetNWFloat("spb_PowerUPDelay", self.SPB_PowerUP_Delay)
 		GAMEMODE:Log(self:GetName() .. " has gained the " .. self.SPB_PowerUP .. " power-up", nil, true)
 		return self.SPB_PowerUP
 	elseif powerupstr == "none" then
 		self.SPB_PowerUP = powerupstr
-		self:SetNWString("SuperPedobear_PowerUP", powerupstr)
+		self:SetNWString("spb_PowerUP", powerupstr)
 		GAMEMODE:Log(self:GetName() .. " has lost their power-up", nil, true)
 		return self.SPB_PowerUP
 	end
@@ -1307,7 +1300,7 @@ function GM.PlayerMeta:UsePowerUP()
 		elseif self.SPB_PowerUP == "vdisguise" then
 			result = GAMEMODE:DisguiseAsProp(self)
 		elseif self.SPB_PowerUP == "radar" then
-			self:SetNWFloat("SuperPedobear_Radar_Time", CurTime() + 2)
+			self:SetNWFloat("spb_RadarTime", CurTime() + 2)
 			result = true
 		elseif self.SPB_PowerUP == "trap" then
 			result = GAMEMODE:CreatePowerUP(self, "dothetrap")
@@ -1315,11 +1308,11 @@ function GM.PlayerMeta:UsePowerUP()
 		if result then
 			GAMEMODE:Log(self:GetName() .. " has used the " .. self.SPB_PowerUP .. " power-up", nil, true)
 			self.SPB_PowerUP = nil
-			self:SetNWString("SuperPedobear_PowerUP", "none")
+			self:SetNWString("spb_PowerUP", "none")
 		elseif result == nil then
 			GAMEMODE:Log(self:GetName() .. " has tried to use the " .. self.SPB_PowerUP .. " power-up but no result was found!")
 			self.SPB_PowerUP = nil
-			self:SetNWString("SuperPedobear_PowerUP", "none")
+			self:SetNWString("spb_PowerUP", "none")
 		end
 	end
 	return result
@@ -1345,6 +1338,6 @@ function GM.PlayerMeta:DropPowerUP()
 end
 
 function GM:DisguiseAsProp(ply)
-	if ply:Team() != TEAM_VICTIMS or !ply:OnGround() then return false end
+	if ply:Team() != TEAM_HIDING or !ply:OnGround() then return false end
 	return nil
 end

@@ -1,6 +1,6 @@
 "UnlitGeneric"
 {
-	"$basetexture" "superpedobear/pedobear"
+	"$basetexture" "superpedobear/bear"
 	"$translucent" 1
 	"$ignorez" "1"
 	"$vertexcolor" "1"

@@ -79,7 +79,10 @@ function SWEP:GangBang(ent, attacker)
 	d:SetDamageForce(Vector(0, 0, -100000))
 	d:SetDamagePosition(attacker:GetPos())
 	d:SetMaxDamage(2147483647)
-	if IsValid(ent) and ent:Health() > 0 then ent:TakeDamageInfo(d) end
+	if IsValid(ent) and ent:Health() > 0 then
+		ent:TakeDamageInfo(d)
+		hook.Call("spb_GangBang", nil, ent, attacker)
+	end
 end
 
 function SWEP:Think()

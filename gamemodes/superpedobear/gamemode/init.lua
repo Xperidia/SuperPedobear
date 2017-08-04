@@ -69,7 +69,7 @@ function GM:PlayerSpawn(ply)
 			ply:SetPos(spawnpoint:GetPos())
 		end
 		local classes = team.GetClass(pteam)
-		player_manager.SetPlayerClass(ply, classes[math.random( 1, #classes )])
+		player_manager.SetPlayerClass(ply, classes[math.random(1, #classes)])
 
 	end
 
@@ -355,8 +355,8 @@ function GM:DoTheVictoryDance(wteam)
 
 				v:Spectate(v.SpecMODE)
 
-				v:SpectateEntity( pv )
-				v:SetupHands( pv )
+				v:SpectateEntity(pv)
+				v:SetupHands(pv)
 
 			end
 
@@ -480,6 +480,8 @@ function GM:RoundThink()
 
 		if GAMEMODE.Vars.victims and GAMEMODE.Vars.victims >= 2 then
 
+			hook.Call("spb_RoundStarting")
+
 			GAMEMODE.Vars.Round.Start = true
 			GAMEMODE.Vars.Round.PreStart = false
 			GAMEMODE.Vars.Round.Pre2Start = true
@@ -584,6 +586,8 @@ function GM:RoundThink()
 				end
 			end
 
+			hook.Call("spb_RoundStarted")
+
 		else
 
 			GAMEMODE.Vars.Round.PreStart = false
@@ -605,6 +609,7 @@ function GM:RoundThink()
 
 			GAMEMODE.Vars.Round.End = true
 			GAMEMODE.Vars.Round.LastTime = GAMEMODE.Vars.Round.Time - CurTime()
+			hook.Call("spb_RoundEnd")
 
 		elseif GAMEMODE.Vars.victims and GAMEMODE.Vars.victims <= 0 then
 
@@ -614,6 +619,7 @@ function GM:RoundThink()
 			team.AddScore(TEAM_BEAR, 1)
 
 			GAMEMODE:DoTheVictoryDance(TEAM_BEAR)
+			hook.Call("spb_RoundEnd", nil, TEAM_BEAR)
 
 		elseif GAMEMODE.Vars.Round.Time < CurTime() then
 
@@ -623,6 +629,7 @@ function GM:RoundThink()
 			team.AddScore(TEAM_HIDING, 1)
 
 			GAMEMODE:DoTheVictoryDance(TEAM_HIDING)
+			hook.Call("spb_RoundEnd", nil, TEAM_HIDING)
 
 		end
 
@@ -852,11 +859,8 @@ function GM:Taunt(ply, taunt, tauntid)
 			ply:SetNWInt("spb_TauntCooldown", ply.TauntCooldown)
 			ply:SetNWInt("spb_TauntCooldownF", cd)
 
-			if PS and GAMEMODE.Vars.Round.Start and !GAMEMODE.Vars.Round.End and !GAMEMODE.Vars.Round.TempEnd and ply:Team() != TEAM_BEAR then
-				local points = 10
-				ply:PS_GivePoints(points)
-				ply:PS_Notify("You've been given " .. points .. " " .. PS.Config.PointsName .. " for taunting!")
-			end
+			local shouldgivepoints = GAMEMODE.Vars.Round.Start and !GAMEMODE.Vars.Round.Pre2Start and !GAMEMODE.Vars.Round.End and !GAMEMODE.Vars.Round.TempEnd and ply:Team() != TEAM_BEAR
+			hook.Call("spb_Taunt", nil, ply, shouldgivepoints)
 
 		end
 
@@ -986,7 +990,10 @@ function GM:BearAFKCare(ply)
 
 		local userid = ply:UserID()
 		timer.Create("spb_AFK" .. userid, spb_afk_action:GetInt(), 1, function()
-			if IsValid(ply) and ply.IsAFK and ply:Alive() and ply:Team() == TEAM_BEAR then GAMEMODE:PlayerJoinTeam( ply, TEAM_HIDING ) end
+			if IsValid(ply) and ply.IsAFK and ply:Alive() and ply:Team() == TEAM_BEAR then
+				GAMEMODE:PlayerJoinTeam(ply, TEAM_HIDING)
+				hook.Call("spb_BearAFKCared", nil, ply)
+			end
 			timer.Remove("spb_AFK" .. userid)
 		end)
 

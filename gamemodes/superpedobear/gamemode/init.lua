@@ -792,6 +792,7 @@ function GM:DoPlayerDeath(ply, attacker, dmginfo)
 			attacker:SetNWInt("spb_TotalVictims", attacker:GetNWInt("spb_TotalVictims", 0) + 1)
 			attacker:SetNWInt("spb_VictimsCurrency", attacker:GetNWInt("spb_VictimsCurrency", 0) + 1)
 			GAMEMODE.Vars.downvictims = (GAMEMODE.Vars.downvictims or 0) + 1
+			hook.Call("spb_GotSomeone", nil, ply, attacker)
 		end
 	end
 

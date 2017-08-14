@@ -1,6 +1,6 @@
 AddCSLuaFile()
 
-SWEP.PrintName	= "Bear"
+SWEP.PrintName	= "Seeker"
 SWEP.Author		= "Xperidia"
 SWEP.Spawnable	= false
 

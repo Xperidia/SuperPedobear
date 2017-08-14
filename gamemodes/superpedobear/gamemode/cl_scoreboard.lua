@@ -141,10 +141,10 @@ local PLAYER_LINE = {
 			self.Name:SetText(self.PName)
 		end
 
-		if self.Player:Team() == TEAM_BEAR and (self.PColor == nil or self.PColor != team.GetColor(self.Player:Team())) then
+		if self.Player:Team() == TEAM_SEEKER and (self.PColor == nil or self.PColor != team.GetColor(self.Player:Team())) then
 			self.PColor = team.GetColor(self.Player:Team())
 			self.Name:SetTextColor(self.PColor)
-		elseif self.Player:Team() != TEAM_BEAR and (self.PColor == nil or self.PColor != Color(255, 255, 255)) then
+		elseif self.Player:Team() != TEAM_SEEKER and (self.PColor == nil or self.PColor != Color(255, 255, 255)) then
 			self.PColor = Color(255, 255, 255)
 			self.Name:SetTextColor(self.PColor)
 		end
@@ -214,7 +214,7 @@ local PLAYER_LINE = {
 
 		end
 
-		if self.Player:Team() == TEAM_BEAR then
+		if self.Player:Team() == TEAM_SEEKER then
 			self:SetZPos(-2000 + self.Player:EntIndex())
 			return
 		end

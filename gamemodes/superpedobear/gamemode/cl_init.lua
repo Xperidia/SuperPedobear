@@ -218,7 +218,7 @@ function GM:HUDPaint()
 	local col = sply:GetPlayerColor():ToColor()
 	if !splyAlive then col = team.GetColor(splyTeam) end
 	local wi = true
-	if !splyAlive or (splyTeam != TEAM_BEAR and splyTeam != TEAM_HIDING) then
+	if !splyAlive or (splyTeam != TEAM_SEEKER and splyTeam != TEAM_HIDING) then
 		wi = false
 	end
 	local welding = sply:GetNWEntity("spb_Welding")
@@ -232,15 +232,17 @@ function GM:HUDPaint()
 
 	--[[ THE GAMEMODE STATUS ]]--
 
+	--draw.DrawText(GAMEMODE.Name .. " V" .. GAMEMODE.Version .. " - " ..  os.date("%d/%m/%Y", os.time()), "DermaDefault", ScrW() / 2, hudoffset, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+
 	local htxt = GAMEMODE.Name .. " V" .. GAMEMODE.Version .. "\nEarly Access (" ..  os.date("%d/%m/%Y", os.time()) .. ")"
-	surface.SetFont("spb_HT")
+	surface.SetFont("spb_HUDname")
 	local tw, th = surface.GetTextSize(htxt)
 	surface.SetDrawColor(Color(0, 0, 0, 200))
-	surface.DrawRect(ScrW() / 2 - 8 - tw / 2, hudoffset, tw + 8, th + 8)
+	surface.DrawRect(ScrW() / 2 - 4 - tw / 2, hudoffset, tw + 8, th + 8)
 	th = th + 8
-	draw.DrawText(htxt, "spb_HT", ScrW() / 2 - 4, hudoffset + 4, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+	draw.DrawText(htxt, "spb_HUDname", ScrW() / 2, hudoffset + 4, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
 	surface.SetDrawColor(Color(0, 0, 0, 255))
-	surface.DrawOutlinedRect(ScrW() / 2 - 8 - tw / 2, hudoffset, tw + 8, th)
+	surface.DrawOutlinedRect(ScrW() / 2 - 4 - tw / 2, hudoffset, tw + 8, th)
 
 
 	--[[ THE CLOCK AND ROUND COUNT ]]--
@@ -253,7 +255,7 @@ function GM:HUDPaint()
 		TheTime = Pre2Time - CurTime()
 		if plyTeam == TEAM_HIDING then
 			time_color = Color(255, 0, 0, 255)
-		elseif plyTeam == TEAM_BEAR then
+		elseif plyTeam == TEAM_SEEKER then
 			time_color = Color(0, 255, 0, 255)
 		else
 			time_color = Color(255, 255, 0, 255)
@@ -267,7 +269,7 @@ function GM:HUDPaint()
 		TheTime = Time - CurTime()
 		if TheTime < 60 and plyTeam == TEAM_HIDING then
 			time_color = Color(0, 255, 0, 255)
-		elseif TheTime < 60 and plyTeam == TEAM_BEAR then
+		elseif TheTime < 60 and plyTeam == TEAM_SEEKER then
 			time_color = Color(255, 0, 0, 255)
 		elseif TheTime < 60 then
 			time_color = Color(255, 255, 0, 255)
@@ -320,8 +322,8 @@ function GM:HUDPaint()
 	elseif Pre2Start then
 		if plyTeam == TEAM_HIDING then
 			addrndtxt("You don't got much time to hide")
-		elseif plyTeam == TEAM_BEAR then
-			addrndtxt("You have been selected to be a bear")
+		elseif plyTeam == TEAM_SEEKER then
+			addrndtxt("You have been selected to be a seeker")
 			addrndtxt("Spawning soon")
 		else
 			addrndtxt("The game will start soon")
@@ -343,7 +345,7 @@ function GM:HUDPaint()
 		local function winstr(WinTeam)
 			if WinTeam == TEAM_HIDING then
 				return "The victims wins"
-			elseif WinTeam == TEAM_BEAR then
+			elseif WinTeam == TEAM_SEEKER then
 				return "The bears captured everyone"
 			end
 			return "Draw game"
@@ -362,9 +364,9 @@ function GM:HUDPaint()
 		if GAMEMODE.Vars.Bears and #GAMEMODE.Vars.Bears > 0 then
 			for k, v in pairs(GAMEMODE.Vars.Bears) do
 				if IsValid(v) and v:Alive() and txt == "" then
-					txt = Format(Either(#GAMEMODE.Vars.Bears > 1, "%s is a bear", "%s is the bear"), v:Nick())
+					txt = Format(Either(#GAMEMODE.Vars.Bears > 1, "%s is a seeker", "%s is the seeker"), v:Nick())
 				elseif IsValid(v) and v:Alive() and txt != "" then
-					txt = txt .. Format("\n%s is a bear", v:Nick())
+					txt = txt .. Format("\n%s is a seeker", v:Nick())
 				end
 			end
 		end
@@ -384,7 +386,7 @@ function GM:HUDPaint()
 	--[[ THE AFK MESSAGE ]]--
 
 	if GAMEMODE.Vars.AfkTime and GAMEMODE.Vars.AfkTime - CurTime() >= 0 then
-		local txt = "Hey you're kind of afk!\nIf you're still afk in " .. GAMEMODE:FormatTime(GAMEMODE.Vars.AfkTime - CurTime()) .. "\nYou will be kicked out\n of the bear"
+		local txt = "Hey you're kind of afk!\nIf you're still afk in " .. GAMEMODE:FormatTime(GAMEMODE.Vars.AfkTime - CurTime()) .. "\nYou will be kicked out\n of the seeker"
 		surface.SetFont("spb_RND")
 		local w, h = surface.GetTextSize(txt)
 		surface.SetDrawColor(Color(0, 0, 0, 200))
@@ -406,7 +408,7 @@ function GM:HUDPaint()
 			tips = GAMEMODE:CheckBind("+attack") .. " next player\n" .. GAMEMODE:CheckBind("+attack2") .. " previous player\n" .. GAMEMODE:CheckBind("+jump") .. " spectate mode (1st person/Chase/Free)"
 		elseif plyAlive and plyTeam == TEAM_HIDING then
 			tips = GAMEMODE:CheckBind("+attack") .. " to weld a prop to another\n" .. GAMEMODE:CheckBind("+attack2") .. " to unweld a prop"
-		elseif plyAlive and plyTeam == TEAM_BEAR then
+		elseif plyAlive and plyTeam == TEAM_SEEKER then
 			tips = GAMEMODE:CheckBind("+attack") .. " to break props"
 		end
 
@@ -471,7 +473,7 @@ function GM:HUDPaint()
 
 	--[[ THE PLAYER STATUS AND FACE ]]--
 
-	if splyTeam == TEAM_BEAR or splyTeam == TEAM_HIDING then
+	if splyTeam == TEAM_SEEKER or splyTeam == TEAM_HIDING then
 
 		local col = sply:GetPlayerColor():ToColor()
 		if !splyAlive then col = team.GetColor(splyTeam) end
@@ -502,7 +504,7 @@ function GM:HUDPaint()
 			taunt = math.Remap(ply.TauntCooldown - CurTime(), 0, ply.TauntCooldownF, 200, 0)
 		end
 
-		if splyTeam == TEAM_BEAR then
+		if splyTeam == TEAM_SEEKER then
 			local radartime = sply:GetNWFloat("spb_RadarTime", 0)
 			if radartime != 0 and radartime > CurTime() then
 				radar = math.Remap(radartime - CurTime(), 0, 2, 0, 200)
@@ -724,8 +726,6 @@ function GM:HUDPaint()
 		end
 
 	end
-
-	--draw.DrawText(GAMEMODE.Name .. " V" .. GAMEMODE.Version, "DermaDefault", ScrW() / 2, hudoffset, Color(255, 255, 255, 64), TEXT_ALIGN_CENTER)
 
 end
 
@@ -949,11 +949,11 @@ function GM:PreDrawHalos()
 		end
 
 		for k,v in pairs(player.GetAll()) do
-			if v:Team() == TEAM_BEAR and v:Alive() then
+			if v:Team() == TEAM_SEEKER and v:Alive() then
 				table.insert(tab2, v)
 			end
 		end
-		halo.Add(tab2, team.GetColor(TEAM_BEAR), 1, 1, 1, true, !ply:Alive())
+		halo.Add(tab2, team.GetColor(TEAM_SEEKER), 1, 1, 1, true, !ply:Alive())
 
 		if IsValid(welding) then
 
@@ -961,18 +961,18 @@ function GM:PreDrawHalos()
 
 		end
 
-	elseif ply:Team() == TEAM_BEAR then
+	elseif ply:Team() == TEAM_SEEKER then
 
 		local radartime = ply:GetNWFloat("spb_RadarTime", 0)
 		local showvictims = radartime != 0 and radartime > CurTime()
 		for k,v in pairs(player.GetAll()) do
-			if v:Team() == TEAM_BEAR and v:Alive() then
+			if v:Team() == TEAM_SEEKER and v:Alive() then
 				table.insert(tab, v)
 			elseif showvictims and v:Team() == TEAM_HIDING and v:Alive() then
 				table.insert(tab2, v)
 			end
 		end
-		halo.Add(tab, team.GetColor(TEAM_BEAR), 1, 1, 1, true, true)
+		halo.Add(tab, team.GetColor(TEAM_SEEKER), 1, 1, 1, true, true)
 		halo.Add(tab2, team.GetColor(TEAM_HIDING), 1, 1, 1, true, true)
 
 	elseif ply:Team() == TEAM_SPECTATOR then
@@ -984,13 +984,13 @@ function GM:PreDrawHalos()
 		end
 
 		for k,v in pairs(player.GetAll()) do
-			if v:Team() == TEAM_BEAR and v:Alive() then
+			if v:Team() == TEAM_SEEKER and v:Alive() then
 				table.insert(tab2, v)
 			end
 		end
 
 		halo.Add(tab, team.GetColor(TEAM_HIDING), 1, 1, 1, true, true)
-		halo.Add(tab2, team.GetColor(TEAM_BEAR), 2, 2, 2, true, true)
+		halo.Add(tab2, team.GetColor(TEAM_SEEKER), 2, 2, 2, true, true)
 
 	end
 
@@ -1076,7 +1076,7 @@ function GM:Think()
 
 	local ply = LocalPlayer()
 
-	if ply:Alive() and (ply:Team() == TEAM_HIDING or ply:Team() == TEAM_BEAR) and !GAMEMODE.ChatOpen and !gui.IsGameUIVisible() then
+	if ply:Alive() and (ply:Team() == TEAM_HIDING or ply:Team() == TEAM_SEEKER) and !GAMEMODE.ChatOpen and !gui.IsGameUIVisible() then
 
 		local inputs = { input.IsKeyDown(KEY_1), input.IsKeyDown(KEY_2), input.IsKeyDown(KEY_3), input.IsKeyDown(KEY_4), input.IsKeyDown(KEY_5), input.IsKeyDown(KEY_6), input.IsKeyDown(KEY_7), input.IsKeyDown(KEY_8), input.IsKeyDown(KEY_9) }
 		local sel = 0
@@ -1104,7 +1104,7 @@ end
 
 function GM:HeartBeat(ply)
 
-	local _, distance = GAMEMODE:GetClosestPlayer(ply, TEAM_BEAR)
+	local _, distance = GAMEMODE:GetClosestPlayer(ply, TEAM_SEEKER)
 	local nextheartbeat = 1
 	local volume = 1
 

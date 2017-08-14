@@ -1,12 +1,12 @@
 //-------------------------------------------------------------------------
 //
-// Super Pedobear FGD V0.1 by VictorienXP@Xperidia
+// Super Pedobear FGD V0.2 by VictorienXP@Xperidia
 //
 //-------------------------------------------------------------------------
 
 @include "base.fgd"
 
-@PointClass base(PlayerClass, Angles) studio("models/editor/playerstart.mdl") = spb_bearstart : "Spawn point for the bears."
+@PointClass base(PlayerClass, Angles) studio("models/editor/playerstart.mdl") = info_player_seekers : "Spawn point for the seekers."
 []
 
 @PointClass base(Targetname) size(-16 -16 0, 16 16 8) = spb_powerup_spawn : "Spawn point for Power-UPs."

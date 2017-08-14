@@ -321,6 +321,7 @@ function GM:SplashScreen()
 		.. "<tr><td>> Removed jumpscare stuff</td></tr>"
 		.. "<tr><td>> Ultra clean up and stuff</td></tr>"
 		.. "<tr><td>> Added some hooks</td></tr>"
+		.. "<tr><td>> Reworked the seeker swep a little bit</td></tr>"
 		.. '</table>");')
 
 		local closebtn = vgui.Create("DButton", spb_SplashScreenF)

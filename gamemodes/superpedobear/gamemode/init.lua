@@ -57,7 +57,7 @@ function GM:PlayerSpawn(ply)
 
 	local pteam = ply:Team()
 
-	if pteam == TEAM_HIDING or pteam == TEAM_BEAR then
+	if pteam == TEAM_HIDING or pteam == TEAM_SEEKER then
 
 		local spawnpoints = team.GetSpawnPoints(pteam)
 		local spawnpoint = spawnpoints[math.random(1, #spawnpoints)]
@@ -194,10 +194,10 @@ end
 
 function GM:PlayerDeathThink(ply)
 
-	if ply:Team() == TEAM_BEAR and GAMEMODE.Vars.Round.Start and !GAMEMODE.Vars.Round.End and !GAMEMODE.Vars.Round.TempEnd and !GAMEMODE.Vars.Round.Pre2Start then
+	if ply:Team() == TEAM_SEEKER and GAMEMODE.Vars.Round.Start and !GAMEMODE.Vars.Round.End and !GAMEMODE.Vars.Round.TempEnd and !GAMEMODE.Vars.Round.Pre2Start then
 		ply:Spawn()
 		return
-	elseif ply:Team() == TEAM_BEAR and GAMEMODE.Vars.Round.Pre2Start then
+	elseif ply:Team() == TEAM_SEEKER and GAMEMODE.Vars.Round.Pre2Start then
 		return
 	end
 
@@ -213,7 +213,7 @@ function GM:PlayerDeathThink(ply)
 		end
 	end
 
-	if ply:Team() == TEAM_HIDING or ply:Team() == TEAM_BEAR then GAMEMODE:SpecControl(ply) end
+	if ply:Team() == TEAM_HIDING or ply:Team() == TEAM_SEEKER then GAMEMODE:SpecControl(ply) end
 
 	if GAMEMODE.Vars.Round.Start then return end
 
@@ -268,7 +268,7 @@ function GM:SpecControl(ply, manual)
 
 	for k, v in pairs(player.GetAll()) do
 		local vteam = v:Team()
-		if v:Alive() and (vteam == TEAM_HIDING or vteam == TEAM_BEAR) and v != ply and vteam != TEAM_UNASSIGNED and vteam != TEAM_SPECTATOR then
+		if v:Alive() and (vteam == TEAM_HIDING or vteam == TEAM_SEEKER) and v != ply and vteam != TEAM_UNASSIGNED and vteam != TEAM_SPECTATOR then
 			table.insert(players, v)
 		end
 	end
@@ -377,7 +377,7 @@ end
 function GM:Think()
 
 	for k, v in pairs(player.GetAll()) do
-		if v:Team() == TEAM_BEAR then
+		if v:Team() == TEAM_SEEKER then
 			if v:GetModel() != "models/player/pbear/pbear.mdl" then
 				v:SetModel(Model("models/player/pbear/pbear.mdl"))
 			end
@@ -486,49 +486,49 @@ function GM:RoundThink()
 			GAMEMODE.Vars.Round.Pre2Time = CurTime() + spb_round_pre2time:GetFloat()
 			GAMEMODE.Vars.Round.Time = GAMEMODE.Vars.Round.Pre2Time + spb_round_time:GetFloat()
 
-			local Bears = {}
-			local WantedBears = 1
-			local BearIndex = 1
+			local Seekers = {}
+			local WantedSeekers = 1
+			local SeekerIndex = 1
 
 			if GAMEMODE.Vars.victims >= 64 then
-				WantedBears = 4
+				WantedSeekers = 4
 			elseif GAMEMODE.Vars.victims >= 32 then
-				WantedBears = 3
+				WantedSeekers = 3
 			elseif GAMEMODE.Vars.victims >= 24 then
-				WantedBears = 2
+				WantedSeekers = 2
 			end
 
-			GAMEMODE:Log(WantedBears .. " pedobear(s) will be selected", nil, true)
+			GAMEMODE:Log(WantedSeekers .. " seeker(s) will be selected", nil, true)
 
-			while #Bears != WantedBears do
+			while #Seekers != WantedSeekers do
 
 				local plys = team.GetPlayers(TEAM_HIDING)
 
 				for k, v in RandomPairs(plys) do
 
-					if !Bears[BearIndex] or (IsValid(Bears[BearIndex]) and (Bears[BearIndex]:GetNWFloat("spb_BearChance", 0) < v:GetNWFloat("spb_BearChance", 0))) then
-						Bears[BearIndex] = v
+					if !Seekers[SeekerIndex] or (IsValid(Seekers[SeekerIndex]) and (Seekers[SeekerIndex]:GetNWFloat("spb_BearChance", 0) < v:GetNWFloat("spb_BearChance", 0))) then
+						Seekers[SeekerIndex] = v
 					end
 
-					GAMEMODE:Log(v:GetName() .. " have " .. (v:GetNWFloat("spb_BearChance", 0) * 100) .. "% chance to be a Pedobear" .. Either(Bears[BearIndex] == v, " and is currently selected", ""), nil, true)
+					GAMEMODE:Log(v:GetName() .. " have " .. (v:GetNWFloat("spb_BearChance", 0) * 100) .. "% chance to be a seeker" .. Either(Seekers[SeekerIndex] == v, " and is currently selected", ""), nil, true)
 
 				end
 
-				GAMEMODE:Log(Bears[BearIndex]:GetName() .. " has been selected to be a bear " .. BearIndex, nil, true)
+				GAMEMODE:Log(Seekers[SeekerIndex]:GetName() .. " has been selected to be a bear " .. SeekerIndex, nil, true)
 
-				if IsValid(Bears[BearIndex]) then
-					Bears[BearIndex]:DropPowerUP()
-					Bears[BearIndex]:SetTeam(TEAM_BEAR)
-					Bears[BearIndex]:KillSilent()
-					Bears[BearIndex]:SetNWFloat("spb_BearChance", 0)
-					Bears[BearIndex]:ScreenFade(SCREENFADE.OUT, color_black, 0.5, spb_round_pre2time:GetFloat())
-					BearIndex = BearIndex + 1
+				if IsValid(Seekers[SeekerIndex]) then
+					Seekers[SeekerIndex]:DropPowerUP()
+					Seekers[SeekerIndex]:SetTeam(TEAM_SEEKER)
+					Seekers[SeekerIndex]:KillSilent()
+					Seekers[SeekerIndex]:SetNWFloat("spb_BearChance", 0)
+					Seekers[SeekerIndex]:ScreenFade(SCREENFADE.OUT, color_black, 0.5, spb_round_pre2time:GetFloat())
+					SeekerIndex = SeekerIndex + 1
 				end
 
 			end
 
 			net.Start("spb_List")
-				net.WriteTable(Bears)
+				net.WriteTable(Seekers)
 			net.Broadcast()
 
 			timer.Create("spb_TempoStart", spb_round_pre2time:GetFloat(), 1, function()
@@ -537,7 +537,7 @@ function GM:RoundThink()
 
 				local custommusic = false
 
-				for k, v in pairs(team.GetPlayers(TEAM_BEAR)) do
+				for k, v in pairs(team.GetPlayers(TEAM_SEEKER)) do
 					if GAMEMODE.PlayerEasterEgg[v:SteamID64()] and GAMEMODE.PlayerEasterEgg[v:SteamID64()][3] then
 						GAMEMODE.Vars.CurrentMusic = GAMEMODE.PlayerEasterEgg[v:SteamID64()][3]
 						GAMEMODE.Vars.CurrentMusicName = v:Nick()
@@ -558,7 +558,7 @@ function GM:RoundThink()
 					end
 				end
 
-				for k, v in pairs(Bears) do
+				for k, v in pairs(Seekers) do
 					v:SendLua([[LocalPlayer():EmitSound("spb_yourethebear") system.FlashWindow()]])
 					GAMEMODE:BearAFKCare(v)
 					v:ScreenFade(SCREENFADE.IN, Color(0, 0, 0, 255), 0.3, 1)
@@ -601,7 +601,7 @@ function GM:RoundThink()
 
 	elseif GAMEMODE.Vars.Round.Start and !GAMEMODE.Vars.Round.TempEnd then -- Round end
 
-		if #team.GetPlayers(TEAM_BEAR) == 0 then
+		if #team.GetPlayers(TEAM_SEEKER) == 0 then
 
 			GAMEMODE.Vars.Round.End = true
 			GAMEMODE.Vars.Round.LastTime = GAMEMODE.Vars.Round.Time - CurTime()
@@ -610,12 +610,12 @@ function GM:RoundThink()
 		elseif GAMEMODE.Vars.victims and GAMEMODE.Vars.victims <= 0 then
 
 			GAMEMODE.Vars.Round.End = true
-			GAMEMODE.Vars.Round.Win = TEAM_BEAR
+			GAMEMODE.Vars.Round.Win = TEAM_SEEKER
 			GAMEMODE.Vars.Round.LastTime = GAMEMODE.Vars.Round.Time - CurTime()
-			team.AddScore(TEAM_BEAR, 1)
+			team.AddScore(TEAM_SEEKER, 1)
 
-			GAMEMODE:DoTheVictoryDance(TEAM_BEAR)
-			hook.Call("spb_RoundEnd", nil, TEAM_BEAR)
+			GAMEMODE:DoTheVictoryDance(TEAM_SEEKER)
+			hook.Call("spb_RoundEnd", nil, TEAM_SEEKER)
 
 		elseif GAMEMODE.Vars.Round.Time < CurTime() then
 
@@ -647,7 +647,7 @@ function GM:RoundThink()
 			timer.Create("spb_TempoPreEnd", 9.8, 1, function()
 
 				for k, v in pairs(player.GetAll()) do
-					if v:Alive() and (v:Team() == TEAM_HIDING or v:Team() == TEAM_BEAR) then
+					if v:Alive() and (v:Team() == TEAM_HIDING or v:Team() == TEAM_SEEKER) then
 						v.Clones = nil
 						v:DropPowerUP()
 						v:KillSilent()
@@ -682,7 +682,7 @@ function GM:RoundThink()
 					if v.Clones and #v.Clones > 0 then table.Empty(v.Clones) end
 				end
 
-				for k, v in pairs(team.GetPlayers(TEAM_BEAR)) do
+				for k, v in pairs(team.GetPlayers(TEAM_SEEKER)) do
 					v:SetTeam(TEAM_HIDING)
 					v:Spawn()
 				end
@@ -723,7 +723,7 @@ function GM:SlowMo()
 
 	if IsValid(ply) then
 
-		local _, distance = GAMEMODE:GetClosestPlayer(ply, TEAM_BEAR)
+		local _, distance = GAMEMODE:GetClosestPlayer(ply, TEAM_SEEKER)
 		local scale = 1
 
 		if distance and distance < 200 then
@@ -756,8 +756,8 @@ function GM:OnPlayerChangedTeam(ply, oldteam, newteam)
 
 	ply:DropPowerUP()
 
-	if oldteam == TEAM_BEAR then
-		PrintMessage(HUD_PRINTTALK, Format("%s left the Pedobear role!", ply:Nick()))
+	if oldteam == TEAM_SEEKER then
+		PrintMessage(HUD_PRINTTALK, Format("%s left the seeker role!", ply:Nick()))
 	elseif newteam == TEAM_HIDING then
 		PrintMessage(HUD_PRINTTALK, Format("%s joined the game!", ply:Nick()))
 	else
@@ -787,7 +787,7 @@ function GM:DoPlayerDeath(ply, attacker, dmginfo)
 	end
 
 	if attacker:IsValid() and attacker:IsPlayer() then
-		if attacker != ply and attacker:Team() == TEAM_BEAR then
+		if attacker != ply and attacker:Team() == TEAM_SEEKER then
 			attacker:AddFrags(1)
 			attacker:SetNWInt("spb_TotalVictims", attacker:GetNWInt("spb_TotalVictims", 0) + 1)
 			attacker:SetNWInt("spb_VictimsCurrency", attacker:GetNWInt("spb_VictimsCurrency", 0) + 1)
@@ -817,7 +817,7 @@ function GM:ShowHelp(ply)
 end
 
 function GM:ShowSpare1(ply)
-	if ply:Team() != TEAM_HIDING and ply:Team() != TEAM_BEAR then return end
+	if ply:Team() != TEAM_HIDING and ply:Team() != TEAM_SEEKER then return end
 	ply:SendLua("GAMEMODE:TauntMenuF()")
 end
 
@@ -832,7 +832,7 @@ net.Receive("spb_Taunt", function(bits,ply)
 end)
 function GM:Taunt(ply, taunt, tauntid)
 
-	if !ply:Alive() or (ply:Team() != TEAM_HIDING and ply:Team() != TEAM_BEAR) then return end
+	if !ply:Alive() or (ply:Team() != TEAM_HIDING and ply:Team() != TEAM_SEEKER) then return end
 
 	if !ply.TauntCooldown then
 		ply.TauntCooldown = 0
@@ -856,7 +856,7 @@ function GM:Taunt(ply, taunt, tauntid)
 			ply:SetNWInt("spb_TauntCooldown", ply.TauntCooldown)
 			ply:SetNWInt("spb_TauntCooldownF", cd)
 
-			local shouldgivepoints = GAMEMODE.Vars.Round.Start and !GAMEMODE.Vars.Round.Pre2Start and !GAMEMODE.Vars.Round.End and !GAMEMODE.Vars.Round.TempEnd and ply:Team() != TEAM_BEAR
+			local shouldgivepoints = GAMEMODE.Vars.Round.Start and !GAMEMODE.Vars.Round.Pre2Start and !GAMEMODE.Vars.Round.End and !GAMEMODE.Vars.Round.TempEnd and ply:Team() != TEAM_SEEKER
 			hook.Call("spb_Taunt", nil, ply, shouldgivepoints)
 
 		end
@@ -921,7 +921,7 @@ function GM:PlayerCanSeePlayersChat(text, teamOnly, listener, speaker)
 	end
 
 	if GAMEMODE.Vars.Round.Start and !GAMEMODE.Vars.Round.End and !teamOnly then
-		if speaker:Team() == TEAM_HIDING and !speaker:Alive() and listener:Team() == TEAM_BEAR then
+		if speaker:Team() == TEAM_HIDING and !speaker:Alive() and listener:Team() == TEAM_SEEKER then
 			return false
 		end
 	end
@@ -979,7 +979,7 @@ end
 
 function GM:BearAFKCare(ply)
 
-	if ply.IsAFK and ply:Team() == TEAM_BEAR then
+	if ply.IsAFK and ply:Team() == TEAM_SEEKER then
 
 		net.Start("spb_AFK")
 			net.WriteFloat(CurTime() + spb_afk_action:GetInt())
@@ -987,7 +987,7 @@ function GM:BearAFKCare(ply)
 
 		local userid = ply:UserID()
 		timer.Create("spb_AFK" .. userid, spb_afk_action:GetInt(), 1, function()
-			if IsValid(ply) and ply.IsAFK and ply:Alive() and ply:Team() == TEAM_BEAR then
+			if IsValid(ply) and ply.IsAFK and ply:Alive() and ply:Team() == TEAM_SEEKER then
 				GAMEMODE:PlayerJoinTeam(ply, TEAM_HIDING)
 				hook.Call("spb_BearAFKCared", nil, ply)
 			end
@@ -1000,7 +1000,7 @@ end
 
 function GM:GetFallDamage(ply, flFallSpeed)
 
-	if ply:Team() == TEAM_BEAR then return 0 end
+	if ply:Team() == TEAM_SEEKER then return 0 end
 
 	if !GAMEMODE.Vars.Round.Start then return 0 end
 
@@ -1146,7 +1146,7 @@ end
 
 function GM:StoreChances(ply)
 
-	if !spb_save_chances:GetBool() then GAMEMODE:Log("Chances saving is disabled. Not saving pedobear chances.") return end
+	if !spb_save_chances:GetBool() then GAMEMODE:Log("Chances saving is disabled. Not saving seeker chances.") return end
 
 	local function savechance(pl)
 
@@ -1156,7 +1156,7 @@ function GM:StoreChances(ply)
 
 		if chance != nil then
 			pl:SetPData("spb_PedoChance", math.floor(math.Clamp(chance, 0, 100) * 100))
-			GAMEMODE:Log("Saved the " .. (chance * 100) .. "% pedobear chance of " .. pl:GetName())
+			GAMEMODE:Log("Saved the " .. (chance * 100) .. "% seeker chance of " .. pl:GetName())
 		end
 
 	end
@@ -1173,7 +1173,7 @@ end
 
 function GM:LoadChances(ply)
 
-	if !spb_save_chances:GetBool() then GAMEMODE:Log("Chances saving is disabled. Not loading pedobear chances.", nil, true) return end
+	if !spb_save_chances:GetBool() then GAMEMODE:Log("Chances saving is disabled. Not loading seeker chances.", nil, true) return end
 
 	local function loadchance(pl)
 
@@ -1184,10 +1184,10 @@ function GM:LoadChances(ply)
 		if chance != nil then
 			chance = chance * 0.01
 			pl:SetNWFloat("spb_BearChance", chance)
-			GAMEMODE:Log("Loaded the " .. (chance * 100) .. "% pedobear chance of " .. pl:GetName())
+			GAMEMODE:Log("Loaded the " .. (chance * 100) .. "% seeker chance of " .. pl:GetName())
 		else
 			pl:SetNWFloat("spb_BearChance", 0.01)
-			GAMEMODE:Log("No pedobear chance found for " .. pl:GetName() .. ", default was set")
+			GAMEMODE:Log("No seeker chance found for " .. pl:GetName() .. ", default was set")
 		end
 
 	end

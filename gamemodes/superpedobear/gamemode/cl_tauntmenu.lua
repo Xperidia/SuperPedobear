@@ -18,7 +18,7 @@ function GM:TauntMenuF()
 		end
 		GAMEMODE.TauntMenu.Think = function(self)
 
-			if !ply:Alive() or (ply:Team() != TEAM_HIDING and ply:Team() != TEAM_BEAR) then
+			if !ply:Alive() or (ply:Team() != TEAM_HIDING and ply:Team() != TEAM_SEEKER) then
 				GAMEMODE.TauntMenu:SetTitle("Taunt menu (You can't taunt now!)")
 				GAMEMODE.TauntMenu.play:SetEnabled(false)
 				GAMEMODE.TauntMenu.random:SetEnabled(false)
@@ -96,8 +96,8 @@ function GM:TauntMenuF()
 				whostr = "Everyone"
 			elseif v[3] == TEAM_HIDING then
 				whostr = "Victims"
-			elseif v[3] == TEAM_BEAR then
-				whostr = "Pedobear"
+			elseif v[3] == TEAM_SEEKER then
+				whostr = "Seekers"
 			end
 
 			AppList:AddLine(k, v[1], whostr)

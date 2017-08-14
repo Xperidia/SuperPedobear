@@ -1,17 +1,17 @@
 DEFINE_BASECLASS("gamemode_base")
 
 include("player_class/player_hiding.lua")
-include("player_class/player_bear.lua")
+include("player_class/player_seeker.lua")
 
 GM.Name 		= "Super Pedobear"
 GM.ShortName 	= "SuperPedobear"
 GM.Author 		= "VictorienXP@Xperidia"
 GM.Website 		= "steamcommunity.com/sharedfiles/filedetails/?id=628449407"
-GM.Version 		= 0.283
+GM.Version 		= 0.284
 GM.TeamBased 	= true
 
 TEAM_HIDING	= 1
-TEAM_BEAR	= 2
+TEAM_SEEKER	= 2
 
 GM.Sounds = {}
 GM.Sounds.YoureTheBear	= Sound("superpedobear/yourethebear.wav")
@@ -23,7 +23,7 @@ table.insert(GM.Sounds.Taunts, {"Makka Pakka", Sound("superpedobear/taunts/s2.og
 table.insert(GM.Sounds.Taunts, {"Stampy Intro", Sound("superpedobear/taunts/s3.ogg"), 0, 7})
 table.insert(GM.Sounds.Taunts, {"Buttsauce", Sound("superpedobear/taunts/s4.ogg"), 0, 1})
 table.insert(GM.Sounds.Taunts, {"Thomas the tank engine", Sound("superpedobear/taunts/s5.ogg"), 0, 7})
-table.insert(GM.Sounds.Taunts, {"Get your lollipops", Sound("superpedobear/taunts/p1.ogg"), TEAM_BEAR, 6})
+table.insert(GM.Sounds.Taunts, {"Get your lollipops", Sound("superpedobear/taunts/p1.ogg"), TEAM_SEEKER, 6})
 table.insert(GM.Sounds.Taunts, {"MY PEE PEE", Sound("superpedobear/taunts/s6.ogg"), 0, 20.5})
 
 GM.Sounds.Damage	= GM.Sounds.Damage or {}
@@ -51,9 +51,9 @@ GM.PowerUps = {
 	clone = {"Clone", TEAM_HIDING, Material("superpedobear/powerup/clone"), Color(255, 200, 50, 255)},
 	boost = {"Boost", TEAM_HIDING, Material("superpedobear/powerup/boost"), Color(255, 128, 0, 255)},
 	--vdisguise = {"Disguise", TEAM_HIDING, Material("superpedobear/powerup/vdisguise")},
-	--pdisguise = {"Disguise", TEAM_BEAR, Material("superpedobear/powerup/pdisguise")},
-	radar = {"Radar", TEAM_BEAR, Material("superpedobear/powerup/radar")},
-	trap = {"False Power-UP", TEAM_BEAR, Material("superpedobear/powerup/trap"), Color(255, 64, 64, 255)}
+	--pdisguise = {"Disguise", TEAM_SEEKER, Material("superpedobear/powerup/pdisguise")},
+	radar = {"Radar", TEAM_SEEKER, Material("superpedobear/powerup/radar")},
+	trap = {"False Power-UP", TEAM_SEEKER, Material("superpedobear/powerup/trap"), Color(255, 64, 64, 255)}
 }
 
 GM.PlayerMeta = GM.PlayerMeta or FindMetaTable("Player")
@@ -111,10 +111,10 @@ function GM:Initialize()
 	spb_enabledevmode = CreateConVar("spb_enabledevmode", 0, FCVAR_NONE, "Dev mode and more logs.")
 	spb_round_time = CreateConVar("spb_round_time", 180, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Time of a round in second.")
 	spb_round_pretime = CreateConVar("spb_round_pretime", 15, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Time of the player waiting time in second.")
-	spb_round_pre2time = CreateConVar("spb_round_pre2time", 15, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Time before bear spawn.")
+	spb_round_pre2time = CreateConVar("spb_round_pre2time", 15, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Time before seeker spawn.")
 	spb_afk_time = CreateConVar("spb_afk_time", 30, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Time needed for a player to be consired afk.")
-	spb_afk_action = CreateConVar("spb_afk_action", 30, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Time needed for a player to be kick out of bear when afk.")
-	spb_save_chances = CreateConVar("spb_save_chances", 1, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Set if we should save the chances to be bear.")
+	spb_afk_action = CreateConVar("spb_afk_action", 30, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Time needed for a player to be kick out of the seeker role when afk.")
+	spb_save_chances = CreateConVar("spb_save_chances", 1, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Set if we should save the chances to be a seeker.")
 
 	local damagesnd = file.Find("sound/superpedobear/damage/*.ogg", "GAME")
 
@@ -227,9 +227,9 @@ function GM:CreateTeams()
 	team.SetSpawnPoint(TEAM_HIDING, {"info_player_start", "info_player_terrorist"})
 	team.SetClass(TEAM_HIDING, {"player_hiding"})
 
-	team.SetUp(TEAM_BEAR, "Bear", Color(139, 85, 46), false)
-	team.SetSpawnPoint(TEAM_BEAR, {"spb_bearstart", "info_player_counterterrorist"})
-	team.SetClass(TEAM_BEAR, {"player_bear"})
+	team.SetUp(TEAM_SEEKER, "Seekers", Color(139, 85, 46), false)
+	team.SetSpawnPoint(TEAM_SEEKER, {"info_player_seekers", "info_player_counterterrorist"})
+	team.SetClass(TEAM_SEEKER, {"player_seeker"})
 
 	team.SetSpawnPoint(TEAM_SPECTATOR, "worldspawn")
 	team.SetSpawnPoint(TEAM_UNASSIGNED, "worldspawn")
@@ -292,7 +292,7 @@ function GM:SelectRandomPowerUP(ply)
 end
 
 function GM:GetClosestPlayer(ply, pteam)
-	local bear
+	local seeker
 	local distance
 	local t
 	local list = team.GetPlayers(pteam)
@@ -301,9 +301,9 @@ function GM:GetClosestPlayer(ply, pteam)
 			t = v:GetPos():Distance(ply:GetPos())
 			if (!distance or distance < t) then
 				distance = t
-				bear = v
+				seeker = v
 			end
 		end
 	end
-	return bear, distance
+	return seeker, distance
 end

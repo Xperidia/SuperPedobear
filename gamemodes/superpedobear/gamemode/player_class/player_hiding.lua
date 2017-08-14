@@ -3,7 +3,7 @@ DEFINE_BASECLASS("player_default")
 
 local PLAYER = {}
 
-PLAYER.DisplayName			= "Victim"
+PLAYER.DisplayName			= "Hiding"
 
 PLAYER.WalkSpeed 			= 200		-- How fast to move when not running
 PLAYER.RunSpeed				= 400		-- How fast to move when running

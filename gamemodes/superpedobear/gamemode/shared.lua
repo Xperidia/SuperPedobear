@@ -297,7 +297,7 @@ function GM:GetClosestPlayer(ply, pteam)
 	local t
 	local list = team.GetPlayers(pteam)
 	for k, v in pairs(list) do
-		if v:Alive() then
+		if v:Alive() and v:IsLineOfSightClear(ply) then
 			t = v:GetPos():Distance(ply:GetPos())
 			if (!distance or distance < t) then
 				distance = t

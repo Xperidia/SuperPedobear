@@ -82,14 +82,8 @@ end
 function SWEP:Think()
 	if SERVER and GAMEMODE.Vars.Round.Start then
 		local attacker = self.Owner
-		for k, v in pairs (ents.FindInSphere(self.Owner:GetPos() + Vector(0,0,16), 26)) do
-			if IsValid(v) and ((v:IsPlayer() and v:Alive() and v:Team() == TEAM_HIDING and v != self.Owner) or v:GetClass() == "spb_dummy") and v:Health() > 0 then
-				if !IsValid(attacker) then attacker = self end
-				self:GangBang(v, attacker)
-			end
-		end
-		for k, v in pairs (ents.FindInSphere(self.Owner:GetPos() + (self.Owner:GetViewOffset() or Vector(0,0,32)), 26)) do
-			if IsValid(v) and ((v:IsPlayer() and v:Alive() and v:Team() == TEAM_HIDING and v != self.Owner) or v:GetClass() == "spb_dummy") and v:Health() > 0 then
+		for k, v in pairs(ents.FindInSphere(self.Owner:GetPos() + Vector(0, 0, 32), 32.2)) do
+			if IsValid(v) and ((v:IsPlayer() and v:Alive() and v:Team() == TEAM_HIDING and self.Owner:IsLineOfSightClear(v)) or v:GetClass() == "spb_dummy") then
 				if !IsValid(attacker) then attacker = self end
 				self:GangBang(v, attacker)
 			end

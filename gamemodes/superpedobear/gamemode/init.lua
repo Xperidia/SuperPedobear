@@ -514,7 +514,7 @@ function GM:RoundThink()
 
 				end
 
-				GAMEMODE:Log(Seekers[SeekerIndex]:GetName() .. " has been selected to be a bear " .. SeekerIndex, nil, true)
+				GAMEMODE:Log(Seekers[SeekerIndex]:GetName() .. " has been selected to be a seeker " .. SeekerIndex, nil, true)
 
 				if IsValid(Seekers[SeekerIndex]) then
 					Seekers[SeekerIndex]:DropPowerUP()

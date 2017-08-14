@@ -1381,6 +1381,8 @@ end
 
 function GM:RenderScreenspaceEffects()
 
+	local ply = LocalPlayer()
+
 	local ravemode = false
 	if GAMEMODE.Vars.Bears and #GAMEMODE.Vars.Bears > 0 then
 		for k, v in pairs(GAMEMODE.Vars.Bears) do
@@ -1404,6 +1406,30 @@ function GM:RenderScreenspaceEffects()
 			["$pp_colour_mulb"] = (0.5 * math.sin(x + 1)) * 10
 		}
 		DrawColorModify(tab)
+	end
+
+	if ply:Team() == TEAM_HIDING and ply:Alive() then
+
+		local _, distance = GAMEMODE:GetClosestPlayer(ply, TEAM_SEEKER)
+
+		if distance and distance < 400 then
+			DrawToyTown(1, ScrH() * math.Clamp(math.Remap(distance, 300, 32, 0, 0.8), 0, 0.8))
+			DrawMotionBlur(0.4, math.Clamp(math.Remap(distance, 200, 32, 0, 0.8), 0, 0.8), 0.01)
+			local x = CurTime() * 5
+			local tab = {
+				["$pp_colour_addr"] = 0,
+				["$pp_colour_addg"] = 0,
+				["$pp_colour_addb"] = 0,
+				["$pp_colour_brightness"] = 0,
+				["$pp_colour_contrast"] = math.Clamp(math.Remap(distance, 32, 200, 0.1, 1), 0.1, 1),
+				["$pp_colour_colour"] = 1,
+				["$pp_colour_mulr"] = 0,
+				["$pp_colour_mulg"] = 0,
+				["$pp_colour_mulb"] = 0
+			}
+			DrawColorModify(tab)
+		end
+
 	end
 
 end

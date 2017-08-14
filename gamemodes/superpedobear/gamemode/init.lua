@@ -55,14 +55,10 @@ end
 
 function GM:PlayerSpawn(ply)
 
-	if ply:Team() == TEAM_UNASSIGNED or ply:Team() == TEAM_SPECTATOR then
+	local pteam = ply:Team()
 
-		GAMEMODE:PlayerSpawnAsSpectator(ply)
-		ply:SetPos(ply:GetPos() + Vector(0, 0, 32))
+	if pteam == TEAM_HIDING or pteam == TEAM_BEAR then
 
-	elseif ply:Team() == TEAM_HIDING or ply:Team() == TEAM_BEAR then
-
-		local pteam = ply:Team()
 		local spawnpoints = team.GetSpawnPoints(pteam)
 		local spawnpoint = spawnpoints[math.random(1, #spawnpoints)]
 		if IsValid(spawnpoint) then

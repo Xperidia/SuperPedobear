@@ -50,7 +50,6 @@ end
 function PLAYER:Spawn()
 	BaseClass.Spawn(self)
 	self.Player:SetPlayerColor(Vector(0.545098, 0.333333, 0.180392))
-	self.Player:SetModelScale(1, 0)
 end
 
 function PLAYER:StartMove(mv)

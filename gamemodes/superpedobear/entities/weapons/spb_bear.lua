@@ -1,33 +1,27 @@
---[[---------------------------------------------------------------------------
-		⚠ This file is a part of the Super Pedobear gamemode ⚠
-	⚠ Please do not redistribute any version of it (edited or not)! ⚠
-	So please ask me directly or contribute on GitHub if you want something...
------------------------------------------------------------------------------]]
-
 AddCSLuaFile()
 
-SWEP.PrintName = "Pedobear"
-SWEP.Author = "Xperidia"
-SWEP.Spawnable = false
+SWEP.PrintName	= "Bear"
+SWEP.Author		= "Xperidia"
+SWEP.Spawnable	= false
 
 SWEP.Primary.ClipSize		= -1
 SWEP.Primary.DefaultClip	= -1
 SWEP.Primary.Automatic		= true
-SWEP.Primary.Ammo		= "none"
+SWEP.Primary.Ammo			= "none"
 
 SWEP.Secondary.ClipSize		= -1
 SWEP.Secondary.DefaultClip	= -1
 SWEP.Secondary.Automatic	= false
-SWEP.Secondary.Ammo		= "none"
+SWEP.Secondary.Ammo			= "none"
 
-SWEP.Weight			= 10
+SWEP.Weight				= 10
 SWEP.AutoSwitchTo		= true
 SWEP.AutoSwitchFrom		= false
 
-SWEP.Slot			= 0
+SWEP.Slot				= 0
 SWEP.SlotPos			= 0
 SWEP.DrawAmmo			= false
-SWEP.BounceWeaponIcon = false
+SWEP.BounceWeaponIcon	= false
 
 SWEP.ViewModel			= "models/weapons/c_arms.mdl"
 SWEP.WorldModel			= ""

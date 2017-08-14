@@ -46,12 +46,9 @@ end
 function PLAYER:Spawn()
 	BaseClass.Spawn(self)
 	self.Player:SetPlayerColor(Vector(math.Rand(0, 1), math.Rand(0, 1), math.Rand(0, 1)))
-	self.Player:SetModelScale(1, 0)
 end
 
 function PLAYER:SetModel()
-
-	BaseClass.SetModel(self)
 
 	local cl_playermodel = self.Player:GetInfo("cl_playermodel")
 	local avmodels = player_manager.AllValidModels()
@@ -88,14 +85,19 @@ function PLAYER:SetModel()
 		end
 
 		if #models > 0 then
-			self.Player:SetModel(player_manager.TranslatePlayerModel(models[math.random(1, #models)]))
+			local modelname = player_manager.TranslatePlayerModel(models[math.random(1, #models)])
+			util.PrecacheModel(modelname)
+			self.Player:SetModel(modelname)
 		else
-			self.Player:SetModel(player_manager.TranslatePlayerModel("chell"))
+			local modelname = player_manager.TranslatePlayerModel("chell")
+			util.PrecacheModel(modelname)
+			self.Player:SetModel(modelname)
 		end
 
 	else
 
 		local modelname = player_manager.TranslatePlayerModel(cl_playermodel)
+		util.PrecacheModel(modelname)
 		self.Player:SetModel(modelname)
 
 		local skin = self.Player:GetInfoNum("cl_playerskin", 0)

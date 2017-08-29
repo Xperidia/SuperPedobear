@@ -230,21 +230,6 @@ function GM:HUDPaint()
 	local hide_tips = GetConVar("spb_cl_hide_tips"):GetBool()
 
 
-	--[[ THE GAMEMODE STATUS ]]--
-
-	--draw.DrawText(GAMEMODE.Name .. " V" .. GAMEMODE.Version .. " - " ..  os.date("%d/%m/%Y", os.time()), "DermaDefault", ScrW() / 2, hudoffset, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
-
-	local htxt = GAMEMODE.Name .. " V" .. GAMEMODE.Version .. "\nEarly Access (" ..  os.date("%d/%m/%Y", os.time()) .. ")"
-	surface.SetFont("spb_HUDname")
-	local tw, th = surface.GetTextSize(htxt)
-	surface.SetDrawColor(Color(0, 0, 0, 200))
-	surface.DrawRect(ScrW() / 2 - 4 - tw / 2, hudoffset, tw + 8, th + 8)
-	th = th + 8
-	draw.DrawText(htxt, "spb_HUDname", ScrW() / 2, hudoffset + 4, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
-	surface.SetDrawColor(Color(0, 0, 0, 255))
-	surface.DrawOutlinedRect(ScrW() / 2 - 4 - tw / 2, hudoffset, tw + 8, th)
-
-
 	--[[ THE CLOCK AND ROUND COUNT ]]--
 
 	local TheTime = 0
@@ -291,11 +276,13 @@ function GM:HUDPaint()
 	end
 
 	surface.SetDrawColor(Color(0, 0, 0, 200))
-	surface.DrawRect(ScrW() / 2 - 100, hudoffset + th, 200, 110)
-	draw.DrawText(GAMEMODE:FormatTime(TheTime), "spb_TIME", ScrW() / 2, hudoffset + th, time_color, TEXT_ALIGN_CENTER)
-	draw.DrawText("Round " .. rnd, "spb_RND", ScrW() / 2, 60 + hudoffset + th, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+	surface.DrawRect(ScrW() / 2 - 100, hudoffset, 200, 110)
+	draw.DrawText(GAMEMODE:FormatTime(TheTime), "spb_TIME", ScrW() / 2, hudoffset, time_color, TEXT_ALIGN_CENTER)
+	draw.DrawText("Round " .. rnd, "spb_RND", ScrW() / 2, 60 + hudoffset, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
 	surface.SetDrawColor(Color(0, 0, 0, 255))
-	surface.DrawOutlinedRect(ScrW() / 2 - 100, hudoffset + th, 200, 110)
+	surface.DrawOutlinedRect(ScrW() / 2 - 100, hudoffset, 200, 110)
+
+	draw.DrawText(GAMEMODE.Name .. " V" .. GAMEMODE.Version .. " - " ..  os.date("%d/%m/%Y", os.time()), "DermaDefault", ScrW() / 2, hudoffset, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
 
 
 	--[[ THE ROUND STATUS ]]--
@@ -305,10 +292,10 @@ function GM:HUDPaint()
 		surface.SetFont("spb_RND")
 		local w, h = surface.GetTextSize(str)
 		surface.SetDrawColor(Color(0, 0, 0, 200))
-		surface.DrawRect(ScrW() / 2 - w / 2 - 8, 110 + hudoffset + th + rndtxth, w + 16, h)
-		draw.DrawText(str, "spb_RND", ScrW() / 2, 110 + hudoffset + th + rndtxth, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+		surface.DrawRect(ScrW() / 2 - w / 2 - 8, 110 + hudoffset + rndtxth, w + 16, h)
+		draw.DrawText(str, "spb_RND", ScrW() / 2, 110 + hudoffset + rndtxth, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
 		surface.SetDrawColor(Color(0, 0, 0, 255))
-		surface.DrawOutlinedRect(ScrW() / 2 - w / 2 - 8, 110 + hudoffset + th + rndtxth, w + 16, h)
+		surface.DrawOutlinedRect(ScrW() / 2 - w / 2 - 8, 110 + hudoffset + rndtxth, w + 16, h)
 		rndtxth = rndtxth + h
 	end
 
@@ -1256,8 +1243,8 @@ function GM:Stats()
 	local needstat = !file.Exists("superpedobear/stats/" .. steamid .. ".txt", "DATA")
 
 	if needstat then
-		http.Post( "https://www.xperidia.com/UCP/stats.php", { steamid = steamid, zone = "pedo" },
-		function( responseText, contentLength, responseHeaders, statusCode )
+		http.Post("https://www.xperidia.com/UCP/stats.php", { steamid = steamid, zone = "pedo" },
+		function(responseText, contentLength, responseHeaders, statusCode)
 			if statusCode == 200 then
 				file.Write("superpedobear/stats/" .. steamid .. ".txt", "")
 				GAMEMODE:Log(responseText)
@@ -1279,10 +1266,10 @@ function GM:Stats()
 	if info then
 		local tab = util.JSONToTable(info)
 		if !tab or (tab.LastVersion and tab.LastVersion < GAMEMODE.Version) then
-			welcomehandle()
+			GAMEMODE:SplashScreen()
 		end
 	else
-		welcomehandle()
+		GAMEMODE:SplashScreen()
 	end
 
 end

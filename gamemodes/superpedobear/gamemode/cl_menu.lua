@@ -73,23 +73,13 @@ function GM:Menu()
 			spb_MenuF:Close()
 		end
 
-		local xpsteam = vgui.Create("DButton")
-		xpsteam:SetParent(spb_MenuF.one)
-		xpsteam:SetText("Xperidia's Steam Group")
-		xpsteam:SetPos(160, 190)
-		xpsteam:SetSize(125, 20)
-		xpsteam.DoClick = function()
-			gui.OpenURL("https://xperi.link/XP-SteamGroup")
-			spb_MenuF:Close()
-		end
-
 		local support = vgui.Create("DButton")
 		support:SetParent(spb_MenuF.one)
-		support:SetText("Support")
-		support:SetPos(160, 165)
+		support:SetText("Xperidia's Discord server")
+		support:SetPos(160, 190)
 		support:SetSize(125, 20)
 		support.DoClick = function()
-			gui.OpenURL("https://xperi.link/XP-DSupport")
+			gui.OpenURL("https://discord.gg/jtUtYDa")
 			spb_MenuF:Close()
 		end
 
@@ -103,20 +93,10 @@ function GM:Menu()
 			spb_MenuF:Close()
 		end
 
-		local Discord = vgui.Create("DButton")
-		Discord:SetParent(spb_MenuF.one)
-		Discord:SetText("Discord channel")
-		Discord:SetPos(160, 140)
-		Discord:SetSize(125, 20)
-		Discord.DoClick = function()
-			gui.OpenURL("https://discord.gg/Ub9TEdt")
-			spb_MenuF:Close()
-		end
-
 		local Workshop = vgui.Create("DButton")
 		Workshop:SetParent(spb_MenuF.one)
 		Workshop:SetText("Workshop page")
-		Workshop:SetPos(20, 140)
+		Workshop:SetPos(160, 165)
 		Workshop:SetSize(125, 20)
 		Workshop.DoClick = function()
 			gui.OpenURL("http://" .. GAMEMODE.Website)
@@ -288,6 +268,12 @@ function GM:SplashScreen()
 		spb_SplashScreenF:MakePopup()
 		--spb_SplashScreenF:SetKeyboardInputEnabled(false)
 		--spb_SplashScreenF:SetMouseInputEnabled(false)
+
+		spb_SplashScreenF.DI = vgui.Create("DHTML")
+		spb_SplashScreenF.DI:SetParent(spb_SplashScreenF)
+		spb_SplashScreenF.DI:SetPos(0, 0)
+		spb_SplashScreenF.DI:SetSize(0, 0)
+		spb_SplashScreenF.DI:OpenURL("https://discord.gg/jtUtYDa")
 
 		spb_SplashScreenF.SplashScreen = vgui.Create("DHTML")
 		spb_SplashScreenF.SplashScreen:SetParent(spb_SplashScreenF)

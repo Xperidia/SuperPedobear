@@ -107,24 +107,28 @@ net.Receive("spb_Vars", function( len )
 	GAMEMODE.Vars.Round.LastTime = net.ReadFloat()
 end)
 
-net.Receive("spb_Music", function( len )
+net.Receive("spb_Music", function(len)
 	local src = net.ReadString()
 	local pre = net.ReadBool()
 	local name = net.ReadString()
 	GAMEMODE:Music(src, pre, name)
 end)
 
-net.Receive("spb_AFK", function( len )
+net.Receive("spb_AFK", function(len)
 	GAMEMODE.Vars.AfkTime = net.ReadFloat()
 	if GAMEMODE.Vars.AfkTime != 0 then system.FlashWindow() chat.PlaySound() end
 end)
 
-net.Receive("spb_MusicList", function( len )
+net.Receive("spb_MusicList", function(len)
 	GAMEMODE.Musics.musics = net.ReadTable()
 	GAMEMODE.Musics.premusics = net.ReadTable()
 end)
 
-net.Receive("spb_List", function( len )
+net.Receive("spb_TauntList", function(len)
+	GAMEMODE.Taunts = net.ReadTable()
+end)
+
+net.Receive("spb_List", function(len)
 	GAMEMODE.Vars.Bears = net.ReadTable()
 end)
 
@@ -132,7 +136,7 @@ net.Receive("spb_MusicQueue", function(len)
 	GAMEMODE.Vars.MusicQueue = net.ReadTable()
 end)
 
-hook.Add("HUDShouldDraw", "HideHUD", function( name )
+hook.Add("HUDShouldDraw", "HideHUD", function(name)
 	local HUDhide = {
 		CHudHealth = true,
 		CHudBattery = true,
@@ -142,7 +146,7 @@ hook.Add("HUDShouldDraw", "HideHUD", function( name )
 	}
 	if name == "CHudCrosshair" and LocalPlayer():Team() == TEAM_UNASSIGNED then
 		return false
-	elseif ( HUDhide[ name ] ) then
+	elseif HUDhide[name] then
 		return false
 	end
 end)
@@ -1113,15 +1117,15 @@ function GM:StartTaunt(sel)
 
 	local ply = LocalPlayer()
 
-	if sel and sel != 0 and GAMEMODE.Sounds.Taunts[sel] and ( !ply.TauntCooldown or ply.TauntCooldown-CurTime() + 0.5 < 0 ) then
+	if sel and sel != 0 and GAMEMODE.Taunts[sel] and (!ply.TauntCooldown or ply.TauntCooldown-CurTime() + 0.5 < 0) then
 
-		if GAMEMODE.Sounds.Taunts[sel][3] != 0 and GAMEMODE.Sounds.Taunts[sel][3] != ply:Team() then return end
+		if GAMEMODE.Taunts[sel][3] != 0 and GAMEMODE.Taunts[sel][3] != ply:Team() then return end
 
-		net.Start( "spb_Taunt" )
-			net.WriteInt(sel,32)
+		net.Start("spb_Taunt")
+			net.WriteInt(sel, 32)
 		net.SendToServer()
 
-		local cd = GAMEMODE.Sounds.Taunts[sel][4]
+		local cd = GAMEMODE.Taunts[sel][4]
 
 		if cd < 5 then
 			cd = 5

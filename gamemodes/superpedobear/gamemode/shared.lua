@@ -7,7 +7,7 @@ GM.Name 		= "Super Pedobear"
 GM.ShortName 	= "SuperPedobear"
 GM.Author 		= "VictorienXP@Xperidia"
 GM.Website 		= "steamcommunity.com/sharedfiles/filedetails/?id=628449407"
-GM.Version 		= 0.29
+GM.Version 		= 0.291
 GM.TeamBased 	= true
 
 TEAM_HIDING	= 1
@@ -16,27 +16,18 @@ TEAM_SEEKER	= 2
 GM.Sounds = {}
 GM.Sounds.YoureTheBear	= Sound("superpedobear/yourethebear.wav")
 GM.Sounds.HeartBeat		= Sound("superpedobear/heartbeat.ogg")
-
-GM.Sounds.Taunts = {}
-table.insert(GM.Sounds.Taunts, {"Goat Gentleman", Sound("superpedobear/taunts/s1.ogg"), 0, 16.5})
-table.insert(GM.Sounds.Taunts, {"Makka Pakka", Sound("superpedobear/taunts/s2.ogg"), 0, 13})
-table.insert(GM.Sounds.Taunts, {"Stampy Intro", Sound("superpedobear/taunts/s3.ogg"), 0, 7})
-table.insert(GM.Sounds.Taunts, {"Buttsauce", Sound("superpedobear/taunts/s4.ogg"), 0, 1})
-table.insert(GM.Sounds.Taunts, {"Thomas the tank engine", Sound("superpedobear/taunts/s5.ogg"), 0, 7})
-table.insert(GM.Sounds.Taunts, {"Get your lollipops", Sound("superpedobear/taunts/p1.ogg"), TEAM_SEEKER, 6})
-table.insert(GM.Sounds.Taunts, {"MY PEE PEE", Sound("superpedobear/taunts/s6.ogg"), 0, 20.5})
-
-GM.Sounds.Damage	= GM.Sounds.Damage or {}
-GM.Sounds.Death		= GM.Sounds.Death or {}
+GM.Sounds.Damage		= GM.Sounds.Damage or {}
+GM.Sounds.Death			= GM.Sounds.Death or {}
 
 GM.Materials = {}
-GM.Materials.Van = Material("superpedobear/van")
-GM.Materials.Bear = Material("superpedobear/bear")
+GM.Materials.Van =	Material("superpedobear/van")
+GM.Materials.Bear =	Material("superpedobear/bear")
 
 GM.Vars = GM.Vars or {}
 GM.Vars.Round = GM.Vars.Round or {}
 GM.Bots = GM.Bots or {}
 GM.Musics = GM.Musics or {}
+GM.Taunts = GM.Taunts or {}
 if CLIENT then GM.LocalMusics = GM.LocalMusics or {} end
 
 GM.SeasonalEvents = {
@@ -169,6 +160,7 @@ function GM:Initialize()
 	end
 
 	GAMEMODE:BuildMusicIndex()
+	GAMEMODE:BuildTauntIndex()
 
 end
 
@@ -217,6 +209,46 @@ function GM:BuildMusicIndex()
 	else
 		GAMEMODE.LocalMusics.musics = musiclist
 		GAMEMODE.LocalMusics.premusics = premusiclist
+	end
+
+end
+
+function GM:BuildTauntIndex()
+
+	if SERVER then
+
+		if !file.IsDir("superpedobear/taunts", "DATA") then
+			file.CreateDir("superpedobear/taunts")
+		end
+
+		local function ReadTauntInfo()
+
+			local mlist = {}
+
+			local lua = file.Find("superpedobear/taunts/*.lua", "LUA")
+
+			for _, v in pairs(lua) do
+				local ft = include("superpedobear/taunts/" .. v)
+				table.Add(mlist, ft)
+			end
+
+			local infos = file.Find("superpedobear/taunts/*.txt", "DATA")
+
+			for _, v in pairs(infos) do
+				local fileml = file.Read("superpedobear/taunts/" .. v)
+				local tmlist = util.JSONToTable(fileml)
+				table.Add(mlist, tmlist)
+			end
+
+			return mlist
+
+		end
+
+		local tauntlist = ReadTauntInfo()
+
+		GAMEMODE.Taunts = tauntlist
+		if !game.IsDedicated() then GAMEMODE:SendTauntIndex() end
+
 	end
 
 end

@@ -17,6 +17,7 @@ util.AddNetworkString("spb_Taunt")
 util.AddNetworkString("spb_Music")
 util.AddNetworkString("spb_AFK")
 util.AddNetworkString("spb_MusicList")
+util.AddNetworkString("spb_TauntList")
 util.AddNetworkString("PlayerKilledDummy")
 util.AddNetworkString("NPCKilledDummy")
 util.AddNetworkString("spb_List")
@@ -49,6 +50,7 @@ function GM:PlayerInitialSpawn(ply)
 
 	GAMEMODE:UpVars(ply)
 	GAMEMODE:SendMusicIndex(ply)
+	GAMEMODE:SendTauntIndex(ply)
 	GAMEMODE:SendMusicQueue(ply)
 
 end
@@ -827,7 +829,7 @@ end
 
 net.Receive("spb_Taunt", function(bits,ply)
 	local tauntid = net.ReadInt(32)
-	taunt = GAMEMODE.Sounds.Taunts[tauntid]
+	taunt = GAMEMODE.Taunts[tauntid]
 	GAMEMODE:Taunt(ply, taunt, tauntid)
 end)
 function GM:Taunt(ply, taunt, tauntid)
@@ -999,37 +1001,33 @@ function GM:BearAFKCare(ply)
 end
 
 function GM:GetFallDamage(ply, flFallSpeed)
-
 	if ply:Team() == TEAM_SEEKER then return 0 end
-
 	if !GAMEMODE.Vars.Round.Start then return 0 end
-
 	return 10
-
 end
 
 function GM:OnDamagedByExplosion(ply, dmginfo)
 end
 
 function GM:EntityTakeDamage(target, dmg)
-
 	if target:IsPlayer() and target:Team() == TEAM_HIDING and target:Health() - dmg:GetDamage() > 0 then
-
 		if #GAMEMODE.Sounds.Damage > 0 then
 			target:EmitSound(GAMEMODE.Sounds.Damage[math.random(1, #GAMEMODE.Sounds.Damage)], 90, 100, 1, CHAN_AUTO)
 		end
-
 	end
-
 end
 
 function GM:SendMusicIndex(ply)
-
 	net.Start("spb_MusicList")
 		net.WriteTable(GAMEMODE.Musics.musics)
 		net.WriteTable(GAMEMODE.Musics.premusics)
 	if IsValid(ply) then net.Send(ply) else net.Broadcast() end
+end
 
+function GM:SendTauntIndex(ply)
+	net.Start("spb_TauntList")
+		net.WriteTable(GAMEMODE.Taunts)
+	if IsValid(ply) then net.Send(ply) else net.Broadcast() end
 end
 
 function GM:OnDummyKilled(ent, attacker, inflictor)

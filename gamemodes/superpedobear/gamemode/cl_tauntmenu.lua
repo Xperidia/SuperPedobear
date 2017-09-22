@@ -73,12 +73,18 @@ function GM:TauntMenuF()
 		AppList:SetSize(sx, sy - 80)
 		AppList:SetMultiSelect(false)
 		local id = AppList:AddColumn("ID")
-		id:SetMinWidth(20)
-		id:SetMaxWidth(20)
+		id:SetMinWidth(30)
+		id:SetMaxWidth(30)
 		AppList:AddColumn("Taunt")
 		local who = AppList:AddColumn("Who")
-		who:SetMinWidth(64)
-		who:SetMaxWidth(64)
+		who:SetMinWidth(60)
+		who:SetMaxWidth(60)
+		local dur = AppList:AddColumn("Duration")
+		dur:SetMinWidth(30)
+		dur:SetMaxWidth(45)
+		local pack = AppList:AddColumn("Pack")
+		pack:SetMinWidth(40)
+		pack:SetMaxWidth(60)
 
 		function AppList:DoDoubleClick(lineID, line)
 
@@ -88,7 +94,7 @@ function GM:TauntMenuF()
 
 		end
 
-		for k,v in pairs(GAMEMODE.Sounds.Taunts) do
+		for k, v in pairs(GAMEMODE.Taunts) do
 
 			local whostr = "Unknown"
 
@@ -100,7 +106,7 @@ function GM:TauntMenuF()
 				whostr = "Seekers"
 			end
 
-			AppList:AddLine(k, v[1], whostr)
+			AppList:AddLine(k, v[1], whostr, math.Round(v[4]), v[5])
 
 		end
 
@@ -122,7 +128,7 @@ function GM:TauntMenuF()
 
 			local sel = {}
 
-			for k,v in pairs(GAMEMODE.Sounds.Taunts) do
+			for k,v in pairs(GAMEMODE.Taunts) do
 				if v[3] == ply:Team() or v[3] == 0 then
 					table.insert(sel, v)
 				end

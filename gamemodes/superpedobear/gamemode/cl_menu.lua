@@ -300,14 +300,8 @@ function GM:SplashScreen()
 		.. "<tr><td class='leftside'>1-9</td><td> Quick taunt</td></tr>"
 		.. '</table>");')
 		spb_SplashScreenF.SplashScreen:Call('$("#changelog").append("<h2><u>Changelog V' .. (GAMEMODE.Version or '?') .. '</u></h2><table>'
-		.. "<tr><td>> Prevent overriding from Enhanced PlayerModel Selector</td></tr>"
-		.. "<tr><td>> Preparation for tutorial stuff</td></tr>"
-		.. "<tr><td>> Removed registration</td></tr>"
-		.. "<tr><td>> Removed the ShowCase</td></tr>"
-		.. "<tr><td>> Removed jumpscare stuff</td></tr>"
-		.. "<tr><td>> Ultra clean up and stuff</td></tr>"
-		.. "<tr><td>> Added some hooks</td></tr>"
-		.. "<tr><td>> Reworked the seeker swep a little bit</td></tr>"
+		.. "<tr><td>> Now with taunt packs!</td></tr>"
+		.. "<tr><td>> Added cvar spb_slow_motion</td></tr>"
 		.. '</table>");')
 
 		local closebtn = vgui.Create("DButton", spb_SplashScreenF)

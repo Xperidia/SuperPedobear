@@ -708,18 +708,20 @@ function GM:SlowMo()
 
 	local ply
 
-	for k, v in pairs(team.GetPlayers(TEAM_HIDING)) do
-		if v:Alive() and IsValid(ply) then
-			return
-		elseif v:Alive() then
-			if v.Clones and #v.Clones > 0 then
-				for k, v in pairs(v.Clones) do
-					if IsValid(v) then
-						return
+	if spb_slow_motion:GetBool() then
+		for k, v in pairs(team.GetPlayers(TEAM_HIDING)) do
+			if v:Alive() and IsValid(ply) then
+				return
+			elseif v:Alive() then
+				if v.Clones and #v.Clones > 0 then
+					for k, v in pairs(v.Clones) do
+						if IsValid(v) then
+							return
+						end
 					end
 				end
+				ply = v
 			end
-			ply = v
 		end
 	end
 

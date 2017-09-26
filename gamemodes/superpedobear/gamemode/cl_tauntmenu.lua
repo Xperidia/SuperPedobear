@@ -101,12 +101,12 @@ function GM:TauntMenuF()
 			if v[3] == 0 then
 				whostr = "Everyone"
 			elseif v[3] == TEAM_HIDING then
-				whostr = "Victims"
+				whostr = "Hiding"
 			elseif v[3] == TEAM_SEEKER then
 				whostr = "Seekers"
 			end
 
-			AppList:AddLine(k, v[1], whostr, math.Round(v[4]), v[5])
+			AppList:AddLine(k, v[1], whostr, v[4], v[5])
 
 		end
 

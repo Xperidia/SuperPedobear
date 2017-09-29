@@ -7,7 +7,7 @@ GM.Name 		= "Super Pedobear"
 GM.ShortName 	= "SuperPedobear"
 GM.Author 		= "VictorienXP@Xperidia"
 GM.Website 		= "steamcommunity.com/sharedfiles/filedetails/?id=628449407"
-GM.Version 		= 0.291
+GM.Version 		= 0.30
 GM.TeamBased 	= true
 
 TEAM_HIDING	= 1
@@ -41,8 +41,8 @@ GM.SeasonalEvents = {
 GM.PowerUps = {
 	clone = {"Clone", TEAM_HIDING, Material("superpedobear/powerup/clone"), Color(255, 200, 50, 255)},
 	boost = {"Boost", TEAM_HIDING, Material("superpedobear/powerup/boost"), Color(255, 128, 0, 255)},
-	--vdisguise = {"Disguise", TEAM_HIDING, Material("superpedobear/powerup/vdisguise")},
-	--pdisguise = {"Disguise", TEAM_SEEKER, Material("superpedobear/powerup/pdisguise")},
+	vdisguise = {"Disguise", -1, Material("superpedobear/powerup/vdisguise")},
+	cloak = {"Invisibility", TEAM_HIDING, Material("superpedobear/powerup/cloak"), Color(84, 110, 122, 255)},
 	radar = {"Radar", TEAM_SEEKER, Material("superpedobear/powerup/radar")},
 	trap = {"False Power-UP", TEAM_SEEKER, Material("superpedobear/powerup/trap"), Color(255, 64, 64, 255)}
 }
@@ -103,10 +103,14 @@ function GM:Initialize()
 	spb_round_time = CreateConVar("spb_round_time", 180, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Time of a round in second.")
 	spb_round_pretime = CreateConVar("spb_round_pretime", 15, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Time of the player waiting time in second.")
 	spb_round_pre2time = CreateConVar("spb_round_pre2time", 15, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Time before seeker spawn.")
+	spb_rounds = CreateConVar("spb_rounds", 8, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Number of rounds before level change.")
 	spb_afk_time = CreateConVar("spb_afk_time", 30, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Time needed for a player to be consired afk.")
 	spb_afk_action = CreateConVar("spb_afk_action", 30, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Time needed for a player to be kick out of the seeker role when afk.")
 	spb_save_chances = CreateConVar("spb_save_chances", 1, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Set if we should save the chances to be a seeker.")
-	spb_slow_motion = CreateConVar("spb_slow_motion", 1, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Slow motion.")
+	spb_slow_motion = CreateConVar("spb_slow_motion", 1, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Slow motion effect.")
+	spb_rainbow_effect = CreateConVar("spb_rainbow_effect", 1, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Rainbow colors for the victims.")
+	spb_powerup_radar_time = CreateConVar("spb_powerup_radar_time", 2, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Radar time.")
+	spb_powerup_cloak_time = CreateConVar("spb_powerup_cloak_time", 4, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Cloak time.")
 
 	local damagesnd = file.Find("sound/superpedobear/damage/*.ogg", "GAME")
 
@@ -317,7 +321,7 @@ end
 
 function GM:SelectRandomPowerUP(ply)
 	for k, v in RandomPairs(GAMEMODE.PowerUps) do
-		if !IsValid(ply) or v[2] == ply:Team() then
+		if !IsValid(ply) or v[2] == ply:Team() or v[2] == 0 then
 			return k
 		end
 	end
@@ -339,4 +343,11 @@ function GM:GetClosestPlayer(ply, pteam)
 		end
 	end
 	return seeker, distance
+end
+
+function GM:PlayerFootstep(ply, pos, foot, sound, volume, filter)
+	local cloakt = ply:GetNWFloat("spb_CloakTime", nil)
+	if cloakt and cloakt >= CurTime() then
+		return true
+	end
 end

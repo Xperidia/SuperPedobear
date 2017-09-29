@@ -277,6 +277,8 @@ function GM:HUDPaint()
 
 	if rnd > 999 or GAMEMODE.Vars.Tutorial then
 		rnd = "∞"
+	elseif MapVote and spb_rounds:GetInt() < 100 then
+		rnd = rnd .. "/" .. spb_rounds:GetInt()
 	end
 
 	surface.SetDrawColor(Color(0, 0, 0, 200))
@@ -472,6 +474,7 @@ function GM:HUDPaint()
 		local stamina = 200
 		local taunt = 200
 		local radar = 200
+		local cloak = 200
 		local sprintlock = false
 		local fcolor = Color(col.r, col.g, col.b, 150 * life)
 		local ib = 0
@@ -495,11 +498,14 @@ function GM:HUDPaint()
 			taunt = math.Remap(ply.TauntCooldown - CurTime(), 0, ply.TauntCooldownF, 200, 0)
 		end
 
-		if splyTeam == TEAM_SEEKER then
-			local radartime = sply:GetNWFloat("spb_RadarTime", 0)
-			if radartime != 0 and radartime > CurTime() then
-				radar = math.Remap(radartime - CurTime(), 0, 2, 0, 200)
-			end
+
+		local cloaktime = sply:GetNWFloat("spb_CloakTime", 0)
+		if cloaktime != 0 and cloaktime > CurTime() then
+			cloak = math.Remap(cloaktime - CurTime(), 0, spb_powerup_cloak_time:GetFloat(), 0, 200)
+		end
+		local radartime = sply:GetNWFloat("spb_RadarTime", 0)
+		if radartime != 0 and radartime > CurTime() then
+			radar = math.Remap(radartime - CurTime(), 0, spb_powerup_radar_time:GetFloat(), 0, 200)
 		end
 
 		draw.RoundedBox(0, hudoffset, ScrH() - 200 - hudoffset, 200, 200, Color(0, 0, 0, 200))
@@ -526,6 +532,9 @@ function GM:HUDPaint()
 			end
 			if radar != 200 then
 				MakeBar("RADAR", radar)
+			end
+			if cloak != 200 then
+				MakeBar("CLOAK", cloak)
 			end
 		end
 
@@ -944,12 +953,12 @@ function GM:PreDrawHalos()
 				table.insert(tab2, v)
 			end
 		end
-		halo.Add(tab2, team.GetColor(TEAM_SEEKER), 1, 1, 1, true, !ply:Alive())
+		local radartime = ply:GetNWFloat("spb_RadarTime", 0)
+		local showseekers = radartime != 0 and radartime > CurTime()
+		halo.Add(tab2, team.GetColor(TEAM_SEEKER), 1, 1, 1, true, !ply:Alive() or showseekers)
 
 		if IsValid(welding) then
-
-			halo.Add({ welding }, Color(255, 255, 255), 1, 1, 1, true, false)
-
+			halo.Add({welding}, Color(255, 255, 255), 1, 1, 1, true, false)
 		end
 
 	elseif ply:Team() == TEAM_SEEKER then

@@ -378,31 +378,51 @@ end
 
 function GM:Think()
 
-	for k, v in pairs(player.GetAll()) do
+	local daplayers = player.GetAll()
+
+	for k, v in pairs(daplayers) do
+
 		if v:Team() == TEAM_SEEKER then
-			if v:GetModel() != "models/player/pbear/pbear.mdl" then
+
+			if v:GetModel() != "models/player/pbear/pbear.mdl" then --PM Protect
 				v:SetModel(Model("models/player/pbear/pbear.mdl"))
 			end
+
 		elseif v:Team() == TEAM_HIDING and v:Alive() then
-			if v:GetModel() == "models/player/pbear/pbear.mdl" then
+
+			if v:GetModel() == "models/player/pbear/pbear.mdl" then --PM Protect
 				v:SetModel(Model("models/jazzmcfly/magica/homura_mg.mdl"))
 			end
-		end
-	end
 
-	for k, v in pairs(team.GetPlayers(TEAM_HIDING)) do
-		if v:Alive() then
-			local a = math.Clamp(v:Health(), 0, 100) / 100
-			local doffset = v:EntIndex()
-			v:SetPlayerColor(Vector(	(0.5 * (math.sin((CurTime() * a + doffset) - 1) + 1)) * a,
-										(0.5 * (math.sin(CurTime() * a + doffset) + 1)) * a,
-										(0.5 * (math.sin((CurTime() * a + doffset) + 1) + 1)) * a))
+			if spb_rainbow_effect:GetBool() then --Rainbow effect~
+				local a = math.Clamp(v:Health(), 0, 100) / 100
+				local doffset = v:EntIndex()
+				v:SetPlayerColor(Vector(	(0.5 * (math.sin((CurTime() * a + doffset) - 1) + 1)) * a,
+											(0.5 * (math.sin(CurTime() * a + doffset) + 1)) * a,
+											(0.5 * (math.sin((CurTime() * a + doffset) + 1) + 1)) * a))
+			end
+
 		end
+
+		if v.spb_CloakTime and v.spb_CloakTime >= CurTime() then
+			local t = v.spb_CloakTime - CurTime()
+			local alpha = 1
+			local tt = spb_powerup_cloak_time:GetFloat() or 0
+			if t <= 0.5 then
+				alpha = math.Clamp(math.Remap(t, 0.5, 0, 0, 1), 0, 1)
+			elseif t >= tt - 1 then
+				alpha = math.Clamp(math.Remap(t, tt, tt - 1, 1, 0), 0, 1)
+			else
+				alpha = 0
+			end
+			v:SetColor(Color(255, 255, 255, 255 * alpha))
+		end
+
 	end
 
 	if !GAMEMODE.Vars.CheckTime or GAMEMODE.Vars.CheckTime + 0.1 <= CurTime() then
 
-		for k, v in pairs(player.GetAll()) do
+		for k, v in pairs(daplayers) do
 
 			if v:Team() == TEAM_HIDING then
 
@@ -642,7 +662,7 @@ function GM:RoundThink()
 
 			--GAMEMODE:Music("pause")
 
-			if MapVote and GAMEMODE.Vars.Rounds > 8 then
+			if MapVote and GAMEMODE.Vars.Rounds > spb_rounds:GetInt() then
 				MapVote.Start(nil, nil, nil, {"spb_", "ph_"})
 			end
 
@@ -706,22 +726,27 @@ end
 
 function GM:SlowMo()
 
+	if !spb_slow_motion:GetBool() then
+		if game.GetTimeScale() != 1 then
+			game.SetTimeScale(1)
+		end
+		return
+	end
+
 	local ply
 
-	if spb_slow_motion:GetBool() then
-		for k, v in pairs(team.GetPlayers(TEAM_HIDING)) do
-			if v:Alive() and IsValid(ply) then
-				return
-			elseif v:Alive() then
-				if v.Clones and #v.Clones > 0 then
-					for k, v in pairs(v.Clones) do
-						if IsValid(v) then
-							return
-						end
+	for k, v in pairs(team.GetPlayers(TEAM_HIDING)) do
+		if v:Alive() and IsValid(ply) then
+			return
+		elseif v:Alive() then
+			if v.Clones and #v.Clones > 0 then
+				for k, v in pairs(v.Clones) do
+					if IsValid(v) then
+						return
 					end
 				end
-				ply = v
 			end
+			ply = v
 		end
 	end
 
@@ -1276,7 +1301,7 @@ concommand.Add("spb_dev_create_powerup", function(ply, cmd, args)
 end)
 
 function GM.PlayerMeta:SetPowerUP(powerupstr)
-	if GAMEMODE.PowerUps[powerupstr] and GAMEMODE.PowerUps[powerupstr][2] == self:Team() then
+	if GAMEMODE.PowerUps[powerupstr] and (GAMEMODE.PowerUps[powerupstr][2] == self:Team() or GAMEMODE.PowerUps[powerupstr][2] == 0) then
 		self.SPB_PowerUP = powerupstr
 		self:SetNWString("spb_PowerUP", powerupstr)
 		self.SPB_PowerUP_Delay = CurTime() + 3
@@ -1301,13 +1326,13 @@ function GM.PlayerMeta:UsePowerUP()
 			self.SprintV = 200
 			self:EmitSound("player/suit_sprint.wav", 75, 100, 1, CHAN_AUTO)
 			result = true
-		elseif self.SPB_PowerUP == "vdisguise" then
-			result = GAMEMODE:DisguiseAsProp(self)
 		elseif self.SPB_PowerUP == "radar" then
-			self:SetNWFloat("spb_RadarTime", CurTime() + 2)
+			self:SetNWFloat("spb_RadarTime", CurTime() + spb_powerup_radar_time:GetFloat())
 			result = true
 		elseif self.SPB_PowerUP == "trap" then
 			result = GAMEMODE:CreatePowerUP(self, "dothetrap")
+		elseif self.SPB_PowerUP == "cloak" then
+			result = self:PutCloak()
 		end
 		if result then
 			GAMEMODE:Log(self:GetName() .. " has used the " .. self.SPB_PowerUP .. " power-up", nil, true)
@@ -1324,7 +1349,7 @@ end
 
 function GM.PlayerMeta:PickPowerUP(powerupstr)
 	if !self:HasPowerUP() then
-		if powerupstr and GAMEMODE.PowerUps[powerupstr] and GAMEMODE.PowerUps[powerupstr][2] == self:Team() then
+		if powerupstr and GAMEMODE.PowerUps[powerupstr] and (GAMEMODE.PowerUps[powerupstr][2] == self:Team() or GAMEMODE.PowerUps[powerupstr][2] == 0) then
 			return self:SetPowerUP(powerupstr)
 		end
 		return self:SetPowerUP(GAMEMODE:SelectRandomPowerUP(self))
@@ -1341,7 +1366,21 @@ function GM.PlayerMeta:DropPowerUP()
 	return false
 end
 
-function GM:DisguiseAsProp(ply)
-	if ply:Team() != TEAM_HIDING or !ply:OnGround() then return false end
-	return nil
+function GM.PlayerMeta:PutCloak()
+	if self:Alive() then
+		local t = spb_powerup_cloak_time:GetFloat()
+		local uid = self:UserID()
+		self:SetRenderMode(RENDERMODE_TRANSALPHA)
+		self.spb_CloakTime = CurTime() + t
+		self:SetNWFloat("spb_CloakTime", self.spb_CloakTime)
+		timer.Create("spb_uncloak_" .. uid, t, 1, function()
+			if IsValid(self) then
+				self:SetRenderMode(RENDERMODE_NORMAL)
+				self.spb_CloakTime = nil
+			end
+			timer.Remove("spb_uncloak_" .. uid)
+		end)
+		return true
+	end
+	return false
 end

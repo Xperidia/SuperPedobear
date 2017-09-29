@@ -133,7 +133,7 @@ function GM:Menu()
 
 		local configlbl = vgui.Create("DLabel")
 		configlbl:SetParent(spb_MenuF.config)
-		configlbl:SetText("Configuration")
+		configlbl:SetText("Personal configuration")
 		configlbl:SetPos(10, 5)
 		configlbl:SetDark(1)
 		configlbl:SizeToContents()
@@ -221,7 +221,7 @@ function GM:Menu()
 		spb_MenuF.AdminCFG:SetSize(305, 215)
 
 		local adminmenulbl = vgui.Create("DLabel", spb_MenuF.AdminCFG)
-		adminmenulbl:SetText("Quick Admin Configs & Debug Utils")
+		adminmenulbl:SetText("Admin configuration")
 		adminmenulbl:SetPos(10, 5)
 		adminmenulbl:SetDark(1)
 		adminmenulbl:SizeToContents()
@@ -240,8 +240,10 @@ function GM:Menu()
 			eh = eh + 20
 		end
 
-		docheckbox("Dev mode (You shoudn't use this)", "spb_enabledevmode")
+		docheckbox("Dev mode (You really shoudn't use this)", "spb_enabledevmode")
 		docheckbox("Save chances", "spb_save_chances")
+		docheckbox("Slow motion effect", "spb_slow_motion")
+		docheckbox("Rainbow color effect", "spb_rainbow_effect")
 
 
 	elseif IsValid(spb_MenuF) then
@@ -301,7 +303,12 @@ function GM:SplashScreen()
 		.. '</table>");')
 		spb_SplashScreenF.SplashScreen:Call('$("#changelog").append("<h2><u>Changelog V' .. (GAMEMODE.Version or '?') .. '</u></h2><table>'
 		.. "<tr><td>> Now with taunt packs!</td></tr>"
+		.. "<tr><td>> New cloak Power-UP!</td></tr>"
 		.. "<tr><td>> Added cvar spb_slow_motion</td></tr>"
+		.. "<tr><td>> Added cvar spb_rounds</td></tr>"
+		.. "<tr><td>> Added cvar spb_rainbow_effect</td></tr>"
+		.. "<tr><td>> Added cvar spb_powerup_radar_time</td></tr>"
+		.. "<tr><td>> Added cvar spb_powerup_cloak_time</td></tr>"
 		.. '</table>");')
 
 		local closebtn = vgui.Create("DButton", spb_SplashScreenF)

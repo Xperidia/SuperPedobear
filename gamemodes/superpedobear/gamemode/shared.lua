@@ -6,7 +6,7 @@ include("player_class/player_seeker.lua")
 GM.Name 		= "Super Pedobear"
 GM.ShortName 	= "SuperPedobear"
 GM.Author 		= "VictorienXP@Xperidia"
-GM.Website 		= "steamcommunity.com/sharedfiles/filedetails/?id=628449407"
+GM.Website 		= "xperi.link/SuperPBear"
 GM.Version 		= 0.30
 GM.TeamBased 	= true
 
@@ -161,6 +161,9 @@ function GM:Initialize()
 	end
 
 	if SERVER then
+		if GetConVar("sv_loadingurl"):GetString() == "" then --Use the Xperidia's loading screen if no other loading screen is defined... Because it shows more information than the current default of Garry's Mod...
+			RunConsoleCommand("sv_loadingurl", "https://xperidia.com/GMOD/loading/?auto")
+		end
 		RunConsoleCommand("sv_playermodel_selector_force", "0") --This is needed so bears won't get overriden
 	end
 
@@ -170,6 +173,11 @@ function GM:Initialize()
 end
 
 function GM:ShutDown()
+	if SERVER then
+		if GetConVar("sv_loadingurl"):GetString() == "https://xperidia.com/GMOD/loading/?auto" then --Put back the default Garry's Mod loading screen...
+			RunConsoleCommand("sv_loadingurl", "")
+		end
+	end
 end
 
 function GM:BuildMusicIndex()

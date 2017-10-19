@@ -1247,29 +1247,6 @@ end
 
 function GM:Stats()
 
-	local steamid = LocalPlayer():SteamID64()
-
-	if !file.IsDir("superpedobear/stats", "DATA") then
-		file.CreateDir("superpedobear/stats")
-	end
-
-	local needstat = !file.Exists("superpedobear/stats/" .. steamid .. ".txt", "DATA")
-
-	if needstat then
-		http.Post("https://www.xperidia.com/UCP/stats.php", { steamid = steamid, zone = "pedo" },
-		function(responseText, contentLength, responseHeaders, statusCode)
-			if statusCode == 200 then
-				file.Write("superpedobear/stats/" .. steamid .. ".txt", "")
-				GAMEMODE:Log(responseText)
-			else
-				GAMEMODE:Log("Error while registering the gamemode (ERROR " .. statusCode .. ")")
-			end
-		end,
-		function(errorMessage)
-			GAMEMODE:Log(errorMessage)
-		end)
-	end
-
 	local function welcomehandle()
 		GAMEMODE:SplashScreen()
 	end

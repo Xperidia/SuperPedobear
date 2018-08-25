@@ -42,15 +42,15 @@ function SWEP:PrimaryAttack()
 
 		if (!trace.HitNonWorld) then
 			self.laste = nil
-			self.Owner:SetNWEntity("PedoWelding", self.Owner)
-			self.Owner:SetNWInt("PedoWeldingState", 0)
+			self.Owner:SetNWEntity("spb_Welding", self.Owner)
+			self.Owner:SetNWInt("spb_WeldingState", 0)
 			return
 		end
 
 		if IsValid(trace.Entity) and trace.Entity:IsPlayer() then return end
 
 		if trace.HitPos:Distance(trace.StartPos) > 100 then
-			self.Owner:SetNWInt("PedoWeldingState", 2)
+			self.Owner:SetNWInt("spb_WeldingState", 2)
 			return
 		end
 
@@ -63,7 +63,7 @@ function SWEP:PrimaryAttack()
 		else
 
 			if trace.Entity:GetPos():Distance(self.laste[1]:GetPos()) > 100 then
-				self.Owner:SetNWInt("PedoWeldingState", 3)
+				self.Owner:SetNWInt("spb_WeldingState", 3)
 				return
 			end
 
@@ -77,11 +77,11 @@ function SWEP:PrimaryAttack()
 		end
 
 		if self.laste and IsValid(self.laste[1]) then
-			self.Owner:SetNWEntity("PedoWelding", self.laste[1])
-			self.Owner:SetNWInt("PedoWeldingState", 1)
+			self.Owner:SetNWEntity("spb_Welding", self.laste[1])
+			self.Owner:SetNWInt("spb_WeldingState", 1)
 		else
-			self.Owner:SetNWEntity("PedoWelding", self.Owner)
-			self.Owner:SetNWInt("PedoWeldingState", 0)
+			self.Owner:SetNWEntity("spb_Welding", self.Owner)
+			self.Owner:SetNWInt("spb_WeldingState", 0)
 		end
 
 	end
@@ -91,8 +91,8 @@ end
 function SWEP:SecondaryAttack()
 	if SERVER then
 		self.laste = nil
-		self.Owner:SetNWEntity("PedoWelding", self.Owner)
-		self.Owner:SetNWInt("PedoWeldingState", 0)
+		self.Owner:SetNWEntity("spb_Welding", self.Owner)
+		self.Owner:SetNWInt("spb_WeldingState", 0)
 		local tr = util.GetPlayerTrace(self.Owner)
 		local trace = util.TraceLine(tr)
 		if (!trace.Hit) then return end
@@ -110,8 +110,8 @@ end
 function SWEP:OnRemove()
 	if SERVER then
 		self.laste = nil
-		self.Owner:SetNWEntity("PedoWelding", self.Owner)
-		self.Owner:SetNWInt("PedoWeldingState", 0)
+		self.Owner:SetNWEntity("spb_Welding", self.Owner)
+		self.Owner:SetNWInt("spb_WeldingState", 0)
 	end
 end
 
@@ -122,8 +122,8 @@ end
 function SWEP:OnDrop()
 	if SERVER then
 		self.laste = nil
-		self.Owner:SetNWEntity("PedoWelding", self.Owner)
-		self.Owner:SetNWInt("PedoWeldingState", 0)
+		self.Owner:SetNWEntity("spb_Welding", self.Owner)
+		self.Owner:SetNWInt("spb_WeldingState", 0)
 	end
 	self:Remove()
 end

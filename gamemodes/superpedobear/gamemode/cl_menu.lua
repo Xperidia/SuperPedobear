@@ -28,6 +28,7 @@ local function changelog()
 		"You can now open the Enhanced PlayerModel Selector with " .. GAMEMODE:CheckBind("phys_swap") .. " (Check out controls)",
 		"Quick taunt now works with the numpad too",
 		"You can now do a random taunt with 0",
+		"The welding state has been fixed",
 		"The Gamemode menu and the Splash Screen have been updated",
 		"Added cvar spb_shop_base_price",
 		"A huge bunch of changes and behind the scenes stuff"

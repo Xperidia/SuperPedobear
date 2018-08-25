@@ -7,7 +7,7 @@ GM.Name 		= "Super Pedobear"
 GM.ShortName 	= "SuperPedobear"
 GM.Author 		= "VictorienXP@Xperidia"
 GM.Website 		= "xperi.link/SuperPBear"
-GM.Version 		= 0.301
+GM.Version 		= 0.302
 GM.TeamBased 	= true
 
 TEAM_HIDING	= 1
@@ -362,7 +362,7 @@ function GM:PlayerFootstep(ply, pos, foot, sound, volume, filter)
 	end
 end
 
-function GM:GetPowerUpPrice(id, ply)
+function GM:GetPowerUpPrice(id, ply, ignorereduc)
 	local price = spb_shop_base_price:GetInt()
 	local ignoreadd = false
 	if price == 0 then
@@ -374,7 +374,7 @@ function GM:GetPowerUpPrice(id, ply)
 	if !ignoreadd and GAMEMODE.PowerUps[id] and GAMEMODE.PowerUps[id][5] then
 		price = price + GAMEMODE.PowerUps[id][5]
 	end
-	if ply:GetNWInt("XperidiaRank", 0) > 0 then
+	if !ignorereduc and ply:GetNWInt("XperidiaRank", 0) > 0 then
 		price = price / 2
 	end
 	return math.Round(price)

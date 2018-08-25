@@ -15,6 +15,17 @@ function GM:Van()
 	local scaleH = function(px) return ScrH() * (px / 1080) end
 	local buttons = {}
 
+	local function buypowerup(pu)
+		local price = GAMEMODE:GetPowerUpPrice(pu, ply)
+		if ply:Alive() and price <= cur then
+			RunConsoleCommand("spb_powerup_buy", pu)
+			surface.PlaySound("garrysmod/ui_click.wav")
+			GAMEMODE.VanFrame:DoClose()
+		else
+			surface.PlaySound("common/wpn_denyselect.wav")
+		end
+	end
+
 	GAMEMODE.VanFrame = vgui.Create("DFrame")
 	local self = GAMEMODE.VanFrame
 	self:SetPos(0, ScrH() / 2 - h / 2)
@@ -40,6 +51,20 @@ function GM:Van()
 	function self:Think(self, w, h)
 		if openanim:Active() then openanim:Run() end
 		if closeanim:Active() then closeanim:Run() end
+		if GAMEMODE.Vars.NInputs[10] != true then
+			local i = 1
+			for k, v in pairs(GAMEMODE.PowerUps) do
+				if v[2] == ply:Team() or v[2] == 0 then
+					if GAMEMODE.Vars.NInputs[i] == true and GAMEMODE.Vars.LNInputs[i] != true then
+						buypowerup(k)
+						break
+					end
+					i = i + 1
+				end
+			end
+		elseif GAMEMODE.Vars.NInputs[10] == true and GAMEMODE.Vars.LNInputs[10] != true then
+			buypowerup("random")
+		end
 	end
 	self.DoClose = function()
 		if closeanim:Active() then
@@ -60,8 +85,8 @@ function GM:Van()
 	if !GetConVar("spb_cl_hide_tips"):GetBool() then
 		self.backtipclose = vgui.Create("DPanel")
 		self.backtipclose:SetParent(self)
-		self.backtipclose:SetPos(scaleW(800), scaleH(490))
-		self.backtipclose:SetSize(scaleW(480), scaleH(32))
+		self.backtipclose:SetPos(scaleW(800), scaleH(450))
+		self.backtipclose:SetSize(scaleW(530), scaleH(100))
 		self.backtipclose:SetBackgroundColor(Color(0, 0, 0, 200))
 
 		self.tipclose = vgui.Create("DLabel")
@@ -69,7 +94,7 @@ function GM:Van()
 		self.tipclose:Dock(FILL)
 		self.tipclose:SetContentAlignment(5)
 		self.tipclose:SetFont("spb_High_Scaled")
-		self.tipclose:SetText("Don't forget to press " .. GAMEMODE:CheckBind("+menu") .. " to close the shop.")
+		self.tipclose:SetText("You can press 1-9 to quickly buy a Power-UP.\nDon't forget to press " .. GAMEMODE:CheckBind("+menu") .. " to close the shop.\nPremium users gets Power-UPs to half the price!")
 	end
 
 	self.backpt = vgui.Create("DPanel")
@@ -168,15 +193,32 @@ function GM:Van()
 		self.txt:SetText("You can't get Power-UPs while dead")
 	end
 
+	local i = 1
 	for k, v in pairs(GAMEMODE.PowerUps) do
 		if v[2] == ply:Team() or v[2] == 0 then
 
 			local price = GAMEMODE:GetPowerUpPrice(k, ply)
-			local canafford = price <= cur
+			local nprice = GAMEMODE:GetPowerUpPrice(k, ply, true)
 
 			local item = vgui.Create("DPanel", self.store.content)
 			item:SetSize(scaleH(220), scaleH(220))
 			item:SetPaintBackground(false)
+
+			local itemid = vgui.Create("DLabel", item)
+			itemid:Dock(FILL)
+			itemid:SetContentAlignment(7)
+			itemid:SetFont("spb_High_Scaled")
+			itemid:SetText(i)
+
+			local itemname = vgui.Create("DLabel", item)
+			itemname:Dock(FILL)
+			itemname:SetContentAlignment(2)
+			itemname:SetFont("spb_Normal_Scaled")
+			if price != nprice then
+				itemname:SetText(price .. " victims instead of " .. nprice)
+			else
+				itemname:SetText(price .. " victims")
+			end
 
 			local btn = vgui.Create("DImageButton", item)
 			btn:Dock(FILL)
@@ -187,13 +229,7 @@ function GM:Van()
 				btn:SetColor(Color(52, 190, 236, 255))
 			end
 			btn.DoClick = function()
-				if canafford and ply:Alive() then
-					RunConsoleCommand("spb_powerup_buy", k)
-					surface.PlaySound("garrysmod/ui_click.wav")
-					GAMEMODE.VanFrame:DoClose()
-				else
-					surface.PlaySound("common/wpn_denyselect.wav")
-				end
+				buypowerup(k)
 			end
 			btn.OnCursorEntered = function()
 				self.txt:SetText("Buy " .. v[1] .. " for " .. price .. " victims")
@@ -210,6 +246,7 @@ function GM:Van()
 
 			self.store.content:AddPanel(item)
 			buttons[k] = item
+			i = i + 1
 
 		end
 	end

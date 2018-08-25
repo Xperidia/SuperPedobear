@@ -1399,7 +1399,7 @@ concommand.Add("spb_powerup_buy", function(ply, cmd, args)
 			ok = ply:PickPowerUP(pu)
 			if ok then
 				ply:SetNWInt("spb_VictimsCurrency", cur - price)
-				GAMEMODE:Log(ply:GetName() .. " has bought the " .. pu .. " power-up for " .. price .. " victims (Balance changes: " .. cur .. " => " .. ply:GetNWInt("spb_VictimsCurrency", 0) .. ")")
+				GAMEMODE:Log(ply:GetName() .. " has bought a " .. (pu or "random") .. " power-up for " .. price .. " victims (Balance changes: " .. cur .. " => " .. ply:GetNWInt("spb_VictimsCurrency", 0) .. ")")
 			end
 		end
 	end

@@ -1095,30 +1095,43 @@ function GM:Think()
 
 	local ply = LocalPlayer()
 
+	GAMEMODE.Vars.LNInputs = {
+								GAMEMODE.Vars.NInputs[1] or false,
+								GAMEMODE.Vars.NInputs[2] or false,
+								GAMEMODE.Vars.NInputs[3] or false,
+								GAMEMODE.Vars.NInputs[4] or false,
+								GAMEMODE.Vars.NInputs[5] or false,
+								GAMEMODE.Vars.NInputs[6] or false,
+								GAMEMODE.Vars.NInputs[7] or false,
+								GAMEMODE.Vars.NInputs[8] or false,
+								GAMEMODE.Vars.NInputs[9] or false,
+								GAMEMODE.Vars.NInputs[10] or false
+							}
+	GAMEMODE.Vars.NInputs = {
+								input.IsKeyDown(KEY_1) or input.IsKeyDown(KEY_PAD_1),
+								input.IsKeyDown(KEY_2) or input.IsKeyDown(KEY_PAD_2),
+								input.IsKeyDown(KEY_3) or input.IsKeyDown(KEY_PAD_3),
+								input.IsKeyDown(KEY_4) or input.IsKeyDown(KEY_PAD_4),
+								input.IsKeyDown(KEY_5) or input.IsKeyDown(KEY_PAD_5),
+								input.IsKeyDown(KEY_6) or input.IsKeyDown(KEY_PAD_6),
+								input.IsKeyDown(KEY_7) or input.IsKeyDown(KEY_PAD_7),
+								input.IsKeyDown(KEY_8) or input.IsKeyDown(KEY_PAD_8),
+								input.IsKeyDown(KEY_9) or input.IsKeyDown(KEY_PAD_9),
+								input.IsKeyDown(KEY_0) or input.IsKeyDown(KEY_PAD_0)
+						}
+
 	if ply:Alive() and (ply:Team() == TEAM_HIDING or ply:Team() == TEAM_SEEKER) and !GAMEMODE.ChatOpen and !gui.IsGameUIVisible() and !IsValid(GAMEMODE.VanFrame) then
 
 		local sel = 0
-		local inputs = {
-							input.IsKeyDown(KEY_1) or input.IsKeyDown(KEY_PAD_1),
-							input.IsKeyDown(KEY_2) or input.IsKeyDown(KEY_PAD_2),
-							input.IsKeyDown(KEY_3) or input.IsKeyDown(KEY_PAD_3),
-							input.IsKeyDown(KEY_4) or input.IsKeyDown(KEY_PAD_4),
-							input.IsKeyDown(KEY_5) or input.IsKeyDown(KEY_PAD_5),
-							input.IsKeyDown(KEY_6) or input.IsKeyDown(KEY_PAD_6),
-							input.IsKeyDown(KEY_7) or input.IsKeyDown(KEY_PAD_7),
-							input.IsKeyDown(KEY_8) or input.IsKeyDown(KEY_PAD_8),
-							input.IsKeyDown(KEY_9) or input.IsKeyDown(KEY_PAD_9),
-							input.IsKeyDown(KEY_0) or input.IsKeyDown(KEY_PAD_0)
-						}
 
-		if inputs[10] != true then
-			for k, v in pairs(inputs) do
-				if v == true then
+		if GAMEMODE.Vars.NInputs[10] != true then
+			for k, v in pairs(GAMEMODE.Vars.NInputs) do
+				if v == true and GAMEMODE.Vars.LNInputs[k] != true then
 					sel = k
 					break
 				end
 			end
-		elseif inputs[10] == true then
+		elseif GAMEMODE.Vars.NInputs[10] == true and GAMEMODE.Vars.LNInputs[10] != true then
 			local selt = {}
 			for k, v in pairs(GAMEMODE.Taunts) do
 				if v[3] == ply:Team() or v[3] == 0 then

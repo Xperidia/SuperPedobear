@@ -1137,7 +1137,7 @@ end
 function GM:RetrieveXperidiaAccountRank(ply)
 	if !IsValid(ply) then return end
 	if ply:IsBot() then return end
-	if !ply.XperidiaRankLastTime or ply.XperidiaRankLastTime + 3600 < SysTime() then
+	if !ply.XperidiaRankLastTime or ply.XperidiaRankLastTime + 300 < SysTime() then
 		local steamid = ply:SteamID64()
 		GAMEMODE:Log("Retrieving the Xperidia Rank for " .. ply:GetName() .. "...", nil, true)
 		http.Post("https://api.xperidia.com/account/rank/v1", {steamid = steamid},
@@ -1289,7 +1289,7 @@ function GM:CreatePowerUP(ent, powerupstr, respawn)
 	else
 		PowerUp.ForcedPowerUP = powerupstr
 		PowerUp.IsRespawn = respawn
-		PowerUp.WasDropped = ent:IsPlayer()
+		PowerUp.WasDropped = ent
 	end
 	PowerUp:Spawn()
 	return PowerUp
@@ -1301,6 +1301,7 @@ concommand.Add("spb_dev_create_powerup", function(ply, cmd, args)
 end)
 
 function GM.PlayerMeta:SetPowerUP(powerupstr)
+	local before = self.SPB_PowerUP
 	if GAMEMODE.PowerUps[powerupstr] and (GAMEMODE.PowerUps[powerupstr][2] == self:Team() or GAMEMODE.PowerUps[powerupstr][2] == 0) then
 		self.SPB_PowerUP = powerupstr
 		self:SetNWString("spb_PowerUP", powerupstr)
@@ -1311,7 +1312,7 @@ function GM.PlayerMeta:SetPowerUP(powerupstr)
 	elseif powerupstr == "none" then
 		self.SPB_PowerUP = powerupstr
 		self:SetNWString("spb_PowerUP", powerupstr)
-		GAMEMODE:Log(self:GetName() .. " has lost their power-up", nil, true)
+		GAMEMODE:Log(self:GetName() .. " has lost the " .. before .. " power-up", nil, true)
 		return self.SPB_PowerUP
 	end
 	return nil
@@ -1384,3 +1385,28 @@ function GM.PlayerMeta:PutCloak()
 	end
 	return false
 end
+
+concommand.Add("spb_powerup_buy", function(ply, cmd, args)
+	if IsValid(ply) and ply:Alive() then
+		local pu = args[1]
+		local price = GAMEMODE:GetPowerUpPrice(pu, ply)
+		local cur = tonumber(ply:GetNWInt("spb_VictimsCurrency", 0))
+		local ok
+		if cur >= price then
+			if ply:HasPowerUP() then
+				ply:DropPowerUP()
+			end
+			ok = ply:PickPowerUP(pu)
+			if ok then
+				ply:SetNWInt("spb_VictimsCurrency", cur - price)
+				GAMEMODE:Log(ply:GetName() .. " has bought the " .. pu .. " power-up for " .. price .. " victims (Balance changes: " .. cur .. " => " .. ply:GetNWInt("spb_VictimsCurrency", 0) .. ")")
+			end
+		end
+	end
+end)
+
+concommand.Add("spb_powerup_drop", function(ply, cmd, args)
+	if IsValid(ply) then
+		ply:DropPowerUP()
+	end
+end)

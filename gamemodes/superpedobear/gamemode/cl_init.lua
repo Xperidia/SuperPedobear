@@ -88,6 +88,21 @@ surface.CreateFont("spb_HUDname", {
 	additive = false,
 	outline = false,
 })
+surface.CreateFont("spb_Normal_Scaled", {
+	font = "Roboto",
+	size = ScreenScale(8),
+	weight = 500
+})
+surface.CreateFont("spb_High_Scaled", {
+	font = "Roboto",
+	size = ScreenScale(10),
+	weight = 500
+})
+surface.CreateFont("spb_Big_Scaled", {
+	font = "Roboto",
+	size = ScreenScale(16),
+	weight = 500
+})
 
 net.Receive("spb_PlayerStats", function( len )
 	GAMEMODE.Vars.victims = net.ReadInt(32)
@@ -554,8 +569,12 @@ function GM:HUDPaint()
 
 	if plyTeam != TEAM_UNASSIGNED and splyTeam != TEAM_SPECTATOR then
 		local splynick = GAMEMODE:LimitString(sply:Nick(), 200, "spb_HUDname")
+		local rankname = GAMEMODE:LimitString(sply:GetNWString("XperidiaRankName", nil) or "Normal user", 200, "spb_HUDname")
+		local rankcolor = string.ToColor(sply:GetNWString("XperidiaRankColor", "255 255 255 255"))
 		draw.DrawText(splynick, "spb_HUDname", 100 + 1 + hudoffset, ScrH() - 200 + 1 - hudoffset, Color(0, 0, 0, 255), TEXT_ALIGN_CENTER)
 		draw.DrawText(splynick, "spb_HUDname", 100 + hudoffset, ScrH() - 200 - hudoffset, col, TEXT_ALIGN_CENTER)
+		draw.DrawText(rankname, "spb_HUDname", 100 + 1 + hudoffset, ScrH() - 20 + 1 - hudoffset, Color(0, 0, 0, 255), TEXT_ALIGN_CENTER)
+		draw.DrawText(rankname, "spb_HUDname", 100 + hudoffset, ScrH() - 20 - hudoffset, rankcolor, TEXT_ALIGN_CENTER)
 	end
 
 
@@ -1076,20 +1095,16 @@ function GM:Think()
 
 	local ply = LocalPlayer()
 
-	if ply:Alive() and (ply:Team() == TEAM_HIDING or ply:Team() == TEAM_SEEKER) and !GAMEMODE.ChatOpen and !gui.IsGameUIVisible() then
+	if ply:Alive() and (ply:Team() == TEAM_HIDING or ply:Team() == TEAM_SEEKER) and !GAMEMODE.ChatOpen and !gui.IsGameUIVisible() and !IsValid(GAMEMODE.VanFrame) then
 
 		local inputs = { input.IsKeyDown(KEY_1), input.IsKeyDown(KEY_2), input.IsKeyDown(KEY_3), input.IsKeyDown(KEY_4), input.IsKeyDown(KEY_5), input.IsKeyDown(KEY_6), input.IsKeyDown(KEY_7), input.IsKeyDown(KEY_8), input.IsKeyDown(KEY_9) }
 		local sel = 0
 
 		for k,v in pairs(inputs) do
-
 			if v == true then
-
 				sel = k
 				break
-
 			end
-
 		end
 
 		GAMEMODE:StartTaunt(sel)
@@ -1099,6 +1114,18 @@ function GM:Think()
 	if ply:Team() == TEAM_HIDING and ply:Alive() and GAMEMODE.Vars.Round.Start and !GAMEMODE.Vars.Round.End and !GAMEMODE.Vars.Round.TempEnd then
 		GAMEMODE:HeartBeat(ply)
 	end
+
+end
+
+function GM:PlayerBindPress(ply, bind, down)
+
+	if down and bind == "gmod_undo" then
+		RunConsoleCommand("spb_powerup_drop")
+	elseif down and bind == "phys_swap" then
+		RunConsoleCommand("playermodel_selector")
+	end
+
+	return false
 
 end
 

@@ -20,6 +20,7 @@ function ENT:Initialize()
 	self:SetMaterial("models/wireframe")
 	self:SetPos(self:GetLePos())
 	self:SetAngles(Angle(0, 0, 90))
+	self.CTime = CurTime()
 	if SERVER then
 		if self.IsRespawn then
 			self:EmitSound("npc/roller/mine/combine_mine_deploy1.wav", 75, 100, 1, CHAN_AUTO)
@@ -87,6 +88,7 @@ end
 
 function ENT:PickUP(ent)
 	if IsValid(ent) and ent:IsPlayer() and ent:Alive() then
+		if ent == self.WasDropped and self.CTime + 0.5 > CurTime() then return end
 		if !self.Trap then
 			local result = ent:PickPowerUP(self.ForcedPowerUP)
 			if result or result == nil then

@@ -1,3 +1,36 @@
+local function binds()
+	return {
+		{GAMEMODE:CheckBind("gm_showhelp"), "Gamemode menu", "Show help"},
+		{GAMEMODE:CheckBind("gm_showteam"), "Change team", "Team menu"},
+		{GAMEMODE:CheckBind("gm_showspare1"), "Taunt menu", "Spare 1"},
+		{GAMEMODE:CheckBind("gm_showspare2"), "Jukebox/music menu", "Spare 2"},
+		{GAMEMODE:CheckBind("+reload"), "Use Power-UP", "Reload weapon"},
+		{GAMEMODE:CheckBind("+menu"), "Shop", "Show Menu"},
+		{GAMEMODE:CheckBind("+menu_context"), "Toggle thirdperson", "Show Context Menu"},
+		{GAMEMODE:CheckBind("gmod_undo"), "Drop Power-UP", "Undo"},
+		{GAMEMODE:CheckBind("phys_swap"), "Enhanced PlayerModel Selector", "Gravity Gun"},
+		{"1-9", "Quick taunt", ""},
+		{GAMEMODE:CheckBind("+forward"), "Move forward", "Move forward"},
+		{GAMEMODE:CheckBind("+moveleft"), "Move left", "Move left (stafe)"},
+		{GAMEMODE:CheckBind("+moveright"), "Move right", "Move right (strafe)"},
+		{GAMEMODE:CheckBind("+back"), "Move back", "Move back"},
+		{GAMEMODE:CheckBind("+duck"), "Crouch", "Duck"},
+		{GAMEMODE:CheckBind("+jump"), "Jump", "Jump"},
+		{GAMEMODE:CheckBind("+speed"), "Sprint", "Sprint (Move Quickly)"}
+	}
+end
+local function changelog()
+	return {
+		"The shop is now open!",
+		"Xperidia's Premium Members gets Power-UPs half the normal price!",
+		"You can now drop Power-UPs with " .. GAMEMODE:CheckBind("gmod_undo") .. " (Check out controls)",
+		"You can now open the Enhanced PlayerModel Selector with " .. GAMEMODE:CheckBind("phys_swap") .. " (Check out controls)",
+		"The Gamemode menu and the Splash Screen have been updated",
+		"Added cvar spb_shop_base_price",
+		"A huge bunch of changes and behind the scenes stuff"
+	}
+end
+
 function GM:Menu()
 
 	if !IsValid(spb_MenuF) and !engine.IsPlayingDemo() then
@@ -45,22 +78,16 @@ function GM:Menu()
 
 		local onelbl = vgui.Create("DLabel")
 		onelbl:SetParent(spb_MenuF.one)
-		onelbl:SetText( "You're playing " .. (GAMEMODE.Name or "?") )
+		onelbl:SetText("You're playing " .. (GAMEMODE.Name or "?") .. " V" .. (GAMEMODE.Version or "?"))
 		onelbl:SetPos(10, 5)
 		onelbl:SetDark(1)
 		onelbl:SizeToContents()
 
 		local desclbl = vgui.Create("DLabel")
 		desclbl:SetParent(spb_MenuF.one)
-		desclbl:SetText("Some controls:\n" .. GAMEMODE:CheckBind("gm_showhelp") .. ": This window\n"
-		.. GAMEMODE:CheckBind("gm_showteam") .. ": Change team\n"
-		.. GAMEMODE:CheckBind("gm_showspare1") .. ": Taunt menu\n"
-		.. GAMEMODE:CheckBind("gm_showspare2") .. ": Jukebox/music menu\n"
-		.. GAMEMODE:CheckBind("+menu") .. ": Shop\n"
-		.. GAMEMODE:CheckBind("+menu_context") .. ": Toggle thirdperson\n"
-		.. "1-9: Quick taunt")
 		desclbl:SetPos(20, 30)
 		desclbl:SetDark(1)
+		desclbl:SetText("Gamemode made by VictorienXP with love\nWith arts from Pho3 and Wubsy\n\n\nIf you need help or anything,\nplease go to Xperidia's Discord server discord.gg/jtUtYDa\n\n\nSupport Xperidia for more stuff and updates!\nGet a Premium Rank in Xperidia.com/Premium")
 		desclbl:SizeToContents()
 
 		local xpucp = vgui.Create( "DButton" )
@@ -100,28 +127,6 @@ function GM:Menu()
 		Workshop:SetSize(125, 20)
 		Workshop.DoClick = function()
 			gui.OpenURL("http://" .. GAMEMODE.Website)
-			spb_MenuF:Close()
-		end
-
-		local playermodelselection = vgui.Create("DButton")
-		playermodelselection:SetParent(spb_MenuF.one)
-		playermodelselection:SetText("Outfitter")
-		playermodelselection:SetPos(145, 40)
-		playermodelselection:SetSize(160, 20)
-		playermodelselection:SetEnabled(concommand.GetTable()["outfitter_open"])
-		playermodelselection.DoClick = function()
-			RunConsoleCommand("outfitter_open")
-			spb_MenuF:Close()
-		end
-
-		local playermodelselection = vgui.Create("DButton")
-		playermodelselection:SetParent(spb_MenuF.one)
-		playermodelselection:SetText("Enhanced PlayerModel Selector")
-		playermodelselection:SetPos(145, 60)
-		playermodelselection:SetSize(160, 20)
-		playermodelselection:SetEnabled(concommand.GetTable()["playermodel_selector"] and (GetConVar("sv_playermodel_selector_gamemodes"):GetBool() or LocalPlayer():IsAdmin()))
-		playermodelselection.DoClick = function()
-			RunConsoleCommand("playermodel_selector")
 			spb_MenuF:Close()
 		end
 
@@ -185,33 +190,32 @@ function GM:Menu()
 		hudoffset:SetConVar("spb_cl_hud_offset")
 
 
-		spb_MenuF.MusicL = vgui.Create("DPanel")
-		spb_MenuF.MusicL:SetParent(spb_MenuF)
-		spb_MenuF.MusicL:SetPos(10, 255)
-		spb_MenuF.MusicL:SetSize(305, 215)
+		spb_MenuF.Controls = vgui.Create("DPanel")
+		spb_MenuF.Controls:SetParent(spb_MenuF)
+		spb_MenuF.Controls:SetPos(10, 255)
+		spb_MenuF.Controls:SetSize(305, 215)
 
-		spb_MenuF.MusicL.lbl = vgui.Create("DLabel")
-		spb_MenuF.MusicL.lbl:SetParent(spb_MenuF.MusicL)
-		spb_MenuF.MusicL.lbl:SetText("Music stuff")
-		spb_MenuF.MusicL.lbl:SetPos(10, 5)
-		spb_MenuF.MusicL.lbl:SetSize(289, 10)
-		spb_MenuF.MusicL.lbl:SetDark(1)
+		spb_MenuF.Controls.lbl = vgui.Create("DLabel")
+		spb_MenuF.Controls.lbl:SetParent(spb_MenuF.Controls)
+		spb_MenuF.Controls.lbl:SetText("Controls")
+		spb_MenuF.Controls.lbl:SetPos(10, 5)
+		spb_MenuF.Controls.lbl:SetSize(289, 10)
+		spb_MenuF.Controls.lbl:SetDark(1)
 
-		local desclbl = vgui.Create("DLabel")
-		desclbl:SetParent(spb_MenuF.MusicL)
-		desclbl:SetText("All the music related stuff has been moved!\nPress F4 to go to all music related stuff!")
-		desclbl:SetPos(20, 30)
-		desclbl:SetDark(1)
-		desclbl:SizeToContents()
+		spb_MenuF.Controls.List = vgui.Create("DListView", spb_MenuF.Controls)
+		spb_MenuF.Controls.List:SetPos(0, 20)
+		spb_MenuF.Controls.List:SetSize(305, 195)
+		spb_MenuF.Controls.List:SetMultiSelect(false)
+		local key = spb_MenuF.Controls.List:AddColumn("KEY")
+		key:SetMinWidth(40)
+		key:SetMinWidth(60)
+		local action = spb_MenuF.Controls.List:AddColumn("Action")
+		action:SetMinWidth(100)
+		local bindname = spb_MenuF.Controls.List:AddColumn("Options bind name")
+		bindname:SetMinWidth(100)
 
-		local gof4 = vgui.Create("DButton")
-		gof4:SetParent(spb_MenuF.MusicL)
-		gof4:SetText("Go to the music window")
-		gof4:SetPos(90, 100)
-		gof4:SetSize(125, 20)
-		gof4.DoClick = function()
-			GAMEMODE:JukeboxMenu()
-			spb_MenuF:Close()
+		for k, v in pairs(binds()) do
+			spb_MenuF.Controls.List:AddLine(v[1], v[2], v[3])
 		end
 
 
@@ -271,12 +275,6 @@ function GM:SplashScreen()
 		--spb_SplashScreenF:SetKeyboardInputEnabled(false)
 		--spb_SplashScreenF:SetMouseInputEnabled(false)
 
-		spb_SplashScreenF.DI = vgui.Create("DHTML")
-		spb_SplashScreenF.DI:SetParent(spb_SplashScreenF)
-		spb_SplashScreenF.DI:SetPos(0, 0)
-		spb_SplashScreenF.DI:SetSize(0, 0)
-		spb_SplashScreenF.DI:OpenURL("https://discord.gg/jtUtYDa")
-
 		spb_SplashScreenF.SplashScreen = vgui.Create("DHTML")
 		spb_SplashScreenF.SplashScreen:SetParent(spb_SplashScreenF)
 		spb_SplashScreenF.SplashScreen:SetPos(0, 0)
@@ -284,32 +282,18 @@ function GM:SplashScreen()
 		spb_SplashScreenF.SplashScreen:SetAllowLua(true)
 		spb_SplashScreenF.SplashScreen:OpenURL("https://www.xperidia.com/SuperPedobear/?steamid=" .. LocalPlayer():SteamID64())
 		--spb_SplashScreenF.SplashScreen:SetScrollbars(false)
-		spb_SplashScreenF.SplashScreen:Call('$("#controls").append("<h2><u>Controls</u></h2><table>'
-		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("+forward") .. "</td><td> Move forward</td></tr>"
-		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("+moveleft") .. "</td><td> Move left (stafe)</td></tr>"
-		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("+moveright") .. "</td><td> Move right (strafe)</td></tr>"
-		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("+back") .. "</td><td> Move back</td></tr>"
-		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("+duck") .. "</td><td> Duck</td></tr>"
-		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("+jump") .. "</td><td> Jump</td></tr>"
-		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("+speed") .. "</td><td> Sprint (Move Quickly)</td></tr>"
-		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("gm_showhelp") .. "</td><td> Gamemode menu ('Show help')</td></tr>"
-		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("gm_showteam") .. "</td><td> Change team ('Team menu')</td></tr>"
-		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("gm_showspare1") .. "</td><td> Taunt menu ('Spare 1')</td></tr>"
-		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("gm_showspare2") .. "</td><td> Jukebox/music menu ('Spare 2')</td></tr>"
-		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("+reload") .. "</td><td> Power-UP ('Reload weapon')</td></tr>"
-		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("+menu") .. "</td><td> Shop ('Show Menu')</td></tr>"
-		.. "<tr><td class='leftside'>" .. GAMEMODE:CheckBind("+menu_context") .. "</td><td> Toggle thirdperson ('Show Context Menu')</td></tr>"
-		.. "<tr><td class='leftside'>1-9</td><td> Quick taunt</td></tr>"
-		.. '</table>");')
-		spb_SplashScreenF.SplashScreen:Call('$("#changelog").append("<h2><u>Changelog V' .. (GAMEMODE.Version or '?') .. '</u></h2><table>'
-		.. "<tr><td>> Now with taunt packs!</td></tr>"
-		.. "<tr><td>> New cloak Power-UP!</td></tr>"
-		.. "<tr><td>> Added cvar spb_slow_motion</td></tr>"
-		.. "<tr><td>> Added cvar spb_rounds</td></tr>"
-		.. "<tr><td>> Added cvar spb_rainbow_effect</td></tr>"
-		.. "<tr><td>> Added cvar spb_powerup_radar_time</td></tr>"
-		.. "<tr><td>> Added cvar spb_powerup_cloak_time</td></tr>"
-		.. '</table>");')
+
+		local btxt = ""
+		for k, v in pairs(binds()) do
+			btxt = btxt .. "<tr><td class='leftside'>" .. v[1] .. "</td><td>" .. v[2] .. "</td><td>" .. v[3] .. "</td></tr>"
+		end
+		spb_SplashScreenF.SplashScreen:Call('$("#controls").append("<h2><u>Controls</u></h2><table>' .. "<thead><th class='leftside'>KEY</th><th>Action</th><th>Options bind name</th></tr>" .. btxt .. '</table>");')
+
+		local ctxt = ""
+		for k, v in pairs(changelog()) do
+			ctxt = ctxt .. "<tr><td>> " .. v .. "</td></tr>"
+		end
+		spb_SplashScreenF.SplashScreen:Call('$("#changelog").append("<h2><u>Changelog V' .. (GAMEMODE.Version or '?') .. '</u></h2><table>' .. ctxt .. '</table>");')
 
 		local closebtn = vgui.Create("DButton", spb_SplashScreenF)
 		closebtn:SetText("X")

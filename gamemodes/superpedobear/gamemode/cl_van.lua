@@ -8,9 +8,12 @@ function GM:Van()
 		return
 	end
 
+	local ply = LocalPlayer()
+	local cur = tonumber(ply:GetNWInt("spb_VictimsCurrency", 0))
 	local w, h, oh = ScrW(), ScrH() * (736 / 1080), ScrH() * (960 / 1080)
 	local scaleW = function(px) return ScrW() * (px / 1920) end
 	local scaleH = function(px) return ScrH() * (px / 1080) end
+	local buttons = {}
 
 	GAMEMODE.VanFrame = vgui.Create("DFrame")
 	local self = GAMEMODE.VanFrame
@@ -44,50 +47,179 @@ function GM:Van()
 			timer.Remove("CloseVan")
 			return
 		end
-		closeanim:Start(0.50)
-		timer.Create("CloseVan", 0.5, 1, function()
+		closeanim:Start(0.3)
+		timer.Create("CloseVan", 0.3, 1, function()
 			if IsValid(self) then self:Close() end
 			timer.Remove("CloseVan")
 		end)
 	end
 	self:MakePopup()
 	self:SetKeyboardInputEnabled(false)
-	openanim:Start(0.50)
+	openanim:Start(0.3)
+
+	if !GetConVar("spb_cl_hide_tips"):GetBool() then
+		self.backtipclose = vgui.Create("DPanel")
+		self.backtipclose:SetParent(self)
+		self.backtipclose:SetPos(scaleW(800), scaleH(490))
+		self.backtipclose:SetSize(scaleW(480), scaleH(32))
+		self.backtipclose:SetBackgroundColor(Color(0, 0, 0, 200))
+
+		self.tipclose = vgui.Create("DLabel")
+		self.tipclose:SetParent(self.backtipclose)
+		self.tipclose:Dock(FILL)
+		self.tipclose:SetContentAlignment(5)
+		self.tipclose:SetFont("spb_High_Scaled")
+		self.tipclose:SetText("Don't forget to press " .. GAMEMODE:CheckBind("+menu") .. " to close the shop.")
+	end
+
+	self.backpt = vgui.Create("DPanel")
+	self.backpt:SetParent(self)
+	self.backpt:SetPos(scaleW(420), scaleH(240))
+	self.backpt:SetSize(scaleW(330), scaleH(32))
+	self.backpt:SetBackgroundColor(Color(0, 0, 0, 200))
+
+	self.pt = vgui.Create("DLabel")
+	self.pt:SetParent(self.backpt)
+	self.pt:Dock(FILL)
+	self.pt:SetContentAlignment(5)
+	self.pt:SetFont("spb_High_Scaled")
+	self.pt:SetText("Welcome to my shop")
 
 	self.backvc = vgui.Create("DPanel")
 	self.backvc:SetParent(self)
 	self.backvc:SetPos(scaleW(1610), scaleH(300))
 	self.backvc:SetSize(scaleW(220), scaleH(100))
+	self.backvc:SetBackgroundColor(Color(0, 0, 0, 200))
 
 	self.vclbl = vgui.Create("DLabel")
 	self.vclbl:SetParent(self)
-	self.vclbl:SetText("Victims in your storage")
 	self.vclbl:SetPos(scaleW(1610), scaleH(300))
 	self.vclbl:SetSize(scaleW(220), scaleH(100))
-	self.vclbl:SetDark(1)
 	self.vclbl:SetContentAlignment(8)
+	self.vclbl:SetFont("spb_Normal_Scaled")
+	self.vclbl:SetText("Victims in your storage")
 
 	self.vc = vgui.Create("DLabel")
 	self.vc:SetParent(self)
-	self.vc:SetText(LocalPlayer():GetNWInt("spb_VictimsCurrency", 0))
 	self.vc:SetPos(scaleW(1610), scaleH(300))
 	self.vc:SetSize(scaleW(220), scaleH(100))
-	self.vc:SetDark(1)
 	self.vc:SetContentAlignment(5)
-	self.vc:SetFont("DermaLarge")
+	self.vc:SetFont("spb_Big_Scaled")
+	self.vc:SetText(cur)
+
+	local shametxt
+	self.vclbl2 = vgui.Create("DLabel")
+	self.vclbl2:SetParent(self)
+	self.vclbl2:SetPos(scaleW(1610), scaleH(300))
+	self.vclbl2:SetSize(scaleW(220), scaleH(100))
+	self.vclbl2:SetContentAlignment(2)
+	self.vclbl2:SetFont("spb_Normal_Scaled")
+	if cur >= 9000 then
+		shametxt = "(╯°□°）╯︵ ┻━┻"
+	elseif cur >= 1000 then
+		shametxt = "( ͡°( ͡° ͜ʖ( ͡° ͜ʖ ͡°)ʖ ͡°) ͡°)"
+	elseif cur >= 500 then
+		shametxt = "( ͡° ͜ʖ ͡°)"
+	elseif cur >= 100 then
+		shametxt = "WOW WOW WOW"
+	elseif cur == 69 then
+		shametxt = "( ͡° ͜ʖ ͡°)"
+	elseif cur >= 50 then
+		shametxt = "Damn boi"
+	elseif cur == 42 then
+		shametxt = "Good answer"
+	elseif cur >= 20 then
+		shametxt = "Impressive"
+	elseif cur >= 10 then
+		shametxt = "Now we're talking"
+	elseif cur > 0 then
+		shametxt = "Can't you get more?"
+	else
+		shametxt = "Boo, shame on you"
+	end
+	self.vclbl2:SetText(shametxt)
 
 	self.store = vgui.Create("DPanel")
 	self.store:SetParent(self)
 	self.store:SetPos(scaleW(800), scaleH(30))
 	self.store:SetSize(scaleW(970), scaleH(220))
+	self.store:SetBackgroundColor(Color(0, 0, 0, 200))
 
-	self.wip = vgui.Create("DLabel")
-	self.wip:SetParent(self)
-	self.wip:SetText("The store is currently closed!\nPlease come back later!")
-	self.wip:SetPos(scaleW(800), scaleH(30))
-	self.wip:SetSize(scaleW(970), scaleH(220))
-	self.wip:SetDark(1)
-	self.wip:SetContentAlignment(5)
-	self.wip:SetFont("DermaLarge")
+	self.store.content = vgui.Create("DHorizontalScroller", self.store)
+	self.store.content:Dock(FILL)
+	self.store.content:SetOverlap(-4)
+
+	self.backtxt = vgui.Create("DPanel")
+	self.backtxt:SetParent(self)
+	self.backtxt:SetPos(scaleW(1042.5), scaleH(250))
+	self.backtxt:SetSize(scaleW(485), scaleH(32))
+	self.backtxt:SetBackgroundColor(Color(0, 0, 0, 200))
+
+	self.txt = vgui.Create("DLabel")
+	self.txt:SetParent(self.backtxt)
+	self.txt:Dock(FILL)
+	self.txt:SetContentAlignment(5)
+	self.txt:SetFont("spb_High_Scaled")
+	if ply:Team() != TEAM_HIDING and ply:Team() != TEAM_SEEKER then
+		self.txt:SetText("You can't get Power-UPs while spectating")
+	elseif ply:Alive() then
+		self.txt:SetText("What do you want?")
+	else
+		self.txt:SetText("You can't get Power-UPs while dead")
+	end
+
+	for k, v in pairs(GAMEMODE.PowerUps) do
+		if v[2] == ply:Team() or v[2] == 0 then
+
+			local price = GAMEMODE:GetPowerUpPrice(k, ply)
+			local canafford = price <= cur
+
+			local item = vgui.Create("DPanel", self.store.content)
+			item:SetSize(scaleH(220), scaleH(220))
+			item:SetPaintBackground(false)
+
+			local btn = vgui.Create("DImageButton", item)
+			btn:Dock(FILL)
+			btn:SetImage(v[3]:GetName())
+			if v[4] and IsColor(v[4]) then
+				btn:SetColor(v[4])
+			else
+				btn:SetColor(Color(52, 190, 236, 255))
+			end
+			btn.DoClick = function()
+				if canafford and ply:Alive() then
+					RunConsoleCommand("spb_powerup_buy", k)
+					surface.PlaySound("garrysmod/ui_click.wav")
+					GAMEMODE.VanFrame:DoClose()
+				else
+					surface.PlaySound("common/wpn_denyselect.wav")
+				end
+			end
+			btn.OnCursorEntered = function()
+				self.txt:SetText("Buy " .. v[1] .. " for " .. price .. " victims")
+			end
+			btn.OnCursorExited = function()
+				if ply:Team() != TEAM_HIDING and ply:Team() != TEAM_SEEKER then
+					self.txt:SetText("You can't get Power-UPs while spectating")
+				elseif ply:Alive() then
+					self.txt:SetText("What do you want?")
+				else
+					self.txt:SetText("You can't get Power-UPs while dead")
+				end
+			end
+
+			self.store.content:AddPanel(item)
+			buttons[k] = item
+
+		end
+	end
+
+	if (ply:Team() != TEAM_HIDING and ply:Team() != TEAM_SEEKER) then
+		self.store.txt = vgui.Create("DLabel", self.store)
+		self.store.txt:Dock(FILL)
+		self.store.txt:SetContentAlignment(5)
+		self.store.txt:SetFont("spb_Big_Scaled")
+		self.store.txt:SetText("You can't get Power-UPs while spectating")
+	end
 
 end

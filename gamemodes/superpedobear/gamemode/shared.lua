@@ -7,7 +7,7 @@ GM.Name 		= "Super Pedobear"
 GM.ShortName 	= "SuperPedobear"
 GM.Author 		= "VictorienXP@Xperidia"
 GM.Website 		= "xperi.link/SuperPBear"
-GM.Version 		= 0.30
+GM.Version 		= 0.301
 GM.TeamBased 	= true
 
 TEAM_HIDING	= 1
@@ -39,11 +39,12 @@ GM.SeasonalEvents = {
 }
 
 GM.PowerUps = {
-	clone = {"Clone", TEAM_HIDING, Material("superpedobear/powerup/clone"), Color(255, 200, 50, 255)},
+	--name = {"Name", <TEAM: -1(disabled), 0(all teams), TEAM_HIDING or TEAM_SEEKER>, Material("superpedobear/powerup/materialname"), <Optional Color()>, <Optional price addition>},
+	clone = {"Clone", TEAM_HIDING, Material("superpedobear/powerup/clone"), Color(255, 200, 50, 255), 2},
 	boost = {"Boost", TEAM_HIDING, Material("superpedobear/powerup/boost"), Color(255, 128, 0, 255)},
 	vdisguise = {"Disguise", -1, Material("superpedobear/powerup/vdisguise")},
-	cloak = {"Invisibility", TEAM_HIDING, Material("superpedobear/powerup/cloak"), Color(84, 110, 122, 255)},
-	radar = {"Radar", TEAM_SEEKER, Material("superpedobear/powerup/radar")},
+	cloak = {"Invisibility", TEAM_HIDING, Material("superpedobear/powerup/cloak"), Color(84, 110, 122, 255), 2},
+	radar = {"Radar", TEAM_SEEKER, Material("superpedobear/powerup/radar"), nil, 4},
 	trap = {"False Power-UP", TEAM_SEEKER, Material("superpedobear/powerup/trap"), Color(255, 64, 64, 255)}
 }
 
@@ -111,6 +112,7 @@ function GM:Initialize()
 	spb_rainbow_effect = CreateConVar("spb_rainbow_effect", 1, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Rainbow colors for the victims.")
 	spb_powerup_radar_time = CreateConVar("spb_powerup_radar_time", 2, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Radar time.")
 	spb_powerup_cloak_time = CreateConVar("spb_powerup_cloak_time", 4, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Cloak time.")
+	spb_shop_base_price = CreateConVar("spb_shop_base_price", 4, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Power-ups base price. Negative values will be converted to positive and will ignore power-ups price addition. 0 will set everything to free.")
 
 	local damagesnd = file.Find("sound/superpedobear/damage/*.ogg", "GAME")
 
@@ -358,4 +360,22 @@ function GM:PlayerFootstep(ply, pos, foot, sound, volume, filter)
 	if cloakt and cloakt >= CurTime() then
 		return true
 	end
+end
+
+function GM:GetPowerUpPrice(id, ply)
+	local price = spb_shop_base_price:GetInt()
+	local ignoreadd = false
+	if price == 0 then
+		return 0
+	elseif price < 0 then
+		price = price * -1
+		ignoreadd = true
+	end
+	if !ignoreadd and GAMEMODE.PowerUps[id] and GAMEMODE.PowerUps[id][5] then
+		price = price + GAMEMODE.PowerUps[id][5]
+	end
+	if ply:GetNWInt("XperidiaRank", 0) > 0 then
+		price = price / 2
+	end
+	return math.Round(price)
 end

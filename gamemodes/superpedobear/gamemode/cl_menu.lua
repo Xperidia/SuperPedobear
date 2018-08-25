@@ -10,6 +10,7 @@ local function binds()
 		{GAMEMODE:CheckBind("gmod_undo"), "Drop Power-UP", "Undo"},
 		{GAMEMODE:CheckBind("phys_swap"), "Enhanced PlayerModel Selector", "Gravity Gun"},
 		{"1-9", "Quick taunt", ""},
+		{"0", "Random taunt", ""},
 		{GAMEMODE:CheckBind("+forward"), "Move forward", "Move forward"},
 		{GAMEMODE:CheckBind("+moveleft"), "Move left", "Move left (stafe)"},
 		{GAMEMODE:CheckBind("+moveright"), "Move right", "Move right (strafe)"},
@@ -25,6 +26,8 @@ local function changelog()
 		"Xperidia's Premium Members gets Power-UPs half the normal price!",
 		"You can now drop Power-UPs with " .. GAMEMODE:CheckBind("gmod_undo") .. " (Check out controls)",
 		"You can now open the Enhanced PlayerModel Selector with " .. GAMEMODE:CheckBind("phys_swap") .. " (Check out controls)",
+		"Quick taunt now works with the numpad too",
+		"You can now do a random taunt with 0",
 		"The Gamemode menu and the Splash Screen have been updated",
 		"Added cvar spb_shop_base_price",
 		"A huge bunch of changes and behind the scenes stuff"

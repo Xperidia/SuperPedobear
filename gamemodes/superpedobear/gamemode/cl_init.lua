@@ -1097,14 +1097,35 @@ function GM:Think()
 
 	if ply:Alive() and (ply:Team() == TEAM_HIDING or ply:Team() == TEAM_SEEKER) and !GAMEMODE.ChatOpen and !gui.IsGameUIVisible() and !IsValid(GAMEMODE.VanFrame) then
 
-		local inputs = { input.IsKeyDown(KEY_1), input.IsKeyDown(KEY_2), input.IsKeyDown(KEY_3), input.IsKeyDown(KEY_4), input.IsKeyDown(KEY_5), input.IsKeyDown(KEY_6), input.IsKeyDown(KEY_7), input.IsKeyDown(KEY_8), input.IsKeyDown(KEY_9) }
 		local sel = 0
+		local inputs = {
+							input.IsKeyDown(KEY_1) or input.IsKeyDown(KEY_PAD_1),
+							input.IsKeyDown(KEY_2) or input.IsKeyDown(KEY_PAD_2),
+							input.IsKeyDown(KEY_3) or input.IsKeyDown(KEY_PAD_3),
+							input.IsKeyDown(KEY_4) or input.IsKeyDown(KEY_PAD_4),
+							input.IsKeyDown(KEY_5) or input.IsKeyDown(KEY_PAD_5),
+							input.IsKeyDown(KEY_6) or input.IsKeyDown(KEY_PAD_6),
+							input.IsKeyDown(KEY_7) or input.IsKeyDown(KEY_PAD_7),
+							input.IsKeyDown(KEY_8) or input.IsKeyDown(KEY_PAD_8),
+							input.IsKeyDown(KEY_9) or input.IsKeyDown(KEY_PAD_9),
+							input.IsKeyDown(KEY_0) or input.IsKeyDown(KEY_PAD_0)
+						}
 
-		for k,v in pairs(inputs) do
-			if v == true then
-				sel = k
-				break
+		if inputs[10] != true then
+			for k, v in pairs(inputs) do
+				if v == true then
+					sel = k
+					break
+				end
 			end
+		elseif inputs[10] == true then
+			local selt = {}
+			for k, v in pairs(GAMEMODE.Taunts) do
+				if v[3] == ply:Team() or v[3] == 0 then
+					table.insert(selt, v)
+				end
+			end
+			sel = math.random(1, #selt)
 		end
 
 		GAMEMODE:StartTaunt(sel)

@@ -245,8 +245,11 @@ function GM:HUDPaint()
 		welding = nil
 	end
 	local weldingstate = sply:GetNWInt("spb_WeldingState")
-	local hudoffset = GetConVar("spb_cl_hud_offset"):GetInt()
 	local hide_tips = GetConVar("spb_cl_hide_tips"):GetBool()
+	local hudoffset_w = GetConVar("spb_cl_hud_offset_w") and GetConVar("spb_cl_hud_offset_w"):GetInt() or 0
+	local hudoffset_h = GetConVar("spb_cl_hud_offset_h") and GetConVar("spb_cl_hud_offset_h"):GetInt() or 0
+	hudoffset_w = ScrW() * (hudoffset_w * 0.001)
+	hudoffset_h = ScrH() * (hudoffset_h * 0.001)
 
 
 	--[[ THE CLOCK AND ROUND COUNT ]]--
@@ -297,13 +300,13 @@ function GM:HUDPaint()
 	end
 
 	surface.SetDrawColor(Color(0, 0, 0, 200))
-	surface.DrawRect(ScrW() / 2 - 100, hudoffset, 200, 110)
-	draw.DrawText(GAMEMODE:FormatTime(TheTime), "spb_TIME", ScrW() / 2, hudoffset, time_color, TEXT_ALIGN_CENTER)
-	draw.DrawText("Round " .. rnd, "spb_RND", ScrW() / 2, 60 + hudoffset, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+	surface.DrawRect(ScrW() / 2 - 100, hudoffset_h, 200, 110)
+	draw.DrawText(GAMEMODE:FormatTime(TheTime), "spb_TIME", ScrW() / 2, hudoffset_h, time_color, TEXT_ALIGN_CENTER)
+	draw.DrawText("Round " .. rnd, "spb_RND", ScrW() / 2, 60 + hudoffset_h, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
 	surface.SetDrawColor(Color(0, 0, 0, 255))
-	surface.DrawOutlinedRect(ScrW() / 2 - 100, hudoffset, 200, 110)
+	surface.DrawOutlinedRect(ScrW() / 2 - 100, hudoffset_h, 200, 110)
 
-	draw.DrawText(GAMEMODE.Name .. " V" .. GAMEMODE.Version .. " - " ..  os.date("%d/%m/%Y", os.time()), "DermaDefault", ScrW() / 2, hudoffset, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+	draw.DrawText(GAMEMODE.Name .. " V" .. GAMEMODE.Version .. " - " ..  os.date("%d/%m/%Y", os.time()), "DermaDefault", ScrW() / 2, hudoffset_h, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
 
 
 	--[[ THE ROUND STATUS ]]--
@@ -313,10 +316,10 @@ function GM:HUDPaint()
 		surface.SetFont("spb_RND")
 		local w, h = surface.GetTextSize(str)
 		surface.SetDrawColor(Color(0, 0, 0, 200))
-		surface.DrawRect(ScrW() / 2 - w / 2 - 8, 110 + hudoffset + rndtxth, w + 16, h)
-		draw.DrawText(str, "spb_RND", ScrW() / 2, 110 + hudoffset + rndtxth, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+		surface.DrawRect(ScrW() / 2 - w / 2 - 8, 110 + hudoffset_h + rndtxth, w + 16, h)
+		draw.DrawText(str, "spb_RND", ScrW() / 2, 110 + hudoffset_h + rndtxth, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
 		surface.SetDrawColor(Color(0, 0, 0, 255))
-		surface.DrawOutlinedRect(ScrW() / 2 - w / 2 - 8, 110 + hudoffset + rndtxth, w + 16, h)
+		surface.DrawOutlinedRect(ScrW() / 2 - w / 2 - 8, 110 + hudoffset_h + rndtxth, w + 16, h)
 		rndtxth = rndtxth + h
 	end
 
@@ -382,10 +385,10 @@ function GM:HUDPaint()
 		if txt != "" then
 			surface.SetFont("spb_HT")
 			w, h = surface.GetTextSize(txt)
-			draw.RoundedBox(0, hudoffset, hudoffset, w + 16, h + 16, Color(0, 0, 0, 200))
-			draw.DrawText(txt, "spb_HT", hudoffset + 8 + w / 2, hudoffset + 8, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+			draw.RoundedBox(0, hudoffset_w, hudoffset_h, w + 16, h + 16, Color(0, 0, 0, 200))
+			draw.DrawText(txt, "spb_HT", hudoffset_w + 8 + w / 2, hudoffset_h + 8, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
 			surface.SetDrawColor(Color(0, 0, 0, 255))
-			surface.DrawOutlinedRect(hudoffset, hudoffset, w + 16, h + 16)
+			surface.DrawOutlinedRect(hudoffset_w, hudoffset_h, w + 16, h + 16)
 		end
 
 	end
@@ -424,10 +427,10 @@ function GM:HUDPaint()
 			surface.SetFont("spb_HT")
 			w, h = surface.GetTextSize(tips)
 			surface.SetDrawColor(Color(0, 0, 0, 200))
-			surface.DrawRect(ScrW() / 2 - w / 2 - 4, ScrH() - 100 - h - hudoffset, w + 8, h)
-			draw.DrawText(tips, "spb_HT", ScrW() / 2, ScrH() - 100 - h - hudoffset, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+			surface.DrawRect(ScrW() / 2 - w / 2 - 4, ScrH() - h - hudoffset_h, w + 8, h)
+			draw.DrawText(tips, "spb_HT", ScrW() / 2, ScrH() - h - hudoffset_h, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
 			surface.SetDrawColor(Color(0, 0, 0, 255))
-			surface.DrawOutlinedRect(ScrW() / 2 - w / 2 - 4, ScrH() - 100 - h - hudoffset, w + 8, h)
+			surface.DrawOutlinedRect(ScrW() / 2 - w / 2 - 4, ScrH() - h - hudoffset_h, w + 8, h)
 		end
 
 
@@ -523,18 +526,18 @@ function GM:HUDPaint()
 			radar = math.Remap(radartime - CurTime(), 0, spb_powerup_radar_time:GetFloat(), 0, 200)
 		end
 
-		draw.RoundedBox(0, hudoffset, ScrH() - 200 - hudoffset, 200, 200, Color(0, 0, 0, 200))
+		draw.RoundedBox(0, hudoffset_w, ScrH() - 200 - hudoffset_h, 200, 200, Color(0, 0, 0, 200))
 
-		draw.RoundedBox(0, hudoffset, ScrH() - 200 - hudoffset, 200, 200, fcolor)
+		draw.RoundedBox(0, hudoffset_w, ScrH() - 200 - hudoffset_h, 200, 200, fcolor)
 
 		local function MakeBar(name, value, nope)
 			surface.SetDrawColor(Color(0, 0, 0, 200))
-			surface.DrawRect(200 + hudoffset, ScrH() - 200 + 50 * ib - hudoffset, 200, 50)
+			surface.DrawRect(200 + hudoffset_w, ScrH() - 200 + 50 * ib - hudoffset_h, 200, 50)
 			surface.SetDrawColor(fcolor)
-			surface.DrawRect(200 + hudoffset, ScrH() - 200 + 50 * ib - hudoffset, value, 50)
-			draw.DrawText(name, "spb_TXT", 300 + hudoffset, ScrH() - 195 + 50 * ib - hudoffset, Either(nope, Color(255, 0, 0, 255), Color(255, 255, 255, 255)), TEXT_ALIGN_CENTER)
+			surface.DrawRect(200 + hudoffset_w, ScrH() - 200 + 50 * ib - hudoffset_h, value, 50)
+			draw.DrawText(name, "spb_TXT", 300 + hudoffset_w, ScrH() - 195 + 50 * ib - hudoffset_h, Either(nope, Color(255, 0, 0, 255), Color(255, 255, 255, 255)), TEXT_ALIGN_CENTER)
 			surface.SetDrawColor(Color(0, 0, 0, 255))
-			surface.DrawOutlinedRect(200 + hudoffset, ScrH() - 200 + 50 * ib - hudoffset, 200, 50)
+			surface.DrawOutlinedRect(200 + hudoffset_w, ScrH() - 200 + 50 * ib - hudoffset_h, 200, 50)
 			ib = ib + 1
 		end
 
@@ -558,23 +561,23 @@ function GM:HUDPaint()
 	if (sply:GetModel() == "models/player/pbear/pbear.mdl" or sply:GetModel() == "models/player/kuristaja/pbear/pbear.mdl") then
 		surface.SetDrawColor(255, 255, 255, 255)
 		surface.SetMaterial(GAMEMODE.Materials.Bear)
-		surface.DrawTexturedRect(hudoffset, ScrH() - 200 - hudoffset, 200, 200)
+		surface.DrawTexturedRect(hudoffset_w, ScrH() - 200 - hudoffset_h, 200, 200)
 		surface.SetDrawColor(Color(0, 0, 0, 255))
-		surface.DrawOutlinedRect(hudoffset, ScrH() - 200 - hudoffset, 200, 200)
+		surface.DrawOutlinedRect(hudoffset_w, ScrH() - 200 - hudoffset_h, 200, 200)
 	elseif plyTeam != TEAM_UNASSIGNED and splyTeam != TEAM_SPECTATOR then
-		self:DrawHealthFace(sply, hudoffset, ScrH() - 200 - hudoffset)
+		self:DrawHealthFace(sply, hudoffset_w, ScrH() - 200 - hudoffset_h)
 		surface.SetDrawColor(Color(0, 0, 0, 255))
-		surface.DrawOutlinedRect(hudoffset, ScrH() - 200 - hudoffset, 200, 200)
+		surface.DrawOutlinedRect(hudoffset_w, ScrH() - 200 - hudoffset_h, 200, 200)
 	end
 
 	if plyTeam != TEAM_UNASSIGNED and splyTeam != TEAM_SPECTATOR then
 		local splynick = GAMEMODE:LimitString(sply:Nick(), 200, "spb_HUDname")
 		local rankname = GAMEMODE:LimitString(sply:GetNWString("XperidiaRankName", nil) or "Normal user", 200, "spb_HUDname")
 		local rankcolor = string.ToColor(sply:GetNWString("XperidiaRankColor", "255 255 255 255"))
-		draw.DrawText(splynick, "spb_HUDname", 100 + 1 + hudoffset, ScrH() - 200 + 1 - hudoffset, Color(0, 0, 0, 255), TEXT_ALIGN_CENTER)
-		draw.DrawText(splynick, "spb_HUDname", 100 + hudoffset, ScrH() - 200 - hudoffset, col, TEXT_ALIGN_CENTER)
-		draw.DrawText(rankname, "spb_HUDname", 100 + 1 + hudoffset, ScrH() - 20 + 1 - hudoffset, Color(0, 0, 0, 255), TEXT_ALIGN_CENTER)
-		draw.DrawText(rankname, "spb_HUDname", 100 + hudoffset, ScrH() - 20 - hudoffset, rankcolor, TEXT_ALIGN_CENTER)
+		draw.DrawText(splynick, "spb_HUDname", 100 + 1 + hudoffset_w, ScrH() - 200 + 1 - hudoffset_h, Color(0, 0, 0, 255), TEXT_ALIGN_CENTER)
+		draw.DrawText(splynick, "spb_HUDname", 100 + hudoffset_w, ScrH() - 200 - hudoffset_h, col, TEXT_ALIGN_CENTER)
+		draw.DrawText(rankname, "spb_HUDname", 100 + 1 + hudoffset_w, ScrH() - 20 + 1 - hudoffset_h, Color(0, 0, 0, 255), TEXT_ALIGN_CENTER)
+		draw.DrawText(rankname, "spb_HUDname", 100 + hudoffset_w, ScrH() - 20 - hudoffset_h, rankcolor, TEXT_ALIGN_CENTER)
 	end
 
 
@@ -585,7 +588,7 @@ function GM:HUDPaint()
 		local powerup = GAMEMODE.PowerUps[sply:GetPowerUP()]
 		local anim_time = sply:GetNWFloat("spb_PowerUPDelay", nil)
 		local anim_progress = anim_time and anim_time > CurTime()
-		local ox, oy = 25 + hudoffset, ScrH() - 400 - hudoffset
+		local ox, oy = 25 + hudoffset_w, ScrH() - 400 - hudoffset_h
 		local ow, oh = 150, 150
 		surface.SetFont("spb_HUDname")
 
@@ -676,7 +679,7 @@ function GM:HUDPaint()
 			visspace = 0
 		end
 
-		draw.RoundedBox(0, ScrW() - 256 - hudoffset, ScrH() - 100 + visspace - hudoffset, 256, 100 - visspace, Color(0, 0, 0, 200))
+		draw.RoundedBox(0, ScrW() - 256 - hudoffset_w, ScrH() - 100 + visspace - hudoffset_h, 256, 100 - visspace, Color(0, 0, 0, 200))
 
 		local ctitle = GAMEMODE.Vars.CurrentMusicName
 		local rtitle
@@ -687,29 +690,29 @@ function GM:HUDPaint()
 		end
 
 		local title = "♪ " .. GAMEMODE:LimitString(rtitle, 216, "spb_HUDname") .. " ♪"
-		draw.DrawText(title, "spb_HUDname", ScrW() - 127 - hudoffset, ScrH() - 99 + visspace - hudoffset, Color(0, 0, 0, 255), TEXT_ALIGN_CENTER)
-		draw.DrawText(title, "spb_HUDname", ScrW() - 128 - hudoffset, ScrH() - 100 + visspace - hudoffset, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+		draw.DrawText(title, "spb_HUDname", ScrW() - 127 - hudoffset_w, ScrH() - 99 + visspace - hudoffset_h, Color(0, 0, 0, 255), TEXT_ALIGN_CENTER)
+		draw.DrawText(title, "spb_HUDname", ScrW() - 128 - hudoffset_w, ScrH() - 100 + visspace - hudoffset_h, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
 
-		draw.RoundedBox(0, ScrW() - 256 - hudoffset, ScrH() - 80 + visspace - hudoffset, 256, 16, Color(0, 0, 0, 200)) --Timetrack
-		draw.RoundedBox(0, ScrW() - 256 - hudoffset, ScrH() - 77 + visspace - hudoffset, math.Remap(time, 0, totaltime, 0, 256), 10, Color(255, 255, 255, 200))
+		draw.RoundedBox(0, ScrW() - 256 - hudoffset_w, ScrH() - 80 + visspace - hudoffset_h, 256, 16, Color(0, 0, 0, 200)) --Timetrack
+		draw.RoundedBox(0, ScrW() - 256 - hudoffset_w, ScrH() - 77 + visspace - hudoffset_h, math.Remap(time, 0, totaltime, 0, 256), 10, Color(255, 255, 255, 200))
 
-		draw.RoundedBox(0, ScrW() - 256 - hudoffset, ScrH() - 64 + visspace - hudoffset, 256, 16, Color( 0, 0, 0, 200)) --Wub
-		draw.RoundedBox(0, ScrW() - 256 - hudoffset, ScrH() - 56 + visspace - hudoffset, math.Remap(left, 0, 1, 0, 256), 8, volcolor(left))
-		draw.RoundedBox(0, ScrW() - 256 - hudoffset, ScrH() - 64 + visspace - hudoffset, math.Remap(right, 0, 1, 0, 256), 8, volcolor(right))
+		draw.RoundedBox(0, ScrW() - 256 - hudoffset_w, ScrH() - 64 + visspace - hudoffset_h, 256, 16, Color( 0, 0, 0, 200)) --Wub
+		draw.RoundedBox(0, ScrW() - 256 - hudoffset_w, ScrH() - 56 + visspace - hudoffset_h, math.Remap(left, 0, 1, 0, 256), 8, volcolor(left))
+		draw.RoundedBox(0, ScrW() - 256 - hudoffset_w, ScrH() - 64 + visspace - hudoffset_h, math.Remap(right, 0, 1, 0, 256), 8, volcolor(right))
 
 		surface.SetDrawColor(0, 0, 0, 255)
-		surface.DrawLine(ScrW() - 256 - hudoffset, ScrH() - 64 + visspace - hudoffset, ScrW() - hudoffset, ScrH() - 64 + visspace - hudoffset)
-		surface.DrawLine(ScrW() - 256 - hudoffset, ScrH() - 48 + visspace - hudoffset, ScrW() - hudoffset, ScrH() - 48 + visspace - hudoffset)
+		surface.DrawLine(ScrW() - 256 - hudoffset_w, ScrH() - 64 + visspace - hudoffset_h, ScrW() - hudoffset_w, ScrH() - 64 + visspace - hudoffset_h)
+		surface.DrawLine(ScrW() - 256 - hudoffset_w, ScrH() - 48 + visspace - hudoffset_h, ScrW() - hudoffset_w, ScrH() - 48 + visspace - hudoffset_h)
 
 		local timetxt = GAMEMODE:FormatTimeTri(time) .. "/" .. GAMEMODE:FormatTimeTri(totaltime) --Time
 		surface.SetFont("spb_HUDname")
 		local tw, _ = surface.GetTextSize(timetxt)
-		draw.RoundedBox(0, ScrW() - 128 - tw / 2 - 4 - hudoffset, ScrH() - 80 + visspace - hudoffset, tw + 8, 16, Color(0, 0, 0, 220))
-		draw.DrawText(timetxt, "spb_HUDname", ScrW() - 127 - hudoffset, ScrH() - 81 + visspace - hudoffset, Color(0, 0, 0, 255), TEXT_ALIGN_CENTER)
-		draw.DrawText(timetxt, "spb_HUDname", ScrW() - 128 - hudoffset, ScrH() - 82 + visspace - hudoffset, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+		draw.RoundedBox(0, ScrW() - 128 - tw / 2 - 4 - hudoffset_w, ScrH() - 80 + visspace - hudoffset_h, tw + 8, 16, Color(0, 0, 0, 220))
+		draw.DrawText(timetxt, "spb_HUDname", ScrW() - 127 - hudoffset_w, ScrH() - 81 + visspace - hudoffset_h, Color(0, 0, 0, 255), TEXT_ALIGN_CENTER)
+		draw.DrawText(timetxt, "spb_HUDname", ScrW() - 128 - hudoffset_w, ScrH() - 82 + visspace - hudoffset_h, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
 
 		surface.SetDrawColor(Color(0, 0, 0, 255))
-		surface.DrawOutlinedRect(ScrW() - 256 - hudoffset, ScrH() - 100 + visspace - hudoffset, 256, 100 - visspace)
+		surface.DrawOutlinedRect(ScrW() - 256 - hudoffset_w, ScrH() - 100 + visspace - hudoffset_h, 256, 100 - visspace)
 
 		if visuok then
 
@@ -718,17 +721,17 @@ function GM:HUDPaint()
 			GAMEMODE.Vars.Music:FFT(eqd, 0)
 
 			surface.SetDrawColor(Color(0, 0, 0, 200))
-			surface.DrawRect(ScrW() - 256 - hudoffset, ScrH() - 48 - hudoffset, 256, 48)
+			surface.DrawRect(ScrW() - 256 - hudoffset_w, ScrH() - 48 - hudoffset_h, 256, 48)
 
 			for k, v in pairs(eqd) do
 				local on = math.Clamp(math.Remap(v, 0, 1 / k, 0, 48), 0, 48)
 				local b = math.Clamp(math.Remap(v, 0, 1 / k, 0, 1), 0, 1)
 				surface.SetDrawColor(volcolor(b))
-				surface.DrawRect(ScrW() - 256 + (k - 1) * 2 - hudoffset, ScrH() - on - hudoffset, 2, on)
+				surface.DrawRect(ScrW() - 256 + (k - 1) * 2 - hudoffset_w, ScrH() - on - hudoffset_h, 2, on)
 			end
 
 			surface.SetDrawColor(Color(0, 0, 0, 255))
-			surface.DrawOutlinedRect(ScrW() - 256 - hudoffset, ScrH() - 48 - hudoffset, 256, 48)
+			surface.DrawOutlinedRect(ScrW() - 256 - hudoffset_w, ScrH() - 48 - hudoffset_h, 256, 48)
 
 		end
 
@@ -737,10 +740,10 @@ function GM:HUDPaint()
 			if usetip then
 				local tw, th = surface.GetTextSize(usetip)
 				surface.SetDrawColor(Color(0, 0, 0, 200))
-				surface.DrawRect(ScrW() - 128 - hudoffset - tw / 2 - 4, ScrH() - 100 + visspace - hudoffset - 20, tw + 8, th)
-				draw.DrawText(usetip, "spb_HUDname", ScrW() - 128 - hudoffset, ScrH() - 100 + visspace - hudoffset - 20, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+				surface.DrawRect(ScrW() - 128 - hudoffset_w - tw / 2 - 4, ScrH() - 100 + visspace - hudoffset_h - 20, tw + 8, th)
+				draw.DrawText(usetip, "spb_HUDname", ScrW() - 128 - hudoffset_w, ScrH() - 100 + visspace - hudoffset_h - 20, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
 				surface.SetDrawColor(Color(0, 0, 0, 255))
-				surface.DrawOutlinedRect(ScrW() - 128 - hudoffset - tw / 2 - 4, ScrH() - 100 + visspace - hudoffset - 20, tw + 8, th)
+				surface.DrawOutlinedRect(ScrW() - 128 - hudoffset_w - tw / 2 - 4, ScrH() - 100 + visspace - hudoffset_h - 20, tw + 8, th)
 			end
 		end
 
@@ -1094,57 +1097,61 @@ end
 function GM:Think()
 
 	local ply = LocalPlayer()
+	local use_quick = GetConVar("spb_cl_quickstuff_enable"):GetBool()
+	local use_numpad = GetConVar("spb_cl_quickstuff_numpad"):GetBool()
 
-	if GAMEMODE.Vars.NInputs then
-		GAMEMODE.Vars.LNInputs = {
-									GAMEMODE.Vars.NInputs[1] or false,
-									GAMEMODE.Vars.NInputs[2] or false,
-									GAMEMODE.Vars.NInputs[3] or false,
-									GAMEMODE.Vars.NInputs[4] or false,
-									GAMEMODE.Vars.NInputs[5] or false,
-									GAMEMODE.Vars.NInputs[6] or false,
-									GAMEMODE.Vars.NInputs[7] or false,
-									GAMEMODE.Vars.NInputs[8] or false,
-									GAMEMODE.Vars.NInputs[9] or false,
-									GAMEMODE.Vars.NInputs[10] or false
-								}
-	end
-	GAMEMODE.Vars.NInputs = {
-								input.IsKeyDown(KEY_1) or input.IsKeyDown(KEY_PAD_1),
-								input.IsKeyDown(KEY_2) or input.IsKeyDown(KEY_PAD_2),
-								input.IsKeyDown(KEY_3) or input.IsKeyDown(KEY_PAD_3),
-								input.IsKeyDown(KEY_4) or input.IsKeyDown(KEY_PAD_4),
-								input.IsKeyDown(KEY_5) or input.IsKeyDown(KEY_PAD_5),
-								input.IsKeyDown(KEY_6) or input.IsKeyDown(KEY_PAD_6),
-								input.IsKeyDown(KEY_7) or input.IsKeyDown(KEY_PAD_7),
-								input.IsKeyDown(KEY_8) or input.IsKeyDown(KEY_PAD_8),
-								input.IsKeyDown(KEY_9) or input.IsKeyDown(KEY_PAD_9),
-								input.IsKeyDown(KEY_0) or input.IsKeyDown(KEY_PAD_0)
-						}
-
-	if ply:Alive() and (ply:Team() == TEAM_HIDING or ply:Team() == TEAM_SEEKER) and !GAMEMODE.ChatOpen and !gui.IsGameUIVisible() and !IsValid(GAMEMODE.VanFrame) then
-
-		local sel = 0
-
-		if GAMEMODE.Vars.NInputs[10] != true then
-			for k, v in pairs(GAMEMODE.Vars.NInputs) do
-				if v == true and GAMEMODE.Vars.LNInputs[k] != true then
-					sel = k
-					break
-				end
-			end
-		elseif GAMEMODE.Vars.NInputs[10] == true and GAMEMODE.Vars.LNInputs[10] != true then
-			local selt = {}
-			for k, v in pairs(GAMEMODE.Taunts) do
-				if v[3] == ply:Team() or v[3] == 0 then
-					table.insert(selt, v)
-				end
-			end
-			sel = math.random(1, #selt)
+	if use_quick then
+		if GAMEMODE.Vars.NInputs then
+			GAMEMODE.Vars.LNInputs = {
+										GAMEMODE.Vars.NInputs[1] or false,
+										GAMEMODE.Vars.NInputs[2] or false,
+										GAMEMODE.Vars.NInputs[3] or false,
+										GAMEMODE.Vars.NInputs[4] or false,
+										GAMEMODE.Vars.NInputs[5] or false,
+										GAMEMODE.Vars.NInputs[6] or false,
+										GAMEMODE.Vars.NInputs[7] or false,
+										GAMEMODE.Vars.NInputs[8] or false,
+										GAMEMODE.Vars.NInputs[9] or false,
+										GAMEMODE.Vars.NInputs[10] or false
+									}
 		end
+		GAMEMODE.Vars.NInputs = {
+									input.IsKeyDown(KEY_1) or (use_numpad and input.IsKeyDown(KEY_PAD_1)),
+									input.IsKeyDown(KEY_2) or (use_numpad and input.IsKeyDown(KEY_PAD_2)),
+									input.IsKeyDown(KEY_3) or (use_numpad and input.IsKeyDown(KEY_PAD_3)),
+									input.IsKeyDown(KEY_4) or (use_numpad and input.IsKeyDown(KEY_PAD_4)),
+									input.IsKeyDown(KEY_5) or (use_numpad and input.IsKeyDown(KEY_PAD_5)),
+									input.IsKeyDown(KEY_6) or (use_numpad and input.IsKeyDown(KEY_PAD_6)),
+									input.IsKeyDown(KEY_7) or (use_numpad and input.IsKeyDown(KEY_PAD_7)),
+									input.IsKeyDown(KEY_8) or (use_numpad and input.IsKeyDown(KEY_PAD_8)),
+									input.IsKeyDown(KEY_9) or (use_numpad and input.IsKeyDown(KEY_PAD_9)),
+									input.IsKeyDown(KEY_0) or (use_numpad and input.IsKeyDown(KEY_PAD_0))
+							}
 
-		GAMEMODE:StartTaunt(sel)
+		if ply:Alive() and (ply:Team() == TEAM_HIDING or ply:Team() == TEAM_SEEKER) and !GAMEMODE.ChatOpen and !gui.IsGameUIVisible() and !IsValid(GAMEMODE.VanFrame) then
 
+			local sel = 0
+
+			if GAMEMODE.Vars.NInputs[10] != true then
+				for k, v in pairs(GAMEMODE.Vars.NInputs) do
+					if v == true and GAMEMODE.Vars.LNInputs[k] != true then
+						sel = k
+						break
+					end
+				end
+			elseif GAMEMODE.Vars.NInputs[10] == true and GAMEMODE.Vars.LNInputs[10] != true then
+				local selt = {}
+				for k, v in pairs(GAMEMODE.Taunts) do
+					if v[3] == ply:Team() or v[3] == 0 then
+						table.insert(selt, v)
+					end
+				end
+				sel = math.random(1, #selt)
+			end
+
+			GAMEMODE:StartTaunt(sel)
+
+		end
 	end
 
 	if ply:Team() == TEAM_HIDING and ply:Alive() and GAMEMODE.Vars.Round.Start and !GAMEMODE.Vars.Round.End and !GAMEMODE.Vars.Round.TempEnd then

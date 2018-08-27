@@ -13,6 +13,7 @@ function GM:Van()
 	local w, h, oh = ScrW(), ScrH() * (736 / 1080), ScrH() * (960 / 1080)
 	local scaleW = function(px) return ScrW() * (px / 1920) end
 	local scaleH = function(px) return ScrH() * (px / 1080) end
+	local use_quick = GetConVar("spb_cl_quickstuff_enable"):GetBool()
 	local buttons = {}
 
 	local function buypowerup(pu)
@@ -51,7 +52,7 @@ function GM:Van()
 	function self:Think(self, w, h)
 		if openanim:Active() then openanim:Run() end
 		if closeanim:Active() then closeanim:Run() end
-		if GAMEMODE.Vars.NInputs[10] != true then
+		if use_quick and GAMEMODE.Vars.NInputs[10] != true then
 			local i = 1
 			for k, v in pairs(GAMEMODE.PowerUps) do
 				if v[2] == ply:Team() or v[2] == 0 then
@@ -62,7 +63,7 @@ function GM:Van()
 					i = i + 1
 				end
 			end
-		elseif GAMEMODE.Vars.NInputs[10] == true and GAMEMODE.Vars.LNInputs[10] != true then
+		elseif use_quick and GAMEMODE.Vars.NInputs[10] == true and GAMEMODE.Vars.LNInputs[10] != true then
 			buypowerup("random")
 		end
 	end

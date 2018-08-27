@@ -26,11 +26,17 @@ local function changelog()
 		"Xperidia's Premium Members gets Power-UPs half the normal price!",
 		"You can now drop Power-UPs with " .. GAMEMODE:CheckBind("gmod_undo") .. " (Check out controls)",
 		"You can now open the Enhanced PlayerModel Selector with " .. GAMEMODE:CheckBind("phys_swap") .. " (Check out controls)",
-		"Quick taunt now works with the numpad too",
+		"Quick taunt now works with the numpad too (Can be toggled)",
 		"You can now do a random taunt with 0",
 		"The welding state has been fixed",
 		"The Gamemode menu and the Splash Screen have been updated",
+		"The HUD offset thingy has been updated",
 		"Added cvar spb_shop_base_price",
+		"Added cvar spb_cl_quickstuff_enable",
+		"Added cvar spb_cl_quickstuff_numpad",
+		"Added cvar spb_cl_hud_offset_w",
+		"Added cvar spb_cl_hud_offset_h",
+		"Removed cvar spb_cl_hud_offset",
 		"A huge bunch of changes and behind the scenes stuff"
 	}
 end
@@ -100,7 +106,7 @@ function GM:Menu()
 		xpucp:SetPos(20, 190)
 		xpucp:SetSize(125, 20)
 		xpucp.DoClick = function()
-			gui.OpenURL("https://www.xperidia.com/UCP/")
+			gui.OpenURL("https://account.xperidia.com/")
 			spb_MenuF:Close()
 		end
 
@@ -110,7 +116,7 @@ function GM:Menu()
 		support:SetPos(160, 190)
 		support:SetSize(125, 20)
 		support.DoClick = function()
-			gui.OpenURL("https://discord.gg/jtUtYDa")
+			gui.OpenURL("https://discordapp.com/invite/jtUtYDa")
 			spb_MenuF:Close()
 		end
 
@@ -183,15 +189,43 @@ function GM:Menu()
 		disablehalo:SetValue(GetConVar("spb_cl_hide_tips"):GetBool())
 		disablehalo:SizeToContents()
 
-		local hudoffset = vgui.Create("DNumSlider", spb_MenuF.config)
-		hudoffset:SetPos(15, 190)
-		hudoffset:SetSize(300, 16)
-		hudoffset:SetText("HUD Offset")
-		hudoffset:SetMin(0)
-		hudoffset:SetMax(ScrW() / 10)
-		hudoffset:SetDecimals(0)
-		hudoffset:SetDark(1)
-		hudoffset:SetConVar("spb_cl_hud_offset")
+		local quickstuff = vgui.Create("DCheckBoxLabel")
+		quickstuff:SetParent(spb_MenuF.config)
+		quickstuff:SetText("Enable quick taunt and quick buy")
+		quickstuff:SetPos(15, 110)
+		quickstuff:SetDark(1)
+		quickstuff:SetConVar("spb_cl_quickstuff_enable")
+		quickstuff:SetValue(GetConVar("spb_cl_quickstuff_enable"):GetBool())
+		quickstuff:SizeToContents()
+
+		local quickstuffnumpad = vgui.Create("DCheckBoxLabel")
+		quickstuffnumpad:SetParent(spb_MenuF.config)
+		quickstuffnumpad:SetText("Use numpad as well for quick stuff")
+		quickstuffnumpad:SetPos(15, 130)
+		quickstuffnumpad:SetDark(1)
+		quickstuffnumpad:SetConVar("spb_cl_quickstuff_numpad")
+		quickstuffnumpad:SetValue(GetConVar("spb_cl_quickstuff_numpad"):GetBool())
+		quickstuffnumpad:SizeToContents()
+
+		local hudoffset_w = vgui.Create("DNumSlider", spb_MenuF.config)
+		hudoffset_w:SetPos(15, 160)
+		hudoffset_w:SetSize(300, 16)
+		hudoffset_w:SetText("Horizontal HUD Offset")
+		hudoffset_w:SetMin(0)
+		hudoffset_w:SetMax(100)
+		hudoffset_w:SetDecimals(0)
+		hudoffset_w:SetDark(1)
+		hudoffset_w:SetConVar("spb_cl_hud_offset_w")
+
+		local hudoffset_h = vgui.Create("DNumSlider", spb_MenuF.config)
+		hudoffset_h:SetPos(15, 190)
+		hudoffset_h:SetSize(300, 16)
+		hudoffset_h:SetText("Vertical HUD Offset")
+		hudoffset_h:SetMin(0)
+		hudoffset_h:SetMax(100)
+		hudoffset_h:SetDecimals(0)
+		hudoffset_h:SetDark(1)
+		hudoffset_h:SetConVar("spb_cl_hud_offset_h")
 
 
 		spb_MenuF.Controls = vgui.Create("DPanel")

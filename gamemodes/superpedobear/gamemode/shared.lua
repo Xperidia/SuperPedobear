@@ -7,7 +7,7 @@ GM.Name 		= "Super Pedobear"
 GM.ShortName 	= "SuperPedobear"
 GM.Author 		= "VictorienXP@Xperidia"
 GM.Website 		= "xperi.link/SuperPBear"
-GM.Version 		= 0.302
+GM.Version 		= 0.303
 GM.TeamBased 	= true
 
 TEAM_HIDING	= 1
@@ -136,14 +136,24 @@ function GM:Initialize()
 
 	if CLIENT then
 
-		CreateClientConVar("spb_cl_disabletauntmenuclose", 0, true, false)
-		CreateClientConVar("spb_cl_disablehalos", 0, true, false)
-		CreateClientConVar("spb_cl_music_enable", 1, true, false)
-		CreateClientConVar("spb_cl_music_volume", 0.5, true, false)
-		CreateClientConVar("spb_cl_music_allowexternal", 1, true, false)
-		CreateClientConVar("spb_cl_music_visualizer", 1, true, false)
-		CreateClientConVar("spb_cl_hud_offset", 0, true, false)
-		CreateClientConVar("spb_cl_hide_tips", 0, true, false)
+		local screen_ratio = ScrW() / ScrH()
+		local hud_offset_w = 25
+
+		if screen_ratio >= 1.6 then
+			hud_offset_w = 100
+		end
+
+		CreateClientConVar("spb_cl_disabletauntmenuclose", 0, true, false, "Don't close the taunt menu after taunting")
+		CreateClientConVar("spb_cl_disablehalos", 0, true, false, "Disable halos (Improve performance)")
+		CreateClientConVar("spb_cl_music_enable", 1, true, false, "Enable music")
+		CreateClientConVar("spb_cl_music_volume", 0.5, true, false, "Music volume")
+		CreateClientConVar("spb_cl_music_allowexternal", 1, true, false, "Allow external musics (Loaded from url)")
+		CreateClientConVar("spb_cl_music_visualizer", 1, true, false, "Enable visualizer (Downgrade performance)")
+		CreateClientConVar("spb_cl_hud_offset_w", hud_offset_w, true, false, "Horizontal HUD Offset")
+		CreateClientConVar("spb_cl_hud_offset_h", 25, true, false, "Vertical HUD Offset")
+		CreateClientConVar("spb_cl_hide_tips", 0, true, false, "Hide all tips")
+		CreateClientConVar("spb_cl_quickstuff_enable", 1, true, false, "Enable quick taunt and quick buy")
+		CreateClientConVar("spb_cl_quickstuff_numpad", 1, true, false, "Use numpad aswell for quick stuff")
 
 		cvars.AddChangeCallback("spb_cl_music_volume", function(convar_name, value_old, value_new)
 			if IsValid(GAMEMODE.Vars.Music) then

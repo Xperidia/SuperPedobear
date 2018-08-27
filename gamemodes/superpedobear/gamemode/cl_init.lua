@@ -1095,18 +1095,20 @@ function GM:Think()
 
 	local ply = LocalPlayer()
 
-	GAMEMODE.Vars.LNInputs = {
-								GAMEMODE.Vars.NInputs[1] or false,
-								GAMEMODE.Vars.NInputs[2] or false,
-								GAMEMODE.Vars.NInputs[3] or false,
-								GAMEMODE.Vars.NInputs[4] or false,
-								GAMEMODE.Vars.NInputs[5] or false,
-								GAMEMODE.Vars.NInputs[6] or false,
-								GAMEMODE.Vars.NInputs[7] or false,
-								GAMEMODE.Vars.NInputs[8] or false,
-								GAMEMODE.Vars.NInputs[9] or false,
-								GAMEMODE.Vars.NInputs[10] or false
-							}
+	if GAMEMODE.Vars.NInputs then
+		GAMEMODE.Vars.LNInputs = {
+									GAMEMODE.Vars.NInputs[1] or false,
+									GAMEMODE.Vars.NInputs[2] or false,
+									GAMEMODE.Vars.NInputs[3] or false,
+									GAMEMODE.Vars.NInputs[4] or false,
+									GAMEMODE.Vars.NInputs[5] or false,
+									GAMEMODE.Vars.NInputs[6] or false,
+									GAMEMODE.Vars.NInputs[7] or false,
+									GAMEMODE.Vars.NInputs[8] or false,
+									GAMEMODE.Vars.NInputs[9] or false,
+									GAMEMODE.Vars.NInputs[10] or false
+								}
+	end
 	GAMEMODE.Vars.NInputs = {
 								input.IsKeyDown(KEY_1) or input.IsKeyDown(KEY_PAD_1),
 								input.IsKeyDown(KEY_2) or input.IsKeyDown(KEY_PAD_2),

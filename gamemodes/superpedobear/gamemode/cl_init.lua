@@ -901,7 +901,8 @@ function GM:HUDDrawTargetID()
 	local text = ""
 	local font = "DermaLarge"
 
-	if trace.Entity:IsPlayer() or trace.Entity:GetClass() == "spb_dummy" then
+
+	if (trace.Entity:IsPlayer() and !trace.Entity:IsCloaked()) or trace.Entity:GetClass() == "spb_dummy" then
 		text = trace.Entity:Nick()
 	end
 

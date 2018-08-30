@@ -339,6 +339,14 @@ function GM.PlayerMeta:HasPowerUP()
 	end
 end
 
+function GM.PlayerMeta:IsCloaked()
+	local var = self.spb_CloakTime or self:GetNWFloat("spb_CloakTime", nil)
+	if !var then
+		return nil
+	end
+	return var >= CurTime()
+end
+
 function GM:SelectRandomPowerUP(ply)
 	for k, v in RandomPairs(GAMEMODE.PowerUps) do
 		if !IsValid(ply) or v[2] == ply:Team() or v[2] == 0 then
@@ -366,8 +374,7 @@ function GM:GetClosestPlayer(ply, pteam)
 end
 
 function GM:PlayerFootstep(ply, pos, foot, sound, volume, filter)
-	local cloakt = ply:GetNWFloat("spb_CloakTime", nil)
-	if cloakt and cloakt >= CurTime() then
+	if ply:IsCloaked() then
 		return true
 	end
 end

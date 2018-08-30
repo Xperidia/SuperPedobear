@@ -404,7 +404,7 @@ function GM:Think()
 
 		end
 
-		if v.spb_CloakTime and v.spb_CloakTime >= CurTime() then
+		if v:IsCloaked() then
 			local t = v.spb_CloakTime - CurTime()
 			local alpha = 1
 			local tt = spb_powerup_cloak_time:GetFloat() or 0
@@ -833,7 +833,9 @@ end
 
 function GM:PlayerShouldTakeDamage(ply, attacker)
 
-	if game.SinglePlayer() then return true end
+	if ply:IsCloaked() then
+		return false
+	end
 
 	if attacker:IsValid() and attacker:IsPlayer() and ply:Team() == attacker:Team() then
 		return false
@@ -1031,6 +1033,7 @@ end
 
 function GM:GetFallDamage(ply, flFallSpeed)
 	if ply:Team() == TEAM_SEEKER then return 0 end
+	if ply:IsCloaked() then return 0 end
 	if !GAMEMODE.Vars.Round.Start then return 0 end
 	return 10
 end
@@ -1039,7 +1042,7 @@ function GM:OnDamagedByExplosion(ply, dmginfo)
 end
 
 function GM:EntityTakeDamage(target, dmg)
-	if target:IsPlayer() and target:Team() == TEAM_HIDING and target:Health() - dmg:GetDamage() > 0 then
+	if target:IsPlayer() and target:Team() == TEAM_HIDING and target:Health() - dmg:GetDamage() > 0 and !target:IsCloaked() then
 		if #GAMEMODE.Sounds.Damage > 0 then
 			target:EmitSound(GAMEMODE.Sounds.Damage[math.random(1, #GAMEMODE.Sounds.Damage)], 90, 100, 1, CHAN_AUTO)
 		end

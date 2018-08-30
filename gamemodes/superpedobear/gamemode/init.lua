@@ -756,7 +756,7 @@ function GM:SlowMo()
 		end
 	end
 
-	if IsValid(ply) then
+	if IsValid(ply) and !ply:IsCloaked() then
 
 		local _, distance = GAMEMODE:GetClosestPlayer(ply, TEAM_SEEKER)
 		local scale = 1

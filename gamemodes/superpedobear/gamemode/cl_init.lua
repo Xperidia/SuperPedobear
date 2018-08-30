@@ -212,7 +212,7 @@ end
 
 function GM:HUDPaint()
 
-	if GetConVarNumber("cl_drawhud") == 0 then return end
+	if !GetConVar("cl_drawhud"):GetBool() then return end
 
 	hook.Run("HUDDrawTargetID")
 	hook.Run("DrawDeathNotice", 0.85, 0.04)

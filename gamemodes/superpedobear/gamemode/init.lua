@@ -43,10 +43,8 @@ function GM:PlayerInitialSpawn(ply)
 		GAMEMODE:LoadPlayerInfo(ply)
 	end
 
-	if !game.IsDedicated() then
-		if ply:IsListenServerHost() then
-			ply:SetNWBool("IsListenServerHost", true)
-		end
+	if !game.IsDedicated() and ply:IsListenServerHost() then
+		ply:SetNWBool("IsListenServerHost", true)
 	end
 
 	GAMEMODE:UpVars(ply)
@@ -807,14 +805,12 @@ function GM:DoPlayerDeath(ply, attacker, dmginfo)
 		end
 	end
 
-	if attacker:IsValid() and attacker:IsPlayer() then
-		if attacker != ply and attacker:Team() == TEAM_SEEKER then
-			attacker:AddFrags(1)
-			attacker:SetNWInt("spb_TotalVictims", attacker:GetNWInt("spb_TotalVictims", 0) + 1)
-			attacker:SetNWInt("spb_VictimsCurrency", attacker:GetNWInt("spb_VictimsCurrency", 0) + 1)
-			GAMEMODE.Vars.downvictims = (GAMEMODE.Vars.downvictims or 0) + 1
-			hook.Call("spb_GotSomeone", nil, ply, attacker)
-		end
+	if attacker:IsValid() and attacker:IsPlayer() and attacker != ply and attacker:Team() == TEAM_SEEKER then
+		attacker:AddFrags(1)
+		attacker:SetNWInt("spb_TotalVictims", attacker:GetNWInt("spb_TotalVictims", 0) + 1)
+		attacker:SetNWInt("spb_VictimsCurrency", attacker:GetNWInt("spb_VictimsCurrency", 0) + 1)
+		GAMEMODE.Vars.downvictims = (GAMEMODE.Vars.downvictims or 0) + 1
+		hook.Call("spb_GotSomeone", nil, ply, attacker)
 	end
 
 	GAMEMODE:PlayerStats()
@@ -861,28 +857,24 @@ function GM:Taunt(ply, taunt, tauntid)
 		ply.TauntCooldown = 0
 	end
 
-	if ply.TauntCooldown <= CurTime() then
+	if ply.TauntCooldown <= CurTime() and taunt[3] == ply:Team() or taunt[3] == 0 then
 
-		if taunt[3] == ply:Team() or taunt[3] == 0 then
+		ply:EmitSound(taunt[2], 75, 100, 1, CHAN_AUTO)
 
-			ply:EmitSound(taunt[2], 75, 100, 1, CHAN_AUTO)
+		local cd = taunt[4]
 
-			local cd = taunt[4]
-
-			if cd < 5 then
-				cd = 5
-			end
-
-			ply.TauntCooldown = CurTime() + cd
-
-			ply:SetNWInt("spb_LastTaunt", tauntid)
-			ply:SetNWInt("spb_TauntCooldown", ply.TauntCooldown)
-			ply:SetNWInt("spb_TauntCooldownF", cd)
-
-			local shouldgivepoints = GAMEMODE.Vars.Round.Start and !GAMEMODE.Vars.Round.Pre2Start and !GAMEMODE.Vars.Round.End and !GAMEMODE.Vars.Round.TempEnd and ply:Team() != TEAM_SEEKER
-			hook.Call("spb_Taunt", nil, ply, shouldgivepoints)
-
+		if cd < 5 then
+			cd = 5
 		end
+
+		ply.TauntCooldown = CurTime() + cd
+
+		ply:SetNWInt("spb_LastTaunt", tauntid)
+		ply:SetNWInt("spb_TauntCooldown", ply.TauntCooldown)
+		ply:SetNWInt("spb_TauntCooldownF", cd)
+
+		local shouldgivepoints = GAMEMODE.Vars.Round.Start and !GAMEMODE.Vars.Round.Pre2Start and !GAMEMODE.Vars.Round.End and !GAMEMODE.Vars.Round.TempEnd and ply:Team() != TEAM_SEEKER
+		hook.Call("spb_Taunt", nil, ply, shouldgivepoints)
 
 	end
 
@@ -943,10 +935,8 @@ function GM:PlayerCanSeePlayersChat(text, teamOnly, listener, speaker)
 		if listener:Team() != speaker:Team() then return false end
 	end
 
-	if GAMEMODE.Vars.Round.Start and !GAMEMODE.Vars.Round.End and !teamOnly then
-		if speaker:Team() == TEAM_HIDING and !speaker:Alive() and listener:Team() == TEAM_SEEKER then
-			return false
-		end
+	if GAMEMODE.Vars.Round.Start and !GAMEMODE.Vars.Round.End and !teamOnly and speaker:Team() == TEAM_HIDING and !speaker:Alive() and listener:Team() == TEAM_SEEKER then
+		return false
 	end
 
 	return true
@@ -1032,10 +1022,8 @@ function GM:OnDamagedByExplosion(ply, dmginfo)
 end
 
 function GM:EntityTakeDamage(target, dmg)
-	if target:IsPlayer() and target:Team() == TEAM_HIDING and target:Health() - dmg:GetDamage() > 0 and !target:IsCloaked() then
-		if #GAMEMODE.Sounds.Damage > 0 then
-			target:EmitSound(GAMEMODE.Sounds.Damage[math.random(1, #GAMEMODE.Sounds.Damage)], 90, 100, 1, CHAN_AUTO)
-		end
+	if target:IsPlayer() and target:Team() == TEAM_HIDING and target:Health() - dmg:GetDamage() > 0 and !target:IsCloaked() and #GAMEMODE.Sounds.Damage > 0 then
+		target:EmitSound(GAMEMODE.Sounds.Damage[math.random(1, #GAMEMODE.Sounds.Damage)], 90, 100, 1, CHAN_AUTO)
 	end
 end
 

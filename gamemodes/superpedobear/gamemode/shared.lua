@@ -20,8 +20,8 @@ GM.Sounds.Damage		= GM.Sounds.Damage or {}
 GM.Sounds.Death			= GM.Sounds.Death or {}
 
 GM.Materials = {}
-GM.Materials.Van =	Material("superpedobear/van")
-GM.Materials.Bear =	Material("superpedobear/bear")
+GM.Materials.Van	= Material("superpedobear/van")
+GM.Materials.Bear	= Material("superpedobear/bear")
 
 GM.Vars = GM.Vars or {}
 GM.Vars.Round = GM.Vars.Round or {}
@@ -39,13 +39,13 @@ GM.SeasonalEvents = {
 }
 
 GM.PowerUps = {
-	--name = {"Name", <TEAM: -1(disabled), 0(all teams), TEAM_HIDING or TEAM_SEEKER>, Material("superpedobear/powerup/materialname"), <Optional Color()>, <Optional price addition>},
-	clone = {"Clone", TEAM_HIDING, Material("superpedobear/powerup/clone"), Color(255, 200, 50, 255), 2},
-	boost = {"Boost", TEAM_HIDING, Material("superpedobear/powerup/boost"), Color(255, 128, 0, 255)},
-	vdisguise = {"Disguise", -1, Material("superpedobear/powerup/vdisguise")},
-	cloak = {"Invisibility", TEAM_HIDING, Material("superpedobear/powerup/cloak"), Color(84, 110, 122, 255), 2},
-	radar = {"Radar", TEAM_SEEKER, Material("superpedobear/powerup/radar"), nil, 4},
-	trap = {"False Power-UP", TEAM_SEEKER, Material("superpedobear/powerup/trap"), Color(255, 64, 64, 255)}
+	--name		= {"Name", <TEAM: -1(disabled), 0(all teams), TEAM_HIDING or TEAM_SEEKER>, Material("superpedobear/powerup/materialname"), <Optional Color()>, <Optional price addition>},
+	clone		= {"Clone",				TEAM_HIDING,	Material("superpedobear/powerup/clone"),	Color(255, 200, 50, 255),	2},
+	boost		= {"Boost",				TEAM_HIDING,	Material("superpedobear/powerup/boost"),	Color(255, 128, 0, 255)},
+	vdisguise	= {"Disguise",			-1,				Material("superpedobear/powerup/vdisguise")},
+	cloak		= {"Invisibility",		TEAM_HIDING,	Material("superpedobear/powerup/cloak"),	Color(84, 110, 122, 255),	2},
+	radar		= {"Radar",				TEAM_SEEKER,	Material("superpedobear/powerup/radar"),	nil,						4},
+	trap		= {"False Power-UP",	TEAM_SEEKER,	Material("superpedobear/powerup/trap"),		Color(255, 64, 64, 255)}
 }
 
 GM.PlayerMeta = GM.PlayerMeta or FindMetaTable("Player")
@@ -208,10 +208,8 @@ function GM:Initialize()
 end
 
 function GM:ShutDown()
-	if SERVER then
-		if GetConVar("sv_loadingurl"):GetString() == "https://xperidia.com/GMOD/loading/?auto" then --Put back the default Garry's Mod loading screen...
-			RunConsoleCommand("sv_loadingurl", "")
-		end
+	if SERVER and GetConVar("sv_loadingurl"):GetString() == "https://xperidia.com/GMOD/loading/?auto" then --Put back the default Garry's Mod loading screen...
+		RunConsoleCommand("sv_loadingurl", "")
 	end
 end
 

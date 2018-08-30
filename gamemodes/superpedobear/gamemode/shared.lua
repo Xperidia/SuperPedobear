@@ -7,7 +7,7 @@ GM.Name 		= "Super Pedobear"
 GM.ShortName 	= "SuperPedobear"
 GM.Author 		= "VictorienXP@Xperidia"
 GM.Website 		= "xperi.link/SuperPBear"
-GM.Version 		= 0.303
+GM.Version 		= 0.304
 GM.TeamBased 	= true
 
 TEAM_HIDING	= 1

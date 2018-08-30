@@ -90,58 +90,62 @@ function GM:Menu()
 		spb_MenuF.one:SetPos(10, 30)
 		spb_MenuF.one:SetSize(305, 215)
 
-		local onelbl = vgui.Create("DLabel")
-		onelbl:SetParent(spb_MenuF.one)
-		onelbl:SetText("You're playing " .. (GAMEMODE.Name or "?") .. " V" .. (GAMEMODE.Version or "?"))
-		onelbl:SetPos(10, 5)
-		onelbl:SetDark(1)
-		onelbl:SizeToContents()
+		spb_MenuF.one.text = vgui.Create("RichText", spb_MenuF.one)
+		spb_MenuF.one.text:Dock(FILL)
+		spb_MenuF.one.text:InsertColorChange(0, 0, 0, 255)
+		function spb_MenuF.one.text:PerformLayout()
+			self:SetFontInternal("DermaDefault")
+		end
+		spb_MenuF.one.text:AppendText("\t\t    You're playing " .. (GAMEMODE.Name or "?") .. " V" .. (GAMEMODE.Version or "?") .. "\n\n")
+		spb_MenuF.one.text:AppendText("Gamemode made by VictorienXP, with arts from Pho3 and Wubsy...\n\n")
+		spb_MenuF.one.text:AppendText("If you need help or anything, please go to Xperidia's Discord server discord.gg/jtUtYDa\n\n")
+		spb_MenuF.one.text:AppendText("Support Xperidia for more stuff and updates!\nGet a Premium Rank in Xperidia.com/Premium\n\n")
 
-		local desclbl = vgui.Create("DLabel")
-		desclbl:SetParent(spb_MenuF.one)
-		desclbl:SetPos(20, 30)
-		desclbl:SetDark(1)
-		desclbl:SetText("Gamemode made by VictorienXP with love\nWith arts from Pho3 and Wubsy\n\n\nIf you need help or anything,\nplease go to Xperidia's Discord server discord.gg/jtUtYDa\n\n\nSupport Xperidia for more stuff and updates!\nGet a Premium Rank in Xperidia.com/Premium")
-		desclbl:SizeToContents()
+		spb_MenuF.one.text:InsertClickableTextStart("SplashScreen")
+		spb_MenuF.one.text:AppendText("Click here to open the Splash Screen")
+		spb_MenuF.one.text:InsertClickableTextEnd()
+		spb_MenuF.one.text:AppendText("\n")
+		spb_MenuF.one.text:InsertClickableTextStart("Workshop")
+		spb_MenuF.one.text:AppendText("Click here to open the gamemode's workshop page")
+		spb_MenuF.one.text:InsertClickableTextEnd()
+		spb_MenuF.one.text:AppendText("\n")
+		spb_MenuF.one.text:InsertClickableTextStart("Discord")
+		spb_MenuF.one.text:AppendText("Click here to join the Xperidia's Discord server")
+		spb_MenuF.one.text:InsertClickableTextEnd()
+		spb_MenuF.one.text:AppendText("\n")
+		spb_MenuF.one.text:InsertClickableTextStart("XP_Premium")
+		spb_MenuF.one.text:AppendText("Click here to get the Xperidia Premium Rank")
+		spb_MenuF.one.text:InsertClickableTextEnd()
+		spb_MenuF.one.text:AppendText("\n")
+		spb_MenuF.one.text:InsertClickableTextStart("XP_Account")
+		spb_MenuF.one.text:AppendText("Click here to check your Xperidia Account")
+		spb_MenuF.one.text:InsertClickableTextEnd()
+		spb_MenuF.one.text:AppendText("\n\n")
 
-		local xpucp = vgui.Create( "DButton" )
-		xpucp:SetParent(spb_MenuF.one)
-		xpucp:SetText("Xperidia Account")
-		xpucp:SetPos(20, 190)
-		xpucp:SetSize(125, 20)
-		xpucp.DoClick = function()
-			gui.OpenURL("https://account.xperidia.com/")
-			spb_MenuF:Close()
+		spb_MenuF.one.text:AppendText("Changelog of V" .. (GAMEMODE.Version or "?") .. ":\n")
+		for k, v in pairs(changelog()) do
+			spb_MenuF.one.text:AppendText("> " .. v .. "\n")
 		end
 
-		local support = vgui.Create("DButton")
-		support:SetParent(spb_MenuF.one)
-		support:SetText("Xperidia's Discord server")
-		support:SetPos(160, 190)
-		support:SetSize(125, 20)
-		support.DoClick = function()
-			gui.OpenURL("https://discordapp.com/invite/jtUtYDa")
-			spb_MenuF:Close()
-		end
-
-		local SplashScreen = vgui.Create("DButton")
-		SplashScreen:SetParent(spb_MenuF.one)
-		SplashScreen:SetText("Splash Screen")
-		SplashScreen:SetPos(20, 165)
-		SplashScreen:SetSize(125, 20)
-		SplashScreen.DoClick = function()
-			GAMEMODE:SplashScreen()
-			spb_MenuF:Close()
-		end
-
-		local Workshop = vgui.Create("DButton")
-		Workshop:SetParent(spb_MenuF.one)
-		Workshop:SetText("Workshop page")
-		Workshop:SetPos(160, 165)
-		Workshop:SetSize(125, 20)
-		Workshop.DoClick = function()
-			gui.OpenURL("http://" .. GAMEMODE.Website)
-			spb_MenuF:Close()
+		function spb_MenuF.one.text:ActionSignal(signalName, signalValue)
+			if signalName == "TextClicked" then
+				if signalValue == "SplashScreen" then
+					GAMEMODE:SplashScreen()
+					spb_MenuF:Close()
+				elseif signalValue == "Workshop" then
+					gui.OpenURL("http://" .. GAMEMODE.Website)
+					spb_MenuF:Close()
+				elseif signalValue == "Discord" then
+					gui.OpenURL("https://discordapp.com/invite/jtUtYDa")
+					spb_MenuF:Close()
+				elseif signalValue == "XP_Account" then
+					gui.OpenURL("https://account.xperidia.com/")
+					spb_MenuF:Close()
+				elseif signalValue == "XP_Premium" then
+					gui.OpenURL("https://store.xperidia.com/Premium")
+					spb_MenuF:Close()
+				end
+			end
 		end
 
 

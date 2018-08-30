@@ -662,7 +662,9 @@ function GM:RoundThink()
 
 			--GAMEMODE:Music("pause")
 
-			if MapVote and GAMEMODE.Vars.Rounds > spb_rounds:GetInt() then
+			local max_rounds = spb_rounds:GetInt()
+
+			if MapVote and GAMEMODE.Vars.Rounds > max_rounds and max_rounds > 0 then
 				MapVote.Start(nil, nil, nil, {"spb_", "ph_"})
 			end
 

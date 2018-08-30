@@ -293,10 +293,11 @@ function GM:HUDPaint()
 		end
 	end
 
-	if rnd > 999 or GAMEMODE.Vars.Tutorial then
+	local max_rounds = spb_rounds:GetInt()
+	if rnd > 99 or GAMEMODE.Vars.Tutorial then
 		rnd = "∞"
-	elseif MapVote and spb_rounds:GetInt() < 100 then
-		rnd = rnd .. "/" .. spb_rounds:GetInt()
+	elseif MapVote and max_rounds < 10 and max_rounds > 0 then
+		rnd = rnd .. "/" .. max_rounds
 	end
 
 	surface.SetDrawColor(Color(0, 0, 0, 200))

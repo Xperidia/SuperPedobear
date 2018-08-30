@@ -36,6 +36,7 @@ local function changelog()
 		"Added cvar spb_cl_quickstuff_numpad",
 		"Added cvar spb_cl_hud_offset_w",
 		"Added cvar spb_cl_hud_offset_h",
+		"Updated cvar spb_rounds",
 		"Removed cvar spb_cl_hud_offset",
 		"A huge bunch of changes and behind the scenes stuff"
 	}

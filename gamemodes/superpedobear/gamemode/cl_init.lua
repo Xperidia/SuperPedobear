@@ -357,12 +357,6 @@ function GM:HUDPaint()
 
 		addrndtxt((GAMEMODE.Vars.victims or 0) .. "|" .. (GAMEMODE.Vars.downvictims or 0))
 
-		for k, v in pairs(GAMEMODE.Vars.Bears) do
-			if IsValid(v) and v:Alive() and GAMEMODE.PlayerEasterEgg[v:SteamID64()] and GAMEMODE.PlayerEasterEgg[v:SteamID64()][4] then
-				addrndtxt(Format(GAMEMODE.PlayerEasterEgg[v:SteamID64()][4], v:Nick()))
-			end
-		end
-
 	elseif !Start and GAMEMODE.Vars.victims < 2 then
 		addrndtxt("Waiting for players")
 	end

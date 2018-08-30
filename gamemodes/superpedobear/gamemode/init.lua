@@ -561,27 +561,13 @@ function GM:RoundThink()
 
 				GAMEMODE.Vars.Round.Pre2Start = false
 
-				local custommusic = false
-
-				for k, v in pairs(team.GetPlayers(TEAM_SEEKER)) do
-					if GAMEMODE.PlayerEasterEgg[v:SteamID64()] and GAMEMODE.PlayerEasterEgg[v:SteamID64()][3] then
-						GAMEMODE.Vars.CurrentMusic = GAMEMODE.PlayerEasterEgg[v:SteamID64()][3]
-						GAMEMODE.Vars.CurrentMusicName = v:Nick()
-						custommusic = true
-					end
-				end
-
-				if custommusic then
-					GAMEMODE:Music(GAMEMODE.Vars.CurrentMusic, false, nil, GAMEMODE.Vars.CurrentMusicName)
+				local jukebox = GAMEMODE:MusicQueueSelect()
+				if jukebox then
+					GAMEMODE.Vars.CurrentMusic = jukebox
+					GAMEMODE.Vars.CurrentMusicName = nil
+					GAMEMODE:Music(GAMEMODE.Vars.CurrentMusic)
 				else
-					local jukebox = GAMEMODE:MusicQueueSelect()
-					if jukebox then
-						GAMEMODE.Vars.CurrentMusic = jukebox
-						GAMEMODE.Vars.CurrentMusicName = nil
-						GAMEMODE:Music(GAMEMODE.Vars.CurrentMusic)
-					else
-						GAMEMODE:SelectMusic()
-					end
+					GAMEMODE:SelectMusic()
 				end
 
 				for k, v in pairs(Seekers) do

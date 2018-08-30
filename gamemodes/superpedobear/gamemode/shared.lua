@@ -55,10 +55,6 @@ function GM.PlayerMeta:Nick()
 	return self:RealNick()
 end
 
-GM.PlayerEasterEgg = {}
---GM.PlayerEasterEgg["SteamID64"] = {<removed>, <removed>, <custom music>, <custom announce>}
-GM.PlayerEasterEgg["76561198108011282"] = {nil, nil, "https://assets.xperidia.com/superpedobear/musics/76561198108011282.mp3", "IT'S CHEEZY TIME WITH %s"} --Marco
-
 
 function GM:IsSeasonalEvent(str)
 	local Timestamp = os.time()

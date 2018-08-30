@@ -9,7 +9,7 @@ local function binds()
 		{GAMEMODE:CheckBind("+menu_context"), "Toggle thirdperson", "Show Context Menu"},
 		{GAMEMODE:CheckBind("gmod_undo"), "Drop Power-UP", "Undo"},
 		{GAMEMODE:CheckBind("phys_swap"), "Enhanced PlayerModel Selector", "Gravity Gun"},
-		{"1-9", "Quick taunt", ""},
+		{"1-9", "Quick taunt and quick buy", ""},
 		{"0", "Random taunt", ""},
 		{GAMEMODE:CheckBind("+forward"), "Move forward", "Move forward"},
 		{GAMEMODE:CheckBind("+moveleft"), "Move left", "Move left (stafe)"},

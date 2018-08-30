@@ -48,40 +48,6 @@ function PLAYER:Loadout()
 	end
 end
 
-local avmodels = avmodels or player_manager.AllValidModels()
-local models = models or {}
-function PLAYER:Init()
-	if #models == 0 then
-		if avmodels["Homura Akemi"] then
-			table.Merge(models, {"Homura Akemi", "Kyouko Sakura", "Madoka Kaname", "Mami Tomoe", "Sayaka Miki"})
-		end
-		if avmodels["Tda Chibi Haku Append (v2)"] then
-			table.insert(models, "Tda Chibi Haku Append (v2)")
-		end
-		if avmodels["Tda Chibi Luka Append (v2)"] then
-			table.insert(models, "Tda Chibi Luka Append (v2)")
-		end
-		if avmodels["Tda Chibi Miku Append (v2)"] then
-			table.insert(models, "Tda Chibi Miku Append (v2)")
-		end
-		if avmodels["Tda Chibi Neru Append (v2)"] then
-			table.insert(models, "Tda Chibi Neru Append (v2)")
-		end
-		if avmodels["Tda Chibi Teto Append (v2)"] then
-			table.insert(models, "Tda Chibi Teto Append (v2)")
-		end
-		if avmodels["RAM"] then
-			table.insert(models, "RAM")
-		end
-		if avmodels["Rom"] then
-			table.insert(models, "Rom")
-		end
-		if avmodels["WH"] then
-			table.insert(models, "WH")
-		end
-	end
-end
-
 function PLAYER:Spawn()
 	BaseClass.Spawn(self)
 	self.Player:SetPlayerColor(Vector(math.Rand(0, 1), math.Rand(0, 1), math.Rand(0, 1)))
@@ -91,18 +57,11 @@ function PLAYER:SetModel()
 
 	local cl_playermodel = self.Player:GetInfo("cl_playermodel")
 
-	if cl_playermodel == "none" or !avmodels[cl_playermodel] then
+	if cl_playermodel == "none" or !GAMEMODE.Vars.PM_Available[cl_playermodel] then
 
-		if #models > 0 then
-			local randmodel = models[math.Round(util.SharedRandom(self.Player:UniqueID(), 1, #models))]
-			local modelname = player_manager.TranslatePlayerModel(randmodel)
-			util.PrecacheModel(modelname)
-			self.Player:SetModel(modelname)
-		else
-			local modelname = player_manager.TranslatePlayerModel("chell")
-			util.PrecacheModel(modelname)
-			self.Player:SetModel(modelname)
-		end
+		local modelname = player_manager.TranslatePlayerModel(self.Player:GetNWString("spb_DefautPM", "chell"))
+		util.PrecacheModel(modelname)
+		self.Player:SetModel(modelname)
 
 	else
 
@@ -127,11 +86,10 @@ end
 function PLAYER:GetHandsModel()
 
 	local cl_playermodel = self.Player:GetInfo("cl_playermodel")
-	if cl_playermodel != "none" and avmodels[cl_playermodel] then
+	if cl_playermodel != "none" and GAMEMODE.Vars.PM_Available[cl_playermodel] then
 		return player_manager.TranslatePlayerHands(cl_playermodel)
 	else
-		local randmodel = models[math.Round(util.SharedRandom(self.Player:UniqueID(), 1, #models))]
-		return player_manager.TranslatePlayerHands(randmodel)
+		return player_manager.TranslatePlayerHands(self.Player:GetNWString("spb_DefautPM", "chell"))
 	end
 
 end

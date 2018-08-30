@@ -143,6 +143,10 @@ net.Receive("spb_TauntList", function(len)
 	GAMEMODE.Taunts = net.ReadTable()
 end)
 
+net.Receive("spb_PM_Lists", function(len)
+	GAMEMODE.Vars.PM_Available = net.ReadTable()
+end)
+
 net.Receive("spb_List", function(len)
 	GAMEMODE.Vars.Bears = net.ReadTable()
 end)

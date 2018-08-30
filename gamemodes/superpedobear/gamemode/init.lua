@@ -24,6 +24,7 @@ util.AddNetworkString("spb_List")
 util.AddNetworkString("spb_MusicQueue")
 util.AddNetworkString("spb_MusicAddToQueue")
 util.AddNetworkString("spb_MusicQueueVote")
+util.AddNetworkString("spb_PM_Lists")
 
 function GM:InitPostEntity()
 	GAMEMODE.Vars.ThereIsPowerUPSpawns = #ents.FindByClass("spb_powerup_spawn") > 0
@@ -52,6 +53,9 @@ function GM:PlayerInitialSpawn(ply)
 	GAMEMODE:SendMusicIndex(ply)
 	GAMEMODE:SendTauntIndex(ply)
 	GAMEMODE:SendMusicQueue(ply)
+	GAMEMODE:SendPMList(ply)
+
+	ply:SetNWString("spb_DefautPM", GAMEMODE.Vars.PM_Default[math.Round(util.SharedRandom(ply:UniqueID(), 1, #GAMEMODE.Vars.PM_Default))])
 
 end
 
@@ -1059,6 +1063,12 @@ end
 function GM:SendTauntIndex(ply)
 	net.Start("spb_TauntList")
 		net.WriteTable(GAMEMODE.Taunts)
+	if IsValid(ply) then net.Send(ply) else net.Broadcast() end
+end
+
+function GM:SendPMList(ply)
+	net.Start("spb_PM_Lists")
+		net.WriteTable(GAMEMODE.Vars.PM_Available)
 	if IsValid(ply) then net.Send(ply) else net.Broadcast() end
 end
 

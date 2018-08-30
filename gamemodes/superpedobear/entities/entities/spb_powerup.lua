@@ -11,12 +11,12 @@ function ENT:Initialize()
 		self:SetUseType(SIMPLE_USE)
 		self:SetLePos(self:GetPos() + Vector(0, 0, 35.5))
 	end
-	self:SetModel("models/hunter/blocks/cube05x105x05.mdl")
+	self:SetModel("models/maxofs2d/hover_rings.mdl")
 	self:SetSolid(SOLID_VPHYSICS)
 	self:DrawShadow(false)
 	self:SetCollisionGroup(COLLISION_GROUP_WORLD)
-	self:SetColor(Color(255, 128, 0, 255))
 	self:SetRenderMode(RENDERMODE_TRANSALPHA)
+	self:SetColor(Color(255, 128, 0, 200))
 	self:SetMaterial("models/wireframe")
 	self:SetPos(self:GetLePos())
 	self:SetAngles(Angle(0, 0, 90))
@@ -38,7 +38,6 @@ end
 
 local sprite = Material("sprites/physg_glow1")
 function ENT:Draw()
-	if spb_enabledevmode:GetBool() then self:DrawModel() end
 	if !IsValid(self.PU) then
 		self.PU = ClientsideModel("models/maxofs2d/hover_rings.mdl")
 		self.PU:SetNoDraw(true)
@@ -88,7 +87,7 @@ end
 
 function ENT:PickUP(ent)
 	if IsValid(ent) and ent:IsPlayer() and ent:Alive() then
-		if ent == self.WasDropped and self.CTime + 0.5 > CurTime() then return end
+		if IsValid(self.WasDropped) and self.WasDropped == ent and self.CTime and self.CTime + 0.5 > CurTime() then return end
 		if !self.Trap then
 			local result = ent:PickPowerUP(self.ForcedPowerUP)
 			if result or result == nil then

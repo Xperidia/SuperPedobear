@@ -1,7 +1,12 @@
 AddCSLuaFile()
 
-SWEP.PrintName	= "Hiding"
+SWEP.PrintName	= "Hiding powers"
 SWEP.Author		= "Xperidia"
+SWEP.Purpose = "Weld props and use power-ups"
+if CLIENT then
+	SWEP.Instructions = GAMEMODE:CheckBind("+attack") .. " to weld a prop to another\n" .. GAMEMODE:CheckBind("+attack2") .. " to unweld a prop\n" .. GAMEMODE:CheckBind("+reload") .. " to use power-ups"
+	SWEP.WepSelectIcon = surface.GetTextureID("superpedobear/weapons/spb_hiding")
+end
 SWEP.Spawnable	= false
 
 SWEP.Primary.ClipSize		= -1

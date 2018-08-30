@@ -12,8 +12,8 @@ PLAYER.DuckSpeed			= 0.3
 PLAYER.UnDuckSpeed			= 0.3
 PLAYER.JumpPower			= 200
 PLAYER.CanUseFlashlight     = true
-PLAYER.MaxHealth			= 100
-PLAYER.StartHealth			= 5000
+PLAYER.MaxHealth			= 255
+PLAYER.StartHealth			= 255
 PLAYER.StartArmor			= 255
 PLAYER.DropWeaponOnDie		= false
 PLAYER.TeammateNoCollide 	= true
@@ -41,6 +41,11 @@ end
 function PLAYER:Loadout()
 	self.Player:RemoveAllItems()
 	self.Player:Give("spb_seeker")
+	if GetConVar("spb_weapons"):GetBool() then
+		self.Player:Give("weapon_crowbar")
+		self.Player:Give("weapon_fists")
+		self.Player:Give("weapon_physcannon")
+	end
 end
 
 function PLAYER:SetModel()

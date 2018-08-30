@@ -152,14 +152,15 @@ net.Receive("spb_MusicQueue", function(len)
 end)
 
 hook.Add("HUDShouldDraw", "HideHUD", function(name)
+	local ply = LocalPlayer()
 	local HUDhide = {
 		CHudHealth = true,
 		CHudBattery = true,
 		CHudDamageIndicator = true,
-		CHudWeaponSelection = true,
+		CHudWeaponSelection = (ply.GetWeapons and table.Count(ply:GetWeapons()) < 2) or IsValid(GAMEMODE.VanFrame),
 		CHudZoom = true
 	}
-	if name == "CHudCrosshair" and LocalPlayer():Team() == TEAM_UNASSIGNED then
+	if name == "CHudCrosshair" and ply:Team() == TEAM_UNASSIGNED then
 		return false
 	elseif HUDhide[name] then
 		return false
@@ -245,11 +246,19 @@ function GM:HUDPaint()
 		welding = nil
 	end
 	local weldingstate = sply:GetNWInt("spb_WeldingState")
-	local hide_tips = GetConVar("spb_cl_hide_tips"):GetBool()
+	local hide_tips = GetConVar("spb_cl_hide_tips"):GetBool() or End
 	local hudoffset_w = GetConVar("spb_cl_hud_offset_w") and GetConVar("spb_cl_hud_offset_w"):GetInt() or 0
 	local hudoffset_h = GetConVar("spb_cl_hud_offset_h") and GetConVar("spb_cl_hud_offset_h"):GetInt() or 0
 	hudoffset_w = ScrW() * (hudoffset_w * 0.001)
 	hudoffset_h = ScrH() * (hudoffset_h * 0.001)
+	local wep = ""
+	if plyAlive and IsValid(ply:GetActiveWeapon()) then
+		wep = ply:GetActiveWeapon():GetClass()
+	end
+	local swep = ""
+	if splyAlive and IsValid(sply:GetActiveWeapon()) then
+		swep = sply:GetActiveWeapon():GetClass()
+	end
 
 
 	--[[ THE CLOCK AND ROUND COUNT ]]--
@@ -408,7 +417,6 @@ function GM:HUDPaint()
 		surface.DrawOutlinedRect(ScrW() / 2 - w / 2 - 4, ScrH() / 2 - h / 2, w + 8, h)
 	end
 
-
 	if !hide_tips then --[[ ALL GENERIC TIPS ]]--
 
 		--[[ THE TIPS MESSAGES ]]--
@@ -418,9 +426,9 @@ function GM:HUDPaint()
 
 		if (plyTeam == TEAM_HIDING and Start and !plyAlive) or plyTeam == TEAM_SPECTATOR then
 			tips = GAMEMODE:CheckBind("+attack") .. " next player\n" .. GAMEMODE:CheckBind("+attack2") .. " previous player\n" .. GAMEMODE:CheckBind("+jump") .. " spectate mode (1st person/Chase/Free)"
-		elseif plyAlive and plyTeam == TEAM_HIDING then
+		elseif plyAlive and plyTeam == TEAM_HIDING and wep == "spb_hiding" then
 			tips = GAMEMODE:CheckBind("+attack") .. " to weld a prop to another\n" .. GAMEMODE:CheckBind("+attack2") .. " to unweld a prop"
-		elseif plyAlive and plyTeam == TEAM_SEEKER then
+		elseif plyAlive and plyTeam == TEAM_SEEKER and wep == "spb_seeker" then
 			tips = GAMEMODE:CheckBind("+attack") .. " to break props"
 		end
 
@@ -638,7 +646,11 @@ function GM:HUDPaint()
 				surface.SetDrawColor(Color(52, 190, 236, 255))
 			end
 			surface.SetMaterial(powerup[3])
-			surface.DrawTexturedRect(ox + yay(25) / 2, oy + yay(25) / 2, ow - yay(25), oh - yay(25))
+			if (swep == "spb_hiding" or swep == "spb_seeker") and !End then
+				surface.DrawTexturedRect(ox + yay(25) / 2, oy + yay(25) / 2, ow - yay(25), oh - yay(25))
+			else
+				surface.DrawTexturedRect(ox, oy, ow, oh)
+			end
 			if sply.AnimSetup and table.Count(sply.AnimSetup) > 0 then table.Empty(sply.AnimSetup) end
 		elseif sply.AnimSetup and table.Count(sply.AnimSetup) > 0 then
 			table.Empty(sply.AnimSetup)
@@ -649,7 +661,7 @@ function GM:HUDPaint()
 
 		if !hide_tips then
 			local usetip
-			if ply:HasPowerUP() and !anim_progress then
+			if ply:HasPowerUP() and !anim_progress and (wep == "spb_hiding" or wep == "spb_seeker") then
 				usetip = "Press " .. GAMEMODE:CheckBind("+reload") .. " to use"
 			end
 			if usetip then
@@ -842,7 +854,7 @@ function GM:DrawHealthFace(ply, x, y)
 		render.OverrideDepthEnable(false)
 		render.SuppressEngineLighting(true)
 		render.SetLightingOrigin(pos)
-		local life = math.Remap(ply:Health(), 0, ply:GetMaxHealth(), 0, 1) or 0
+		local life = math.Clamp(math.Remap(ply:Health(), 0, ply:GetMaxHealth(), 0, 1), 0, 1) or 0
 		render.ResetModelLighting(life, life, life)
 		render.SetColorModulation(1, 1, 1)
 		render.SetBlend(1)
@@ -1101,6 +1113,7 @@ function GM:Think()
 	local ply = LocalPlayer()
 	local use_quick = GetConVar("spb_cl_quickstuff_enable"):GetBool()
 	local use_numpad = GetConVar("spb_cl_quickstuff_numpad"):GetBool()
+	local got_weapons = (ply.GetWeapons and table.Count(ply:GetWeapons()) > 1) and !IsValid(GAMEMODE.VanFrame)
 
 	if use_quick then
 		if GAMEMODE.Vars.NInputs then
@@ -1118,16 +1131,16 @@ function GM:Think()
 									}
 		end
 		GAMEMODE.Vars.NInputs = {
-									input.IsKeyDown(KEY_1) or (use_numpad and input.IsKeyDown(KEY_PAD_1)),
-									input.IsKeyDown(KEY_2) or (use_numpad and input.IsKeyDown(KEY_PAD_2)),
-									input.IsKeyDown(KEY_3) or (use_numpad and input.IsKeyDown(KEY_PAD_3)),
-									input.IsKeyDown(KEY_4) or (use_numpad and input.IsKeyDown(KEY_PAD_4)),
-									input.IsKeyDown(KEY_5) or (use_numpad and input.IsKeyDown(KEY_PAD_5)),
-									input.IsKeyDown(KEY_6) or (use_numpad and input.IsKeyDown(KEY_PAD_6)),
-									input.IsKeyDown(KEY_7) or (use_numpad and input.IsKeyDown(KEY_PAD_7)),
-									input.IsKeyDown(KEY_8) or (use_numpad and input.IsKeyDown(KEY_PAD_8)),
-									input.IsKeyDown(KEY_9) or (use_numpad and input.IsKeyDown(KEY_PAD_9)),
-									input.IsKeyDown(KEY_0) or (use_numpad and input.IsKeyDown(KEY_PAD_0))
+									(!got_weapons and input.IsKeyDown(KEY_1)) or (use_numpad and input.IsKeyDown(KEY_PAD_1)),
+									(!got_weapons and input.IsKeyDown(KEY_2)) or (use_numpad and input.IsKeyDown(KEY_PAD_2)),
+									(!got_weapons and input.IsKeyDown(KEY_3)) or (use_numpad and input.IsKeyDown(KEY_PAD_3)),
+									(!got_weapons and input.IsKeyDown(KEY_4)) or (use_numpad and input.IsKeyDown(KEY_PAD_4)),
+									(!got_weapons and input.IsKeyDown(KEY_5)) or (use_numpad and input.IsKeyDown(KEY_PAD_5)),
+									(!got_weapons and input.IsKeyDown(KEY_6)) or (use_numpad and input.IsKeyDown(KEY_PAD_6)),
+									(!got_weapons and input.IsKeyDown(KEY_7)) or (use_numpad and input.IsKeyDown(KEY_PAD_7)),
+									(!got_weapons and input.IsKeyDown(KEY_8)) or (use_numpad and input.IsKeyDown(KEY_PAD_8)),
+									(!got_weapons and input.IsKeyDown(KEY_9)) or (use_numpad and input.IsKeyDown(KEY_PAD_9)),
+									(!got_weapons and input.IsKeyDown(KEY_0)) or (use_numpad and input.IsKeyDown(KEY_PAD_0))
 							}
 
 		if ply:Alive() and (ply:Team() == TEAM_HIDING or ply:Team() == TEAM_SEEKER) and !GAMEMODE.ChatOpen and !gui.IsGameUIVisible() and !IsValid(GAMEMODE.VanFrame) then
@@ -1166,7 +1179,7 @@ function GM:PlayerBindPress(ply, bind, down)
 
 	if down and bind == "gmod_undo" then
 		RunConsoleCommand("spb_powerup_drop")
-	elseif down and bind == "phys_swap" then
+	elseif down and bind == "phys_swap" and !ply:HasWeapon("weapon_physcannon") then
 		RunConsoleCommand("playermodel_selector")
 	end
 

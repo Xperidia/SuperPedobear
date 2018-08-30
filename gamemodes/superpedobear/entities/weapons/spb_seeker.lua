@@ -1,7 +1,12 @@
 AddCSLuaFile()
 
-SWEP.PrintName	= "Seeker"
+SWEP.PrintName	= "Seeker powers"
 SWEP.Author		= "Xperidia"
+SWEP.Purpose = "Catch players, break props and use power-ups"
+if CLIENT then
+	SWEP.Instructions = GAMEMODE:CheckBind("+attack") .. " to break props\n" .. GAMEMODE:CheckBind("+reload") .. " to use power-ups"
+	SWEP.WepSelectIcon = surface.GetTextureID("superpedobear/weapons/spb_seeker")
+end
 SWEP.Spawnable	= false
 
 SWEP.Primary.ClipSize		= -1

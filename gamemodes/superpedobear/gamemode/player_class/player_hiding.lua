@@ -41,6 +41,11 @@ end
 function PLAYER:Loadout()
 	self.Player:RemoveAllItems()
 	self.Player:Give("spb_hiding")
+	if GetConVar("spb_weapons"):GetBool() then
+		self.Player:Give("weapon_fists")
+		self.Player:Give("weapon_stunstick")
+		self.Player:Give("weapon_medkit")
+	end
 end
 
 local avmodels = avmodels or player_manager.AllValidModels()

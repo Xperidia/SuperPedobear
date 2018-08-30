@@ -43,19 +43,10 @@ function PLAYER:Loadout()
 	self.Player:Give("spb_hiding")
 end
 
-function PLAYER:Spawn()
-	BaseClass.Spawn(self)
-	self.Player:SetPlayerColor(Vector(math.Rand(0, 1), math.Rand(0, 1), math.Rand(0, 1)))
-end
-
-function PLAYER:SetModel()
-
-	local cl_playermodel = self.Player:GetInfo("cl_playermodel")
-	local avmodels = player_manager.AllValidModels()
-
-	if cl_playermodel == "none" or !avmodels[cl_playermodel] then
-
-		local models = {}
+local avmodels = avmodels or player_manager.AllValidModels()
+local models = models or {}
+function PLAYER:Init()
+	if #models == 0 then
 		if avmodels["Homura Akemi"] then
 			table.Merge(models, {"Homura Akemi", "Kyouko Sakura", "Madoka Kaname", "Mami Tomoe", "Sayaka Miki"})
 		end
@@ -83,9 +74,23 @@ function PLAYER:SetModel()
 		if avmodels["WH"] then
 			table.insert(models, "WH")
 		end
+	end
+end
+
+function PLAYER:Spawn()
+	BaseClass.Spawn(self)
+	self.Player:SetPlayerColor(Vector(math.Rand(0, 1), math.Rand(0, 1), math.Rand(0, 1)))
+end
+
+function PLAYER:SetModel()
+
+	local cl_playermodel = self.Player:GetInfo("cl_playermodel")
+
+	if cl_playermodel == "none" or !avmodels[cl_playermodel] then
 
 		if #models > 0 then
-			local modelname = player_manager.TranslatePlayerModel(models[math.random(1, #models)])
+			local randmodel = models[math.Round(util.SharedRandom(self.Player:UniqueID(), 1, #models))]
+			local modelname = player_manager.TranslatePlayerModel(randmodel)
 			util.PrecacheModel(modelname)
 			self.Player:SetModel(modelname)
 		else
@@ -110,6 +115,18 @@ function PLAYER:SetModel()
 			self.Player:SetBodygroup(k, tonumber(groups[k + 1]) or 0)
 		end
 
+	end
+
+end
+
+function PLAYER:GetHandsModel()
+
+	local cl_playermodel = self.Player:GetInfo("cl_playermodel")
+	if cl_playermodel != "none" and avmodels[cl_playermodel] then
+		return player_manager.TranslatePlayerHands(cl_playermodel)
+	else
+		local randmodel = models[math.Round(util.SharedRandom(self.Player:UniqueID(), 1, #models))]
+		return player_manager.TranslatePlayerHands(randmodel)
 	end
 
 end

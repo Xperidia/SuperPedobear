@@ -95,7 +95,7 @@ function GM:Van()
 		self.tipclose:Dock(FILL)
 		self.tipclose:SetContentAlignment(5)
 		self.tipclose:SetFont("spb_High_Scaled")
-		self.tipclose:SetText("You can press 1-9 to quickly buy a Power-UP.\nDon't forget to press " .. GAMEMODE:CheckBind("+menu") .. " to close the shop.\nPremium users gets Power-UPs to half the price!")
+		self.tipclose:SetText("You can press 1-9 to quickly buy a Power-UP.\nDon't forget to press " .. GAMEMODE:CheckBind("+menu") .. " to close the shop.")
 	end
 
 	self.backpt = vgui.Create("DPanel")

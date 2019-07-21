@@ -38,55 +38,55 @@ end
 
 local sprite = Material("sprites/physg_glow1")
 function ENT:Draw()
-	if !IsValid(self.PU) then
-		self.PU = ClientsideModel("models/maxofs2d/hover_rings.mdl")
-		self.PU:SetNoDraw(true)
-		self.PU:SetPos(self:GetPos() + Vector(0, 0, -30))
-		self.PU:SetColor(Color(255, 128, 0, 255))
-		self.PU:SetRenderMode(RENDERMODE_TRANSALPHA)
-	end
-	if IsValid(self.PU) then
-		local x = 0.5 * (math.sin(CurTime() * 2) + 1)
-		local pos = self:GetPos() + Vector(0, 0, 0)
-		--self.PU:SetAngles(self.PU:GetAngles() + Angle(0.1, 0.1, 0.1))
-		--self.PU:SetColor(Color(255, 128, 0, math.Remap(x, 0, 1, 128, 255)))
-		if self:GetNWBool("Trap", false) then
-			self.PU:SetColor(Color(255, 64, 0, 255))
-			self:SetColor(Color(255, 0, 0, 255))
-			self.PU:SetPos(pos + Vector(0, 0, math.sin(CurTime()) * 2))
-			self.PU:DrawModel()
-			render.SetMaterial(sprite)
-			render.DrawSprite(self.PU:GetPos(), 32, 32, Color(255, 64, 0, math.Remap(x, 0, 1, 128, 255)))
-		else
-			self.PU:SetPos(pos + Vector(0, 0, math.sin(CurTime() * 2) * 2))
-			self.PU:DrawModel()
-			render.SetMaterial(sprite)
-			render.DrawSprite(self.PU:GetPos(), 32, 32, Color(255, 128, 0, math.Remap(x, 0, 1, 128, 255)))
-			self.light = DynamicLight(self:EntIndex())
-			if self.light then
-				self.light.pos = self.PU:GetPos()
-				self.light.r = math.Remap(x, 0, 1, 85, 255)
-				self.light.g = math.Remap(x, 0, 1, 128 / 3, 128)
-				self.light.b = 0
-				self.light.brightness = 1
-				self.light.Decay = 1000
-				self.light.Size = 256
-				self.light.DieTime = CurTime() + 1
+	if spb_powerup_enabled:GetBool() then
+		if !IsValid(self.PU) then
+			self.PU = ClientsideModel("models/maxofs2d/hover_rings.mdl")
+			self.PU:SetNoDraw(true)
+			self.PU:SetPos(self:GetPos() + Vector(0, 0, -30))
+			self.PU:SetColor(Color(255, 128, 0, 255))
+			self.PU:SetRenderMode(RENDERMODE_TRANSALPHA)
+		end
+		if IsValid(self.PU) then
+			local x = 0.5 * (math.sin(CurTime() * 2) + 1)
+			local pos = self:GetPos() + Vector(0, 0, 0)
+			--self.PU:SetAngles(self.PU:GetAngles() + Angle(0.1, 0.1, 0.1))
+			--self.PU:SetColor(Color(255, 128, 0, math.Remap(x, 0, 1, 128, 255)))
+			if self:GetNWBool("Trap", false) then
+				self.PU:SetColor(Color(255, 64, 0, 255))
+				self:SetColor(Color(255, 0, 0, 255))
+				self.PU:SetPos(pos + Vector(0, 0, math.sin(CurTime()) * 2))
+				self.PU:DrawModel()
+				render.SetMaterial(sprite)
+				render.DrawSprite(self.PU:GetPos(), 32, 32, Color(255, 64, 0, math.Remap(x, 0, 1, 128, 255)))
+			else
+				self.PU:SetPos(pos + Vector(0, 0, math.sin(CurTime() * 2) * 2))
+				self.PU:DrawModel()
+				render.SetMaterial(sprite)
+				render.DrawSprite(self.PU:GetPos(), 32, 32, Color(255, 128, 0, math.Remap(x, 0, 1, 128, 255)))
+				self.light = DynamicLight(self:EntIndex())
+				if self.light then
+					self.light.pos = self.PU:GetPos()
+					self.light.r = math.Remap(x, 0, 1, 85, 255)
+					self.light.g = math.Remap(x, 0, 1, 128 / 3, 128)
+					self.light.b = 0
+					self.light.brightness = 1
+					self.light.Decay = 1000
+					self.light.Size = 256
+					self.light.DieTime = CurTime() + 1
+				end
 			end
 		end
 	end
 end
 
 function ENT:OnRemove()
-	if CLIENT then
-		if IsValid(self.PU) then
-			self.PU:Remove()
-		end
+	if CLIENT and IsValid(self.PU) then
+		self.PU:Remove()
 	end
 end
 
 function ENT:PickUP(ent)
-	if IsValid(ent) and ent:IsPlayer() and ent:Alive() then
+	if spb_powerup_enabled:GetBool() and IsValid(ent) and ent:IsPlayer() and ent:Alive() then
 		if IsValid(self.WasDropped) and self.WasDropped == ent and self.CTime and self.CTime + 0.5 > CurTime() then return end
 		if !self.Trap then
 			local result = ent:PickPowerUP(self.ForcedPowerUP)

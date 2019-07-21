@@ -8,6 +8,16 @@ function GM:Van()
 		return
 	end
 
+	if !spb_powerup_enabled:GetBool() then
+		GAMEMODE:Notif("Power-UPs are disabled in this server.", NOTIFY_ERROR, 5, true)
+		return
+	end
+
+	if !spb_shop_enabled:GetBool() then
+		GAMEMODE:Notif("The Power-UP shop has been disabled in this server.", NOTIFY_ERROR, 5, true)
+		return
+	end
+
 	local ply = LocalPlayer()
 	local cur = tonumber(ply:GetNWInt("spb_VictimsCurrency", 0))
 	local w, h, oh = ScrW(), ScrH() * (736 / 1080), ScrH() * (960 / 1080)

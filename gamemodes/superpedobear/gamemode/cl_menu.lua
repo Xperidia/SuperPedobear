@@ -22,7 +22,8 @@ local function binds()
 end
 local function changelog()
 	return {
-		"Basic code for map voting (WIP)"
+		"Basic code for map voting (WIP)",
+		"New cvars to disable power-up related stuff"
 	}
 end
 

@@ -599,7 +599,7 @@ function GM:RoundThink()
 					v:SendLua([[LocalPlayer():EmitSound("spb_yourethebear") system.FlashWindow()]])
 					GAMEMODE:BearAFKCare(v)
 					v:ScreenFade(SCREENFADE.IN, Color(0, 0, 0, 255), 0.3, 1)
-					if !GAMEMODE.Vars.ThereIsPowerUPSpawns then
+					if spb_powerup_autofill:GetBool() and !GAMEMODE.Vars.ThereIsPowerUPSpawns then
 						v:PickPowerUP()
 					end
 				end
@@ -611,7 +611,7 @@ function GM:RoundThink()
 
 			end)
 
-			if !GAMEMODE.Vars.ThereIsPowerUPSpawns then
+			if spb_powerup_autofill:GetBool() and !GAMEMODE.Vars.ThereIsPowerUPSpawns then
 				for k, v in pairs(team.GetPlayers(TEAM_HIDING)) do
 					if v:Alive() then
 						v:PickPowerUP()
@@ -1296,6 +1296,9 @@ function GM:PlayerNoClip(ply, on)
 end
 
 function GM:CreatePowerUP(ent, powerupstr, respawn)
+	if !spb_powerup_enabled:GetBool() then
+		return nil
+	end
 	local PowerUp = ents.Create("spb_powerup")
 	PowerUp:SetPos(ent:GetPos())
 	if powerupstr == "dothetrap" then
@@ -1317,6 +1320,10 @@ concommand.Add("spb_dev_create_powerup", function(ply, cmd, args)
 end)
 
 function GM.PlayerMeta:SetPowerUP(powerupstr)
+	if !spb_powerup_enabled:GetBool() then
+		GAMEMODE:Log("Tried to set a power-up to " .. self:GetName() .. " but power-ups are disabled ", nil, true)
+		return nil
+	end
 	local before = self.SPB_PowerUP
 	if GAMEMODE.PowerUps[powerupstr] and (GAMEMODE.PowerUps[powerupstr][2] == self:Team() or GAMEMODE.PowerUps[powerupstr][2] == 0) then
 		self.SPB_PowerUP = powerupstr
@@ -1335,6 +1342,9 @@ function GM.PlayerMeta:SetPowerUP(powerupstr)
 end
 
 function GM.PlayerMeta:UsePowerUP()
+	if !spb_powerup_enabled:GetBool() then
+		return nil
+	end
 	local result
 	if self.SPB_PowerUP and GAMEMODE.PowerUps[self.SPB_PowerUP] and (!self.SPB_PowerUP_Delay or self.SPB_PowerUP_Delay < CurTime()) then
 		if self.SPB_PowerUP == "clone" then
@@ -1365,6 +1375,9 @@ function GM.PlayerMeta:UsePowerUP()
 end
 
 function GM.PlayerMeta:PickPowerUP(powerupstr)
+	if !spb_powerup_enabled:GetBool() then
+		return nil
+	end
 	if !self:HasPowerUP() then
 		if powerupstr and GAMEMODE.PowerUps[powerupstr] and (GAMEMODE.PowerUps[powerupstr][2] == self:Team() or GAMEMODE.PowerUps[powerupstr][2] == 0) then
 			return self:SetPowerUP(powerupstr)
@@ -1404,6 +1417,15 @@ end
 
 concommand.Add("spb_powerup_buy", function(ply, cmd, args)
 	if IsValid(ply) and ply:Alive() then
+		if !spb_shop_enabled:GetBool() then
+			net.Start("spb_Notif")
+				net.WriteString("The Power-UP shop has been disabled in this server.")
+				net.WriteInt(1, 3)
+				net.WriteFloat(5)
+				net.WriteBit(true)
+			net.Send(ply)
+			return
+		end
 		local pu = args[1]
 		local price = GAMEMODE:GetPowerUpPrice(pu, ply)
 		local cur = tonumber(ply:GetNWInt("spb_VictimsCurrency", 0))

@@ -7,7 +7,7 @@ GM.Name 		= "Super Pedobear"
 GM.ShortName 	= "SuperPedobear"
 GM.Author 		= "VictorienXP@Xperidia"
 GM.Website 		= "xperi.link/SuperPBear"
-GM.Version 		= 0.311
+GM.Version 		= 0.312
 GM.TeamBased 	= true
 
 TEAM_HIDING	= 1
@@ -106,8 +106,11 @@ function GM:Initialize()
 	spb_save_chances = CreateConVar("spb_save_chances", 1, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Set if we should save the chances to be a seeker.")
 	spb_slow_motion = CreateConVar("spb_slow_motion", 1, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Slow motion effect.")
 	spb_rainbow_effect = CreateConVar("spb_rainbow_effect", 1, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Rainbow colors for the victims.")
+	spb_powerup_enabled = CreateConVar("spb_powerup_enabled", 1, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Enable power-ups.")
+	spb_powerup_autofill = CreateConVar("spb_powerup_autofill", 1, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Fill players with random power-ups on round start when the maps doesn't have any power-up spawner.")
 	spb_powerup_radar_time = CreateConVar("spb_powerup_radar_time", 2, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Radar time.")
 	spb_powerup_cloak_time = CreateConVar("spb_powerup_cloak_time", 4, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Cloak time.")
+	spb_shop_enabled = CreateConVar("spb_shop_enabled", 1, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Enable the power-up shop.")
 	spb_shop_base_price = CreateConVar("spb_shop_base_price", 4, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Power-ups base price. Negative values will be converted to positive and will ignore power-ups price addition. 0 will set everything to free.")
 	spb_weapons = CreateConVar("spb_weapons", 0, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Give some weapons at spawn.")
 	spb_votemap_prefixes = CreateConVar("spb_votemap_prefixes", "spb_|ph_|md_|mu_|ttt_", {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Map prefixes to use for votemap. Prefixes are separated with pipes.")

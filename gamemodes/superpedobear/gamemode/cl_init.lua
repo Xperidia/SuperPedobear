@@ -155,6 +155,10 @@ net.Receive("spb_MusicQueue", function(len)
 	GAMEMODE.Vars.MusicQueue = net.ReadTable()
 end)
 
+net.Receive("spb_MapList", function(len)
+	GAMEMODE.MapList = net.ReadTable()
+end)
+
 hook.Add("HUDShouldDraw", "HideHUD", function(name)
 	local ply = LocalPlayer()
 	local HUDhide = {

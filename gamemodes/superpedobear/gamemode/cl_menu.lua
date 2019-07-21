@@ -22,26 +22,7 @@ local function binds()
 end
 local function changelog()
 	return {
-		"The shop is now open!",
-		"Xperidia's Premium Members gets Power-UPs half the normal price!",
-		"You can now drop Power-UPs with " .. GAMEMODE:CheckBind("gmod_undo") .. " (Check out controls)",
-		"You can now open the Enhanced PlayerModel Selector with " .. GAMEMODE:CheckBind("phys_swap") .. " (Check out controls)",
-		"Quick taunt now works with the numpad too (Can be toggled)",
-		"You can now do a random taunt with 0",
-		"Improved the invisibility power-up (Makes you invulnerable)",
-		"The welding state has been fixed",
-		"The Gamemode menu and the Splash Screen have been updated",
-		"The HUD offset thingy has been updated",
-		"You can now switch weapons when you got some",
-		"Added cvar spb_shop_base_price",
-		"Added cvar spb_weapons",
-		"Added cvar spb_cl_quickstuff_enable",
-		"Added cvar spb_cl_quickstuff_numpad",
-		"Added cvar spb_cl_hud_offset_w",
-		"Added cvar spb_cl_hud_offset_h",
-		"Updated cvar spb_rounds",
-		"Removed cvar spb_cl_hud_offset",
-		"A huge bunch of changes and behind the scenes stuff"
+		"Basic code for map voting (WIP)"
 	}
 end
 
@@ -116,6 +97,10 @@ function GM:Menu()
 		spb_MenuF.one.text:InsertClickableTextStart("XP_Account")
 		spb_MenuF.one.text:AppendText("Click here to check your Xperidia Account")
 		spb_MenuF.one.text:InsertClickableTextEnd()
+		spb_MenuF.one.text:AppendText("\n")
+		spb_MenuF.one.text:InsertClickableTextStart("MapVote")
+		spb_MenuF.one.text:AppendText("Click here for the map vote (not yet implemeted)")
+		spb_MenuF.one.text:InsertClickableTextEnd()
 		spb_MenuF.one.text:AppendText("\n\n")
 
 		spb_MenuF.one.text:AppendText("Changelog of V" .. (GAMEMODE.Version or "?") .. ":\n")
@@ -136,6 +121,9 @@ function GM:Menu()
 					spb_MenuF:Close()
 				elseif signalValue == "XP_Account" then
 					gui.OpenURL("https://account.xperidia.com/")
+					spb_MenuF:Close()
+				elseif signalValue == "MapVote" then
+					GAMEMODE:MapVote()
 					spb_MenuF:Close()
 				end
 			end
@@ -581,5 +569,11 @@ function GM:JukeboxMenu()
 	elseif IsValid(spb_Jukebox) then
 		spb_Jukebox:Close()
 	end
+
+end
+
+function GM:MapVote()
+
+	GAMEMODE:Notif("Not yet implemented.", NOTIFY_ERROR, 5, true)
 
 end

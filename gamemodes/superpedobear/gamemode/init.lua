@@ -25,6 +25,7 @@ util.AddNetworkString("spb_MusicQueue")
 util.AddNetworkString("spb_MusicAddToQueue")
 util.AddNetworkString("spb_MusicQueueVote")
 util.AddNetworkString("spb_PM_Lists")
+util.AddNetworkString("spb_MapList")
 
 function GM:InitPostEntity()
 	GAMEMODE.Vars.ThereIsPowerUPSpawns = #ents.FindByClass("spb_powerup_spawn") > 0
@@ -98,6 +99,32 @@ function GM:UpVars(ply)
 		net.WriteInt(GAMEMODE.Vars.Rounds or 1, 32)
 		net.WriteFloat(GAMEMODE.Vars.Round.LastTime or 0)
 	if IsValid(ply) then net.Send(ply) else net.Broadcast() end
+
+end
+
+function GM:ListMaps(ply)
+
+	GAMEMODE.MapList = {}
+	local AvMaps = file.Find("maps/*.bsp", "GAME")
+	local prefixes = string.Explode("|", spb_votemap_prefixes:GetString())
+
+	for _, map in pairs(AvMaps) do
+		if map != "spb_tutorial.bsp" and map != "spb_dev.bsp" then
+			for _, prefix in pairs(prefixes) do
+				if string.StartWith(map, prefix) then
+					GAMEMODE:Log("Found " .. map, nil, true)
+					table.insert(GAMEMODE.MapList, string.StripExtension(map))
+					break
+				end
+			end
+		end
+	end
+
+	net.Start("spb_MapList")
+		net.WriteTable(GAMEMODE.MapList)
+	if IsValid(ply) then net.Send(ply) else net.Broadcast() end
+
+	GAMEMODE:Log(#GAMEMODE.MapList .. " maps have been found!")
 
 end
 

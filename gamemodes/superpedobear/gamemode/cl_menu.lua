@@ -276,6 +276,10 @@ function GM:Menu()
 		docheckbox("Save chances", "spb_save_chances")
 		docheckbox("Slow motion effect", "spb_slow_motion")
 		docheckbox("Rainbow color effect", "spb_rainbow_effect")
+		docheckbox("Enable Power-UPs", "spb_powerup_enabled")
+		docheckbox("Give Power-UPs on maps without Power-UP spawner", "spb_powerup_autofill")
+		docheckbox("Enable the van (shop)", "spb_shop_enabled")
+		docheckbox("Give some weapons on spawn (You shouldn't use this)", "spb_weapons")
 
 
 	elseif IsValid(spb_MenuF) then

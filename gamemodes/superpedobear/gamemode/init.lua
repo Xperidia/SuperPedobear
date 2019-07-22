@@ -867,7 +867,7 @@ function GM:ShowSpare1(ply)
 	ply:SendLua("GAMEMODE:TauntMenuF()")
 end
 
-function GM:ShowSpare2(ply) --TODO Jukebox
+function GM:ShowSpare2(ply)
 	ply:SendLua("GAMEMODE:JukeboxMenu()")
 end
 

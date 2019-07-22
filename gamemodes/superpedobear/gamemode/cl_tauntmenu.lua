@@ -2,6 +2,11 @@ function GM:TauntMenuF()
 
 	if !IsValid(GAMEMODE.TauntMenu) and !engine.IsPlayingDemo() then
 
+		if #GAMEMODE.Taunts == 0 then
+			GAMEMODE:Notif("There is no taunt pack installed in this server.", NOTIFY_ERROR, 5, true)
+			return
+		end
+
 		local sx, sy = 320, ScrH() * 0.5
 		local ply = LocalPlayer()
 

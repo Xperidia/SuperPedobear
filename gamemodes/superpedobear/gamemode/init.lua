@@ -169,8 +169,13 @@ function GM:SendMusicQueue(ply)
 end
 
 net.Receive("spb_MusicAddToQueue", function(bits, ply)
+
 	local music = net.ReadString()
-	GAMEMODE:MusicQueueAdd(ply, music)
+
+	if spb_jukebox_enable_input:GetBool() then
+		GAMEMODE:MusicQueueAdd(ply, music)
+	end
+
 end)
 function GM:MusicQueueAdd(ply, musicsrc)
 	if !GAMEMODE.Vars.MusicQueue then GAMEMODE.Vars.MusicQueue = {} end

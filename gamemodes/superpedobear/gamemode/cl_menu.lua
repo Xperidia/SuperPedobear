@@ -23,7 +23,8 @@ end
 local function changelog()
 	return {
 		"Basic code for map voting (WIP)",
-		"New cvars to disable power-up related stuff"
+		"New cvars to disable power-up related stuff",
+		"New cvar to disable player input on the jukebox"
 	}
 end
 
@@ -280,6 +281,7 @@ function GM:Menu()
 		docheckbox("Give Power-UPs on maps without Power-UP spawner", "spb_powerup_autofill")
 		docheckbox("Enable the van (shop)", "spb_shop_enabled")
 		docheckbox("Give some weapons on spawn (You shouldn't use this)", "spb_weapons")
+		docheckbox("Enable jukebox input", "spb_jukebox_enable_input")
 
 
 	elseif IsValid(spb_MenuF) then
@@ -490,12 +492,13 @@ function GM:JukeboxMenu()
 		end
 
 		local placeholder = "Enter a music path or URL (Mostly .mp3)"
+		local jukebox_input_enabled = spb_jukebox_enable_input:GetBool()
 		spb_Jukebox.ServerQueue.add2queue = vgui.Create("DTextEntry", spb_Jukebox.ServerQueue)
 		spb_Jukebox.ServerQueue.add2queue:SetPos(0, h - 60)
 		spb_Jukebox.ServerQueue.add2queue:SetSize(mw, 20)
 		spb_Jukebox.ServerQueue.add2queue:SetText(placeholder)
 		spb_Jukebox.ServerQueue.add2queue.OnMousePressed = function(self, keycode)
-			if keycode == MOUSE_FIRST and !self:IsEditing() then
+			if jukebox_input_enabled and keycode == MOUSE_FIRST and !self:IsEditing() then
 				spb_Jukebox:SetKeyboardInputEnabled(true)
 				if self:GetValue() == placeholder then
 					self:SetText("")
@@ -510,6 +513,11 @@ function GM:JukeboxMenu()
 		end
 		spb_Jukebox.ServerQueue.add2queue.OnLoseFocus = function(self)
 			spb_Jukebox:SetKeyboardInputEnabled(false)
+		end
+
+		if !jukebox_input_enabled then
+			spb_Jukebox.ServerQueue.add2queue:SetText("Music input has been disabled by the server.")
+			spb_Jukebox.ServerQueue.add2queue:SetDisabled(true)
 		end
 
 

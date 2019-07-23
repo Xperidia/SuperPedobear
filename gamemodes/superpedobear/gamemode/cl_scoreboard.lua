@@ -175,8 +175,8 @@ local PLAYER_LINE = {
 			end
 		end
 
-		if (self.LGroup == nil or string.lower(self.LGroup) != self.Player:GetUserGroup()) and self.Player:GetUserGroup() != "user" then
-			self.LGroup = string.upper( string.sub(self.Player:GetUserGroup(), 1, 1) ) .. string.sub(self.Player:GetUserGroup(), 2)
+		if (self.LGroup == nil or self.LGroup != self.Player:GetUserGroup()) and self.Player:GetUserGroup() != "user" then
+			self.LGroup = self.Player:GetUserGroup()
 			self.Group:SetText(self.LGroup)
 		end
 

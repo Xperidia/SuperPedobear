@@ -583,7 +583,7 @@ function GM:HUDPaint()
 
 	if plyTeam != TEAM_UNASSIGNED and splyTeam != TEAM_SPECTATOR then
 		local splynick = GAMEMODE:LimitString(sply:Nick(), 200, "spb_HUDname")
-		local rankname = GAMEMODE:LimitString(sply:GetNWString("XperidiaRankName", nil) or "Normal user", 200, "spb_HUDname")
+		local rankname = GAMEMODE:LimitString(sply:GetNWString("XperidiaRankName", nil) or "", 200, "spb_HUDname")
 		local rankcolor = string.ToColor(sply:GetNWString("XperidiaRankColor", "255 255 255 255"))
 		draw.DrawText(splynick, "spb_HUDname", 100 + 1 + hudoffset_w, ScrH() - 200 + 1 - hudoffset_h, Color(0, 0, 0, 255), TEXT_ALIGN_CENTER)
 		draw.DrawText(splynick, "spb_HUDname", 100 + hudoffset_w, ScrH() - 200 - hudoffset_h, col, TEXT_ALIGN_CENTER)

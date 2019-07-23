@@ -585,6 +585,9 @@ function GM:HUDPaint()
 		local splynick = GAMEMODE:LimitString(sply:Nick(), 200, "spb_HUDname")
 		local rankname = GAMEMODE:LimitString(sply:GetNWString("XperidiaRankName", nil) or "", 200, "spb_HUDname")
 		local rankcolor = string.ToColor(sply:GetNWString("XperidiaRankColor", "255 255 255 255"))
+		if sply:IsGamemodeAuthor() then
+			rankname = "Gamemode author"
+		end
 		draw.DrawText(splynick, "spb_HUDname", 100 + 1 + hudoffset_w, ScrH() - 200 + 1 - hudoffset_h, Color(0, 0, 0, 255), TEXT_ALIGN_CENTER)
 		draw.DrawText(splynick, "spb_HUDname", 100 + hudoffset_w, ScrH() - 200 - hudoffset_h, col, TEXT_ALIGN_CENTER)
 		draw.DrawText(rankname, "spb_HUDname", 100 + 1 + hudoffset_w, ScrH() - 20 + 1 - hudoffset_h, Color(0, 0, 0, 255), TEXT_ALIGN_CENTER)
@@ -1421,7 +1424,10 @@ function GM:OnPlayerChat(player, strText, bTeamOnly, bPlayerIsDead)
 		local rankid = player:GetNWInt("XperidiaRank", 0)
 		local rankname = player:GetNWString("XperidiaRankName", "<Unknown rank name>")
 		local rankcolor = player:GetNWString("XperidiaRankColor", "255 255 255 255")
-		if rankid > 0 then
+		if player:IsGamemodeAuthor() then
+			table.insert(tab, string.ToColor(rankcolor))
+			table.insert(tab, "{Gamemode author} ")
+		elseif rankid > 0 then
 			table.insert(tab, string.ToColor(rankcolor))
 			table.insert(tab, "{Xperidia " .. rankname .. "} ")
 		end

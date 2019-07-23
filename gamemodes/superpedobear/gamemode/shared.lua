@@ -422,3 +422,7 @@ function GM:GetPowerUpPrice(id, ply, ignorereduc)
 	end
 	return math.Round(price)
 end
+
+function GM.PlayerMeta:IsGamemodeAuthor() --Credits
+	return self:SteamID() == "STEAM_0:1:18280147"
+end

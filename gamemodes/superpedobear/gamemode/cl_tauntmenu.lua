@@ -1,3 +1,8 @@
+--[[---------------------------------------------------------
+		Super Pedobear Gamemode for Garry's Mod
+				by VictorienXP (2016)
+-----------------------------------------------------------]]
+
 function GM:TauntMenuF()
 
 	if !IsValid(GAMEMODE.TauntMenu) and !engine.IsPlayingDemo() then

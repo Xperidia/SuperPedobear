@@ -1,3 +1,8 @@
+--[[---------------------------------------------------------
+		Super Pedobear Gamemode for Garry's Mod
+				by VictorienXP (2016)
+-----------------------------------------------------------]]
+
 local function binds()
 	return {
 		{GAMEMODE:CheckBind("gm_showhelp"), "Gamemode menu", "Show help"},

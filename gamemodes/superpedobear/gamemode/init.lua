@@ -1,3 +1,8 @@
+--[[---------------------------------------------------------
+		Super Pedobear Gamemode for Garry's Mod
+				by VictorienXP (2016)
+-----------------------------------------------------------]]
+
 AddCSLuaFile("shared.lua")
 AddCSLuaFile("cl_scoreboard.lua")
 AddCSLuaFile("cl_menu.lua")

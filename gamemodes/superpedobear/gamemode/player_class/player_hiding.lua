@@ -1,3 +1,8 @@
+--[[---------------------------------------------------------
+		Super Pedobear Gamemode for Garry's Mod
+				by VictorienXP (2016)
+-----------------------------------------------------------]]
+
 AddCSLuaFile()
 DEFINE_BASECLASS("player_default")
 

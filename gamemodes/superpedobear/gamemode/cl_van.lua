@@ -1,3 +1,8 @@
+--[[---------------------------------------------------------
+		Super Pedobear Gamemode for Garry's Mod
+				by VictorienXP (2016)
+-----------------------------------------------------------]]
+
 function GM:Van()
 
 	if IsValid(GAMEMODE.VanFrame) and GAMEMODE.VanFrame.DoClose then

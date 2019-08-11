@@ -1,3 +1,8 @@
+--[[---------------------------------------------------------
+		Super Pedobear Gamemode for Garry's Mod
+				by VictorienXP (2016)
+-----------------------------------------------------------]]
+
 DEFINE_BASECLASS("gamemode_base")
 
 include("player_class/player_hiding.lua")

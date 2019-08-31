@@ -11,7 +11,7 @@ include("player_class/player_seeker.lua")
 GM.Name 		= "Super Pedobear"
 GM.ShortName 	= "SuperPedobear"
 GM.Author 		= "VictorienXP@Xperidia"
-GM.Website 		= "xperi.link/SuperPBear"
+GM.Website 		= "steamcommunity.com/sharedfiles/filedetails/?id=628449407"
 GM.Version 		= 0.32
 GM.TeamBased 	= true
 

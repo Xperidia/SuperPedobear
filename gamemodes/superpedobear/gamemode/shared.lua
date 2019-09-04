@@ -9,10 +9,10 @@ include("player_class/player_hiding.lua")
 include("player_class/player_seeker.lua")
 
 GM.Name 		= "Super Pedobear"
-GM.ShortName 	= "SuperPedobear"
 GM.Author 		= "VictorienXP@Xperidia"
 GM.Website 		= "steamcommunity.com/sharedfiles/filedetails/?id=628449407"
 GM.Version 		= 0.32
+GM.VersionDate 	= 190904
 GM.TeamBased 	= true
 
 TEAM_HIDING	= 1
@@ -333,7 +333,7 @@ end
 
 function GM:Log(str, tn, hardcore)
 	if hardcore and !spb_enabledevmode:GetBool() then return end
-	Msg("[" .. GAMEMODE.ShortName .. "] " .. (str or "This was a log message, but something went wrong") .. "\n")
+	Msg("[Super Pedobear] " .. (str or "This was a log message, but something went wrong") .. "\n")
 end
 
 function GM:GetHost()

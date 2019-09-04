@@ -104,9 +104,13 @@ function GM:Menu()
 		spb_MenuF.one.text:InsertClickableTextStart("MapVote")
 		spb_MenuF.one.text:AppendText("Click here for the map vote (not yet implemeted)")
 		spb_MenuF.one.text:InsertClickableTextEnd()
+		spb_MenuF.one.text:AppendText("\n")
+		spb_MenuF.one.text:InsertClickableTextStart("Debug")
+		spb_MenuF.one.text:AppendText("Click here to open the debug window")
+		spb_MenuF.one.text:InsertClickableTextEnd()
 		spb_MenuF.one.text:AppendText("\n\n")
 
-		spb_MenuF.one.text:AppendText("Changelog of V" .. (GAMEMODE.Version or "?") .. ":\n")
+		spb_MenuF.one.text:AppendText("Changelog for Super Pedobear V" .. (GAMEMODE.Version or "?") .. ":\n")
 		for k, v in pairs(changelog()) do
 			spb_MenuF.one.text:AppendText("> " .. v .. "\n")
 		end
@@ -124,6 +128,9 @@ function GM:Menu()
 					spb_MenuF:Close()
 				elseif signalValue == "MapVote" then
 					GAMEMODE:MapVote()
+					spb_MenuF:Close()
+				elseif signalValue == "Debug" then
+					GAMEMODE:DebugWindow()
 					spb_MenuF:Close()
 				end
 			end
@@ -586,5 +593,213 @@ end
 function GM:MapVote()
 
 	GAMEMODE:Notif("Not yet implemented.", NOTIFY_ERROR, 5, true)
+
+end
+
+function GM:DebugWindow()
+
+	local debugwindow = vgui.Create("DFrame")
+	local w, h = ScrW() * .2, ScrH() * .2
+	debugwindow:SetPos(ScrW() / 2 - w / 2, ScrH() / 2 - h / 2)
+	debugwindow:SetSize(w, h)
+	debugwindow:SetMinWidth(280)
+	debugwindow:SetMinHeight(24)
+	debugwindow:SetTitle("Super Pedobear Debug Window")
+	debugwindow:SetVisible(true)
+	debugwindow:SetDraggable(true)
+	debugwindow:ShowCloseButton(true)
+	debugwindow:SetScreenLock(true)
+	debugwindow:SetSizable(true)
+	debugwindow.btnMaxim:SetDisabled(false)
+	debugwindow.btnMaxim.DoClick = function(btn)
+		if debugwindow.maxim and !debugwindow.minim then
+			debugwindow:SetPos(debugwindow.lastpos_x, debugwindow.lastpos_y)
+			debugwindow:SetSize(debugwindow.lastsize_w, debugwindow.lastsize_h)
+			debugwindow:SetKeyboardInputEnabled(false)
+			debugwindow:SetSizable(true)
+			debugwindow:SetDraggable(true)
+			debugwindow.maxim = false
+		else
+			if !debugwindow.minim then
+				debugwindow.lastpos_x, debugwindow.lastpos_y = debugwindow:GetPos()
+				debugwindow.lastsize_w, debugwindow.lastsize_h = debugwindow:GetSize()
+			end
+			debugwindow:SetPos(0, 0)
+			debugwindow:SetSize(ScrW(), ScrH())
+			debugwindow:SetKeyboardInputEnabled(true)
+			debugwindow:SetSizable(false)
+			debugwindow:SetDraggable(false)
+			debugwindow.maxim = true
+			debugwindow.minim = false
+		end
+	end
+	debugwindow.btnMinim:SetDisabled(false)
+	debugwindow.btnMinim.DoClick = function(btn)
+		if debugwindow.minim and debugwindow.maxim then
+			debugwindow:SetPos(0, 0)
+			debugwindow:SetSize(ScrW(), ScrH())
+			debugwindow:SetKeyboardInputEnabled(true)
+			debugwindow:SetSizable(false)
+			debugwindow:SetDraggable(false)
+			debugwindow.minim = false
+		elseif debugwindow.minim then
+			debugwindow:SetPos(debugwindow.lastpos_x, debugwindow.lastpos_y)
+			debugwindow:SetSize(debugwindow.lastsize_w, debugwindow.lastsize_h)
+			debugwindow:SetKeyboardInputEnabled(false)
+			debugwindow:SetSizable(true)
+			debugwindow.minim = false
+		else
+			if !debugwindow.maxim then
+				debugwindow.lastpos_x, debugwindow.lastpos_y = debugwindow:GetPos()
+				debugwindow.lastsize_w, debugwindow.lastsize_h = debugwindow:GetSize()
+			end
+			debugwindow:SetPos(0, ScrH() - 24)
+			debugwindow:SetSize(280, 24)
+			debugwindow:SetKeyboardInputEnabled(false)
+			debugwindow:SetSizable(false)
+			debugwindow.minim = true
+		end
+	end
+	debugwindow.Paint = function(self, w, h)
+		draw.RoundedBox(4, 0, 0, w, h, Color(0, 0, 0, 128))
+	end
+	debugwindow:MakePopup()
+	debugwindow:SetKeyboardInputEnabled(false)
+
+	debugwindow.panel = vgui.Create("DPanel", debugwindow)
+	debugwindow.panel:Dock(FILL)
+	debugwindow.panel.text = vgui.Create("RichText", debugwindow.panel)
+	debugwindow.panel.text:Dock(FILL)
+	function debugwindow.panel.text:PerformLayout()
+		self:SetFontInternal("DermaDefault")
+	end
+
+	local function writedebuginfo()
+
+		local ostime = os.time()
+		local osclock = os.clock()
+		local systime = SysTime()
+
+		debugwindow.panel.text:SetText("")
+		debugwindow.panel.text:InsertColorChange(0, 0, 0, 255)
+
+		local function linebreak() debugwindow.panel.text:AppendText("\n") end
+		local function autoappend(txt, var)
+			if txt then
+				debugwindow.panel.text:InsertColorChange(0, 0, 0, 255)
+				debugwindow.panel.text:AppendText(txt)
+				debugwindow.panel.text:AppendText(": ")
+			end
+			debugwindow.panel.text:InsertColorChange(128, 0, 128, 255)
+			if isbool(var) and var then
+				debugwindow.panel.text:AppendText("Yes")
+			elseif isbool(var) and !var then
+				debugwindow.panel.text:AppendText("No")
+			else
+				debugwindow.panel.text:AppendText(var or nil)
+			end
+			debugwindow.panel.text:InsertColorChange(0, 0, 0, 255)
+			debugwindow.panel.text:AppendText("\n")
+		end
+
+		autoappend("System time", ostime)
+		autoappend("System time (formatted)", os.date("%H:%M:%S - %d/%m/%Y" , ostime))
+		autoappend("Country code", system.GetCountry())
+		autoappend("Game clock time", osclock)
+		autoappend("Game time", systime)
+		autoappend("Game started since", os.date("%H:%M:%S - %d/%m/%Y" , ostime - systime))
+		linebreak()
+
+		autoappend("Windows", system.IsWindows())
+		autoappend("OSX", system.IsOSX())
+		autoappend("Linux", system.IsLinux())
+		linebreak()
+
+		autoappend("Garry's Mod version", VERSIONSTR)
+		autoappend("Garry's Mod branch", BRANCH)
+		autoappend("Lua version", _VERSION)
+		autoappend("LuaJIT version", jit.version)
+		autoappend("LuaJIT enabled", jit.status())
+		autoappend("gmod_language", GetConVar("gmod_language"):GetString())
+		linebreak()
+
+		autoappend("Server ticks", engine.TickCount())
+		autoappend("Gametick interval", engine.TickInterval())
+		autoappend("Servertick", 1 / engine.TickInterval())
+		autoappend("Map", game.GetMap())
+		autoappend("Dedicated", game.IsDedicated())
+		autoappend("IP", game.GetIPAddress())
+		autoappend("sv_allowcslua", GetConVar("sv_allowcslua"):GetBool())
+		linebreak()
+
+		autoappend("Gamemode id (GAMEMODE_NAME)", GAMEMODE_NAME)
+		autoappend("Gamemode id (engine.ActiveGamemode())", engine.ActiveGamemode())
+		autoappend("Gamemode name", GAMEMODE.Name)
+		autoappend("Gamemode version", GAMEMODE.Version)
+		autoappend("Gamemode version date", GAMEMODE.VersionDate)
+		linebreak()
+
+		debugwindow.panel.text:AppendText("Mounted Source games:\n")
+		for k, v in pairs(engine.GetGames()) do
+			if v.mounted then
+				debugwindow.panel.text:InsertColorChange(29, 193, 228, 255)
+				debugwindow.panel.text:AppendText("▶ ")
+				debugwindow.panel.text:InsertColorChange(0, 0, 0, 255)
+				debugwindow.panel.text:AppendText(Either(v.title, v.title, "unkown name"))
+				debugwindow.panel.text:AppendText(" ")
+				debugwindow.panel.text:InsertColorChange(128, 0, 128, 255)
+				debugwindow.panel.text:AppendText(Either(v.depot, v.depot, "unknown depot"))
+				debugwindow.panel.text:AppendText(" ")
+				debugwindow.panel.text:InsertColorChange(128, 128, 128, 255)
+				debugwindow.panel.text:AppendText(Either(v.folder, v.folder, ""))
+				debugwindow.panel.text:AppendText("\n")
+				debugwindow.panel.text:InsertColorChange(0, 0, 0, 255)
+			end
+		end
+		linebreak()
+
+		if game.GetIPAddress() == "loopback" then
+
+			debugwindow.panel.text:AppendText("Gamemodes:\n")
+			for k, v in pairs(engine.GetGamemodes()) do
+				debugwindow.panel.text:InsertColorChange(29, 193, 228, 255)
+				debugwindow.panel.text:AppendText("▶ ")
+				debugwindow.panel.text:InsertColorChange(0, 0, 0, 255)
+				debugwindow.panel.text:AppendText(Either(v.title, v.title, "unkown name"))
+				debugwindow.panel.text:AppendText(" ")
+				debugwindow.panel.text:InsertColorChange(128, 0, 128, 255)
+				debugwindow.panel.text:AppendText(Either(v.workshopid, v.workshopid, "unknown workshop id"))
+				debugwindow.panel.text:AppendText(" ")
+				debugwindow.panel.text:InsertColorChange(128, 128, 128, 255)
+				debugwindow.panel.text:AppendText(Either(v.name, v.name, "unknown name"))
+				debugwindow.panel.text:AppendText("\n")
+				debugwindow.panel.text:InsertColorChange(0, 0, 0, 255)
+			end
+			linebreak()
+
+			debugwindow.panel.text:AppendText("Mounted addons:\n")
+			for k, v in pairs(engine.GetAddons()) do
+				if v.mounted then
+					debugwindow.panel.text:InsertColorChange(29, 193, 228, 255)
+					debugwindow.panel.text:AppendText("▶ ")
+					debugwindow.panel.text:InsertColorChange(0, 0, 0, 255)
+					debugwindow.panel.text:AppendText(Either(v.title, v.title, "unkown name"))
+					debugwindow.panel.text:AppendText(" ")
+					debugwindow.panel.text:InsertColorChange(128, 0, 128, 255)
+					debugwindow.panel.text:AppendText(Either(v.wsid, v.wsid, "unknown id"))
+					debugwindow.panel.text:AppendText(" ")
+					debugwindow.panel.text:InsertColorChange(128, 128, 128, 255)
+					debugwindow.panel.text:AppendText(Either(v.file, "\"" .. v.file .. "\"", "unknown path"))
+					debugwindow.panel.text:AppendText("\n")
+					debugwindow.panel.text:InsertColorChange(0, 0, 0, 255)
+				end
+			end
+			linebreak()
+
+		end
+
+	end
+
+	writedebuginfo()
 
 end

@@ -331,7 +331,7 @@ function GM:SplashScreen()
 		spb_SplashScreenF.SplashScreen:SetPos(0, 0)
 		spb_SplashScreenF.SplashScreen:SetSize(ScrW(), ScrH())
 		spb_SplashScreenF.SplashScreen:SetAllowLua(true)
-		spb_SplashScreenF.SplashScreen:OpenURL("https://www.xperidia.com/SuperPedobear/?steamid=" .. LocalPlayer():SteamID64())
+		spb_SplashScreenF.SplashScreen:OpenURL("https://www.xperidia.com/SuperPedobear/")
 		--spb_SplashScreenF.SplashScreen:SetScrollbars(false)
 
 		local btxt = ""

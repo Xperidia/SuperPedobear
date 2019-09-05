@@ -25,13 +25,6 @@ local function binds()
 		{GAMEMODE:CheckBind("+speed"), "Sprint", "Sprint (Move Quickly)"}
 	}
 end
-local function changelog()
-	return {
-		"Basic code for map voting (WIP)",
-		"New cvars to disable power-up related stuff",
-		"New cvar to disable player input on the jukebox"
-	}
-end
 
 function GM:Menu()
 
@@ -109,11 +102,6 @@ function GM:Menu()
 		spb_MenuF.one.text:AppendText("Click here to open the debug window")
 		spb_MenuF.one.text:InsertClickableTextEnd()
 		spb_MenuF.one.text:AppendText("\n\n")
-
-		spb_MenuF.one.text:AppendText("Changelog for Super Pedobear V" .. (GAMEMODE.Version or "?") .. ":\n")
-		for k, v in pairs(changelog()) do
-			spb_MenuF.one.text:AppendText("> " .. v .. "\n")
-		end
 
 		function spb_MenuF.one.text:ActionSignal(signalName, signalValue)
 			if signalName == "TextClicked" then
@@ -327,12 +315,6 @@ function GM:SplashScreen()
 			btxt = btxt .. "<tr><td class='leftside'>" .. v[1] .. "</td><td>" .. v[2] .. "</td><td>" .. v[3] .. "</td></tr>"
 		end
 		spb_SplashScreenF.SplashScreen:Call('$("#controls").append("<h2><u>Controls</u></h2><table>' .. "<thead><th class='leftside'>KEY</th><th>Action</th><th>Options bind name</th></tr>" .. btxt .. '</table>");')
-
-		local ctxt = ""
-		for k, v in pairs(changelog()) do
-			ctxt = ctxt .. "<tr><td>> " .. v .. "</td></tr>"
-		end
-		spb_SplashScreenF.SplashScreen:Call('$("#changelog").append("<h2><u>Changelog V' .. (GAMEMODE.Version or '?') .. '</u></h2><table>' .. ctxt .. '</table>");')
 
 		local closebtn = vgui.Create("DButton", spb_SplashScreenF)
 		closebtn:SetText("X")

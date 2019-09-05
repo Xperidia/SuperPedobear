@@ -207,9 +207,11 @@ function GM:Initialize()
 		end
 
 		if GetConVar("sv_loadingurl"):GetString() == "" then --Use the Xperidia's loading screen if no other loading screen is defined... Because it shows more information than the current default of Garry's Mod...
-			RunConsoleCommand("sv_loadingurl", "https://xperidia.com/GMOD/loading/?auto")
+			RunConsoleCommand("sv_loadingurl", "https://assets.xperidia.com/garrysmod/loading.html#auto")
 		end
+
 		RunConsoleCommand("sv_playermodel_selector_force", "0") --This is needed so bears won't get overriden
+
 	end
 
 	GAMEMODE:BuildMusicIndex()
@@ -218,8 +220,10 @@ function GM:Initialize()
 end
 
 function GM:ShutDown()
-	if SERVER and GetConVar("sv_loadingurl"):GetString() == "https://xperidia.com/GMOD/loading/?auto" then --Put back the default Garry's Mod loading screen...
-		RunConsoleCommand("sv_loadingurl", "")
+	if SERVER
+	and	(GetConVar("sv_loadingurl"):GetString() == "https://assets.xperidia.com/garrysmod/loading.html#auto"
+	or	GetConVar("sv_loadingurl"):GetString() == "https://xperidia.com/GMOD/loading/?auto") then
+		RunConsoleCommand("sv_loadingurl", "") --Put back the default Garry's Mod loading screen...
 	end
 end
 

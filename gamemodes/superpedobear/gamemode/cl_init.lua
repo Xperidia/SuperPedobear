@@ -329,7 +329,7 @@ function GM:HUDPaint()
 	surface.SetDrawColor(Color(0, 0, 0, 255))
 	surface.DrawOutlinedRect(ScrW() / 2 - 100, hudoffset_h, 200, 110)
 
-	draw.DrawText("Super Pedobear V" .. (GAMEMODE.Version or "?"), "DermaDefault", ScrW() / 2, hudoffset_h, Color(255, 255, 255, 64), TEXT_ALIGN_CENTER)
+	draw.DrawText("Super Pedobear V" .. (GAMEMODE.Version or "?"), "DermaDefault", ScrW() / 2, hudoffset_h, Color(255, 255, 255, 16), TEXT_ALIGN_CENTER)
 
 
 	--[[ THE ROUND STATUS ]]--

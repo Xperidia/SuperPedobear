@@ -132,10 +132,6 @@ function GM:Menu()
 		spb_MenuF.one.text:AppendText("Click here to open the GitHub releases")
 		spb_MenuF.one.text:InsertClickableTextEnd()
 		spb_MenuF.one.text:AppendText("\n")
-		spb_MenuF.one.text:InsertClickableTextStart("Discord")
-		spb_MenuF.one.text:AppendText("Click here to join the Xperidia's Discord server")
-		spb_MenuF.one.text:InsertClickableTextEnd()
-		spb_MenuF.one.text:AppendText("\n\n")
 
 		function spb_MenuF.one.text:ActionSignal(signalName, signalValue)
 			if signalName == "TextClicked" then
@@ -160,8 +156,6 @@ function GM:Menu()
 				elseif signalValue == "GitHub_releases" then
 					gui.OpenURL("https://github.com/Xperidia/SuperPedobear/releases")
 					spb_MenuF:Close()
-				elseif signalValue == "Discord" then
-					gui.OpenURL("https://discordapp.com/invite/jtUtYDa")
 				elseif signalValue == "LatestRelease" then
 					gui.OpenURL(GAMEMODE.LatestRelease.URL)
 					spb_MenuF:Close()

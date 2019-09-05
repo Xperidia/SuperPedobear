@@ -83,7 +83,7 @@ function GM:SeasonalEventStr()
 		local i = 0
 		while v[3 + i] do
 			if (os.date("%d/%m", Timestamp) == v[3 + i]) then
-				return " - " .. v[2]
+				return v[2]
 			end
 			i = i + 1
 		end

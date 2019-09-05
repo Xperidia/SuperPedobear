@@ -33,7 +33,7 @@ function GM:Menu()
 		spb_MenuF = vgui.Create("DFrame")
 		spb_MenuF:SetPos(ScrW() / 2 - 320, ScrH() / 2 - 240)
 		spb_MenuF:SetSize(640, 480)
-		spb_MenuF:SetTitle("Super Pedobear V" .. (GAMEMODE.Version or "?") .. GAMEMODE:SeasonalEventStr())
+		spb_MenuF:SetTitle(GAMEMODE.Name .. " main menu")
 		spb_MenuF:SetVisible(true)
 		spb_MenuF:SetDraggable(true)
 		spb_MenuF:ShowCloseButton(true)
@@ -77,7 +77,12 @@ function GM:Menu()
 		function spb_MenuF.one.text:PerformLayout()
 			self:SetFontInternal("DermaDefault")
 		end
-		spb_MenuF.one.text:AppendText("\t\t    You're playing Super Pedobear V" .. (GAMEMODE.Version or "?") .. "\n\n")
+		spb_MenuF.one.text:AppendText("\t\t    You're playing Super Pedobear V" .. (GAMEMODE.Version or "?") .. "\n")
+		if GAMEMODE:SeasonalEventStr() != "" then
+			spb_MenuF.one.text:AppendText("\t\t\t    " .. GAMEMODE:SeasonalEventStr() .. "\n\n")
+		else
+			spb_MenuF.one.text:AppendText("\n")
+		end
 		spb_MenuF.one.text:AppendText("Gamemode made by VictorienXP, with arts from Pho3 and Wubsy...\n\n")
 		spb_MenuF.one.text:AppendText("If you need help or anything, please go to Xperidia's Discord server discord.gg/jtUtYDa\n\n")
 		spb_MenuF.one.text:AppendText("Please support Xperidia for new content and updates!\n\n")

@@ -217,6 +217,14 @@ function GM:Initialize()
 	GAMEMODE:BuildMusicIndex()
 	GAMEMODE:BuildTauntIndex()
 
+	for _, addon in pairs(engine.GetAddons()) do
+		if addon.wsid == "628449407" and addon.mounted then
+			GAMEMODE.MountedfromWorkshop = true
+		end
+	end
+
+	GAMEMODE:CheckForNewRelease()
+
 end
 
 function GM:ShutDown()
@@ -434,4 +442,31 @@ end
 
 function GM.PlayerMeta:IsGamemodeAuthor() --Credits
 	return self:SteamID() == "STEAM_0:1:18280147"
+end
+
+GM.LatestRelease = GM.LatestRelease or {}
+function GM:CheckForNewRelease()
+	if !GAMEMODE.Version or !isnumber(GAMEMODE.Version) then return nil end
+	return HTTP({	url			=	"https://api.github.com/repos/Xperidia/SuperPedoBear/releases/latest",
+					method		=	"GET",
+					headers		=	{ Accept = "application/json, application/vnd.github.v3+json" },
+					success		=	function(code, body, headers)
+										if code == 200 then
+											local result = util.JSONToTable(body)
+											if result and result.tag_name then
+												GAMEMODE.LatestRelease.Version = tonumber(result.tag_name)
+												GAMEMODE.LatestRelease.Name = result.name or nil
+												GAMEMODE.LatestRelease.URL = result.html_url or nil
+												GAMEMODE.LatestRelease.Newer = isnumber(GAMEMODE.LatestRelease.Version) and GAMEMODE.LatestRelease.Version > GAMEMODE.Version
+											end
+											GAMEMODE:Log("The latest release tag is V" .. GAMEMODE.LatestRelease.Version .. ". " .. Either(GAMEMODE.LatestRelease.Newer, "You're on V" .. GAMEMODE.Version .. "! An update is available!", "You're on the latest version (V" .. GAMEMODE.Version .. ")."))
+										else
+											local state = headers.Status or code
+											GAMEMODE:Log("Couldn't check for new release: " .. state)
+										end
+									end,
+					failed		=	function(reason)
+										GAMEMODE:Log("Couldn't check for new release: " .. reason)
+									end
+	})
 end

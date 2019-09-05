@@ -61,6 +61,10 @@ function GM:PlayerInitialSpawn(ply)
 
 	ply:SetNWString("spb_DefautPM", GAMEMODE.Vars.PM_Default[math.Round(util.SharedRandom(ply:UniqueID(), 1, #GAMEMODE.Vars.PM_Default))])
 
+	if !GAMEMODE.LatestRelease.Version then
+		GAMEMODE:CheckForNewRelease()
+	end
+
 end
 
 function GM:PlayerSpawn(ply)

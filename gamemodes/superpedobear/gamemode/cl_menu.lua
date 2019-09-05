@@ -77,13 +77,32 @@ function GM:Menu()
 		function spb_MenuF.one.text:PerformLayout()
 			self:SetFontInternal("DermaDefault")
 		end
+
 		spb_MenuF.one.text:AppendText("\t    You're playing Super Pedobear V" .. (GAMEMODE.Version or "?") .. " (" .. (GAMEMODE.VersionDate or "?") .. ")\n")
+
 		if GAMEMODE:SeasonalEventStr() != "" then
 			spb_MenuF.one.text:AppendText("\t\t\t    " .. GAMEMODE:SeasonalEventStr() .. "\n\n")
 		else
 			spb_MenuF.one.text:AppendText("\n")
 		end
+
 		spb_MenuF.one.text:AppendText("Gamemode made by VictorienXP, with arts from Pho3 and Wubsy...\n\n")
+
+		if GAMEMODE.LatestRelease.Newer then
+			spb_MenuF.one.text:InsertColorChange(192, 0, 0, 255)
+			spb_MenuF.one.text:AppendText("There is a new release available! ")
+			spb_MenuF.one.text:InsertColorChange(192, 0, 192, 255)
+			spb_MenuF.one.text:InsertClickableTextStart("LatestRelease")
+			spb_MenuF.one.text:AppendText(GAMEMODE.LatestRelease.Name .. "\n")
+			spb_MenuF.one.text:InsertClickableTextEnd()
+			spb_MenuF.one.text:InsertColorChange(0, 0, 0, 255)
+			if game.IsDedicated() then
+				spb_MenuF.one.text:AppendText("Ask the server owner to update the gamemode!\n")
+			elseif GAMEMODE.MountedfromWorkshop and LocalPlayer():GetNWBool("IsListenServerHost", false) then
+				spb_MenuF.one.text:AppendText("Let Steam download the update and restart the game!\n")
+			end
+			spb_MenuF.one.text:AppendText("\n")
+		end
 
 		spb_MenuF.one.text:InsertClickableTextStart("SplashScreen")
 		spb_MenuF.one.text:AppendText("Click here to open the Splash Screen")
@@ -130,7 +149,7 @@ function GM:Menu()
 					GAMEMODE:DebugWindow()
 					spb_MenuF:Close()
 				elseif signalValue == "Workshop" then
-					gui.OpenURL("https://" .. GAMEMODE.Website)
+					gui.OpenURL("https://steamcommunity.com/sharedfiles/filedetails/?id=628449407")
 					spb_MenuF:Close()
 				elseif signalValue == "Workshop_changelog" then
 					gui.OpenURL("https://steamcommunity.com/sharedfiles/filedetails/changelog/628449407")
@@ -143,6 +162,8 @@ function GM:Menu()
 					spb_MenuF:Close()
 				elseif signalValue == "Discord" then
 					gui.OpenURL("https://discordapp.com/invite/jtUtYDa")
+				elseif signalValue == "LatestRelease" then
+					gui.OpenURL(GAMEMODE.LatestRelease.URL)
 					spb_MenuF:Close()
 				end
 			end

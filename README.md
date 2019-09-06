@@ -1,4 +1,5 @@
-﻿# Super Pedobear
+![Super Pedobear](https://github.com/Xperidia/SuperPedobear/raw/master/gamemodes/superpedobear/logo.png)
+
 Meme flavoured hide and seek gamemode!
 _Or also like Escape Pedobear but pvp with power-ups..._
 

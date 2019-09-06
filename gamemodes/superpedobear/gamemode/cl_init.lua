@@ -1350,7 +1350,7 @@ function GM:Stats()
 
 	if info then
 		local tab = util.JSONToTable(info)
-		if !tab or (tab.LastVersion and tab.LastVersion < GAMEMODE.Version) then
+		if !tab or (tab.LastVersion and tab.LastVersion < (GAMEMODE.Version or 0)) then
 			GAMEMODE:SplashScreen()
 		end
 	else

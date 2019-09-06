@@ -88,18 +88,30 @@ function GM:Menu()
 
 		spb_MenuF.one.text:AppendText("Gamemode made by VictorienXP, with arts from Pho3 and Wubsy...\n\n")
 
-		if GAMEMODE.LatestRelease.Newer then
-			spb_MenuF.one.text:InsertColorChange(192, 0, 0, 255)
-			spb_MenuF.one.text:AppendText("There is a new release available! ")
-			spb_MenuF.one.text:InsertColorChange(192, 0, 192, 255)
+		if GAMEMODE.LatestRelease then
+			if GAMEMODE.LatestRelease.Newer then
+				spb_MenuF.one.text:InsertColorChange(192, 0, 0, 255)
+				spb_MenuF.one.text:AppendText("There is a new release available! ")
+				spb_MenuF.one.text:InsertColorChange(192, 0, 192, 255)
+			elseif isnumber(GAMEMODE.LatestRelease.Version) and GAMEMODE.LatestRelease.Version == GAMEMODE.Version then
+				spb_MenuF.one.text:InsertColorChange(0, 192, 0, 255)
+				spb_MenuF.one.text:AppendText("You're on the latest release! ")
+				spb_MenuF.one.text:InsertColorChange(192, 0, 192, 255)
+			elseif isnumber(GAMEMODE.LatestRelease.Version) and GAMEMODE.LatestRelease.Version < GAMEMODE.Version then
+				spb_MenuF.one.text:InsertColorChange(0, 0, 0, 255)
+				spb_MenuF.one.text:AppendText("You're on a unreleased/dev build!\nLatest release is ")
+				spb_MenuF.one.text:InsertColorChange(192, 0, 192, 255)
+			end
 			spb_MenuF.one.text:InsertClickableTextStart("LatestRelease")
-			spb_MenuF.one.text:AppendText(GAMEMODE.LatestRelease.Name .. "\n")
+			spb_MenuF.one.text:AppendText((GAMEMODE.LatestRelease.Name or "V" .. GAMEMODE.LatestRelease.Version) .. "\n")
 			spb_MenuF.one.text:InsertClickableTextEnd()
 			spb_MenuF.one.text:InsertColorChange(0, 0, 0, 255)
-			if game.IsDedicated() then
+			if GAMEMODE.LatestRelease.Newer and game.IsDedicated() then
 				spb_MenuF.one.text:AppendText("Ask the server owner to update the gamemode!\n")
-			elseif GAMEMODE.MountedfromWorkshop and LocalPlayer():GetNWBool("IsListenServerHost", false) then
+			elseif GAMEMODE.LatestRelease.Newer and GAMEMODE.MountedfromWorkshop and LocalPlayer():GetNWBool("IsListenServerHost", false) then
 				spb_MenuF.one.text:AppendText("Let Steam download the update and restart the game!\n")
+			elseif GAMEMODE.LatestRelease.Newer then
+				spb_MenuF.one.text:AppendText("Don't forget to update!\n")
 			end
 			spb_MenuF.one.text:AppendText("\n")
 		end
@@ -372,7 +384,7 @@ end
 
 function GM:HideSplashScreenUntilNextUpdate()
 	local tab = {}
-	tab.LastVersion = GAMEMODE.Version
+	tab.LastVersion = GAMEMODE.Version or 0
 	file.Write("superpedobear/info.txt", util.TableToJSON(tab))
 end
 

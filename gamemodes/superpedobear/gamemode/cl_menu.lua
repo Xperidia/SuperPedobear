@@ -347,19 +347,64 @@ function GM:SplashScreen()
 		spb_SplashScreenF:SetDraggable(false)
 		spb_SplashScreenF:ShowCloseButton(false)
 		spb_SplashScreenF:SetScreenLock(true)
-		spb_SplashScreenF.Paint = function(self, w, h)
-		end
+		spb_SplashScreenF.Paint = function(self, w, h) end
 		spb_SplashScreenF:MakePopup()
-		--spb_SplashScreenF:SetKeyboardInputEnabled(false)
-		--spb_SplashScreenF:SetMouseInputEnabled(false)
+
+		local closebtn = vgui.Create("DButton", spb_SplashScreenF)
+		closebtn:SetText("You're currently on the gamemode's splash screen window that shows controls for new players.\nIf it doesn't load, please click here to force close and skip it for now.")
+		closebtn:SetPos(0, 0)
+		closebtn:SetSize(ScrW(), 32)
+		closebtn:SetColor(Color(255, 255, 255))
+		closebtn.DoClick = function()
+			surface.PlaySound("garrysmod/ui_return.wav")
+			spb_SplashScreenF:Close()
+		end
+		closebtn.Paint = function(self, w, h)
+			if self.nanim then
+				draw.RoundedBox(4, 0, 0, w, h, Color(0, 0, 0, math.Clamp(CurTime() - self.nanim, 0, 255)))
+			else
+				draw.RoundedBox(4, 0, 0, w, h, Color(0, 0, 0, 200))
+			end
+		end
+		closebtn:SetZPos(32767)
 
 		spb_SplashScreenF.SplashScreen = vgui.Create("DHTML")
 		spb_SplashScreenF.SplashScreen:SetParent(spb_SplashScreenF)
 		spb_SplashScreenF.SplashScreen:SetPos(0, 0)
 		spb_SplashScreenF.SplashScreen:SetSize(ScrW(), ScrH())
-		spb_SplashScreenF.SplashScreen:SetAllowLua(true)
 		spb_SplashScreenF.SplashScreen:OpenURL("https://assets.xperidia.com/superpedobear/splash_screen.html")
-		--spb_SplashScreenF.SplashScreen:SetScrollbars(false)
+
+		spb_SplashScreenF.SplashScreen:AddFunction("splashscreen", "loaded", function()
+
+			local tab = {}
+			tab.LastVersion = GAMEMODE.Version or 0
+			file.Write("superpedobear/info.txt", util.TableToJSON(tab))
+
+			surface.PlaySound("ambient/water/drip" .. math.random(1, 4) .. ".wav")
+
+			if IsValid(closebtn) then
+				closebtn:SetSize(ScrW(), 16)
+				closebtn:SetText("Click here if you're somehow stuck in the splash screen.")
+				closebtn:SetColor(Color(255, 255, 255, 0))
+				closebtn.nanim = CurTime()
+				closebtn.Think = function(self)
+					self:SetColor(Color(255, 255, 255, math.Clamp(CurTime() - self.nanim, 0, 255)))
+				end
+			end
+
+			GAMEMODE:Log("The splash screen has loaded properly!")
+
+		end)
+
+		spb_SplashScreenF.SplashScreen:AddFunction("splashscreen", "close", function()
+			surface.PlaySound("garrysmod/ui_click.wav")
+			spb_SplashScreenF:Close()
+		end)
+
+		spb_SplashScreenF.SplashScreen:AddFunction("splashscreen", "openurl", function(url)
+			surface.PlaySound("garrysmod/ui_click.wav")
+			gui.OpenURL(url)
+		end)
 
 		local btxt = ""
 		for k, v in pairs(binds()) do
@@ -367,25 +412,10 @@ function GM:SplashScreen()
 		end
 		spb_SplashScreenF.SplashScreen:Call('$("#controls").append("<h2><u>Controls</u></h2><table>' .. "<thead><th class='leftside'>KEY</th><th>Action</th><th>Options bind name</th></tr>" .. btxt .. '</table>");')
 
-		local closebtn = vgui.Create("DButton", spb_SplashScreenF)
-		closebtn:SetText("X")
-		closebtn:SetPos(ScrW() - 20, 0)
-		closebtn:SetSize(20, 20)
-		closebtn.DoClick = function()
-			spb_SplashScreenF:Close()
-		end
-		closebtn:SetZPos(32767)
-
 	elseif IsValid(spb_SplashScreenF) then
 		spb_SplashScreenF:Close()
 	end
 
-end
-
-function GM:HideSplashScreenUntilNextUpdate()
-	local tab = {}
-	tab.LastVersion = GAMEMODE.Version or 0
-	file.Write("superpedobear/info.txt", util.TableToJSON(tab))
 end
 
 function GM:JukeboxMenu()

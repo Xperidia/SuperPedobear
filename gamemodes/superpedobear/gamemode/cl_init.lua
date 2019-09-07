@@ -181,34 +181,6 @@ hook.Add("HUDShouldDraw", "HideHUD", function(name)
 	end
 end)
 
-function GM:FormatTime(time)
-	local timet = string.FormattedTime(time)
-	if timet.h >= 999 then
-		return "∞"
-	elseif timet.h >= 1 then
-		return string.format("%02i:%02i", timet.h, timet.m)
-	elseif timet.m >= 1 then
-		return string.format("%02i:%02i", timet.m, timet.s)
-	else
-		return string.format("%02i.%02i", timet.s, math.Clamp(timet.ms, 0, 99))
-	end
-end
-
-function GM:FormatTimeTri(time)
-	local timet = string.FormattedTime( time )
-	if timet.h > 0 then
-		return string.format("%02i:%02i:%02i", timet.h, timet.m, timet.s)
-	end
-	return string.format("%02i:%02i", timet.m, timet.s)
-end
-
-function GM:PrettyMusicName(snd)
-	local str = string.StripExtension(snd)
-	str = string.Replace(str, "_", " ")
-	str = string.Replace(str, "%20", " ")
-	return string.gsub(str, "(%a)([%w_']*)", function(first, rest) return first:upper() .. rest:lower() end)
-end
-
 function GM:LimitString(str, size, font)
 	surface.SetFont(font)
 	if surface.GetTextSize(str) <= size then

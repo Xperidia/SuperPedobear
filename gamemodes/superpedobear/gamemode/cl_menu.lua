@@ -50,6 +50,7 @@ local cl_cvars = {
 	spb_cl_hide_tips = "Hide all tips",
 	spb_cl_quickstuff_enable = "Enable quick taunt and quick buy",
 	spb_cl_quickstuff_numpad = "Use numpad as well for quick stuff",
+	spb_cl_hud_html_enable = "Enable the HTML HUD (WIP)"
 }
 
 function GM:Menu()

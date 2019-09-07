@@ -7,9 +7,75 @@ function GM:HUDPaint()
 
 	if !GetConVar("cl_drawhud"):GetBool() then return end
 
-	GAMEMODE:DrawLegacyHUD()
+	if GetConVar("spb_cl_hud_html_enable"):GetBool() then
+		if !GAMEMODE.HTML_HUD_LOADED then
+			GAMEMODE:DrawLegacyHUD()
+		end
+		GAMEMODE:HTML_HUD()
+	else
+		GAMEMODE:DrawLegacyHUD()
+		if IsValid(GAMEMODE.HUD) then
+			GAMEMODE.HUD:Close()
+			GAMEMODE.HTML_HUD_LOADED = nil
+		end
+	end
 	hook.Run("HUDDrawTargetID")
 	hook.Run("DrawDeathNotice", 0.85, 0.04)
+
+end
+
+concommand.Add("spb_cl_hud_html_reload", function()
+	if IsValid(GAMEMODE.HUD) then
+		GAMEMODE.HUD:Close()
+	end
+	GAMEMODE.HTML_HUD_LOADED = nil
+end)
+
+function GM:HTML_HUD()
+
+	if !IsValid(GAMEMODE.HUD) then
+
+		GAMEMODE.HUD = vgui.Create("DFrame")
+		GAMEMODE.HUD:ParentToHUD()
+		GAMEMODE.HUD:SetPos(0, 0)
+		GAMEMODE.HUD:SetSize(ScrW(), ScrH())
+		GAMEMODE.HUD:SetTitle("")
+		GAMEMODE.HUD:SetVisible(false)
+		GAMEMODE.HUD:SetDraggable(false)
+		GAMEMODE.HUD:ShowCloseButton(false)
+		GAMEMODE.HUD:SetScreenLock(true)
+		GAMEMODE.HUD:SetZPos(-32768)
+		GAMEMODE.HUD.Paint = function(self, w, h) end
+		GAMEMODE.HUD:MakePopup()
+		GAMEMODE.HUD:SetKeyboardInputEnabled(false)
+		GAMEMODE.HUD:SetMouseInputEnabled(false)
+
+		GAMEMODE.HUD.HTML = vgui.Create("DHTML")
+		GAMEMODE.HUD.HTML:SetParent(GAMEMODE.HUD)
+		GAMEMODE.HUD.HTML:SetPos(0, 0)
+		GAMEMODE.HUD.HTML:SetSize(ScrW(), ScrH())
+
+		GAMEMODE.HUD.HTML:AddFunction("spb", "validate", function(str)
+
+			if str == "HUD" then
+
+				GAMEMODE.HTML_HUD_LOADED = true
+
+				GAMEMODE.HUD:SetVisible(true)
+
+				--GAMEMODE.HUD.HTML:Call("RoundVars(" .. util.TableToJSON(GAMEMODE.Vars.Round) .. ")")
+
+				GAMEMODE:Log("The HTML HUD has loaded properly!")
+
+			end
+
+		end)
+
+		GAMEMODE.HUD.HTML:OpenURL("https://assets.xperidia.com/superpedobear/hud.html")
+
+		GAMEMODE:Log("The HTML HUD is loading!")
+
+	end
 
 end
 

@@ -119,6 +119,7 @@ function GM:Initialize()
 		CreateClientConVar("spb_cl_hide_tips", 0, true, false, "Hide all tips")
 		CreateClientConVar("spb_cl_quickstuff_enable", 1, true, false, "Enable quick taunt and quick buy")
 		CreateClientConVar("spb_cl_quickstuff_numpad", 1, true, false, "Use numpad aswell for quick stuff")
+		CreateClientConVar("spb_cl_hud_html_enable", 0, true, false, "Enable the HTML HUD. It will fallback on legacy HUD if it couldn't load.") --TODO: Make it default when ready to use.
 
 		cvars.AddChangeCallback("spb_cl_music_volume", function(convar_name, value_old, value_new)
 			if IsValid(GAMEMODE.Vars.Music) then

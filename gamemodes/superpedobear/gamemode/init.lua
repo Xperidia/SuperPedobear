@@ -104,9 +104,10 @@ function GM:UpVars(ply)
 		net.WriteFloat(GAMEMODE.Vars.Round.Pre2Time or 0)
 		net.WriteFloat(GAMEMODE.Vars.Round.Time or 0)
 		net.WriteBool(GAMEMODE.Vars.Round.End or false)
-		net.WriteInt(tonumber(GAMEMODE.Vars.Round.Win) or 0, 32)
-		net.WriteInt(GAMEMODE.Vars.Rounds or 1, 32)
+		net.WriteInt(tonumber(GAMEMODE.Vars.Round.Win) or 0, 4)
 		net.WriteFloat(GAMEMODE.Vars.Round.LastTime or 0)
+		net.WriteBool(GAMEMODE.Vars.Round.TempEnd or false)
+		net.WriteUInt(GAMEMODE.Vars.Rounds or 1, 32)
 	if IsValid(ply) then net.Send(ply) else net.Broadcast() end
 
 end
@@ -289,8 +290,8 @@ function GM:PlayerStats()
 	end
 
 	net.Start("spb_PlayerStats")
-		net.WriteInt(GAMEMODE.Vars.victims, 32)
-		net.WriteInt(GAMEMODE.Vars.downvictims or 0, 32)
+		net.WriteUInt(GAMEMODE.Vars.victims, 8)
+		net.WriteUInt(GAMEMODE.Vars.downvictims or 0, 10)
 	net.Broadcast()
 
 end

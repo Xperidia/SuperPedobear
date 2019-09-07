@@ -217,7 +217,7 @@ function GM:Menu()
 
 		spb_MenuF.config.checkbox_offset = (spb_MenuF.config.checkbox_offset or 0) + 10
 		local hudoffset_w = vgui.Create("DNumSlider", spb_MenuF.config)
-		hudoffset_w:SetPos(15, 30 + spb_MenuF.config.checkbox_offset)
+		hudoffset_w:SetPos(15, 24 + spb_MenuF.config.checkbox_offset)
 		hudoffset_w:SetSize(300, 16)
 		hudoffset_w:SetText("Horizontal HUD Offset")
 		hudoffset_w:SetMin(0)
@@ -225,10 +225,10 @@ function GM:Menu()
 		hudoffset_w:SetDecimals(0)
 		hudoffset_w:SetDark(1)
 		hudoffset_w:SetConVar("spb_cl_hud_offset_w")
-		spb_MenuF.config.checkbox_offset = spb_MenuF.config.checkbox_offset + 30
+		spb_MenuF.config.checkbox_offset = spb_MenuF.config.checkbox_offset + 24
 
 		local hudoffset_h = vgui.Create("DNumSlider", spb_MenuF.config)
-		hudoffset_h:SetPos(15, 30 + spb_MenuF.config.checkbox_offset)
+		hudoffset_h:SetPos(15, 24 + spb_MenuF.config.checkbox_offset)
 		hudoffset_h:SetSize(300, 16)
 		hudoffset_h:SetText("Vertical HUD Offset")
 		hudoffset_h:SetMin(0)

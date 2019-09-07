@@ -26,6 +26,32 @@ local function binds()
 	}
 end
 
+local function do_a_checkbox(str, cvar, parent)
+	local checkbox = vgui.Create("DCheckBoxLabel", parent)
+	checkbox:SetText(str)
+	checkbox:SetPos(15, 30 + (parent.checkbox_offset or 0))
+	checkbox:SetDark(1)
+	checkbox:SetConVar(cvar)
+	checkbox:SetValue(GetConVar(cvar):GetBool())
+	checkbox:SizeToContents()
+	parent.checkbox_offset = (parent.checkbox_offset or 0) + 20
+end
+
+local function do_a_bunch_of_checkboxes(table, parent)
+	for k, v in pairs(table) do
+		do_a_checkbox(v, k, parent)
+	end
+end
+
+local cl_cvars = {
+	spb_cl_disabletauntmenuclose = "Don't close the taunt menu after taunting",
+	cl_drawhud = "Draw HUD (Caution! This is a Garry's Mod convar)",
+	spb_cl_disablehalos = "Disable halos (Improve performance)",
+	spb_cl_hide_tips = "Hide all tips",
+	spb_cl_quickstuff_enable = "Enable quick taunt and quick buy",
+	spb_cl_quickstuff_numpad = "Use numpad as well for quick stuff",
+}
+
 function GM:Menu()
 
 	if !IsValid(spb_MenuF) and !engine.IsPlayingDemo() then
@@ -176,74 +202,22 @@ function GM:Menu()
 		end
 
 
-		spb_MenuF.config = vgui.Create("DPanel")
-		spb_MenuF.config:SetParent(spb_MenuF)
+		spb_MenuF.config = vgui.Create("DScrollPanel", spb_MenuF)
 		spb_MenuF.config:SetPos(325, 30)
 		spb_MenuF.config:SetSize(305, 215)
+		spb_MenuF.config:SetPaintBackground(true)
 
-		local configlbl = vgui.Create("DLabel")
-		configlbl:SetParent(spb_MenuF.config)
+		local configlbl = vgui.Create("DLabel", spb_MenuF.config)
 		configlbl:SetText("Personal configuration")
 		configlbl:SetPos(10, 5)
 		configlbl:SetDark(1)
 		configlbl:SizeToContents()
 
-		local disabletc = vgui.Create("DCheckBoxLabel")
-		disabletc:SetParent(spb_MenuF.config)
-		disabletc:SetText("Don't close the taunt menu after taunting")
-		disabletc:SetPos(15, 30)
-		disabletc:SetDark(1)
-		disabletc:SetConVar("spb_cl_disabletauntmenuclose")
-		disabletc:SetValue(GetConVar("spb_cl_disabletauntmenuclose"):GetBool())
-		disabletc:SizeToContents()
+		do_a_bunch_of_checkboxes(cl_cvars, spb_MenuF.config)
 
-		local hud = vgui.Create("DCheckBoxLabel")
-		hud:SetParent(spb_MenuF.config)
-		hud:SetText("Draw HUD (Caution! This is a Garry's Mod convar)")
-		hud:SetPos(15, 50)
-		hud:SetDark(1)
-		hud:SetConVar("cl_drawhud")
-		hud:SetValue(GetConVar("cl_drawhud"):GetBool())
-		hud:SizeToContents()
-
-		local disablehalo = vgui.Create("DCheckBoxLabel")
-		disablehalo:SetParent(spb_MenuF.config)
-		disablehalo:SetText("Disable halos (Improve performance)")
-		disablehalo:SetPos(15, 70)
-		disablehalo:SetDark(1)
-		disablehalo:SetConVar("spb_cl_disablehalos")
-		disablehalo:SetValue(GetConVar("spb_cl_disablehalos"):GetBool())
-		disablehalo:SizeToContents()
-
-		local disablehalo = vgui.Create("DCheckBoxLabel")
-		disablehalo:SetParent(spb_MenuF.config)
-		disablehalo:SetText("Hide all tips")
-		disablehalo:SetPos(15, 90)
-		disablehalo:SetDark(1)
-		disablehalo:SetConVar("spb_cl_hide_tips")
-		disablehalo:SetValue(GetConVar("spb_cl_hide_tips"):GetBool())
-		disablehalo:SizeToContents()
-
-		local quickstuff = vgui.Create("DCheckBoxLabel")
-		quickstuff:SetParent(spb_MenuF.config)
-		quickstuff:SetText("Enable quick taunt and quick buy")
-		quickstuff:SetPos(15, 110)
-		quickstuff:SetDark(1)
-		quickstuff:SetConVar("spb_cl_quickstuff_enable")
-		quickstuff:SetValue(GetConVar("spb_cl_quickstuff_enable"):GetBool())
-		quickstuff:SizeToContents()
-
-		local quickstuffnumpad = vgui.Create("DCheckBoxLabel")
-		quickstuffnumpad:SetParent(spb_MenuF.config)
-		quickstuffnumpad:SetText("Use numpad as well for quick stuff")
-		quickstuffnumpad:SetPos(15, 130)
-		quickstuffnumpad:SetDark(1)
-		quickstuffnumpad:SetConVar("spb_cl_quickstuff_numpad")
-		quickstuffnumpad:SetValue(GetConVar("spb_cl_quickstuff_numpad"):GetBool())
-		quickstuffnumpad:SizeToContents()
-
+		spb_MenuF.config.checkbox_offset = (spb_MenuF.config.checkbox_offset or 0) + 10
 		local hudoffset_w = vgui.Create("DNumSlider", spb_MenuF.config)
-		hudoffset_w:SetPos(15, 160)
+		hudoffset_w:SetPos(15, 30 + spb_MenuF.config.checkbox_offset)
 		hudoffset_w:SetSize(300, 16)
 		hudoffset_w:SetText("Horizontal HUD Offset")
 		hudoffset_w:SetMin(0)
@@ -251,9 +225,10 @@ function GM:Menu()
 		hudoffset_w:SetDecimals(0)
 		hudoffset_w:SetDark(1)
 		hudoffset_w:SetConVar("spb_cl_hud_offset_w")
+		spb_MenuF.config.checkbox_offset = spb_MenuF.config.checkbox_offset + 30
 
 		local hudoffset_h = vgui.Create("DNumSlider", spb_MenuF.config)
-		hudoffset_h:SetPos(15, 190)
+		hudoffset_h:SetPos(15, 30 + spb_MenuF.config.checkbox_offset)
 		hudoffset_h:SetSize(300, 16)
 		hudoffset_h:SetText("Vertical HUD Offset")
 		hudoffset_h:SetMin(0)
@@ -292,10 +267,10 @@ function GM:Menu()
 		end
 
 
-		spb_MenuF.AdminCFG = vgui.Create("DPanel")
-		spb_MenuF.AdminCFG:SetParent(spb_MenuF)
+		spb_MenuF.AdminCFG = vgui.Create("DScrollPanel", spb_MenuF)
 		spb_MenuF.AdminCFG:SetPos(325, 255)
 		spb_MenuF.AdminCFG:SetSize(305, 215)
+		spb_MenuF.AdminCFG:SetPaintBackground(true)
 
 		local adminmenulbl = vgui.Create("DLabel", spb_MenuF.AdminCFG)
 		adminmenulbl:SetText("Admin configuration")

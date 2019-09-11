@@ -31,9 +31,58 @@ concommand.Add("spb_cl_hud_html_reload", function()
 	GAMEMODE.HTML_HUD_LOADED = nil
 end)
 
+function GM:HTML_HUD_UPDATE()
+
+	local vars = {}
+
+	vars.rounds = GAMEMODE.Vars.Rounds
+	vars.round = GAMEMODE.Vars.Round
+
+	vars.sply = {}
+	vars.ply = {}
+	local ply = LocalPlayer()
+	local sply = ply:GetObserverTarget() or ply
+	if !sply:IsPlayer() then
+		sply = ply
+	end
+	vars.ply.Alive = ply:Alive()
+	vars.ply.Team = ply:Team()
+	vars.sply.Alive = sply:Alive()
+	vars.sply.Team = sply:Team()
+	vars.sply.col = sply:GetPlayerColor():ToColor()
+	if !vars.sply.Alive then
+		vars.sply.col = team.GetColor(vars.sply.Team)
+	end
+	vars.welding = IsValid(sply:GetNWEntity("spb_Welding"))
+	if vars.welding == sply then
+		vars.welding = nil
+	end
+	vars.weldingstate = sply:GetNWInt("spb_WeldingState")
+	vars.hide_tips = GetConVar("spb_cl_hide_tips"):GetBool() or End
+	vars.hudoffset_w = GetConVar("spb_cl_hud_offset_w") and GetConVar("spb_cl_hud_offset_w"):GetInt() or 0
+	vars.hudoffset_h = GetConVar("spb_cl_hud_offset_h") and GetConVar("spb_cl_hud_offset_h"):GetInt() or 0
+	vars.hudoffset_w = ScrW() * (vars.hudoffset_w * 0.001)
+	vars.hudoffset_h = ScrH() * (vars.hudoffset_h * 0.001)
+	vars.ply.wep = ""
+	if vars.ply.Alive and IsValid(ply:GetActiveWeapon()) then
+		vars.ply.wep = ply:GetActiveWeapon():GetClass()
+	end
+	vars.sply.swep = ""
+	if vars.sply.Alive and IsValid(sply:GetActiveWeapon()) then
+		vars.sply.swep = sply:GetActiveWeapon():GetClass()
+	end
+
+	GAMEMODE.HUD.HTML:Call("update('" .. util.TableToJSON(vars) .. "')")
+
+end
+
 function GM:HTML_HUD()
 
-	if !IsValid(GAMEMODE.HUD) then
+	if IsValid(GAMEMODE.HUD) then
+
+		GAMEMODE:HTML_HUD_UPDATE()
+
+	else
 
 		GAMEMODE.HUD = vgui.Create("DFrame")
 		GAMEMODE.HUD:ParentToHUD()
@@ -63,7 +112,7 @@ function GM:HTML_HUD()
 
 				GAMEMODE.HUD:SetVisible(true)
 
-				--GAMEMODE.HUD.HTML:Call("RoundVars(" .. util.TableToJSON(GAMEMODE.Vars.Round) .. ")")
+				GAMEMODE:HTML_HUD_UPDATE()
 
 				GAMEMODE:Log("The HTML HUD has loaded properly!")
 

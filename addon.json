@@ -9,15 +9,8 @@
 		"*.svn*",
 		"*.git*",
 		"*.fgd",
+		"*.md",
 		"desktop.ini",
-		"Thumbs.db",
-		"README.md",
-		"maps/spb_dev.bsp",
-		"maps/spb_dev.nav",
-		"maps/spb_tutorial.bsp",
-		"maps/spb_tutorial.nav",
-		"materials/correction/spb_tutorial.raw",
-		"sound/superpedobear/spb_tutorial/secret.mp3",
-		"materials/superpedobear/spb_tutorial/*"
+		"Thumbs.db"
 	]
 }

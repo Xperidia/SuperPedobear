@@ -1,7 +1,0 @@
-UnlitGeneric
-{
-$baseTexture "superpedobear/spb_tutorial/skybox/urban_horizon_even"
-$translucent 1
-$color "[ .5 .5 .5 ]"
-
-}

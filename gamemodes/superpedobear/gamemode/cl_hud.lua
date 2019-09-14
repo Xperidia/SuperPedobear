@@ -184,10 +184,6 @@ function GM:DrawLegacyHUD()
 	local splyTeam = sply:Team()
 	local col = sply:GetPlayerColor():ToColor()
 	if !splyAlive then col = team.GetColor(splyTeam) end
-	local wi = true
-	if !splyAlive or (splyTeam != TEAM_SEEKER and splyTeam != TEAM_HIDING) then
-		wi = false
-	end
 	local welding = sply:GetNWEntity("spb_Welding")
 	if welding == sply then
 		welding = nil

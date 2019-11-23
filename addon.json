@@ -11,6 +11,7 @@
 		"*.fgd",
 		"*.md",
 		"desktop.ini",
-		"Thumbs.db"
+		"Thumbs.db",
+		"CODEOWNERS"
 	]
 }

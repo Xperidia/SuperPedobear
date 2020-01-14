@@ -5,24 +5,25 @@
 
 local function binds()
 	return {
-		{GAMEMODE:CheckBind("gm_showhelp"), "Gamemode menu", "Show help"},
-		{GAMEMODE:CheckBind("gm_showteam"), "Change team", "Team menu"},
-		{GAMEMODE:CheckBind("gm_showspare1"), "Taunt menu", "Spare 1"},
-		{GAMEMODE:CheckBind("gm_showspare2"), "Jukebox/music menu", "Spare 2"},
-		{GAMEMODE:CheckBind("+reload"), "Use Power-UP", "Reload weapon"},
-		{GAMEMODE:CheckBind("+menu"), "Shop", "Show Menu"},
-		{GAMEMODE:CheckBind("+menu_context"), "Toggle thirdperson", "Show Context Menu"},
+		{GAMEMODE:CheckBind("gm_showhelp"), "Gamemode menu", "Open Help"},
+		{GAMEMODE:CheckBind("gm_showteam"), "Change team", "Open Team Menu"},
+		{GAMEMODE:CheckBind("gm_showspare1"), "Taunt menu", "Server Customizable Spare 1"},
+		{GAMEMODE:CheckBind("gm_showspare2"), "Jukebox/music menu", "Server Customizable Spare 2"},
+		{GAMEMODE:CheckBind("+reload"), "Use Power-UP", language.GetPhrase("#Valve_Reload_Weapon")},
+		{GAMEMODE:CheckBind("+menu"), "Shop", "Open Spawn Menu"},
+		{GAMEMODE:CheckBind("+menu_context"), "Toggle thirdperson", "Open Context Menu"},
 		{GAMEMODE:CheckBind("gmod_undo"), "Drop Power-UP", "Undo"},
-		{GAMEMODE:CheckBind("phys_swap"), "Enhanced PlayerModel Selector", "Gravity Gun"},
+		{GAMEMODE:CheckBind("phys_swap"), "Enhanced PlayerModel Selector", language.GetPhrase("#Valve_Gravity_Gun")},
 		{"1-9", "Quick taunt and quick buy", ""},
 		{"0", "Random taunt", ""},
-		{GAMEMODE:CheckBind("+forward"), "Move forward", "Move forward"},
-		{GAMEMODE:CheckBind("+moveleft"), "Move left", "Move left (stafe)"},
-		{GAMEMODE:CheckBind("+moveright"), "Move right", "Move right (strafe)"},
-		{GAMEMODE:CheckBind("+back"), "Move back", "Move back"},
-		{GAMEMODE:CheckBind("+duck"), "Crouch", "Duck"},
-		{GAMEMODE:CheckBind("+jump"), "Jump", "Jump"},
-		{GAMEMODE:CheckBind("+speed"), "Sprint", "Sprint (Move Quickly)"}
+		{GAMEMODE:CheckBind("+forward"), "Move forward", language.GetPhrase("#Valve_Move_Forward")},
+		{GAMEMODE:CheckBind("+moveleft"), "Move left", language.GetPhrase("#Valve_Move_Left")},
+		{GAMEMODE:CheckBind("+moveright"), "Move right", language.GetPhrase("#Valve_Move_Right")},
+		{GAMEMODE:CheckBind("+back"), "Move back", language.GetPhrase("#Valve_Move_Back")},
+		{GAMEMODE:CheckBind("+speed"), "Sprint", language.GetPhrase("#Valve_Sprint")},
+		{GAMEMODE:CheckBind("+jump"), "Jump", language.GetPhrase("#Valve_Jump")},
+		{GAMEMODE:CheckBind("+duck"), "Crouch", language.GetPhrase("#Valve_Duck")},
+		{GAMEMODE:CheckBind("+use"), "Use", language.GetPhrase("#Valve_Use_Items")}
 	}
 end
 

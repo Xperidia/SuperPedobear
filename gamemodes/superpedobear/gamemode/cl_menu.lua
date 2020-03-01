@@ -353,9 +353,7 @@ function GM:SplashScreen()
 
 		spb_SplashScreenF.SplashScreen:AddFunction("splashscreen", "loaded", function()
 
-			local tab = {}
-			tab.LastVersion = GAMEMODE.Version or 0
-			file.Write("superpedobear/info.txt", util.TableToJSON(tab))
+			GAMEMODE:SaveStats()
 
 			surface.PlaySound("ambient/water/drip" .. math.random(1, 4) .. ".wav")
 

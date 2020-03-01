@@ -602,25 +602,33 @@ function GM:GetTeamColor(ent)
 end
 
 function GM:InitPostEntity()
-	GAMEMODE:Stats()
+	if !GAMEMODE:LoadStats() then
+		GAMEMODE:SplashScreen()
+	end
 end
 
-function GM:Stats()
+function GM:LoadStats()
 
-	local function welcomehandle()
-		GAMEMODE:SplashScreen()
-	end
+	local stats = file.Read("superpedobear/stats.json")
 
-	local info = file.Read("superpedobear/info.txt")
-
-	if info then
-		local tab = util.JSONToTable(info)
-		if !tab or (tab.LastVersion and tab.LastVersion < (GAMEMODE.Version or 0)) then
-			GAMEMODE:SplashScreen()
-		end
+	if stats then
+		local t = util.JSONToTable(stats)
+		return t or (t.Version and t.Version >= (GAMEMODE.Version or 0))
 	else
-		GAMEMODE:SplashScreen()
+		return nil
 	end
+
+end
+
+function GM:SaveStats()
+
+	local stats = {}
+
+	stats.Version = GAMEMODE.Version or 0
+
+	file.Write("superpedobear/stats.json", util.TableToJSON(stats))
+
+	file.Delete("superpedobear/info.txt")
 
 end
 

@@ -13,7 +13,7 @@ GM.Name 		= "Super Pedobear"
 GM.Author 		= "VictorienXP@Xperidia"
 GM.Website 		= "steamcommunity.com/sharedfiles/filedetails/?id=628449407"
 GM.Version 		= 0.34
-GM.VersionDate 	= 200121
+GM.VersionDate 	= 200404
 GM.TeamBased 	= true
 
 TEAM_HIDING	= 1

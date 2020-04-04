@@ -11,6 +11,7 @@ include("cl_voice.lua")
 include("cl_deathnotice.lua")
 include("cl_van.lua")
 include("cl_hud.lua")
+include("cl_mapvote.lua")
 
 DEFINE_BASECLASS("gamemode_base")
 

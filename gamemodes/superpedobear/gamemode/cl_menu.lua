@@ -628,12 +628,6 @@ function GM:JukeboxMenu()
 
 end
 
-function GM:MapVote()
-
-	GAMEMODE:Notif("Not yet implemented.", NOTIFY_ERROR, 5, true)
-
-end
-
 function GM:DebugWindow()
 
 	local debugwindow = vgui.Create("DFrame")

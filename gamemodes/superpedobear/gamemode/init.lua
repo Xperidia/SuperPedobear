@@ -60,6 +60,7 @@ function GM:PlayerInitialSpawn(ply)
 	GAMEMODE:SendTauntIndex(ply)
 	GAMEMODE:SendMusicQueue(ply)
 	GAMEMODE:SendPMList(ply)
+	GAMEMODE:SendMaps(ply)
 
 	ply:SetNWString("spb_DefautPM", GAMEMODE.Vars.PM_Default[math.Round(util.SharedRandom(ply:UniqueID(), 1, #GAMEMODE.Vars.PM_Default))])
 

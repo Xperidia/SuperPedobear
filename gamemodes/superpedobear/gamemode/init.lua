@@ -1465,3 +1465,95 @@ concommand.Add("spb_powerup_drop", function(ply, cmd, args)
 		ply:DropPowerUP()
 	end
 end)
+
+local default_playermodel_list =
+{
+	"Homura Akemi",
+	"Kyouko Sakura",
+	"Madoka Kaname",
+	"Mami Tomoe",
+	"Sayaka Miki",
+	"Tda Chibi Haku Append (v2)",
+	"Tda Chibi Luka Append (v2)",
+	"Tda Chibi Miku Append (v2)",
+	"Tda Chibi Neru Append (v2)",
+	"Tda Chibi Teto Append (v2)",
+	"RAM",
+	"ROM",
+	"WH"
+}
+function GM:SaveDefaultPlayerModelListExample()
+
+	if !file.Exists("superpedobear/default_playermodel_list_example.json", "DATA") then
+
+		GAMEMODE:Log("Writting default_playermodel_list_example.json and default_playermodel_list_readme.txt...")
+
+		file.Write("superpedobear/default_playermodel_list_example.json", util.TableToJSON(default_playermodel_list, true))
+
+		file.Write("superpedobear/default_playermodel_list_readme.txt", "You can use the \"default_playermodel_list_example.json\" to make your own custom default playermodel list \"default_playermodel_list.json\".")
+
+	end
+
+end
+
+function GM:LoadDefaultPlayerModelList()
+
+	local raw_list = file.Read("superpedobear/default_playermodel_list.json")
+
+	if raw_list then
+
+		local list = util.JSONToTable(raw_list)
+
+		if list then
+
+			GAMEMODE:Log("Custom default_playermodel_list.json loaded succefully!")
+
+			return list, true
+
+		else
+
+			ErrorNoHalt("[Super Pedobear] Error while loading default_playermodel_list.json! Make sure it is valid JSON!\n")
+
+		end
+	else
+
+		GAMEMODE:Log("No custom default_playermodel_list.json found.")
+
+	end
+
+	GAMEMODE:Log("Using the builtin default playermodel list.")
+
+	return default_playermodel_list, false
+
+end
+
+function GM:BuildDefaultPlayerModelList()
+
+	GAMEMODE:Log("Building default playermodel list...")
+
+	GAMEMODE:SaveDefaultPlayerModelListExample()
+
+	GAMEMODE.Vars.PM_Available = player_manager.AllValidModels()
+	GAMEMODE.Vars.PM_Default = {}
+
+	local list, custom = GAMEMODE:LoadDefaultPlayerModelList()
+
+	for k, v in pairs(list) do
+		if GAMEMODE.Vars.PM_Available[v] then
+			table.insert(GAMEMODE.Vars.PM_Default, v)
+			GAMEMODE:Log("Playermodel found: " .. v, nil, true)
+		elseif custom then
+			ErrorNoHalt("[Super Pedobear] Playermodel not found: " .. v .. "\n")
+		else
+			GAMEMODE:Log("Playermodel not found: " .. v, nil, true)
+		end
+	end
+
+	if #GAMEMODE.Vars.PM_Default > 0 then
+		GAMEMODE:Log("Default player model list built. (" .. #GAMEMODE.Vars.PM_Default .. " found out of " .. #list .. " selected)")
+		GAMEMODE:Log("Final default playermodel list: " .. table.concat(GAMEMODE.Vars.PM_Default, ", "), nil, true)
+	else
+		GAMEMODE:Log("Default player model list empty!")
+	end
+
+end

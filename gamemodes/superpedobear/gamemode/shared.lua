@@ -140,35 +140,7 @@ function GM:Initialize()
 
 	if SERVER then
 
-		GAMEMODE.Vars.PM_Available = player_manager.AllValidModels()
-		GAMEMODE.Vars.PM_Default = {}
-		if GAMEMODE.Vars.PM_Available["Homura Akemi"] then
-			table.Merge(GAMEMODE.Vars.PM_Default, {"Homura Akemi", "Kyouko Sakura", "Madoka Kaname", "Mami Tomoe", "Sayaka Miki"})
-		end
-		if GAMEMODE.Vars.PM_Available["Tda Chibi Haku Append (v2)"] then
-			table.insert(GAMEMODE.Vars.PM_Default, "Tda Chibi Haku Append (v2)")
-		end
-		if GAMEMODE.Vars.PM_Available["Tda Chibi Luka Append (v2)"] then
-			table.insert(GAMEMODE.Vars.PM_Default, "Tda Chibi Luka Append (v2)")
-		end
-		if GAMEMODE.Vars.PM_Available["Tda Chibi Miku Append (v2)"] then
-			table.insert(GAMEMODE.Vars.PM_Default, "Tda Chibi Miku Append (v2)")
-		end
-		if GAMEMODE.Vars.PM_Available["Tda Chibi Neru Append (v2)"] then
-			table.insert(GAMEMODE.Vars.PM_Default, "Tda Chibi Neru Append (v2)")
-		end
-		if GAMEMODE.Vars.PM_Available["Tda Chibi Teto Append (v2)"] then
-			table.insert(GAMEMODE.Vars.PM_Default, "Tda Chibi Teto Append (v2)")
-		end
-		if GAMEMODE.Vars.PM_Available["RAM"] then
-			table.insert(GAMEMODE.Vars.PM_Default, "RAM")
-		end
-		if GAMEMODE.Vars.PM_Available["Rom"] then
-			table.insert(GAMEMODE.Vars.PM_Default, "Rom")
-		end
-		if GAMEMODE.Vars.PM_Available["WH"] then
-			table.insert(GAMEMODE.Vars.PM_Default, "WH")
-		end
+		GAMEMODE:BuildDefaultPlayerModelList()
 
 		if GetConVar("sv_loadingurl"):GetString() == "" then --Use the Xperidia's loading screen if no other loading screen is defined... Because it shows more information than the current default of Garry's Mod...
 			RunConsoleCommand("sv_loadingurl", "https://assets.xperidia.com/garrysmod/loading.html#auto")

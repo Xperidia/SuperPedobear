@@ -1,6 +1,6 @@
 --[[---------------------------------------------------------
 		Super Pedobear Gamemode for Garry's Mod
-				by VictorienXP (2016-2019)
+				by VictorienXP (2016-2020)
 -----------------------------------------------------------]]
 
 function GM:Log(str, hardcore)

@@ -1512,7 +1512,7 @@ function GM:LoadDefaultPlayerModelList()
 
 		else
 
-			ErrorNoHalt("[Super Pedobear] Error while loading default_playermodel_list.json! Make sure it is valid JSON!\n")
+			GAMEMODE:ErrorLog("[Super Pedobear] Error while loading default_playermodel_list.json! Make sure it is valid JSON!")
 
 		end
 	else
@@ -1543,7 +1543,7 @@ function GM:BuildDefaultPlayerModelList()
 			table.insert(GAMEMODE.Vars.PM_Default, v)
 			GAMEMODE:Log("Playermodel found: " .. v, true)
 		elseif custom then
-			ErrorNoHalt("[Super Pedobear] Playermodel not found: " .. v .. "\n")
+			GAMEMODE:ErrorLog("[Super Pedobear] Playermodel not found: " .. v)
 		else
 			GAMEMODE:Log("Playermodel not found: " .. v, true)
 		end

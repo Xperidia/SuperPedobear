@@ -8,6 +8,10 @@ function GM:Log(str, hardcore)
 	Msg("[Super Pedobear] " .. (str or "This was a log message, but something went wrong") .. "\n")
 end
 
+function GM:ErrorLog(str)
+	ErrorNoHalt("[Super Pedobear] " .. (str or "This was an error message, but something went wrong") .. "\n")
+end
+
 function GM:GetHost()
 	if GAMEMODE.Vars.Host and IsValid(GAMEMODE.Vars.Host) then
 		return GAMEMODE.Vars.Host

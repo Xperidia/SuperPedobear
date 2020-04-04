@@ -12,7 +12,7 @@ include("player_class/player_seeker.lua")
 GM.Name 		= "Super Pedobear"
 GM.Author 		= "VictorienXP@Xperidia"
 GM.Website 		= "steamcommunity.com/sharedfiles/filedetails/?id=628449407"
-GM.Version 		= 0.34
+GM.Version 		= 0.35
 GM.VersionDate 	= 200404
 GM.TeamBased 	= true
 

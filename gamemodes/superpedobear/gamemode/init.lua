@@ -114,7 +114,7 @@ function GM:UpVars(ply)
 
 end
 
-function GM:ListMaps(ply)
+function GM:ListMaps()
 
 	GAMEMODE.MapList = {}
 	local AvMaps = file.Find("maps/*.bsp", "GAME")
@@ -131,6 +131,14 @@ function GM:ListMaps(ply)
 			end
 		end
 	end
+
+	GAMEMODE:Log(#GAMEMODE.MapList .. " maps have been found!")
+
+	GAMEMODE:SendMaps()
+
+end
+
+function GM:SendMaps(ply)
 
 	net.Start("spb_MapList")
 		net.WriteTable(GAMEMODE.MapList)

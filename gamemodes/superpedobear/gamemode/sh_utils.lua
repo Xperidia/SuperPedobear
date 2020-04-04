@@ -3,7 +3,7 @@
 				by VictorienXP (2016-2019)
 -----------------------------------------------------------]]
 
-function GM:Log(str, tn, hardcore)
+function GM:Log(str, hardcore)
 	if hardcore and !spb_enabledevmode:GetBool() then return end
 	Msg("[Super Pedobear] " .. (str or "This was a log message, but something went wrong") .. "\n")
 end

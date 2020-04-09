@@ -91,7 +91,7 @@ end
 function PLAYER:GetHandsModel()
 
 	local cl_playermodel = self.Player:GetInfo("cl_playermodel")
-	if cl_playermodel != "none" and GAMEMODE.Vars.PM_Available[cl_playermodel] then
+	if cl_playermodel != "none" and GAMEMODE.Vars.PM_Available[cl_playermodel] and !spb_restrict_playermodels:GetBool() then
 		return player_manager.TranslatePlayerHands(cl_playermodel)
 	else
 		return player_manager.TranslatePlayerHands(self.Player:GetNWString("spb_DefautPM", "chell"))

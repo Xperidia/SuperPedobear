@@ -301,7 +301,7 @@ function GM:Menu()
 		docheckbox("Enable Power-UPs", "spb_powerup_enabled")
 		docheckbox("Give Power-UPs on maps without Power-UP spawner", "spb_powerup_autofill")
 		docheckbox("Enable the van (shop)", "spb_shop_enabled")
-		docheckbox("Give some weapons on spawn (You shouldn't use this)", "spb_weapons")
+		docheckbox("Give some weapons on spawn (not recommended)", "spb_weapons")
 		docheckbox("Enable jukebox input", "spb_jukebox_enable_input")
 
 

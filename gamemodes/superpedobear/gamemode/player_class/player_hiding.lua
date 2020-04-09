@@ -62,7 +62,7 @@ function PLAYER:SetModel()
 
 	local cl_playermodel = self.Player:GetInfo("cl_playermodel")
 
-	if cl_playermodel == "none" or !GAMEMODE.Vars.PM_Available[cl_playermodel] then
+	if cl_playermodel == "none" or !GAMEMODE.Vars.PM_Available[cl_playermodel] or spb_restrict_playermodels:GetBool() then
 
 		local modelname = player_manager.TranslatePlayerModel(self.Player:GetNWString("spb_DefautPM", "chell"))
 		util.PrecacheModel(modelname)

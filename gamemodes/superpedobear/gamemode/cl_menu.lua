@@ -303,6 +303,7 @@ function GM:Menu()
 		docheckbox("Enable the van (shop)", "spb_shop_enabled")
 		docheckbox("Give some weapons on spawn (not recommended)", "spb_weapons")
 		docheckbox("Enable jukebox input", "spb_jukebox_enable_input")
+		docheckbox("Restrict playermodels to the default list", "spb_restrict_playermodels")
 
 
 	elseif IsValid(spb_MenuF) then

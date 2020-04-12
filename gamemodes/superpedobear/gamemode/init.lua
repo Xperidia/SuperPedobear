@@ -146,8 +146,6 @@ function GM:SendMaps(ply)
 		net.WriteTable(GAMEMODE.MapList)
 	if IsValid(ply) then net.Send(ply) else net.Broadcast() end
 
-	GAMEMODE:Log(#GAMEMODE.MapList .. " maps have been found!")
-
 end
 
 function GM:SelectMusic(pre)

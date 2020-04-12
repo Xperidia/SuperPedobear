@@ -12,6 +12,7 @@
 		"*.md",
 		"desktop.ini",
 		"Thumbs.db",
-		"CODEOWNERS"
+		"CODEOWNERS",
+		"semver.lua/*"
 	]
 }

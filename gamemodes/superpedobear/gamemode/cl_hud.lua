@@ -259,7 +259,7 @@ function GM:DrawLegacyHUD()
 	surface.SetDrawColor(Color(0, 0, 0, 255))
 	surface.DrawOutlinedRect(ScrW() / 2 - 100, hudoffset_h, 200, 110)
 
-	draw.DrawText("Super Pedobear V" .. (GAMEMODE.Version and tostring(GAMEMODE.Version) or "?") .. " (" .. (GAMEMODE.VersionDate or "?") .. ")", "DermaDefault", ScrW() / 2, hudoffset_h, Color(255, 255, 255, 32), TEXT_ALIGN_CENTER)
+	draw.DrawText("Super Pedobear v" .. (GAMEMODE.Version and tostring(GAMEMODE.Version) or "?") .. " (" .. (GAMEMODE.VersionDate or "?") .. ")", "DermaDefault", ScrW() / 2, hudoffset_h, Color(255, 255, 255, 32), TEXT_ALIGN_CENTER)
 
 
 	--[[ THE ROUND STATUS ]]--

@@ -276,7 +276,7 @@ function GM:CheckForNewRelease()
 										GAMEMODE.LatestRelease.Newer = true
 									end
 								end
-								GAMEMODE:Log("The latest release tag is V" .. tostring(GAMEMODE.LatestRelease.Version) .. ". " .. Either(GAMEMODE.LatestRelease.Newer, "You're on V" .. tostring(GAMEMODE.Version) .. "! An update is available!", "You're on the latest version (V" .. tostring(GAMEMODE.Version) .. ")."))
+								GAMEMODE:Log("The latest release tag is v" .. tostring(GAMEMODE.LatestRelease.Version) .. ". " .. Either(GAMEMODE.LatestRelease.Newer, "You're on v" .. tostring(GAMEMODE.Version) .. "! An update is available!", "You're on the latest version (V" .. tostring(GAMEMODE.Version) .. ")."))
 							else
 								local state = headers.Status or code
 								GAMEMODE:Log("Couldn't check for new release: " .. state)

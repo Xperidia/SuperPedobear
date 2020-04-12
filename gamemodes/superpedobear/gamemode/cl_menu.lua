@@ -106,7 +106,7 @@ function GM:Menu()
 			self:SetFontInternal("DermaDefault")
 		end
 
-		spb_MenuF.one.text:AppendText("\t    You're playing Super Pedobear V" .. (GAMEMODE.Version and tostring(GAMEMODE.Version) or "?") .. " (" .. (GAMEMODE.VersionDate or "?") .. ")\n")
+		spb_MenuF.one.text:AppendText("\t    You're playing Super Pedobear v" .. (GAMEMODE.Version and tostring(GAMEMODE.Version) or "?") .. " (" .. (GAMEMODE.VersionDate or "?") .. ")\n")
 
 		if GAMEMODE:SeasonalEventStr() != "" then
 			spb_MenuF.one.text:AppendText("\t\t\t    " .. GAMEMODE:SeasonalEventStr() .. "\n\n")

@@ -13,6 +13,7 @@ AddCSLuaFile("cl_deathnotice.lua")
 AddCSLuaFile("cl_van.lua")
 AddCSLuaFile("cl_hud.lua")
 AddCSLuaFile("cl_mapvote.lua")
+AddCSLuaFile("semver.lua")
 
 include("shared.lua")
 

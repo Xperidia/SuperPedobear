@@ -3,6 +3,8 @@
 				by VictorienXP (2016-2020)
 -----------------------------------------------------------]]
 
+local v = include("semver.lua")
+
 function GM:Log(str, hardcore)
 	if hardcore and !spb_enabledevmode:GetBool() then return end
 	Msg("[Super Pedobear] " .. (str or "This was a log message, but something went wrong") .. "\n")
@@ -256,27 +258,32 @@ end
 
 GM.LatestRelease = GM.LatestRelease or {}
 function GM:CheckForNewRelease()
-	if !GAMEMODE.Version or !isnumber(GAMEMODE.Version) then return nil end
-	return HTTP({	url			=	"https://api.github.com/repos/Xperidia/SuperPedoBear/releases/latest",
-					method		=	"GET",
-					headers		=	{ Accept = "application/json, application/vnd.github.v3+json" },
-					success		=	function(code, body, headers)
-										if code == 200 then
-											local result = util.JSONToTable(body)
-											if result and result.tag_name then
-												GAMEMODE.LatestRelease.Version = tonumber(result.tag_name)
-												GAMEMODE.LatestRelease.Name = result.name or nil
-												GAMEMODE.LatestRelease.URL = result.html_url or nil
-												GAMEMODE.LatestRelease.Newer = isnumber(GAMEMODE.LatestRelease.Version) and GAMEMODE.LatestRelease.Version > GAMEMODE.Version
-											end
-											GAMEMODE:Log("The latest release tag is V" .. GAMEMODE.LatestRelease.Version .. ". " .. Either(GAMEMODE.LatestRelease.Newer, "You're on V" .. GAMEMODE.Version .. "! An update is available!", "You're on the latest version (V" .. GAMEMODE.Version .. ")."))
-										else
-											local state = headers.Status or code
-											GAMEMODE:Log("Couldn't check for new release: " .. state)
-										end
-									end,
-					failed		=	function(reason)
-										GAMEMODE:Log("Couldn't check for new release: " .. reason)
+	if !GAMEMODE.Version then return nil end
+	return HTTP({
+		url			=	"https://api.github.com/repos/Xperidia/SuperPedoBear/releases/latest",
+		method		=	"GET",
+		headers		=	{ Accept = "application/json, application/vnd.github.v3+json" },
+		success		=	function(code, body, headers)
+							if code == 200 then
+								local result = util.JSONToTable(body)
+								if result and result.tag_name then
+									GAMEMODE.LatestRelease.Version = tonumber(result.tag_name) or v(result.tag_name)
+									GAMEMODE.LatestRelease.Name = result.name or nil
+									GAMEMODE.LatestRelease.URL = result.html_url or nil
+									if (isnumber(GAMEMODE.LatestRelease.Version) and isnumber(GAMEMODE.Version)) or (!isnumber(GAMEMODE.LatestRelease.Version) and !isnumber(GAMEMODE.Version)) then
+										GAMEMODE.LatestRelease.Newer = GAMEMODE.LatestRelease.Version > GAMEMODE.Version
+									else
+										GAMEMODE.LatestRelease.Newer = true
 									end
+								end
+								GAMEMODE:Log("The latest release tag is V" .. tostring(GAMEMODE.LatestRelease.Version) .. ". " .. Either(GAMEMODE.LatestRelease.Newer, "You're on V" .. tostring(GAMEMODE.Version) .. "! An update is available!", "You're on the latest version (V" .. tostring(GAMEMODE.Version) .. ")."))
+							else
+								local state = headers.Status or code
+								GAMEMODE:Log("Couldn't check for new release: " .. state)
+							end
+						end,
+		failed		=	function(reason)
+							GAMEMODE:Log("Couldn't check for new release: " .. reason)
+						end
 	})
 end

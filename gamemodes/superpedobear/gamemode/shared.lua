@@ -8,12 +8,13 @@ DEFINE_BASECLASS("gamemode_base")
 include("sh_utils.lua")
 include("player_class/player_hiding.lua")
 include("player_class/player_seeker.lua")
+local v = include("semver.lua")
 
 GM.Name 		= "Super Pedobear"
 GM.Author 		= "VictorienXP@Xperidia"
 GM.Website 		= "steamcommunity.com/sharedfiles/filedetails/?id=628449407"
-GM.Version 		= 0.35
-GM.VersionDate 	= 200409
+GM.Version 		= 0.36
+GM.VersionDate 	= 200412
 GM.TeamBased 	= true
 
 TEAM_HIDING	= 1

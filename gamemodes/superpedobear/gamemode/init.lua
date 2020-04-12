@@ -134,7 +134,7 @@ function GM:ListMaps()
 		end
 	end
 
-	GAMEMODE:Log(#GAMEMODE.MapList .. " maps have been found!")
+	GAMEMODE:Log(#GAMEMODE.MapList .. " map(s) have been found!")
 
 	GAMEMODE:SendMaps()
 

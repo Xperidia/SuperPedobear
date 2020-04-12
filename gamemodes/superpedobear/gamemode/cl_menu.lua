@@ -134,11 +134,11 @@ function GM:Menu()
 			spb_MenuF.one.text:AppendText((GAMEMODE.LatestRelease.Name or "v" .. (GAMEMODE.LatestRelease.Version and tostring(GAMEMODE.LatestRelease.Version) or "?")) .. "\n")
 			spb_MenuF.one.text:InsertClickableTextEnd()
 			spb_MenuF.one.text:InsertColorChange(0, 0, 0, 255)
-			if GAMEMODE.LatestRelease.Newer and game.IsDedicated() then
+			if GAMEMODE.LatestRelease.Newer and !GAMEMODE.LatestRelease.prerelease and game.IsDedicated() then
 				spb_MenuF.one.text:AppendText("Ask the server owner to update the gamemode!\n")
-			elseif GAMEMODE.LatestRelease.Newer and GAMEMODE.MountedfromWorkshop and LocalPlayer():GetNWBool("IsListenServerHost", false) then
+			elseif GAMEMODE.LatestRelease.Newer and !GAMEMODE.LatestRelease.prerelease and GAMEMODE.MountedfromWorkshop and LocalPlayer():GetNWBool("IsListenServerHost", false) then
 				spb_MenuF.one.text:AppendText("Let Steam download the update and restart the game!\n")
-			elseif GAMEMODE.LatestRelease.Newer then
+			elseif GAMEMODE.LatestRelease.Newer and !GAMEMODE.LatestRelease.prerelease then
 				spb_MenuF.one.text:AppendText("Don't forget to update!\n")
 			end
 			spb_MenuF.one.text:AppendText("\n")

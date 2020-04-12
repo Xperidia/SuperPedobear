@@ -260,7 +260,7 @@ GM.LatestRelease = GM.LatestRelease or {}
 function GM:CheckForNewRelease()
 	if !GAMEMODE.Version then return nil end
 	return HTTP({
-		url			=	"https://api.github.com/repos/Xperidia/SuperPedoBear/releases/latest",
+		url			=	"https://api.github.com/repos/Xperidia/SuperPedobear/releases/latest",
 		method		=	"GET",
 		headers		=	{ Accept = "application/json, application/vnd.github.v3+json" },
 		success		=	function(code, body, headers)

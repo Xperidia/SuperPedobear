@@ -106,7 +106,7 @@ function GM:Menu()
 			self:SetFontInternal("DermaDefault")
 		end
 
-		spb_MenuF.one.text:AppendText("\t    You're playing Super Pedobear V" .. (GAMEMODE.Version or "?") .. " (" .. (GAMEMODE.VersionDate or "?") .. ")\n")
+		spb_MenuF.one.text:AppendText("\t    You're playing Super Pedobear V" .. (GAMEMODE.Version and tostring(GAMEMODE.Version) or "?") .. " (" .. (GAMEMODE.VersionDate or "?") .. ")\n")
 
 		if GAMEMODE:SeasonalEventStr() != "" then
 			spb_MenuF.one.text:AppendText("\t\t\t    " .. GAMEMODE:SeasonalEventStr() .. "\n\n")
@@ -121,17 +121,17 @@ function GM:Menu()
 				spb_MenuF.one.text:InsertColorChange(192, 0, 0, 255)
 				spb_MenuF.one.text:AppendText("There is a new release available! ")
 				spb_MenuF.one.text:InsertColorChange(192, 0, 192, 255)
-			elseif isnumber(GAMEMODE.LatestRelease.Version) and GAMEMODE.LatestRelease.Version == GAMEMODE.Version then
+			elseif isnumber(GAMEMODE.LatestRelease.Version) and isnumber(GAMEMODE.Version) and GAMEMODE.LatestRelease.Version == GAMEMODE.Version then
 				spb_MenuF.one.text:InsertColorChange(0, 192, 0, 255)
 				spb_MenuF.one.text:AppendText("You're on the latest release! ")
 				spb_MenuF.one.text:InsertColorChange(192, 0, 192, 255)
-			elseif isnumber(GAMEMODE.LatestRelease.Version) and GAMEMODE.LatestRelease.Version < GAMEMODE.Version then
+			elseif isnumber(GAMEMODE.LatestRelease.Version) and isnumber(GAMEMODE.Version) and GAMEMODE.LatestRelease.Version < GAMEMODE.Version then
 				spb_MenuF.one.text:InsertColorChange(0, 0, 0, 255)
 				spb_MenuF.one.text:AppendText("You're on a unreleased/dev build!\nLatest release is ")
 				spb_MenuF.one.text:InsertColorChange(192, 0, 192, 255)
 			end
 			spb_MenuF.one.text:InsertClickableTextStart("LatestRelease")
-			spb_MenuF.one.text:AppendText((GAMEMODE.LatestRelease.Name or "V" .. GAMEMODE.LatestRelease.Version) .. "\n")
+			spb_MenuF.one.text:AppendText((GAMEMODE.LatestRelease.Name or "V" .. (GAMEMODE.LatestRelease.Version and tostring(GAMEMODE.LatestRelease.Version) or "?")) .. "\n")
 			spb_MenuF.one.text:InsertClickableTextEnd()
 			spb_MenuF.one.text:InsertColorChange(0, 0, 0, 255)
 			if GAMEMODE.LatestRelease.Newer and game.IsDedicated() then
@@ -197,7 +197,7 @@ function GM:Menu()
 					gui.OpenURL("https://github.com/Xperidia/SuperPedobear/releases")
 					spb_MenuF:Close()
 				elseif signalValue == "LatestRelease" then
-					gui.OpenURL(GAMEMODE.LatestRelease.URL)
+					gui.OpenURL(GAMEMODE.LatestRelease.URL or "https://github.com/Xperidia/SuperPedobear/releases/latest")
 					spb_MenuF:Close()
 				end
 			end
@@ -768,7 +768,7 @@ function GM:DebugWindow()
 		autoappend("Gamemode id (GAMEMODE_NAME)", GAMEMODE_NAME)
 		autoappend("Gamemode id (engine.ActiveGamemode())", engine.ActiveGamemode())
 		autoappend("Gamemode name", GAMEMODE.Name)
-		autoappend("Gamemode version", GAMEMODE.Version)
+		autoappend("Gamemode version", tostring(GAMEMODE.Version))
 		autoappend("Gamemode version date", GAMEMODE.VersionDate)
 		linebreak()
 

@@ -131,7 +131,7 @@ function GM:Menu()
 				spb_MenuF.one.text:InsertColorChange(192, 0, 192, 255)
 			end
 			spb_MenuF.one.text:InsertClickableTextStart("LatestRelease")
-			spb_MenuF.one.text:AppendText((GAMEMODE.LatestRelease.Name or "V" .. (GAMEMODE.LatestRelease.Version and tostring(GAMEMODE.LatestRelease.Version) or "?")) .. "\n")
+			spb_MenuF.one.text:AppendText((GAMEMODE.LatestRelease.Name or "v" .. (GAMEMODE.LatestRelease.Version and tostring(GAMEMODE.LatestRelease.Version) or "?")) .. "\n")
 			spb_MenuF.one.text:InsertClickableTextEnd()
 			spb_MenuF.one.text:InsertColorChange(0, 0, 0, 255)
 			if GAMEMODE.LatestRelease.Newer and game.IsDedicated() then

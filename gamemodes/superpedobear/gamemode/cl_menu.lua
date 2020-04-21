@@ -535,7 +535,7 @@ function GM:JukeboxMenu()
 			end
 		end
 
-		local placeholder = "Enter a music path or URL (Mostly .mp3)"
+		local placeholder = "Enter a music path or URL (MP3, MP2, MP1, OGG, WAV, AIFF)"
 		local jukebox_input_enabled = spb_jukebox_enable_input:GetBool()
 		spb_Jukebox.ServerQueue.add2queue = vgui.Create("DTextEntry", spb_Jukebox.ServerQueue)
 		spb_Jukebox.ServerQueue.add2queue:SetPos(0, h - 60)

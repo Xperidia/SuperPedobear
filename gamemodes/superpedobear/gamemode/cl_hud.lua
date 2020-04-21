@@ -622,7 +622,7 @@ function GM:DrawLegacyHUD()
 			rtitle = GAMEMODE:PrettyMusicName(string.GetFileFromFilename(GAMEMODE.Vars.Music:GetFileName()))
 		end
 
-		local title = "♪ " .. GAMEMODE:LimitString(rtitle, 216, "spb_HUDname") .. " ♪"
+		local title = GAMEMODE:LimitString(rtitle, 246, "spb_HUDname")
 		draw.DrawText(title, "spb_HUDname", ScrW() - 127 - hudoffset_w, ScrH() - 99 + visspace - hudoffset_h, Color(0, 0, 0, 255), TEXT_ALIGN_CENTER)
 		draw.DrawText(title, "spb_HUDname", ScrW() - 128 - hudoffset_w, ScrH() - 100 + visspace - hudoffset_h, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
 

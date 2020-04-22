@@ -262,8 +262,6 @@ function GM:CheckForNewRelease()
 									GAMEMODE.LatestRelease.prerelease = result.prerelease or false
 									if (isnumber(GAMEMODE.LatestRelease.Version) and isnumber(GAMEMODE.Version)) or (!isnumber(GAMEMODE.LatestRelease.Version) and !isnumber(GAMEMODE.Version)) then
 										GAMEMODE.LatestRelease.Newer = GAMEMODE.LatestRelease.Version > GAMEMODE.Version
-									else
-										GAMEMODE.LatestRelease.Newer = true
 									end
 								end
 								GAMEMODE:Log("The latest release tag is v" .. tostring(GAMEMODE.LatestRelease.Version) .. ". " .. Either(GAMEMODE.LatestRelease.Newer, "You're on v" .. tostring(GAMEMODE.Version) .. "! An update is available!", "You're on the latest version (V" .. tostring(GAMEMODE.Version) .. ")."))

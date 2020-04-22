@@ -215,24 +215,24 @@ function GM:BuildTauntIndex()
 
 		local function ReadTauntInfo()
 
-			local mlist = {}
+			local taunt_list = {}
 
-			local lua = file.Find("superpedobear/taunts/*.lua", "LUA")
+			local lua_taunts = file.Find("superpedobear/taunts/*.lua", "LUA")
 
-			for _, v in pairs(lua) do
-				local ft = include("superpedobear/taunts/" .. v)
-				table.Add(mlist, ft)
+			for _, v in pairs(lua_taunts) do
+				local taunts = include("superpedobear/taunts/" .. v)
+				table.Add(taunt_list, taunts)
 			end
 
-			local infos = file.Find("superpedobear/taunts/*.json", "DATA")
+			local json_taunts = file.Find("superpedobear/taunts/*.json", "DATA")
 
-			for _, v in pairs(infos) do
-				local fileml = file.Read("superpedobear/taunts/" .. v)
-				local tmlist = util.JSONToTable(fileml)
-				table.Add(mlist, tmlist)
+			for _, v in pairs(json_taunts) do
+				local taunt_file = file.Read("superpedobear/taunts/" .. v)
+				local taunts = util.JSONToTable(taunt_file)
+				table.Add(taunt_list, taunts)
 			end
 
-			return mlist
+			return taunt_list
 
 		end
 

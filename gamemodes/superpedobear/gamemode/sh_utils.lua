@@ -288,3 +288,15 @@ function GM:CheckForNewRelease()
 						end
 	})
 end
+
+function GM:FindOGGTag(tags, tag)
+	for k, vtag in pairs(tags) do
+		if string.StartWith(vtag, tag .. "=") then
+			local title = string.sub(vtag, #tag + 2)
+			if title and #title > 0 then
+				return string.Trim(title)
+			end
+		end
+	end
+	return nil
+end

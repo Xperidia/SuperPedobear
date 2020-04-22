@@ -172,13 +172,6 @@ end
 
 function GM:BuildMusicIndex()
 
-	if !file.IsDir("superpedobear/musics", "DATA") then
-		file.CreateDir("superpedobear/musics")
-	end
-	if !file.IsDir("superpedobear/premusics", "DATA") then
-		file.CreateDir("superpedobear/premusics")
-	end
-
 	local function ReadMusicInfo(pre)
 
 		local mlist = {}
@@ -219,10 +212,6 @@ end
 function GM:BuildTauntIndex()
 
 	if SERVER then
-
-		if !file.IsDir("superpedobear/taunts", "DATA") then
-			file.CreateDir("superpedobear/taunts")
-		end
 
 		local function ReadTauntInfo()
 

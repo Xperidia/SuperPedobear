@@ -190,7 +190,7 @@ function GM:BuildMusicIndex()
 			table.Add(mlist, ft)
 		end
 
-		local infos = file.Find("superpedobear/" .. Either(pre, "premusics", "musics") .. "/*.txt", "DATA")
+		local infos = file.Find("superpedobear/" .. Either(pre, "premusics", "musics") .. "/*.json", "DATA")
 
 		for _, v in pairs(infos) do
 			local fileml = file.Read("superpedobear/" .. Either(pre, "premusics", "musics") .. "/" .. v)
@@ -235,7 +235,7 @@ function GM:BuildTauntIndex()
 				table.Add(mlist, ft)
 			end
 
-			local infos = file.Find("superpedobear/taunts/*.txt", "DATA")
+			local infos = file.Find("superpedobear/taunts/*.json", "DATA")
 
 			for _, v in pairs(infos) do
 				local fileml = file.Read("superpedobear/taunts/" .. v)

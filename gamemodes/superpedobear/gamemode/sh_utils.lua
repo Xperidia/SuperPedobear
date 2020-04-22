@@ -176,10 +176,10 @@ function GM:BuildMusicIndex()
 
 		local mlist = {}
 
-		local lua = file.Find("pedo_musiclist/" .. Either(pre, "premusics", "musics") .. "/*.lua", "LUA")
+		local lua = file.Find("superpedobear/" .. Either(pre, "premusics", "musics") .. "/*.lua", "LUA")
 
 		for _, v in pairs(lua) do
-			local ft = include("pedo_musiclist/" .. Either(pre, "premusics", "musics") .. '/' .. v)
+			local ft = include("superpedobear/" .. Either(pre, "premusics", "musics") .. '/' .. v)
 			table.Add(mlist, ft)
 		end
 

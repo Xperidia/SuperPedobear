@@ -554,6 +554,14 @@ function GM:Music(src, pre, name, retry)
 				mus:SetVolume(GetConVar("spb_cl_music_volume"):GetFloat())
 				mus:EnableLooping(true)
 				GAMEMODE.Vars.Music = mus
+				if mus.GetTagsOGG and mus:GetTagsOGG() then
+					local title = GAMEMODE:FindOGGTag(mus:GetTagsOGG(), "TITLE")
+					if title then
+						GAMEMODE.Vars.CurrentMusicName = title
+					end
+				elseif mus.GetTagsID3 and mus:GetTagsID3() and mus:GetTagsID3().title then
+					GAMEMODE.Vars.CurrentMusicName = string.Trim(mus:GetTagsID3().title)
+				end
 			end
 
 			if errorID or errorName then

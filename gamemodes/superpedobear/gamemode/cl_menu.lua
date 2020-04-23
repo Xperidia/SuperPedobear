@@ -108,12 +108,12 @@ end
 
 function GM:Menu()
 
-	if IsValid(GAMEMODE.MainMenuFrame) then
-		GAMEMODE.MainMenuFrame:Close()
+	if engine.IsPlayingDemo() then
 		return
 	end
 
-	if engine.IsPlayingDemo() then
+	if IsValid(GAMEMODE.MainMenuFrame) then
+		GAMEMODE.MainMenuFrame:Close()
 		return
 	end
 

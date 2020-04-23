@@ -54,6 +54,58 @@ local cl_cvars = {
 	spb_cl_hud_html_enable = "Enable the HTML HUD (WIP)"
 }
 
+local function btnMinimDoClick(btn)
+	local self = btn:GetParent()
+	if self.minim and self.maxim then
+		self:SetPos(0, 0)
+		self:SetSize(ScrW(), ScrH())
+		self:SetKeyboardInputEnabled(true)
+		self:SetSizable(false)
+		self:SetDraggable(false)
+		self.minim = false
+	elseif self.minim then
+		self:SetPos(self.lastpos_x, self.lastpos_y)
+		self:SetSize(self.lastsize_w, self.lastsize_h)
+		self:SetKeyboardInputEnabled(false)
+		self:SetSizable(true)
+		self.minim = false
+	else
+		if !self.maxim then
+			self.lastpos_x, self.lastpos_y = self:GetPos()
+			self.lastsize_w, self.lastsize_h = self:GetSize()
+		end
+		self:SetPos(0, ScrH() - 24)
+		self:SetSize(280, 24)
+		self:SetKeyboardInputEnabled(false)
+		self:SetSizable(false)
+		self.minim = true
+	end
+end
+
+local function btnMaximDoClick(btn)
+	local self = btn:GetParent()
+	if self.maxim and !self.minim then
+		self:SetPos(self.lastpos_x, self.lastpos_y)
+		self:SetSize(self.lastsize_w, self.lastsize_h)
+		self:SetKeyboardInputEnabled(false)
+		self:SetSizable(true)
+		self:SetDraggable(true)
+		self.maxim = false
+	else
+		if !self.minim then
+			self.lastpos_x, self.lastpos_y = self:GetPos()
+			self.lastsize_w, self.lastsize_h = self:GetSize()
+		end
+		self:SetPos(0, 0)
+		self:SetSize(ScrW(), ScrH())
+		self:SetKeyboardInputEnabled(true)
+		self:SetSizable(false)
+		self:SetDraggable(false)
+		self.maxim = true
+		self.minim = false
+	end
+end
+
 function GM:Menu()
 
 	if IsValid(spb_MenuF) then
@@ -624,55 +676,9 @@ function GM:DebugWindow()
 	debugwindow:SetScreenLock(true)
 	debugwindow:SetSizable(true)
 	debugwindow.btnMaxim:SetDisabled(false)
-	debugwindow.btnMaxim.DoClick = function(btn)
-		if debugwindow.maxim and !debugwindow.minim then
-			debugwindow:SetPos(debugwindow.lastpos_x, debugwindow.lastpos_y)
-			debugwindow:SetSize(debugwindow.lastsize_w, debugwindow.lastsize_h)
-			debugwindow:SetKeyboardInputEnabled(false)
-			debugwindow:SetSizable(true)
-			debugwindow:SetDraggable(true)
-			debugwindow.maxim = false
-		else
-			if !debugwindow.minim then
-				debugwindow.lastpos_x, debugwindow.lastpos_y = debugwindow:GetPos()
-				debugwindow.lastsize_w, debugwindow.lastsize_h = debugwindow:GetSize()
-			end
-			debugwindow:SetPos(0, 0)
-			debugwindow:SetSize(ScrW(), ScrH())
-			debugwindow:SetKeyboardInputEnabled(true)
-			debugwindow:SetSizable(false)
-			debugwindow:SetDraggable(false)
-			debugwindow.maxim = true
-			debugwindow.minim = false
-		end
-	end
+	debugwindow.btnMaxim.DoClick = function(btn) btnMaximDoClick(btn) end
 	debugwindow.btnMinim:SetDisabled(false)
-	debugwindow.btnMinim.DoClick = function(btn)
-		if debugwindow.minim and debugwindow.maxim then
-			debugwindow:SetPos(0, 0)
-			debugwindow:SetSize(ScrW(), ScrH())
-			debugwindow:SetKeyboardInputEnabled(true)
-			debugwindow:SetSizable(false)
-			debugwindow:SetDraggable(false)
-			debugwindow.minim = false
-		elseif debugwindow.minim then
-			debugwindow:SetPos(debugwindow.lastpos_x, debugwindow.lastpos_y)
-			debugwindow:SetSize(debugwindow.lastsize_w, debugwindow.lastsize_h)
-			debugwindow:SetKeyboardInputEnabled(false)
-			debugwindow:SetSizable(true)
-			debugwindow.minim = false
-		else
-			if !debugwindow.maxim then
-				debugwindow.lastpos_x, debugwindow.lastpos_y = debugwindow:GetPos()
-				debugwindow.lastsize_w, debugwindow.lastsize_h = debugwindow:GetSize()
-			end
-			debugwindow:SetPos(0, ScrH() - 24)
-			debugwindow:SetSize(280, 24)
-			debugwindow:SetKeyboardInputEnabled(false)
-			debugwindow:SetSizable(false)
-			debugwindow.minim = true
-		end
-	end
+	debugwindow.btnMinim.DoClick = function(btn) btnMinimDoClick(btn) end
 	debugwindow.Paint = function(self, w, h)
 		draw.RoundedBox(4, 0, 0, w, h, Color(0, 0, 0, 128))
 	end

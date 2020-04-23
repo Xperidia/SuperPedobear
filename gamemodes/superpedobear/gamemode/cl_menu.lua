@@ -113,7 +113,7 @@ function GM:Menu()
 	end
 
 	if IsValid(GAMEMODE.MainMenuFrame) then
-		GAMEMODE.MainMenuFrame:Close()
+		GAMEMODE.MainMenuFrame:ToggleVisible()
 		return
 	end
 
@@ -126,6 +126,8 @@ function GM:Menu()
 	menu:SetDraggable(true)
 	menu:ShowCloseButton(true)
 	menu:SetScreenLock(true)
+	menu.btnMinim:SetDisabled(false)
+	menu.btnMinim.DoClick = function(btn) menu:ToggleVisible() end
 	menu.Paint = function(self, w, h)
 		draw.RoundedBox(4, 0, 0, w, h, Color(0, 0, 0, 128))
 	end

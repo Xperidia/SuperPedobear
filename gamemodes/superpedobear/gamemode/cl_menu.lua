@@ -76,27 +76,6 @@ function GM:Menu()
 	spb_MenuF.Paint = function(self, w, h)
 		draw.RoundedBox(4, 0, 0, w, h, Color(0, 0, 0, 128))
 	end
-	spb_MenuF.Think = function(self)
-		local mousex = math.Clamp(gui.MouseX(), 1, ScrW() - 1)
-		local mousey = math.Clamp(gui.MouseY(), 1, ScrH() - 1)
-		if self.Dragging then
-			local x = mousex - self.Dragging[1]
-			local y = mousey - self.Dragging[2]
-			if self:GetScreenLock() then
-				x = math.Clamp(x, 0, ScrW() - self:GetWide())
-				y = math.Clamp(y, 0, ScrH() - self:GetTall())
-			end
-			self:SetPos(x, y)
-		end
-		if self.Hovered and mousey < (self.y + 24) then
-			self:SetCursor("sizeall")
-			return
-		end
-		self:SetCursor("arrow")
-		if self.y < 0 then
-			self:SetPos(self.x, 0)
-		end
-	end
 	spb_MenuF:MakePopup()
 	spb_MenuF:SetKeyboardInputEnabled(false)
 

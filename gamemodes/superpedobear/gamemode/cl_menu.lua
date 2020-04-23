@@ -77,7 +77,6 @@ function GM:Menu()
 		draw.RoundedBox(4, 0, 0, w, h, Color(0, 0, 0, 128))
 	end
 	spb_MenuF.Think = function(self)
-		if xpsc_anim and xpsc_anim:Active() then xpsc_anim:Run() end
 		local mousex = math.Clamp(gui.MouseX(), 1, ScrW() - 1)
 		local mousey = math.Clamp(gui.MouseY(), 1, ScrH() - 1)
 		if self.Dragging then

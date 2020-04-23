@@ -108,8 +108,8 @@ end
 
 function GM:Menu()
 
-	if IsValid(spb_MenuF) then
-		spb_MenuF:Close()
+	if IsValid(GAMEMODE.MainMenuFrame) then
+		GAMEMODE.MainMenuFrame:Close()
 		return
 	end
 
@@ -117,146 +117,147 @@ function GM:Menu()
 		return
 	end
 
-	spb_MenuF = vgui.Create("DFrame")
-	spb_MenuF:SetPos(ScrW() / 2 - 320, ScrH() / 2 - 240)
-	spb_MenuF:SetSize(640, 480)
-	spb_MenuF:SetTitle(GAMEMODE.Name .. " main menu")
-	spb_MenuF:SetVisible(true)
-	spb_MenuF:SetDraggable(true)
-	spb_MenuF:ShowCloseButton(true)
-	spb_MenuF:SetScreenLock(true)
-	spb_MenuF.Paint = function(self, w, h)
+	GAMEMODE.MainMenuFrame = vgui.Create("DFrame")
+	local menu = GAMEMODE.MainMenuFrame
+	menu:SetPos(ScrW() / 2 - 320, ScrH() / 2 - 240)
+	menu:SetSize(640, 480)
+	menu:SetTitle(GAMEMODE.Name .. " main menu")
+	menu:SetVisible(true)
+	menu:SetDraggable(true)
+	menu:ShowCloseButton(true)
+	menu:SetScreenLock(true)
+	menu.Paint = function(self, w, h)
 		draw.RoundedBox(4, 0, 0, w, h, Color(0, 0, 0, 128))
 	end
-	spb_MenuF:MakePopup()
-	spb_MenuF:SetKeyboardInputEnabled(false)
+	menu:MakePopup()
+	menu:SetKeyboardInputEnabled(false)
 
-	spb_MenuF.one = vgui.Create("DPanel")
-	spb_MenuF.one:SetParent(spb_MenuF)
-	spb_MenuF.one:SetPos(10, 30)
-	spb_MenuF.one:SetSize(305, 215)
+	menu.one = vgui.Create("DPanel")
+	menu.one:SetParent(menu)
+	menu.one:SetPos(10, 30)
+	menu.one:SetSize(305, 215)
 
-	spb_MenuF.one.text = vgui.Create("RichText", spb_MenuF.one)
-	spb_MenuF.one.text:Dock(FILL)
-	spb_MenuF.one.text:InsertColorChange(0, 0, 0, 255)
-	function spb_MenuF.one.text:PerformLayout()
+	menu.one.text = vgui.Create("RichText", menu.one)
+	menu.one.text:Dock(FILL)
+	menu.one.text:InsertColorChange(0, 0, 0, 255)
+	function menu.one.text:PerformLayout()
 		self:SetFontInternal("DermaDefault")
 	end
 
-	spb_MenuF.one.text:AppendText("\t    You're playing Super Pedobear v" .. (GAMEMODE.Version and tostring(GAMEMODE.Version) or "?") .. " (" .. (GAMEMODE.VersionDate or "?") .. ")\n")
+	menu.one.text:AppendText("\t    You're playing Super Pedobear v" .. (GAMEMODE.Version and tostring(GAMEMODE.Version) or "?") .. " (" .. (GAMEMODE.VersionDate or "?") .. ")\n")
 
 	if GAMEMODE:SeasonalEventStr() != "" then
-		spb_MenuF.one.text:AppendText("\t\t\t    " .. GAMEMODE:SeasonalEventStr() .. "\n\n")
+		menu.one.text:AppendText("\t\t\t    " .. GAMEMODE:SeasonalEventStr() .. "\n\n")
 	else
-		spb_MenuF.one.text:AppendText("\n")
+		menu.one.text:AppendText("\n")
 	end
 
-	spb_MenuF.one.text:AppendText("Gamemode made by VictorienXP, with arts from Pho3 and Wubsy...\n\n")
+	menu.one.text:AppendText("Gamemode made by VictorienXP, with arts from Pho3 and Wubsy...\n\n")
 
 	if GAMEMODE.LatestRelease then
 		if GAMEMODE.LatestRelease.Newer then
-			spb_MenuF.one.text:InsertColorChange(192, 0, 0, 255)
-			spb_MenuF.one.text:AppendText("There is a new release available! ")
-			spb_MenuF.one.text:InsertColorChange(192, 0, 192, 255)
+			menu.one.text:InsertColorChange(192, 0, 0, 255)
+			menu.one.text:AppendText("There is a new release available! ")
+			menu.one.text:InsertColorChange(192, 0, 192, 255)
 		elseif isnumber(GAMEMODE.LatestRelease.Version) and isnumber(GAMEMODE.Version) and GAMEMODE.LatestRelease.Version == GAMEMODE.Version then
-			spb_MenuF.one.text:InsertColorChange(0, 192, 0, 255)
-			spb_MenuF.one.text:AppendText("You're on the latest release! ")
-			spb_MenuF.one.text:InsertColorChange(192, 0, 192, 255)
+			menu.one.text:InsertColorChange(0, 192, 0, 255)
+			menu.one.text:AppendText("You're on the latest release! ")
+			menu.one.text:InsertColorChange(192, 0, 192, 255)
 		elseif isnumber(GAMEMODE.LatestRelease.Version) and isnumber(GAMEMODE.Version) and GAMEMODE.LatestRelease.Version < GAMEMODE.Version then
-			spb_MenuF.one.text:InsertColorChange(0, 0, 0, 255)
-			spb_MenuF.one.text:AppendText("You're on a unreleased/dev build!\nLatest release is ")
-			spb_MenuF.one.text:InsertColorChange(192, 0, 192, 255)
+			menu.one.text:InsertColorChange(0, 0, 0, 255)
+			menu.one.text:AppendText("You're on a unreleased/dev build!\nLatest release is ")
+			menu.one.text:InsertColorChange(192, 0, 192, 255)
 		end
-		spb_MenuF.one.text:InsertClickableTextStart("LatestRelease")
-		spb_MenuF.one.text:AppendText((GAMEMODE.LatestRelease.Name or "v" .. (GAMEMODE.LatestRelease.Version and tostring(GAMEMODE.LatestRelease.Version) or "?")) .. "\n")
-		spb_MenuF.one.text:InsertClickableTextEnd()
-		spb_MenuF.one.text:InsertColorChange(0, 0, 0, 255)
+		menu.one.text:InsertClickableTextStart("LatestRelease")
+		menu.one.text:AppendText((GAMEMODE.LatestRelease.Name or "v" .. (GAMEMODE.LatestRelease.Version and tostring(GAMEMODE.LatestRelease.Version) or "?")) .. "\n")
+		menu.one.text:InsertClickableTextEnd()
+		menu.one.text:InsertColorChange(0, 0, 0, 255)
 		if GAMEMODE.LatestRelease.Newer and !GAMEMODE.LatestRelease.prerelease and game.IsDedicated() then
-			spb_MenuF.one.text:AppendText("Ask the server owner to update the gamemode!\n")
+			menu.one.text:AppendText("Ask the server owner to update the gamemode!\n")
 		elseif GAMEMODE.LatestRelease.Newer and !GAMEMODE.LatestRelease.prerelease and GAMEMODE.MountedfromWorkshop and LocalPlayer():GetNWBool("IsListenServerHost", false) then
-			spb_MenuF.one.text:AppendText("Let Steam download the update and restart the game!\n")
+			menu.one.text:AppendText("Let Steam download the update and restart the game!\n")
 		elseif GAMEMODE.LatestRelease.Newer and !GAMEMODE.LatestRelease.prerelease then
-			spb_MenuF.one.text:AppendText("Don't forget to update!\n")
+			menu.one.text:AppendText("Don't forget to update!\n")
 		end
-		spb_MenuF.one.text:AppendText("\n")
+		menu.one.text:AppendText("\n")
 	end
 
-	spb_MenuF.one.text:InsertClickableTextStart("SplashScreen")
-	spb_MenuF.one.text:AppendText("Click here to open the Splash Screen")
-	spb_MenuF.one.text:InsertClickableTextEnd()
-	spb_MenuF.one.text:AppendText("\n")
-	spb_MenuF.one.text:InsertClickableTextStart("MapVote")
-	spb_MenuF.one.text:AppendText("Click here for the map vote (not yet implemeted)")
-	spb_MenuF.one.text:InsertClickableTextEnd()
-	spb_MenuF.one.text:AppendText("\n")
-	spb_MenuF.one.text:InsertClickableTextStart("Debug")
-	spb_MenuF.one.text:AppendText("Click here to open the debug window")
-	spb_MenuF.one.text:InsertClickableTextEnd()
-	spb_MenuF.one.text:AppendText("\n")
-	spb_MenuF.one.text:InsertClickableTextStart("Workshop")
-	spb_MenuF.one.text:AppendText("Click here to open the Workshop page")
-	spb_MenuF.one.text:InsertClickableTextEnd()
-	spb_MenuF.one.text:AppendText("\n")
-	spb_MenuF.one.text:InsertClickableTextStart("Workshop_changelog")
-	spb_MenuF.one.text:AppendText("Click here to open the Workshop change notes")
-	spb_MenuF.one.text:InsertClickableTextEnd()
-	spb_MenuF.one.text:AppendText("\n")
-	spb_MenuF.one.text:InsertClickableTextStart("GitHub")
-	spb_MenuF.one.text:AppendText("Click here to open the GitHub repository")
-	spb_MenuF.one.text:InsertClickableTextEnd()
-	spb_MenuF.one.text:AppendText("\n")
-	spb_MenuF.one.text:InsertClickableTextStart("GitHub_releases")
-	spb_MenuF.one.text:AppendText("Click here to open the GitHub releases")
-	spb_MenuF.one.text:InsertClickableTextEnd()
-	spb_MenuF.one.text:AppendText("\n")
+	menu.one.text:InsertClickableTextStart("SplashScreen")
+	menu.one.text:AppendText("Click here to open the Splash Screen")
+	menu.one.text:InsertClickableTextEnd()
+	menu.one.text:AppendText("\n")
+	menu.one.text:InsertClickableTextStart("MapVote")
+	menu.one.text:AppendText("Click here for the map vote (not yet implemeted)")
+	menu.one.text:InsertClickableTextEnd()
+	menu.one.text:AppendText("\n")
+	menu.one.text:InsertClickableTextStart("Debug")
+	menu.one.text:AppendText("Click here to open the debug window")
+	menu.one.text:InsertClickableTextEnd()
+	menu.one.text:AppendText("\n")
+	menu.one.text:InsertClickableTextStart("Workshop")
+	menu.one.text:AppendText("Click here to open the Workshop page")
+	menu.one.text:InsertClickableTextEnd()
+	menu.one.text:AppendText("\n")
+	menu.one.text:InsertClickableTextStart("Workshop_changelog")
+	menu.one.text:AppendText("Click here to open the Workshop change notes")
+	menu.one.text:InsertClickableTextEnd()
+	menu.one.text:AppendText("\n")
+	menu.one.text:InsertClickableTextStart("GitHub")
+	menu.one.text:AppendText("Click here to open the GitHub repository")
+	menu.one.text:InsertClickableTextEnd()
+	menu.one.text:AppendText("\n")
+	menu.one.text:InsertClickableTextStart("GitHub_releases")
+	menu.one.text:AppendText("Click here to open the GitHub releases")
+	menu.one.text:InsertClickableTextEnd()
+	menu.one.text:AppendText("\n")
 
-	function spb_MenuF.one.text:ActionSignal(signalName, signalValue)
+	function menu.one.text:ActionSignal(signalName, signalValue)
 		if signalName == "TextClicked" then
 			if signalValue == "SplashScreen" then
 				GAMEMODE:SplashScreen()
-				spb_MenuF:Close()
+				menu:Close()
 			elseif signalValue == "MapVote" then
 				GAMEMODE:MapVote()
-				spb_MenuF:Close()
+				menu:Close()
 			elseif signalValue == "Debug" then
 				GAMEMODE:DebugWindow()
-				spb_MenuF:Close()
+				menu:Close()
 			elseif signalValue == "Workshop" then
 				gui.OpenURL("https://steamcommunity.com/sharedfiles/filedetails/?id=628449407")
-				spb_MenuF:Close()
+				menu:Close()
 			elseif signalValue == "Workshop_changelog" then
 				gui.OpenURL("https://steamcommunity.com/sharedfiles/filedetails/changelog/628449407")
-				spb_MenuF:Close()
+				menu:Close()
 			elseif signalValue == "GitHub" then
 				gui.OpenURL("https://github.com/Xperidia/SuperPedobear")
-				spb_MenuF:Close()
+				menu:Close()
 			elseif signalValue == "GitHub_releases" then
 				gui.OpenURL("https://github.com/Xperidia/SuperPedobear/releases")
-				spb_MenuF:Close()
+				menu:Close()
 			elseif signalValue == "LatestRelease" then
 				gui.OpenURL(GAMEMODE.LatestRelease.URL or "https://github.com/Xperidia/SuperPedobear/releases/latest")
-				spb_MenuF:Close()
+				menu:Close()
 			end
 		end
 	end
 
 
-	spb_MenuF.config = vgui.Create("DScrollPanel", spb_MenuF)
-	spb_MenuF.config:SetPos(325, 30)
-	spb_MenuF.config:SetSize(305, 215)
-	spb_MenuF.config:SetPaintBackground(true)
+	menu.config = vgui.Create("DScrollPanel", menu)
+	menu.config:SetPos(325, 30)
+	menu.config:SetSize(305, 215)
+	menu.config:SetPaintBackground(true)
 
-	local configlbl = vgui.Create("DLabel", spb_MenuF.config)
+	local configlbl = vgui.Create("DLabel", menu.config)
 	configlbl:SetText("Personal configuration")
 	configlbl:SetPos(10, 5)
 	configlbl:SetDark(1)
 	configlbl:SizeToContents()
 
-	do_a_bunch_of_checkboxes(cl_cvars, spb_MenuF.config)
+	do_a_bunch_of_checkboxes(cl_cvars, menu.config)
 
-	spb_MenuF.config.checkbox_offset = (spb_MenuF.config.checkbox_offset or 0) + 10
-	local hudoffset_w = vgui.Create("DNumSlider", spb_MenuF.config)
-	hudoffset_w:SetPos(15, 24 + spb_MenuF.config.checkbox_offset)
+	menu.config.checkbox_offset = (menu.config.checkbox_offset or 0) + 10
+	local hudoffset_w = vgui.Create("DNumSlider", menu.config)
+	hudoffset_w:SetPos(15, 24 + menu.config.checkbox_offset)
 	hudoffset_w:SetSize(300, 16)
 	hudoffset_w:SetText("Horizontal HUD Offset")
 	hudoffset_w:SetMin(0)
@@ -264,10 +265,10 @@ function GM:Menu()
 	hudoffset_w:SetDecimals(0)
 	hudoffset_w:SetDark(1)
 	hudoffset_w:SetConVar("spb_cl_hud_offset_w")
-	spb_MenuF.config.checkbox_offset = spb_MenuF.config.checkbox_offset + 24
+	menu.config.checkbox_offset = menu.config.checkbox_offset + 24
 
-	local hudoffset_h = vgui.Create("DNumSlider", spb_MenuF.config)
-	hudoffset_h:SetPos(15, 24 + spb_MenuF.config.checkbox_offset)
+	local hudoffset_h = vgui.Create("DNumSlider", menu.config)
+	hudoffset_h:SetPos(15, 24 + menu.config.checkbox_offset)
 	hudoffset_h:SetSize(300, 16)
 	hudoffset_h:SetText("Vertical HUD Offset")
 	hudoffset_h:SetMin(0)
@@ -277,41 +278,41 @@ function GM:Menu()
 	hudoffset_h:SetConVar("spb_cl_hud_offset_h")
 
 
-	spb_MenuF.Controls = vgui.Create("DPanel")
-	spb_MenuF.Controls:SetParent(spb_MenuF)
-	spb_MenuF.Controls:SetPos(10, 255)
-	spb_MenuF.Controls:SetSize(305, 215)
+	menu.Controls = vgui.Create("DPanel")
+	menu.Controls:SetParent(menu)
+	menu.Controls:SetPos(10, 255)
+	menu.Controls:SetSize(305, 215)
 
-	spb_MenuF.Controls.lbl = vgui.Create("DLabel")
-	spb_MenuF.Controls.lbl:SetParent(spb_MenuF.Controls)
-	spb_MenuF.Controls.lbl:SetText("Controls")
-	spb_MenuF.Controls.lbl:SetPos(10, 5)
-	spb_MenuF.Controls.lbl:SetSize(289, 10)
-	spb_MenuF.Controls.lbl:SetDark(1)
+	menu.Controls.lbl = vgui.Create("DLabel")
+	menu.Controls.lbl:SetParent(menu.Controls)
+	menu.Controls.lbl:SetText("Controls")
+	menu.Controls.lbl:SetPos(10, 5)
+	menu.Controls.lbl:SetSize(289, 10)
+	menu.Controls.lbl:SetDark(1)
 
-	spb_MenuF.Controls.List = vgui.Create("DListView", spb_MenuF.Controls)
-	spb_MenuF.Controls.List:SetPos(0, 20)
-	spb_MenuF.Controls.List:SetSize(305, 195)
-	spb_MenuF.Controls.List:SetMultiSelect(false)
-	local key = spb_MenuF.Controls.List:AddColumn("KEY")
+	menu.Controls.List = vgui.Create("DListView", menu.Controls)
+	menu.Controls.List:SetPos(0, 20)
+	menu.Controls.List:SetSize(305, 195)
+	menu.Controls.List:SetMultiSelect(false)
+	local key = menu.Controls.List:AddColumn("KEY")
 	key:SetMinWidth(40)
 	key:SetMinWidth(60)
-	local action = spb_MenuF.Controls.List:AddColumn("Action")
+	local action = menu.Controls.List:AddColumn("Action")
 	action:SetMinWidth(100)
-	local bindname = spb_MenuF.Controls.List:AddColumn("Options bind name")
+	local bindname = menu.Controls.List:AddColumn("Options bind name")
 	bindname:SetMinWidth(100)
 
 	for k, v in pairs(binds()) do
-		spb_MenuF.Controls.List:AddLine(v[1], v[2], v[3])
+		menu.Controls.List:AddLine(v[1], v[2], v[3])
 	end
 
 
-	spb_MenuF.AdminCFG = vgui.Create("DScrollPanel", spb_MenuF)
-	spb_MenuF.AdminCFG:SetPos(325, 255)
-	spb_MenuF.AdminCFG:SetSize(305, 215)
-	spb_MenuF.AdminCFG:SetPaintBackground(true)
+	menu.AdminCFG = vgui.Create("DScrollPanel", menu)
+	menu.AdminCFG:SetPos(325, 255)
+	menu.AdminCFG:SetSize(305, 215)
+	menu.AdminCFG:SetPaintBackground(true)
 
-	local adminmenulbl = vgui.Create("DLabel", spb_MenuF.AdminCFG)
+	local adminmenulbl = vgui.Create("DLabel", menu.AdminCFG)
 	adminmenulbl:SetText("Admin configuration")
 	adminmenulbl:SetPos(10, 5)
 	adminmenulbl:SetDark(1)
@@ -320,7 +321,7 @@ function GM:Menu()
 	local eh = 0
 	local function docheckbox(str, cvar)
 		local checkbox = vgui.Create("DCheckBoxLabel")
-		checkbox:SetParent(spb_MenuF.AdminCFG)
+		checkbox:SetParent(menu.AdminCFG)
 		checkbox:SetText(str)
 		checkbox:SetPos(15, 30 + eh)
 		checkbox:SetDark(1)

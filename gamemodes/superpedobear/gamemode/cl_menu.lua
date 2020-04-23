@@ -134,8 +134,7 @@ function GM:Menu()
 	menu:MakePopup()
 	menu:SetKeyboardInputEnabled(false)
 
-	menu.one = vgui.Create("DPanel")
-	menu.one:SetParent(menu)
+	menu.one = vgui.Create("DPanel", menu)
 	menu.one:SetPos(10, 30)
 	menu.one:SetSize(305, 215)
 
@@ -280,13 +279,11 @@ function GM:Menu()
 	hudoffset_h:SetConVar("spb_cl_hud_offset_h")
 
 
-	menu.Controls = vgui.Create("DPanel")
-	menu.Controls:SetParent(menu)
+	menu.Controls = vgui.Create("DPanel", menu)
 	menu.Controls:SetPos(10, 255)
 	menu.Controls:SetSize(305, 215)
 
-	menu.Controls.lbl = vgui.Create("DLabel")
-	menu.Controls.lbl:SetParent(menu.Controls)
+	menu.Controls.lbl = vgui.Create("DLabel", menu.Controls)
 	menu.Controls.lbl:SetText("Controls")
 	menu.Controls.lbl:SetPos(10, 5)
 	menu.Controls.lbl:SetSize(289, 10)
@@ -322,8 +319,7 @@ function GM:Menu()
 
 	local eh = 0
 	local function docheckbox(str, cvar)
-		local checkbox = vgui.Create("DCheckBoxLabel")
-		checkbox:SetParent(menu.AdminCFG)
+		local checkbox = vgui.Create("DCheckBoxLabel", menu.AdminCFG)
 		checkbox:SetText(str)
 		checkbox:SetPos(15, 30 + eh)
 		checkbox:SetDark(1)
@@ -381,8 +377,7 @@ function GM:SplashScreen()
 		end
 		closebtn:SetZPos(32767)
 
-		spb_SplashScreenF.SplashScreen = vgui.Create("DHTML")
-		spb_SplashScreenF.SplashScreen:SetParent(spb_SplashScreenF)
+		spb_SplashScreenF.SplashScreen = vgui.Create("DHTML", spb_SplashScreenF)
 		spb_SplashScreenF.SplashScreen:SetPos(0, 0)
 		spb_SplashScreenF.SplashScreen:SetSize(ScrW(), ScrH())
 		spb_SplashScreenF.SplashScreen:OpenURL("https://assets.xperidia.com/superpedobear/splash_screen.html")
@@ -451,13 +446,11 @@ function GM:JukeboxMenu()
 		local mw = w / 3 - 20
 
 
-		spb_Jukebox.MusicL = vgui.Create("DPanel")
-		spb_Jukebox.MusicL:SetParent(spb_Jukebox)
+		spb_Jukebox.MusicL = vgui.Create("DPanel", spb_Jukebox)
 		spb_Jukebox.MusicL:SetPos(10, 30)
 		spb_Jukebox.MusicL:SetSize(mw, h - 40)
 
-		spb_Jukebox.MusicL.lbl = vgui.Create("DLabel")
-		spb_Jukebox.MusicL.lbl:SetParent(spb_Jukebox.MusicL)
+		spb_Jukebox.MusicL.lbl = vgui.Create("DLabel", spb_Jukebox.MusicL)
 		spb_Jukebox.MusicL.lbl:SetText("Music list")
 		spb_Jukebox.MusicL.lbl:SetPos(5, 3)
 		spb_Jukebox.MusicL.lbl:SetSize(mw, 15)
@@ -514,8 +507,7 @@ function GM:JukeboxMenu()
 		end
 		CreateMusicList(pre)
 
-		local switchbtn = vgui.Create("DButton")
-		switchbtn:SetParent(spb_Jukebox.MusicL)
+		local switchbtn = vgui.Create("DButton", spb_Jukebox.MusicL)
 		switchbtn:SetText("Switch to " .. Either(pre, "Round", "Pre round"))
 		switchbtn:SetPos(mw - 105, 0)
 		switchbtn:SetSize(105, 20)
@@ -527,8 +519,7 @@ function GM:JukeboxMenu()
 
 
 		local queue = {}
-		spb_Jukebox.ServerQueue = vgui.Create("DPanel")
-		spb_Jukebox.ServerQueue:SetParent(spb_Jukebox)
+		spb_Jukebox.ServerQueue = vgui.Create("DPanel", spb_Jukebox)
 		spb_Jukebox.ServerQueue:SetPos(w / 3 + 10, 30)
 		spb_Jukebox.ServerQueue:SetSize(mw, h - 40)
 		spb_Jukebox.ServerQueue.Think = function(self)
@@ -538,8 +529,7 @@ function GM:JukeboxMenu()
 			end
 		end
 
-		spb_Jukebox.ServerQueue.lbl = vgui.Create("DLabel")
-		spb_Jukebox.ServerQueue.lbl:SetParent(spb_Jukebox.ServerQueue)
+		spb_Jukebox.ServerQueue.lbl = vgui.Create("DLabel", spb_Jukebox.ServerQueue)
 		spb_Jukebox.ServerQueue.lbl:SetText("Jukebox (server queue)")
 		spb_Jukebox.ServerQueue.lbl:SetPos(5, 3)
 		spb_Jukebox.ServerQueue.lbl:SetSize(289, 15)
@@ -600,22 +590,19 @@ function GM:JukeboxMenu()
 		end
 
 
-		spb_Jukebox.MusicCFG = vgui.Create("DPanel")
-		spb_Jukebox.MusicCFG:SetParent(spb_Jukebox)
+		spb_Jukebox.MusicCFG = vgui.Create("DPanel", spb_Jukebox)
 		spb_Jukebox.MusicCFG:SetPos(w / 3 * 2 + 10, 30)
 		spb_Jukebox.MusicCFG:SetSize(mw, h - 40)
 
 		local mcfgw, mcfgh = spb_Jukebox.MusicCFG:GetSize()
 
-		local musicmenulbl = vgui.Create("DLabel")
-		musicmenulbl:SetParent(spb_Jukebox.MusicCFG)
+		local musicmenulbl = vgui.Create("DLabel", spb_Jukebox.MusicCFG)
 		musicmenulbl:SetText("Music configuration")
 		musicmenulbl:SetPos(8, 5)
 		musicmenulbl:SetDark(1)
 		musicmenulbl:SizeToContents()
 
-		local enablemusic = vgui.Create("DCheckBoxLabel")
-		enablemusic:SetParent(spb_Jukebox.MusicCFG)
+		local enablemusic = vgui.Create("DCheckBoxLabel", spb_Jukebox.MusicCFG)
 		enablemusic:SetText("Enable music")
 		enablemusic:SetPos(10, 30)
 		enablemusic:SetDark(1)
@@ -623,8 +610,7 @@ function GM:JukeboxMenu()
 		enablemusic:SetValue(GetConVar("spb_cl_music_enable"):GetBool())
 		enablemusic:SizeToContents()
 
-		local allowexternal = vgui.Create("DCheckBoxLabel")
-		allowexternal:SetParent(spb_Jukebox.MusicCFG)
+		local allowexternal = vgui.Create("DCheckBoxLabel", spb_Jukebox.MusicCFG)
 		allowexternal:SetText("Allow external musics (Loaded from url)")
 		allowexternal:SetPos(10, 50)
 		allowexternal:SetDark(1)
@@ -632,8 +618,7 @@ function GM:JukeboxMenu()
 		allowexternal:SetValue(GetConVar("spb_cl_music_allowexternal"):GetBool())
 		allowexternal:SizeToContents()
 
-		local visualizer = vgui.Create("DCheckBoxLabel")
-		visualizer:SetParent(spb_Jukebox.MusicCFG)
+		local visualizer = vgui.Create("DCheckBoxLabel", spb_Jukebox.MusicCFG)
 		visualizer:SetText("Enable visualizer (Downgrade performance)")
 		visualizer:SetPos(10, 70)
 		visualizer:SetDark(1)
@@ -641,16 +626,14 @@ function GM:JukeboxMenu()
 		visualizer:SetValue(GetConVar("spb_cl_music_visualizer"):GetBool())
 		visualizer:SizeToContents()
 
-		local vollbl = vgui.Create("DLabel")
-		vollbl:SetParent(spb_Jukebox.MusicCFG)
+		local vollbl = vgui.Create("DLabel", spb_Jukebox.MusicCFG)
 		vollbl:SetText("Volume")
 		vollbl:SetPos(mw / 2 - 40, mcfgh - 50)
 		vollbl:SetDark(1)
 		vollbl:SizeToContents()
 
 		local vol = GetConVar("spb_cl_music_volume")
-		local musivol = vgui.Create("Slider")
-		musivol:SetParent(spb_Jukebox.MusicCFG)
+		local musivol = vgui.Create("Slider", spb_Jukebox.MusicCFG)
 		musivol:SetPos(0, mcfgh - 40)
 		musivol:SetSize(mw, 40)
 		musivol:SetValue(vol:GetFloat())

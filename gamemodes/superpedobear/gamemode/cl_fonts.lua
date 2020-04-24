@@ -59,7 +59,7 @@ function GM:CreateScaledFont(fname, fsize, foptions)
 	local aname = scaled_font_name(fname)
 
 	if self.CreatedFonts[aname] then
-		self:Log("The " .. aname .. " font is already created.")
+		self:DebugLog("The " .. aname .. " font is already created.")
 		return aname
 	end
 
@@ -75,7 +75,7 @@ function GM:CreateScaledFont(fname, fsize, foptions)
 
 	self.CreatedFonts[aname] = true
 
-	self:Log("Created scaled font " .. aname .. " from " .. fsize)
+	self:DebugLog("Created scaled font " .. aname .. " from " .. fsize)
 
 	return aname
 

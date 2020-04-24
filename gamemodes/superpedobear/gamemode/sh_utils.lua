@@ -6,17 +6,30 @@
 local v = include("semver.lua")
 
 function GM:Log(str, hardcore)
-	if hardcore and !spb_enabledevmode:GetBool() then return end
-	Msg("[Super Pedobear] " .. (str or "This was a log message, but something went wrong") .. "\n")
+	if !hardcore or spb_enabledevmode:GetBool() then
+		Msg("[Super Pedobear] " .. (str or "This was a log message, but something went wrong") .. "\n")
+	end
+	if spb_enabledevmode:GetBool() then
+		self:LogToFile(" [LOG] " .. str)
+	end
 end
 
 function GM:ErrorLog(str)
 	ErrorNoHalt("[Super Pedobear] " .. (str or "This was an error message, but something went wrong") .. "\n")
+	if spb_enabledevmode:GetBool() then
+		self:LogToFile(" [ERROR] " .. str)
+	end
 end
 
 function GM:DebugLog(str)
-	if !spb_enabledevmode:GetBool() then return end
-	Msg("[Super Pedobear] " .. (str or "This was a debug message, but something went wrong") .. "\n")
+	if spb_enabledevmode:GetBool() then
+		Msg("[Super Pedobear] " .. (str or "This was a debug message, but something went wrong") .. "\n")
+		self:LogToFile(" [DEBUG] " .. str)
+	end
+end
+
+function GM:LogToFile(str)
+	file.Append("superpedobear/log.txt", SysTime() .. str .. "\n")
 end
 
 function GM:GetHost()

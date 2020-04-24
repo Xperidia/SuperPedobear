@@ -5,6 +5,7 @@
 
 include("shared.lua")
 include("cl_scale.lua")
+include("cl_fonts.lua")
 include("cl_scoreboard.lua")
 include("cl_menu.lua")
 include("cl_tauntmenu.lua")
@@ -789,5 +790,11 @@ function GM:RenderScreenspaceEffects()
 		end
 
 	end
+
+end
+
+function GM:OnScreenSizeChanged(oldWidth, oldHeight)
+
+	self:CreateScaledFonts()
 
 end

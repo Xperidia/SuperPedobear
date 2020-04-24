@@ -24,7 +24,7 @@ end
 function GM:DebugLog(str)
 	if spb_enabledevmode:GetBool() then
 		Msg("[Super Pedobear] " .. (str or "This was a debug message, but something went wrong") .. "\n")
-		self:LogToFile(" [DEBUG] " .. str)
+		self:LogToFile("\t[DEBUG]\t" .. str)
 	end
 end
 

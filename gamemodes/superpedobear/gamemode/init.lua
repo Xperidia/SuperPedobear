@@ -5,6 +5,7 @@
 
 AddCSLuaFile("shared.lua")
 AddCSLuaFile("sh_utils.lua")
+AddCSLuaFile("cl_scale.lua")
 AddCSLuaFile("cl_scoreboard.lua")
 AddCSLuaFile("cl_menu.lua")
 AddCSLuaFile("cl_tauntmenu.lua")

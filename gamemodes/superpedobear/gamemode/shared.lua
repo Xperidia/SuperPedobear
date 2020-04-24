@@ -108,7 +108,7 @@ function GM:Initialize()
 
 	if CLIENT then
 
-		local screen_ratio = ScrW() / ScrH()
+		self:CreateScaledFonts()
 
 		CreateClientConVar("spb_cl_disabletauntmenuclose", 0, true, false, "Don't close the taunt menu after taunting")
 		CreateClientConVar("spb_cl_disablehalos", 0, true, false, "Disable halos (Improve performance)")

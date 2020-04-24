@@ -38,6 +38,12 @@ local fonts = {
 			antialias = true
 		}
 	},
+	spb_min	= {
+		18,
+		{
+			antialias = true
+		}
+	},
 }
 
 local function scaled_font_name(name)

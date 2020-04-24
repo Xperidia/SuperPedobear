@@ -68,7 +68,7 @@ function GM:Initialize()
 		sound = GAMEMODE.Sounds.YoureTheBear
 	})
 
-	spb_enabledevmode = CreateConVar("spb_enabledevmode", 0, FCVAR_NONE, "Dev mode and more logs.")
+	spb_enabledevmode = CreateConVar("spb_enabledevmode", 0, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Dev mode and more logs.")
 	spb_round_time = CreateConVar("spb_round_time", 180, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Time of a round in second.")
 	spb_round_pretime = CreateConVar("spb_round_pretime", 15, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Time of the player waiting time in second.")
 	spb_round_pre2time = CreateConVar("spb_round_pre2time", 15, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Time before seeker spawn.")

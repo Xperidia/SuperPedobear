@@ -129,7 +129,7 @@ function GM:ListMaps()
 		if map != "spb_tutorial.bsp" and map != "spb_dev.bsp" then
 			for _, prefix in pairs(prefixes) do
 				if string.StartWith(map, prefix) then
-					GAMEMODE:Log("Found " .. map, true)
+					GAMEMODE:DebugLog("Found " .. map)
 					table.insert(GAMEMODE.MapList, string.StripExtension(map))
 					break
 				end
@@ -547,7 +547,7 @@ function GM:RoundThink()
 
 			GAMEMODE:UpVars()
 
-			GAMEMODE:Log("The game will start at " .. GAMEMODE.Vars.Round.PreStartTime, true)
+			GAMEMODE:DebugLog("The game will start at " .. GAMEMODE.Vars.Round.PreStartTime)
 
 		end
 
@@ -577,7 +577,7 @@ function GM:RoundThink()
 				WantedSeekers = 2
 			end
 
-			GAMEMODE:Log(WantedSeekers .. " seeker(s) will be selected", true)
+			GAMEMODE:DebugLog(WantedSeekers .. " seeker(s) will be selected")
 
 			while #Seekers != WantedSeekers do
 
@@ -589,11 +589,11 @@ function GM:RoundThink()
 						Seekers[SeekerIndex] = v
 					end
 
-					GAMEMODE:Log(v:GetName() .. " have " .. (v:GetNWFloat("spb_BearChance", 0) * 100) .. "% chance to be a seeker" .. Either(Seekers[SeekerIndex] == v, " and is currently selected", ""), true)
+					GAMEMODE:DebugLog(v:GetName() .. " have " .. (v:GetNWFloat("spb_BearChance", 0) * 100) .. "% chance to be a seeker" .. Either(Seekers[SeekerIndex] == v, " and is currently selected", ""))
 
 				end
 
-				GAMEMODE:Log(Seekers[SeekerIndex]:GetName() .. " has been selected to be a seeker " .. SeekerIndex, true)
+				GAMEMODE:DebugLog(Seekers[SeekerIndex]:GetName() .. " has been selected to be a seeker " .. SeekerIndex)
 
 				if IsValid(Seekers[SeekerIndex]) then
 					Seekers[SeekerIndex]:DropPowerUP()
@@ -1022,7 +1022,7 @@ function GM:AFKThink(ply, ucmd)
 
 			ply.IsAFK = false
 
-			GAMEMODE:Log(ply:GetName() .. " is no longer afk!", true)
+			GAMEMODE:DebugLog(ply:GetName() .. " is no longer afk!")
 
 			net.Start("spb_AFK")
 				net.WriteFloat(0)
@@ -1037,7 +1037,7 @@ function GM:AFKThink(ply, ucmd)
 	if !ply.IsAFK and ply.afkcheck != nil and ply.afkcheck < CurTime() - spb_afk_time:GetInt() then
 
 		ply.IsAFK = true
-		GAMEMODE:Log(ply:GetName() .. " is afk!", true)
+		GAMEMODE:DebugLog(ply:GetName() .. " is afk!")
 
 		GAMEMODE:BearAFKCare(ply)
 
@@ -1183,7 +1183,7 @@ function GM:RetrieveXperidiaAccountRank(ply)
 	if ply:IsBot() then return end
 	if !ply.XperidiaRankLastTime or ply.XperidiaRankLastTime + 300 < SysTime() then
 		local steamid = ply:SteamID64()
-		GAMEMODE:Log("Retrieving the Xperidia Rank for " .. ply:GetName() .. "...", true)
+		GAMEMODE:DebugLog("Retrieving the Xperidia Rank for " .. ply:GetName() .. "...")
 		http.Post("https://api.xperidia.com/account/rank/v1", {steamid = steamid},
 		function(responseText, contentLength, responseHeaders, statusCode)
 			if !IsValid(ply) then return end
@@ -1196,11 +1196,11 @@ function GM:RetrieveXperidiaAccountRank(ply)
 					if rank_info.color and #rank_info.color == 6 then ply:SetNWString("XperidiaRankColor", tonumber("0x" .. rank_info.color:sub(1,2)) .. " " .. tonumber("0x" .. rank_info.color:sub(3,4)) .. " " .. tonumber("0x" .. rank_info.color:sub(5,6)) .. " 255") end
 					ply.XperidiaRankLastTime = SysTime()
 					if rank_info.id != 0 and rank_info.name then
-						GAMEMODE:Log("The Xperidia Rank for " .. ply:GetName() .. " is " .. rank_info.name .. " (" .. rank_info.id .. ")")
+						GAMEMODE:DebugLog("The Xperidia Rank for " .. ply:GetName() .. " is " .. rank_info.name .. " (" .. rank_info.id .. ")")
 					elseif rank_info.id != 0 then
-						GAMEMODE:Log("The Xperidia Rank for " .. ply:GetName() .. " is " .. rank_info.id)
+						GAMEMODE:DebugLog("The Xperidia Rank for " .. ply:GetName() .. " is " .. rank_info.id)
 					else
-						GAMEMODE:Log(ply:GetName() .. " doesn't have any Xperidia Rank...", true)
+						GAMEMODE:DebugLog(ply:GetName() .. " doesn't have any Xperidia Rank...")
 					end
 				end
 			else
@@ -1215,7 +1215,7 @@ end
 
 function GM:StoreChances(ply)
 
-	if !spb_save_chances:GetBool() then GAMEMODE:Log("Chances saving is disabled. Not saving seeker chances.") return end
+	if !spb_save_chances:GetBool() then GAMEMODE:DebugLog("Chances saving is disabled. Not saving seeker chances.") return end
 
 	local function savechance(pl)
 
@@ -1225,7 +1225,7 @@ function GM:StoreChances(ply)
 
 		if chance != nil then
 			pl:SetPData("spb_PedoChance", math.floor(math.Clamp(chance, 0, 100) * 100))
-			GAMEMODE:Log("Saved the " .. (chance * 100) .. "% seeker chance of " .. pl:GetName(), true)
+			GAMEMODE:DebugLog("Saved the " .. (chance * 100) .. "% seeker chance of " .. pl:GetName())
 		end
 
 	end
@@ -1242,7 +1242,7 @@ end
 
 function GM:LoadChances(ply)
 
-	if !spb_save_chances:GetBool() then GAMEMODE:Log("Chances saving is disabled. Not loading seeker chances.", true) return end
+	if !spb_save_chances:GetBool() then GAMEMODE:DebugLog("Chances saving is disabled. Not loading seeker chances.") return end
 
 	local function loadchance(pl)
 
@@ -1253,10 +1253,10 @@ function GM:LoadChances(ply)
 		if chance != nil then
 			chance = chance * 0.01
 			pl:SetNWFloat("spb_BearChance", chance)
-			GAMEMODE:Log("Loaded the " .. (chance * 100) .. "% seeker chance of " .. pl:GetName(), true)
+			GAMEMODE:DebugLog("Loaded the " .. (chance * 100) .. "% seeker chance of " .. pl:GetName())
 		else
 			pl:SetNWFloat("spb_BearChance", 0.01)
-			GAMEMODE:Log("No seeker chance found for " .. pl:GetName() .. ", default was set", true)
+			GAMEMODE:DebugLog("No seeker chance found for " .. pl:GetName() .. ", default was set")
 		end
 
 	end
@@ -1288,7 +1288,7 @@ function GM:StorePlayerInfo(ply)
 			pl:SetPData("spb_VictimsCurrency", victimscurrency)
 		end
 
-		GAMEMODE:Log("Saved the player info of " .. pl:GetName())
+		GAMEMODE:DebugLog("Saved the player info of " .. pl:GetName())
 
 	end
 
@@ -1307,7 +1307,7 @@ function GM:LoadPlayerInfo(ply)
 		if pl:IsBot() then return end
 		pl:SetNWInt("spb_TotalVictims", pl:GetPData("spb_TotalVictims", 0))
 		pl:SetNWInt("spb_VictimsCurrency", pl:GetPData("spb_VictimsCurrency", 0))
-		GAMEMODE:Log("Loaded the player info of " .. pl:GetName())
+		GAMEMODE:DebugLog("Loaded the player info of " .. pl:GetName())
 	end
 	if IsValid(ply) then
 		loadinfo(ply)
@@ -1349,7 +1349,7 @@ end)
 
 function GM.PlayerMeta:SetPowerUP(powerupstr)
 	if !spb_powerup_enabled:GetBool() then
-		GAMEMODE:Log("Tried to set a power-up to " .. self:GetName() .. " but power-ups are disabled ", true)
+		GAMEMODE:DebugLog("Tried to set a power-up to " .. self:GetName() .. " but power-ups are disabled ")
 		return nil
 	end
 	local before = self.SPB_PowerUP
@@ -1358,12 +1358,12 @@ function GM.PlayerMeta:SetPowerUP(powerupstr)
 		self:SetNWString("spb_PowerUP", powerupstr)
 		self.SPB_PowerUP_Delay = CurTime() + 3
 		self:SetNWFloat("spb_PowerUPDelay", self.SPB_PowerUP_Delay)
-		GAMEMODE:Log(self:GetName() .. " has gained the " .. self.SPB_PowerUP .. " power-up", true)
+		GAMEMODE:DebugLog(self:GetName() .. " has gained the " .. self.SPB_PowerUP .. " power-up")
 		return self.SPB_PowerUP
 	elseif powerupstr == "none" then
 		self.SPB_PowerUP = powerupstr
 		self:SetNWString("spb_PowerUP", powerupstr)
-		GAMEMODE:Log(self:GetName() .. " has lost the " .. before .. " power-up", true)
+		GAMEMODE:DebugLog(self:GetName() .. " has lost the " .. before .. " power-up")
 		return self.SPB_PowerUP
 	end
 	return nil
@@ -1390,7 +1390,7 @@ function GM.PlayerMeta:UsePowerUP()
 			result = self:PutCloak()
 		end
 		if result then
-			GAMEMODE:Log(self:GetName() .. " has used the " .. self.SPB_PowerUP .. " power-up", true)
+			GAMEMODE:DebugLog(self:GetName() .. " has used the " .. self.SPB_PowerUP .. " power-up")
 			self.SPB_PowerUP = nil
 			self:SetNWString("spb_PowerUP", "none")
 		elseif result == nil then
@@ -1552,17 +1552,17 @@ function GM:BuildDefaultPlayerModelList()
 	for k, v in pairs(list) do
 		if GAMEMODE.Vars.PM_Available[v] then
 			table.insert(GAMEMODE.Vars.PM_Default, v)
-			GAMEMODE:Log("Playermodel found: " .. v, true)
+			GAMEMODE:DebugLog("Playermodel found: " .. v)
 		elseif custom then
 			GAMEMODE:ErrorLog("[Super Pedobear] Playermodel not found: " .. v)
 		else
-			GAMEMODE:Log("Playermodel not found: " .. v, true)
+			GAMEMODE:DebugLog("Playermodel not found: " .. v)
 		end
 	end
 
 	if #GAMEMODE.Vars.PM_Default > 0 then
 		GAMEMODE:Log("Default player model list built. (" .. #GAMEMODE.Vars.PM_Default .. " found out of " .. #list .. " selected)")
-		GAMEMODE:Log("Final default playermodel list: " .. table.concat(GAMEMODE.Vars.PM_Default, ", "), true)
+		GAMEMODE:DebugLog("Final default playermodel list: " .. table.concat(GAMEMODE.Vars.PM_Default, ", "))
 	else
 		GAMEMODE:Log("Default player model list empty!")
 	end

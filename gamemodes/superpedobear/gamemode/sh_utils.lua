@@ -14,6 +14,11 @@ function GM:ErrorLog(str)
 	ErrorNoHalt("[Super Pedobear] " .. (str or "This was an error message, but something went wrong") .. "\n")
 end
 
+function GM:DebugLog(str)
+	if !spb_enabledevmode:GetBool() then return end
+	Msg("[Super Pedobear] " .. (str or "This was a debug message, but something went wrong") .. "\n")
+end
+
 function GM:GetHost()
 	if GAMEMODE.Vars.Host and IsValid(GAMEMODE.Vars.Host) then
 		return GAMEMODE.Vars.Host

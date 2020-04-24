@@ -35,7 +35,10 @@ GM.Vars.Round = GM.Vars.Round or {}
 GM.Bots = GM.Bots or {}
 GM.Musics = GM.Musics or {}
 GM.Taunts = GM.Taunts or {}
-if CLIENT then GM.LocalMusics = GM.LocalMusics or {} end
+if CLIENT then
+	GM.LocalMusics = GM.LocalMusics or {}
+	GM.CreatedFonts = GM.CreatedFonts or {}
+end
 
 GM.SeasonalEvents = {
 	{"AprilFool", "April Fool", "01/04"},

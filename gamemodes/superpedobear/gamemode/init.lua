@@ -1476,7 +1476,7 @@ concommand.Add("spb_powerup_drop", function(ply, cmd, args)
 	if IsValid(ply) then
 		ply:DropPowerUP()
 	end
-end)
+end, nil, "Drop a power-up", FCVAR_CLIENTCMD_CAN_EXECUTE)
 
 local default_playermodel_list =
 {

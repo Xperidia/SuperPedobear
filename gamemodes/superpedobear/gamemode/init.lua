@@ -1346,7 +1346,7 @@ concommand.Add("spb_dev_create_powerup", function(ply, cmd, args)
 	if spb_enabledevmode:GetBool() and IsValid(ply) and (ply:IsListenServerHost() or ply:IsSuperAdmin()) then
 		GAMEMODE:CreatePowerUP(ply, args[1])
 	end
-end)
+end, (GM or GAMEMODE).AutoCompletePowerUP, "Create a power-up", FCVAR_CLIENTCMD_CAN_EXECUTE)
 
 function GM.PlayerMeta:SetPowerUP(powerupstr)
 	if !spb_powerup_enabled:GetBool() then
@@ -1470,7 +1470,7 @@ concommand.Add("spb_powerup_buy", function(ply, cmd, args)
 			end
 		end
 	end
-end)
+end, (GM or GAMEMODE).AutoCompletePowerUP, "Buy a power-up", FCVAR_CLIENTCMD_CAN_EXECUTE)
 
 concommand.Add("spb_powerup_drop", function(ply, cmd, args)
 	if IsValid(ply) then

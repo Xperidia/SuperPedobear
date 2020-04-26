@@ -170,7 +170,7 @@ function GM:Menu()
 			menu.one.text:InsertColorChange(192, 0, 192, 255)
 		end
 		menu.one.text:InsertClickableTextStart("LatestRelease")
-		menu.one.text:AppendText((GAMEMODE.LatestRelease.Name or "v" .. (GAMEMODE.LatestRelease.Version and tostring(GAMEMODE.LatestRelease.Version) or "?")) .. "\n")
+		menu.one.text:AppendText((GAMEMODE.LatestRelease.Name or ("v" .. (GAMEMODE.LatestRelease.Version and tostring(GAMEMODE.LatestRelease.Version) or "?"))) .. "\n")
 		menu.one.text:InsertClickableTextEnd()
 		menu.one.text:InsertColorChange(0, 0, 0, 255)
 		if GAMEMODE.LatestRelease.Newer and !GAMEMODE.LatestRelease.prerelease and game.IsDedicated() then

@@ -99,7 +99,7 @@ function ENT:Think()
 	end
 
 	for p, ply in pairs(player.GetAll()) do
-		if ply:EyePos():Distance(self:EyePos()) <= 60 then
+		if ply:EyePos():Distance(self:EyePos()) <= 128 then
 			self:SetEyeTarget(ply:EyePos())
 			break
 		end

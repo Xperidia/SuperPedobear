@@ -1341,6 +1341,7 @@ function GM:CreatePowerUP(ent, powerupstr, respawn)
 	PowerUp:Spawn()
 	return PowerUp
 end
+
 concommand.Add("spb_dev_create_powerup", function(ply, cmd, args)
 	if spb_enabledevmode:GetBool() and IsValid(ply) and (ply:IsListenServerHost() or ply:IsSuperAdmin()) then
 		GAMEMODE:CreatePowerUP(ply, args[1])

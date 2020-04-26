@@ -106,6 +106,8 @@ local function btnMaximDoClick(btn)
 	end
 end
 
+concommand.Add("spb_menu", function() GAMEMODE:Menu() end, nil, "Open the gamemode's menu")
+
 function GM:Menu()
 
 	if engine.IsPlayingDemo() then

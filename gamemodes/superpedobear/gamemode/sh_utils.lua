@@ -305,3 +305,26 @@ function GM:FindOGGTag(tags, tag)
 	end
 	return nil
 end
+
+function GM.AutoCompletePowerUP(cmd, args)
+
+	args = string.Trim(args)
+	args = string.lower(args)
+
+	local tbl = {}
+
+	for k, v in pairs(GAMEMODE.PowerUps) do
+
+		if string.find(k, args) then
+
+			k = cmd .. " " .. k
+
+			table.insert(tbl, k)
+
+		end
+
+	end
+
+	return tbl
+
+end

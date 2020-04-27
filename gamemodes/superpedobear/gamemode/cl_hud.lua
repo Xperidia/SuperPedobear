@@ -674,6 +674,7 @@ function GM:DrawLegacyHUD()
 end
 
 function GM:CreateHealthFace(ply)
+
 	self.HealthFace = ClientsideModel(ply:GetModel(), RENDER_GROUP_OPAQUE_ENTITY)
 	self.HealthFace:SetNoDraw(true)
 	local iSeq = self.HealthFace:LookupSequence("idle_passive")
@@ -784,6 +785,7 @@ function GM:DrawHealthFace(ply, x, y, w, h)
 	render.SetBlend(1)
 
 	cam.IgnoreZ(false)
+
 end
 
 function GM:HUDDrawTargetID()

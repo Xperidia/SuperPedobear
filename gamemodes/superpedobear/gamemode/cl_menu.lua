@@ -147,18 +147,18 @@ function GM:Menu()
 		self:SetFontInternal("DermaDefault")
 	end
 
-	menu.one.text:AppendText("\t    You're playing Super Pedobear v" .. (GAMEMODE.Version and tostring(GAMEMODE.Version) or "?") .. " (" .. (GAMEMODE.VersionDate or "?") .. ")\n")
+	menu.one.text:AppendText("\t    You're playing Super Pedobear v" .. (self.Version and tostring(self.Version) or "?") .. " (" .. (self.VersionDate or "?") .. ")\n")
 
-	if GAMEMODE:SeasonalEventStr() != "" then
-		menu.one.text:AppendText("\t\t\t    " .. GAMEMODE:SeasonalEventStr() .. "\n\n")
+	if self:SeasonalEventStr() != "" then
+		menu.one.text:AppendText("\t\t\t    " .. self:SeasonalEventStr() .. "\n\n")
 	else
 		menu.one.text:AppendText("\n")
 	end
 
 	menu.one.text:AppendText("Gamemode made by VictorienXP, with arts from Pho3 and Wubsy...\n\n")
 
-	if GAMEMODE.LatestRelease then
-		if GAMEMODE.LatestRelease.Newer then
+	if self.LatestRelease then
+		if self.LatestRelease.Newer then
 			menu.one.text:InsertColorChange(192, 0, 0, 255)
 			menu.one.text:AppendText("There is a new release available! ")
 			menu.one.text:InsertColorChange(192, 0, 192, 255)
@@ -172,14 +172,14 @@ function GM:Menu()
 			menu.one.text:InsertColorChange(192, 0, 192, 255)
 		end
 		menu.one.text:InsertClickableTextStart("LatestRelease")
-		menu.one.text:AppendText((GAMEMODE.LatestRelease.Name or ("v" .. (GAMEMODE.LatestRelease.Version and tostring(GAMEMODE.LatestRelease.Version) or "?"))) .. "\n")
+		menu.one.text:AppendText((self.LatestRelease.Name or ("v" .. (self.LatestRelease.Version and tostring(self.LatestRelease.Version) or "?"))) .. "\n")
 		menu.one.text:InsertClickableTextEnd()
 		menu.one.text:InsertColorChange(0, 0, 0, 255)
-		if GAMEMODE.LatestRelease.Newer and !GAMEMODE.LatestRelease.prerelease and game.IsDedicated() then
+		if self.LatestRelease.Newer and !self.LatestRelease.prerelease and game.IsDedicated() then
 			menu.one.text:AppendText("Ask the server owner to update the gamemode!\n")
-		elseif GAMEMODE.LatestRelease.Newer and !GAMEMODE.LatestRelease.prerelease and GAMEMODE.MountedfromWorkshop and LocalPlayer():GetNWBool("IsListenServerHost", false) then
+		elseif self.LatestRelease.Newer and !self.LatestRelease.prerelease and self.MountedfromWorkshop and LocalPlayer():GetNWBool("IsListenServerHost", false) then
 			menu.one.text:AppendText("Let Steam download the update and restart the game!\n")
-		elseif GAMEMODE.LatestRelease.Newer and !GAMEMODE.LatestRelease.prerelease then
+		elseif self.LatestRelease.Newer and !self.LatestRelease.prerelease then
 			menu.one.text:AppendText("Don't forget to update!\n")
 		end
 		menu.one.text:AppendText("\n")

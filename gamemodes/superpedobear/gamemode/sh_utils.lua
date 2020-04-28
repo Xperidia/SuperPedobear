@@ -263,9 +263,23 @@ function GM:BuildTauntIndex()
 
 end
 
+function GAMEMODE:VersionCompare(cur, last)
+	if cur.major ~= last.major then return cur.major < last.major end
+	if cur.minor ~= last.minor then return cur.minor < last.minor end
+	if cur.patch ~= last.patch then return cur.patch < last.patch end
+	return false
+end
+
+function GAMEMODE:VersionEqual(cur, last)
+	return	cur.major == last.major and
+			cur.minor == last.minor and
+			cur.patch == last.patch and
+			cur.prerelease == last.prerelease
+end
+
 GM.LatestRelease = GM.LatestRelease or {}
 function GM:CheckForNewRelease()
-	if !GAMEMODE.Version then return nil end
+	if !self.Version then return nil end
 	return HTTP({
 		url			=	"https://api.github.com/repos/Xperidia/SuperPedobear/releases/latest",
 		method		=	"GET",
@@ -274,22 +288,20 @@ function GM:CheckForNewRelease()
 							if code == 200 then
 								local result = util.JSONToTable(body)
 								if result and result.tag_name then
-									GAMEMODE.LatestRelease.Version = tonumber(result.tag_name) or v(result.tag_name)
-									GAMEMODE.LatestRelease.Name = result.name or nil
-									GAMEMODE.LatestRelease.URL = result.html_url or nil
-									GAMEMODE.LatestRelease.prerelease = result.prerelease or false
-									if (isnumber(GAMEMODE.LatestRelease.Version) and isnumber(GAMEMODE.Version)) or (!isnumber(GAMEMODE.LatestRelease.Version) and !isnumber(GAMEMODE.Version)) then
-										GAMEMODE.LatestRelease.Newer = GAMEMODE.LatestRelease.Version > GAMEMODE.Version
-									end
+									self.LatestRelease.Version = v(result.tag_name)
+									self.LatestRelease.Name = result.name or nil
+									self.LatestRelease.URL = result.html_url or nil
+									self.LatestRelease.prerelease = result.prerelease or false
+									self.LatestRelease.Newer = self:VersionCompare(self.Version, self.LatestRelease.Version)
 								end
-								GAMEMODE:Log("The latest release tag is v" .. tostring(GAMEMODE.LatestRelease.Version) .. ". " .. Either(GAMEMODE.LatestRelease.Newer, "You're on v" .. tostring(GAMEMODE.Version) .. "! An update is available!", "You're on the latest version (V" .. tostring(GAMEMODE.Version) .. ")."))
+								self:Log("The latest release tag is v" .. tostring(self.LatestRelease.Version) .. ". " .. Either(self.LatestRelease.Newer, "You're on v" .. tostring(self.Version) .. "! An update is available!", "You're on the latest version (v" .. tostring(self.Version) .. ")."))
 							else
 								local state = headers.Status or code
-								GAMEMODE:Log("Couldn't check for new release: " .. state)
+								self:Log("Couldn't check for new release: " .. state)
 							end
 						end,
 		failed		=	function(reason)
-							GAMEMODE:Log("Couldn't check for new release: " .. reason)
+							self:Log("Couldn't check for new release: " .. reason)
 						end
 	})
 end

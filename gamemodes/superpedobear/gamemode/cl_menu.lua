@@ -162,11 +162,11 @@ function GM:Menu()
 			menu.one.text:InsertColorChange(192, 0, 0, 255)
 			menu.one.text:AppendText("There is a new release available! ")
 			menu.one.text:InsertColorChange(192, 0, 192, 255)
-		elseif isnumber(GAMEMODE.LatestRelease.Version) and isnumber(GAMEMODE.Version) and GAMEMODE.LatestRelease.Version == GAMEMODE.Version then
+		elseif self:VersionEqual(self.Version, self.LatestRelease.Version) then
 			menu.one.text:InsertColorChange(0, 192, 0, 255)
 			menu.one.text:AppendText("You're on the latest release! ")
 			menu.one.text:InsertColorChange(192, 0, 192, 255)
-		elseif isnumber(GAMEMODE.LatestRelease.Version) and isnumber(GAMEMODE.Version) and GAMEMODE.LatestRelease.Version < GAMEMODE.Version then
+		elseif self:VersionCompare(self.LatestRelease.Version, self.Version) then
 			menu.one.text:InsertColorChange(0, 0, 0, 255)
 			menu.one.text:AppendText("You're on a unreleased/dev build!\nLatest release is ")
 			menu.one.text:InsertColorChange(192, 0, 192, 255)

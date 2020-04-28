@@ -263,14 +263,14 @@ function GM:BuildTauntIndex()
 
 end
 
-function GAMEMODE:VersionCompare(cur, last)
+function GM:VersionCompare(cur, last)
 	if cur.major ~= last.major then return cur.major < last.major end
 	if cur.minor ~= last.minor then return cur.minor < last.minor end
 	if cur.patch ~= last.patch then return cur.patch < last.patch end
 	return false
 end
 
-function GAMEMODE:VersionEqual(cur, last)
+function GM:VersionEqual(cur, last)
 	return	cur.major == last.major and
 			cur.minor == last.minor and
 			cur.patch == last.patch and

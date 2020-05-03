@@ -121,8 +121,9 @@ function GM:Menu()
 
 	GAMEMODE.MainMenuFrame = vgui.Create("DFrame")
 	local menu = GAMEMODE.MainMenuFrame
-	menu:SetPos(ScrW() / 2 - 320, ScrH() / 2 - 240)
-	menu:SetSize(640, 480)
+	local s_x, s_y = 640, 480
+	menu:SetSize(s_x, s_y)
+	menu:SetPos(ScrW() / 2 - (s_x / 2), ScrH() / 2 - (s_y / 2))
 	menu:SetTitle(GAMEMODE.Name .. " main menu")
 	menu:SetVisible(true)
 	menu:SetDraggable(true)

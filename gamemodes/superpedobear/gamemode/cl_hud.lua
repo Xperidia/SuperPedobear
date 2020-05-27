@@ -94,11 +94,11 @@ end
 
 local function winstr(WinTeam)
 	if WinTeam == TEAM_HIDING then
-		return "The victims wins"
+		return GAMEMODE:FormatLangPhrase("$spb_win.spb_hiding.x", "$spb_hidings.x")
 	elseif WinTeam == TEAM_SEEKER then
-		return "The bears captured everyone"
+		return GAMEMODE:FormatLangPhrase("$spb_win.spb_seeker.x", "$spb_seekers.x")
 	end
-	return "Draw game"
+	return language.GetPhrase("spb_win.none")
 end
 
 local function remap_volume(mu) return
@@ -269,18 +269,18 @@ function GM:DrawLegacyHUD()
 	rndtxth = self:DrawLegacyRoundStrHUD(V, rounds, rndtxth)
 
 	if game.SinglePlayer() then
-		rndtxth = self:DrawLegacyRoundStrHUD(V, "You can't play in \"Single Player\" mode!", rndtxth)
-		rndtxth = self:DrawLegacyRoundStrHUD(V, "Start a new game and select at least \"2 Players\"", rndtxth)
+		rndtxth = self:DrawLegacyRoundStrHUD(V, self:FormatLangPhrase("$spb_singleplayer_warn.1", "$maxplayers_1"), rndtxth)
+		rndtxth = self:DrawLegacyRoundStrHUD(V, self:FormatLangPhrase("$spb_singleplayer_warn.2", "$maxplayers_2"), rndtxth)
 	elseif V.R.PreStart or (!V.R.Start and V.victims < 2) then
-		rndtxth = self:DrawLegacyRoundStrHUD(V, "Waiting for players", rndtxth)
+		rndtxth = self:DrawLegacyRoundStrHUD(V, self:FormatLangPhrase("$spb_round.waiting_for_players", "$players"), rndtxth)
 	elseif V.R.Pre2Start then
 		if V.P.plyTeam == TEAM_HIDING then
-			rndtxth = self:DrawLegacyRoundStrHUD(V, "You don't got much time to hide", rndtxth)
+			rndtxth = self:DrawLegacyRoundStrHUD(V, language.GetPhrase("spb_round.pre2start.hiding.1"), rndtxth)
 		elseif V.P.plyTeam == TEAM_SEEKER then
-			rndtxth = self:DrawLegacyRoundStrHUD(V, "You have been selected to be a seeker", rndtxth)
-			rndtxth = self:DrawLegacyRoundStrHUD(V, "Spawning soon", rndtxth)
+			rndtxth = self:DrawLegacyRoundStrHUD(V, self:FormatLangPhrase("$spb_round.pre2start.seeker.1", "$spb_seeker.x"), rndtxth)
+			rndtxth = self:DrawLegacyRoundStrHUD(V, language.GetPhrase("spb_round.pre2start.seeker.2"), rndtxth)
 		else
-			rndtxth = self:DrawLegacyRoundStrHUD(V, "The game will start soon", rndtxth)
+			rndtxth = self:DrawLegacyRoundStrHUD(V, language.GetPhrase("spb_round.start_soon"), rndtxth)
 		end
 	elseif V.R.Start and V.seekers and #V.seekers > 0 then
 		rndtxth = self:DrawLegacyRoundStrHUD(V, (V.victims or 0) .. "|" .. (V.downvictims or 0), rndtxth)
@@ -300,9 +300,13 @@ function GM:DrawLegacyHUD()
 		if V.seekers and #V.seekers > 0 then
 			for k, v in pairs(V.seekers) do
 				if IsValid(v) and v:Alive() and txt == "" then
-					txt = Format(Either(#V.seekers > 1, "%s is a seeker", "%s is the seeker"), v:Nick())
+					if #V.seekers == 1 then
+						txt = self:FormatLangPhrase("$spb_player_is_the", v:Nick(), "$spb_seeker.x")
+					else
+						txt = self:FormatLangPhrase("$spb_player_is_a", v:Nick(), "$spb_seeker.x")
+					end
 				elseif IsValid(v) and v:Alive() and txt != "" then
-					txt = txt .. Format("\n%s is a seeker", v:Nick())
+					txt = txt .. "\n" .. self:FormatLangPhrase("$spb_player_is_a", v:Nick(), "$spb_seeker.x")
 				end
 			end
 		end
@@ -322,7 +326,7 @@ function GM:DrawLegacyHUD()
 	--[[ THE AFK MESSAGE ]]--
 
 	if self.Vars.AfkTime and self.Vars.AfkTime - CurTime() >= 0 then
-		local txt = "Hey you're kind of afk!\nIf you're still afk in " .. self:FormatTime(self.Vars.AfkTime - CurTime()) .. "\nYou will be kicked out of the seeker role!"
+		local txt = self:FormatLangPhrase("$spb_afk_msg", self:FormatTime(self.Vars.AfkTime - CurTime()), "$spb_seeker.x")
 		surface.SetFont(self:GetScaledFont("spb_RND"))
 		local w, h = surface.GetTextSize(txt)
 		surface.SetDrawColor(Color(0, 0, 0, 200))
@@ -340,11 +344,11 @@ function GM:DrawLegacyHUD()
 		local tips = ""
 
 		if (V.P.plyTeam == TEAM_HIDING and V.R.Start and !V.P.plyAlive) or V.P.plyTeam == TEAM_SPECTATOR then
-			tips = self:CheckBind("+attack") .. " next player\n" .. self:CheckBind("+attack2") .. " previous player\n" .. self:CheckBind("+jump") .. " spectate mode (1st person/Chase/Free)"
+			tips = self:FormatLangPhrase("$spb.tips.spectating", self:CheckBind("+attack"), self:CheckBind("+attack2"), self:CheckBind("+jump"))
 		elseif V.P.plyAlive and V.P.plyTeam == TEAM_HIDING and V.P.wep == "spb_hiding" then
-			tips = self:CheckBind("+attack") .. " to weld a prop to another\n" .. self:CheckBind("+attack2") .. " to unweld a prop"
+			tips = self:FormatLangPhrase("$spb.tips.hiding", self:CheckBind("+attack"), self:CheckBind("+attack2"))
 		elseif V.P.plyAlive and V.P.plyTeam == TEAM_SEEKER and V.P.wep == "spb_seeker" then
-			tips = self:CheckBind("+attack") .. " to break props"
+			tips = self:FormatLangPhrase("$spb.tips.seeker", self:CheckBind("+attack"))
 		end
 
 		if tips != "" then
@@ -364,9 +368,9 @@ function GM:DrawLegacyHUD()
 		local w, h = 0, 0
 
 		if V.P.plyTeam == TEAM_UNASSIGNED then
-			qtips = "Press any key to join!"
+			qtips = language.GetPhrase("spb.tips.join")
 		elseif V.P.plyTeam == TEAM_HIDING and !V.R.Start and !V.P.plyAlive then
-			qtips = "Press any key to respawn!"
+			qtips = language.GetPhrase("spb.tips.respawn")
 		end
 		if qtips then
 			surface.SetFont(self:GetScaledFont("spb_TXT"))
@@ -384,11 +388,11 @@ function GM:DrawLegacyHUD()
 		if V.P.splyAlive and V.P.splyTeam == TEAM_HIDING then
 
 			if V.P.weldingstate == 2 then
-				self:DrawLegacyWeldInfo(V, "This prop is too far!", true)
+				self:DrawLegacyWeldInfo(V, language.GetPhrase("spb.tips.weld.prop_too_far"), true)
 			elseif V.P.weldingstate == 3 then
-				self:DrawLegacyWeldInfo(V, "The props are too far each other!", true)
+				self:DrawLegacyWeldInfo(V, language.GetPhrase("spb.tips.weld.props_too_far"), true)
 			elseif IsValid(V.P.welding) then
-				self:DrawLegacyWeldInfo(V, "Click another prop")
+				self:DrawLegacyWeldInfo(V, language.GetPhrase("spb.tips.weld.click_another_prop"))
 			end
 
 		end
@@ -571,7 +575,7 @@ function GM:DrawLegacyHUD()
 		if !V.hide_tips then
 			local usetip
 			if V.P.ply:HasPowerUP() and !anim_progress and (V.P.wep == "spb_hiding" or V.P.wep == "spb_seeker") then
-				usetip = "Press " .. self:CheckBind("+reload") .. " to use"
+				usetip = self:FormatLangPhrase("$spb.tips.use", self:CheckBind("+reload"))
 			end
 			if usetip then
 				local tw, th = surface.GetTextSize(usetip)
@@ -658,7 +662,7 @@ function GM:DrawLegacyHUD()
 		end
 
 		if !V.hide_tips then
-			local usetip = "Press " .. self:CheckBind("gm_showspare2") .. " for options"
+			local usetip = self:FormatLangPhrase("$spb.tips.settings", self:CheckBind("gm_showspare2"))
 			if usetip then
 				local tw, th = surface.GetTextSize(usetip)
 				surface.SetDrawColor(Color(0, 0, 0, 200))

@@ -6,7 +6,7 @@
 AddCSLuaFile()
 
 ENT.Base = "base_nextbot"
-ENT.PrintName = "Dummy"
+ENT.PrintName = "#spb_dummy"
 ENT.Author = "Xperidia"
 
 function ENT:Initialize()

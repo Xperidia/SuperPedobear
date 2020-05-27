@@ -6,7 +6,7 @@
 AddCSLuaFile()
 
 ENT.Base = "base_anim"
-ENT.PrintName = "Power-UP"
+ENT.PrintName = "#spb_powerup"
 ENT.Author = "Xperidia"
 ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
 

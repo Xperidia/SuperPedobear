@@ -6,7 +6,7 @@
 local v = include("semver.lua")
 
 function GM:Log(str, hardcore)
-	if !hardcore or spb_enabledevmode:GetBool() then
+	if not hardcore or spb_enabledevmode:GetBool() then
 		Msg("[Super Pedobear] " .. (str or "This was a log message, but something went wrong") .. "\n")
 	end
 	if spb_enabledevmode:GetBool() then
@@ -76,7 +76,7 @@ end
 
 function GM.PlayerMeta:IsCloaked()
 	local var = self.spb_CloakTime or self:GetNWFloat("spb_CloakTime", nil)
-	if !var then
+	if not var then
 		return nil
 	end
 	return var >= CurTime()
@@ -84,7 +84,7 @@ end
 
 function GM:SelectRandomPowerUP(ply)
 	for k, v in RandomPairs(GAMEMODE.PowerUps) do
-		if !IsValid(ply) or v[2] == ply:Team() or v[2] == 0 then
+		if not IsValid(ply) or v[2] == ply:Team() or v[2] == 0 then
 			return k
 		end
 	end
@@ -99,7 +99,7 @@ function GM:GetClosestPlayer(ply, pteam)
 	for k, v in pairs(list) do
 		if v:Alive() and v:IsLineOfSightClear(ply) then
 			t = v:GetPos():Distance(ply:GetPos())
-			if (!distance or distance < t) then
+			if (not distance or distance < t) then
 				distance = t
 				seeker = v
 			end
@@ -117,10 +117,10 @@ function GM:GetPowerUpPrice(id, ply, ignorereduc)
 		price = price * -1
 		ignoreadd = true
 	end
-	if !ignoreadd and GAMEMODE.PowerUps[id] and GAMEMODE.PowerUps[id][5] then
+	if not ignoreadd and GAMEMODE.PowerUps[id] and GAMEMODE.PowerUps[id][5] then
 		price = price + GAMEMODE.PowerUps[id][5]
 	end
-	if !ignorereduc and ply:GetNWInt("XperidiaRank", 0) > 0 then
+	if not ignorereduc and ply:GetNWInt("XperidiaRank", 0) > 0 then
 		price = price / 2
 	end
 	return math.Round(price)
@@ -219,7 +219,7 @@ function GM:BuildMusicIndex()
 	if SERVER then
 		GAMEMODE.Musics.musics = musiclist
 		GAMEMODE.Musics.premusics = premusiclist
-		if !game.IsDedicated() then GAMEMODE:SendMusicIndex() end
+		if not game.IsDedicated() then GAMEMODE:SendMusicIndex() end
 	else
 		GAMEMODE.LocalMusics.musics = musiclist
 		GAMEMODE.LocalMusics.premusics = premusiclist
@@ -257,7 +257,7 @@ function GM:BuildTauntIndex()
 		local tauntlist = ReadTauntInfo()
 
 		GAMEMODE.Taunts = tauntlist
-		if !game.IsDedicated() then GAMEMODE:SendTauntIndex() end
+		if not game.IsDedicated() then GAMEMODE:SendTauntIndex() end
 
 	end
 
@@ -279,7 +279,7 @@ end
 
 GM.LatestRelease = GM.LatestRelease or {}
 function GM:CheckForNewRelease()
-	if !self.Version then return nil end
+	if not self.Version then return nil end
 	return HTTP({
 		url			=	"https://api.github.com/repos/Xperidia/SuperPedobear/releases/latest",
 		method		=	"GET",

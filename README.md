@@ -18,7 +18,7 @@ The seekers are automatically chosen by the gamemode and it should be fair enoug
 * Taunt system!
 * Music player/Jukebox!
 * Server owners can use the cvars and .json files to quickly configure/customize aspects of the gamemode!
-* Map makers can use and place gamemode entities! [Check out the FGD](https://raw.githubusercontent.com/Xperidia/SuperPedobear/master/superpedobear.fgd)
+* Map makers can use and place gamemode entities! [Check out the FGD](gamemodes/superpedobear/superpedobear.fgd)
 
 # Power-UPs
 * [Hiding] **Clone**: Clone yourself to bait the seekers or hide your clone somewhere to respawn on it later!

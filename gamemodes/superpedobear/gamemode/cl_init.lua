@@ -774,7 +774,6 @@ function GM:RenderScreenspaceEffects()
 		if distance and distance < 400 then
 			DrawToyTown(1, ScrH() * math.Clamp(math.Remap(distance, 300, 32, 0, 0.8), 0, 0.8))
 			DrawMotionBlur(0.4, math.Clamp(math.Remap(distance, 200, 32, 0, 0.8), 0, 0.8), 0.01)
-			local x = CurTime() * 5
 			local tab = {
 				["$pp_colour_addr"] = 0,
 				["$pp_colour_addg"] = 0,

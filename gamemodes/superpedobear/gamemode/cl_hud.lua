@@ -751,7 +751,6 @@ function GM:DrawHealthFace(ply, x, y, w, h)
 
 		local bone = self.HealthFace:LookupBone("ValveBiped.Bip01_Head1")
 		local pos = Vector(0, 0, 70)
-		local bang = Angle()
 		if bone then
 			pos, bang = self.HealthFace:GetBonePosition(bone)
 		end

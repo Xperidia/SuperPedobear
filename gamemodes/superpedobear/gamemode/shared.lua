@@ -13,7 +13,7 @@ local v = include("semver.lua")
 GM.Name 		= "Super Pedobear"
 GM.Author 		= "VictorienXP@Xperidia"
 GM.Website 		= "steamcommunity.com/sharedfiles/filedetails/?id=628449407"
-GM.Version 		= v"0.1.2"
+GM.Version 		= v"0.2.0"
 GM.VersionDate 	= 200527
 GM.TeamBased 	= true
 

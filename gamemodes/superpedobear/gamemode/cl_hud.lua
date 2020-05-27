@@ -807,13 +807,10 @@ function GM:HUDDrawTargetID()
 	surface.SetFont(font)
 	local w, h = surface.GetTextSize(text)
 
-	local MouseX, MouseY = ScrW() / 2, ScrH() * 0.5
-
-	local x = MouseX
-	local y = MouseY
+	local x, y = ScrW() / 2, ScrH() * 0.5
 
 	x = x - w / 2
-	y = y + 30
+	y = y + h
 
 	draw.SimpleText(text, font, x + 1, y + 1, Color(0, 0, 0, 255))
 	draw.SimpleText(text, font, x + 2, y + 2, Color(0, 0, 0, 126))

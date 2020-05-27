@@ -88,7 +88,7 @@ function GM:Initialize()
 	spb_votemap_prefixes = CreateConVar("spb_votemap_prefixes", "spb_|ph_|md_|mu_|ttt_", {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Map prefixes to use for votemap. Prefixes are separated with pipes.")
 	spb_jukebox_enable_input = CreateConVar("spb_jukebox_enable_input", 1, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Enable player input on the jukebox queue.")
 	spb_restrict_playermodels = CreateConVar("spb_restrict_playermodels", 0, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Restrict playermodels to the default list.")
-	spb_censoring_level = CreateConVar("spb_censoring_level", 2, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Adjust the self word censoring level.")
+	spb_censoring_level = CreateConVar("spb_censoring_level", 2, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Adjust the self word censoring level. 2 is the most censored. 1 is moderatly censored. 0 is uncensored. Any invalid values will fallback to 0 (uncensored).")
 
 	local damagesnd = file.Find("sound/superpedobear/damage/*.ogg", "GAME")
 

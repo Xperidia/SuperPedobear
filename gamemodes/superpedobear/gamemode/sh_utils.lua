@@ -61,13 +61,13 @@ end
 
 function GM.PlayerMeta:HasPowerUP()
 	if CLIENT then
-		if self:GetNWString("spb_PowerUP", "none") != "none" then
+		if self:GetNWString("spb_PowerUP", "none") ~= "none" then
 			return true
 		else
 			return false
 		end
 	end
-	if self.SPB_PowerUP and self.SPB_PowerUP != "none" then
+	if self.SPB_PowerUP and self.SPB_PowerUP ~= "none" then
 		return true
 	else
 		return false

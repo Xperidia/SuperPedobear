@@ -13,6 +13,7 @@
 		"desktop.ini",
 		"Thumbs.db",
 		"CODEOWNERS",
-		"semver.lua/*"
+		"semver.lua/*",
+		"glualint.json"
 	]
 }

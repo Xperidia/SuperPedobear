@@ -16,7 +16,6 @@
 		"*.sh",
 		"*.py*",
 		"*.vmf",
-		"*.fgd",
 		"*.gma",
 		"desktop.ini",
 		"Thumbs.db",

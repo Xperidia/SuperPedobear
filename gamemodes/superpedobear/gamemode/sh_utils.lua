@@ -340,3 +340,55 @@ function GM.AutoCompletePowerUP(cmd, args)
 	return tbl
 
 end
+
+-- This should probably only be called clientside.
+function GM:FormatLangPhrase(phrase, ...)
+
+	local args = {...}
+
+	for k, v in pairs(args) do
+
+		if isstring(v) then
+
+			args[k] = self:GetCensoredPhrase(v)
+
+		end
+
+	end
+
+	return string.format(self:GetCensoredPhrase(phrase), unpack(args))
+
+end
+
+function GM:GetCensoredPhrase(str)
+
+	if not isstring(str) or #str < 1 then return str end
+
+	if str[1] ~= "$" then
+		--TODO: maybe implement actual global censoring
+		return str
+	end
+
+	str = string.Right(str, #str - 1)
+
+	if #str > 2 and string.Right(str, 2) == ".x" then
+
+		local level = spb_censoring_level:GetInt()
+
+		if level >= 0 and level <= 2 then
+			str = string.Left(str, #str - 1) .. level
+		else
+			str = string.Left(str, #str - 1) .. "0"
+		end
+
+	end
+
+	--[[	This library/function does not seems exist on SERVER
+					so here is this check if it ever does			]]
+	if not language or not language.GetPhrase then
+		return str
+	end
+
+	return language.GetPhrase(str)
+
+end

@@ -155,6 +155,11 @@ function GM:Initialize()
 
 		RunConsoleCommand("sv_playermodel_selector_force", "0") --This is needed so bears won't get overriden
 
+		for _, v in pairs(self:ListLocalizationFiles()) do
+			self:Log("Adding " .. v)
+			resource.AddFile(v)
+		end
+
 	end
 
 	GAMEMODE:BuildMusicIndex()

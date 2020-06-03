@@ -392,3 +392,32 @@ function GM:GetCensoredPhrase(str)
 	return language.GetPhrase(str)
 
 end
+
+function GM:ListLocalizationFiles()
+
+	local list = {}
+	local location = "resource/localization/"
+
+	local _, folders = file.Find(location .. "*", "GAME")
+
+	for _, folder in pairs(folders) do
+
+		local location2 = location .. folder .. "/"
+
+		local files = file.Find(location2 .. "*", "GAME")
+
+		for _, file in pairs(files) do
+
+			if string.Left(file, 13) == "superpedobear" then
+
+				table.insert(list, location2 .. file)
+
+			end
+
+		end
+
+	end
+
+	return list
+
+end

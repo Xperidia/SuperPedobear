@@ -169,21 +169,36 @@ net.Receive("spb_MapList", function(len)
 	GAMEMODE.MapList = net.ReadTable()
 end)
 
-hook.Add("HUDShouldDraw", "HideHUD", function(name)
+
+local HUDhide = {
+	CHudAmmo = true,
+	CHudBattery = true,
+	CHudDamageIndicator = true,
+	CHudGeiger = true,
+	CHudHealth = true,
+	CHudPoisonDamageIndicator = true,
+	CHudSecondaryAmmo = true,
+	CHudSquadStatus = true,
+	CHudZoom = true,
+	CHUDQuickInfo = true,
+	CHudSuitPower = true,
+}
+
+function GM:HUDShouldDraw(name)
+
 	local ply = LocalPlayer()
-	local HUDhide = {
-		CHudHealth = true,
-		CHudBattery = true,
-		CHudDamageIndicator = true,
-		CHudWeaponSelection = (ply.GetWeapons and table.Count(ply:GetWeapons()) < 2) or IsValid(GAMEMODE.VanFrame),
-		CHudZoom = true
-	}
+
 	if name == "CHudCrosshair" and ply:Team() == TEAM_UNASSIGNED then
 		return false
+	elseif name == "CHudWeaponSelection" and (ply.GetWeapons and table.Count(ply:GetWeapons()) < 2) or IsValid(GAMEMODE.VanFrame) then
+			return false
 	elseif HUDhide[name] then
 		return false
 	end
-end)
+
+	return BaseClass.HUDShouldDraw(self, name)
+
+end
 
 function GM:LimitString(str, size, font)
 	surface.SetFont(font)

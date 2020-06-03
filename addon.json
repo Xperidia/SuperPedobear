@@ -21,6 +21,7 @@
 		"Thumbs.db",
 		"CODEOWNERS",
 		"semver.lua/*",
-		"glualint.json"
+		"glualint.json",
+		"gamemodes/*/content/*"
 	]
 }

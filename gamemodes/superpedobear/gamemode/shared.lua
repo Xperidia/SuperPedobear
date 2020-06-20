@@ -106,10 +106,6 @@ function GM:Initialize()
 		file.CreateDir("superpedobear")
 	end
 
-	if game.GetMap() == "spb_tutorial" then
-		GAMEMODE.Vars.Tutorial = true
-	end
-
 	if CLIENT then
 
 		self:CreateScaledFonts()

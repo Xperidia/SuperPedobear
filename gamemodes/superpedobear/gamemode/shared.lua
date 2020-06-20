@@ -16,6 +16,7 @@ GM.Website 		= "steamcommunity.com/sharedfiles/filedetails/?id=628449407"
 GM.Version 		= v"0.2.3"
 GM.VersionDate 	= 200620
 GM.TeamBased 	= true
+GM.IsSPBDerived	= true
 
 TEAM_HIDING	= 1
 TEAM_SEEKER	= 2

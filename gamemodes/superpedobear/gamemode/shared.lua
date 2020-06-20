@@ -146,7 +146,7 @@ function GM:Initialize()
 		GAMEMODE:ListMaps()
 
 		if GetConVar("sv_loadingurl"):GetString() == "" then --Use the Xperidia's loading screen if no other loading screen is defined... Because it shows more information than the current default of Garry's Mod...
-			RunConsoleCommand("sv_loadingurl", "https://assets.xperidia.com/garrysmod/loading.html#auto")
+			RunConsoleCommand("sv_loadingurl", "https://assets.xperidia.com/garrysmod/loading.html#auto-spb")
 		end
 
 		RunConsoleCommand("sv_playermodel_selector_force", "0") --This is needed so bears won't get overriden
@@ -166,10 +166,14 @@ function GM:Initialize()
 
 end
 
+local a_load_scrn_urls = {
+	["https://assets.xperidia.com/garrysmod/loading.html#auto-spb"] = true,
+	["https://assets.xperidia.com/garrysmod/loading.html#auto"] = true,
+	["https://xperidia.com/GMOD/loading/?auto"] = true,
+}
+
 function GM:ShutDown()
-	if SERVER
-	and	(GetConVar("sv_loadingurl"):GetString() == "https://assets.xperidia.com/garrysmod/loading.html#auto"
-	or	GetConVar("sv_loadingurl"):GetString() == "https://xperidia.com/GMOD/loading/?auto") then
+	if SERVER and a_load_scrn_urls[GetConVar("sv_loadingurl"):GetString()] then
 		RunConsoleCommand("sv_loadingurl", "") --Put back the default Garry's Mod loading screen...
 	end
 end

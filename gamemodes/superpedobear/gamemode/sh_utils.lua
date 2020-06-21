@@ -392,3 +392,36 @@ function GM:GetCensoredPhrase(str)
 	return language.GetPhrase(str)
 
 end
+
+local a_load_scrn_urls = {
+	["https://assets.xperidia.com/garrysmod/loading.html#auto-spb"] = true,
+	["https://assets.xperidia.com/garrysmod/loading.html#auto"] = true,
+	["https://xperidia.com/GMOD/loading/?auto"] = true,
+}
+
+local ls_url = "https://assets.xperidia.com/garrysmod/loading.html#auto-spb"
+
+--[[----------------------------------------------------------------------------
+	Use the Xperidia's loading screen if no other loading screen is defined...
+	Because it shows more information than the current default of Garry's Mod...
+------------------------------------------------------------------------------]]
+function GM:SetAutoLoadingScreen()
+
+	local c_url = GetConVar("sv_loadingurl"):GetString()
+
+	if c_url ~= "" and not a_load_scrn_urls[c_url] then
+		return
+	end
+
+	RunConsoleCommand("sv_loadingurl", ls_url)
+
+end
+
+--Put back the default Garry's Mod loading screen...
+function GM:RemoveAutoLoadingScreen()
+
+	if a_load_scrn_urls[GetConVar("sv_loadingurl"):GetString()] then
+		RunConsoleCommand("sv_loadingurl", "")
+	end
+
+end

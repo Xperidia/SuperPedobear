@@ -94,7 +94,7 @@ function GM:GetScaledFont(fname)
 
 		return scaled_font_name(fname)
 
-	elseif !self.CreatedFonts[scaled_font_name(fname)] and fonts[fname] then
+	elseif not self.CreatedFonts[scaled_font_name(fname)] and fonts[fname] then
 
 		return self:CreateScaledFont(fname, fonts[fname][1], fonts[fname][2])
 

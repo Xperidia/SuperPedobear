@@ -1083,10 +1083,23 @@ function GM:EntityTakeDamage(target, dmg)
 end
 
 function GM:SendMusicIndex(ply)
+
+	if not self.Musics.musics or #self.Musics.musics == 0
+	or not self.Musics.premusics or #self.Musics.premusics == 0 then
+		return
+	end
+
 	net.Start("spb_MusicList")
-		net.WriteTable(GAMEMODE.Musics.musics)
-		net.WriteTable(GAMEMODE.Musics.premusics)
-	if IsValid(ply) then net.Send(ply) else net.Broadcast() end
+
+		net.WriteTable(self.Musics.musics or {})
+		net.WriteTable(self.Musics.premusics or {})
+
+	if IsValid(ply) then
+		net.Send(ply)
+	else
+		net.Broadcast()
+	end
+
 end
 
 function GM:SendTauntIndex(ply)

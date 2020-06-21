@@ -5,10 +5,10 @@
 
 function GM:HUDPaint()
 
-	if !GetConVar("cl_drawhud"):GetBool() then return end
+	if not GetConVar("cl_drawhud"):GetBool() then return end
 
 	if GetConVar("spb_cl_hud_html_enable"):GetBool() then
-		if !self.HTML_HUD_LOADED then
+		if not self.HTML_HUD_LOADED then
 			self:DrawLegacyHUD()
 		end
 		self:HTML_HUD()
@@ -134,7 +134,7 @@ function GM:HUD_Values()
 	v.P = {}
 	v.P.ply				= LocalPlayer()
 	v.P.sply			= v.P.ply:GetObserverTarget() or v.P.ply
-	if !v.P.sply:IsPlayer() then
+	if not v.P.sply:IsPlayer() then
 		v.P.sply		= v.P.ply
 	end
 	v.P.plyAlive		= v.P.ply:Alive()
@@ -142,7 +142,7 @@ function GM:HUD_Values()
 	v.P.splyAlive		= v.P.sply:Alive()
 	v.P.splyTeam		= v.P.sply:Team()
 	v.P.color			= v.P.sply:GetPlayerColor():ToColor()
-	if !v.P.splyAlive then
+	if not v.P.splyAlive then
 		v.P.color		= team.GetColor(v.P.splyTeam)
 	end
 	v.P.welding			= v.P.sply:GetNWEntity("spb_Welding")
@@ -193,7 +193,7 @@ function GM:HUD_ClockLogic(v)
 		end
 	elseif v.R.End or v.R.TempEnd then
 		time_val = v.R.LastTime
-	elseif !v.R.Start and !v.R.Pre2Time then
+	elseif not v.R.Start and not v.R.Pre2Time then
 		if rounds <= 1 then
 			time_val = 40
 		else
@@ -271,7 +271,7 @@ function GM:DrawLegacyHUD()
 	if game.SinglePlayer() then
 		rndtxth = self:DrawLegacyRoundStrHUD(V, self:FormatLangPhrase("$spb_singleplayer_warn.1", "$maxplayers_1"), rndtxth)
 		rndtxth = self:DrawLegacyRoundStrHUD(V, self:FormatLangPhrase("$spb_singleplayer_warn.2", "$maxplayers_2"), rndtxth)
-	elseif V.R.PreStart or (!V.R.Start and V.victims < 2) then
+	elseif V.R.PreStart or (not V.R.Start and V.victims < 2) then
 		rndtxth = self:DrawLegacyRoundStrHUD(V, self:FormatLangPhrase("$spb_round.waiting_for_players", "$players"), rndtxth)
 	elseif V.R.Pre2Start then
 		if V.P.plyTeam == TEAM_HIDING then
@@ -292,7 +292,7 @@ function GM:DrawLegacyHUD()
 
 	--[[ THE BEAR SHOWCASE ]]--
 
-	if V.R.Start and !V.R.PreStart then
+	if V.R.Start and not V.R.PreStart then
 
 		local txt = ""
 		local w, h = 0, 0
@@ -305,13 +305,13 @@ function GM:DrawLegacyHUD()
 					else
 						txt = self:FormatLangPhrase("$spb_player_is_a", v:Nick(), "$spb_seeker.x")
 					end
-				elseif IsValid(v) and v:Alive() and txt != "" then
+				elseif IsValid(v) and v:Alive() and txt ~= "" then
 					txt = txt .. "\n" .. self:FormatLangPhrase("$spb_player_is_a", v:Nick(), "$spb_seeker.x")
 				end
 			end
 		end
 
-		if txt != "" then
+		if txt ~= "" then
 			surface.SetFont(self:GetScaledFont("spb_HT"))
 			w, h = surface.GetTextSize(txt)
 			draw.RoundedBox(0, V.hudoffset_w, V.hudoffset_h, w + V.spacer * 2, h + V.spacer * 2, Color(0, 0, 0, 200))
@@ -336,14 +336,14 @@ function GM:DrawLegacyHUD()
 		surface.DrawOutlinedRect(ScrW() / 2 - w / 2 - V.spacer / 2, ScrH() / 2 - h / 2, w + V.spacer, h)
 	end
 
-	if !V.hide_tips then --[[ ALL GENERIC TIPS ]]--
+	if not V.hide_tips then --[[ ALL GENERIC TIPS ]]--
 
 		--[[ THE TIPS MESSAGES ]]--
 
 		local w, h = 0, 0
 		local tips = ""
 
-		if (V.P.plyTeam == TEAM_HIDING and V.R.Start and !V.P.plyAlive) or V.P.plyTeam == TEAM_SPECTATOR then
+		if (V.P.plyTeam == TEAM_HIDING and V.R.Start and not V.P.plyAlive) or V.P.plyTeam == TEAM_SPECTATOR then
 			tips = self:FormatLangPhrase("$spb.tips.spectating", self:CheckBind("+attack"), self:CheckBind("+attack2"), self:CheckBind("+jump"))
 		elseif V.P.plyAlive and V.P.plyTeam == TEAM_HIDING and V.P.wep == "spb_hiding" then
 			tips = self:FormatLangPhrase("$spb.tips.hiding", self:CheckBind("+attack"), self:CheckBind("+attack2"))
@@ -351,7 +351,7 @@ function GM:DrawLegacyHUD()
 			tips = self:FormatLangPhrase("$spb.tips.seeker", self:CheckBind("+attack"))
 		end
 
-		if tips != "" then
+		if tips ~= "" then
 			surface.SetFont(self:GetScaledFont("spb_HT"))
 			w, h = surface.GetTextSize(tips)
 			surface.SetDrawColor(Color(0, 0, 0, 200))
@@ -369,7 +369,7 @@ function GM:DrawLegacyHUD()
 
 		if V.P.plyTeam == TEAM_UNASSIGNED then
 			qtips = language.GetPhrase("spb.tips.join")
-		elseif V.P.plyTeam == TEAM_HIDING and !V.R.Start and !V.P.plyAlive then
+		elseif V.P.plyTeam == TEAM_HIDING and not V.R.Start and not V.P.plyAlive then
 			qtips = language.GetPhrase("spb.tips.respawn")
 		end
 		if qtips then
@@ -421,7 +421,7 @@ function GM:DrawLegacyHUD()
 			sprintlock = V.P.sply:GetNWInt("spb_SprintLock", false)
 		end
 
-		if V.P.ply != V.P.sply and V.P.splyAlive then
+		if V.P.ply ~= V.P.sply and V.P.splyAlive then
 
 			local LastTaunt = V.P.sply:GetNWInt("spb_LastTaunt", 0)
 			local TauntCooldown = V.P.sply:GetNWInt("spb_TauntCooldown", 0) - CurTime()
@@ -437,11 +437,11 @@ function GM:DrawLegacyHUD()
 
 
 		local cloaktime = V.P.sply:GetNWFloat("spb_CloakTime", 0)
-		if cloaktime != 0 and cloaktime > CurTime() then
+		if cloaktime ~= 0 and cloaktime > CurTime() then
 			cloak = math.Remap(cloaktime - CurTime(), 0, spb_powerup_cloak_time:GetFloat(), 0, base_value)
 		end
 		local radartime = V.P.sply:GetNWFloat("spb_RadarTime", 0)
-		if radartime != 0 and radartime > CurTime() then
+		if radartime ~= 0 and radartime > CurTime() then
 			radar = math.Remap(radartime - CurTime(), 0, spb_powerup_radar_time:GetFloat(), 0, base_value)
 		end
 
@@ -461,16 +461,16 @@ function GM:DrawLegacyHUD()
 		end
 
 		if V.P.splyAlive then
-			if (V.R.Start or stamina != base_value) and V.P.splyTeam == TEAM_HIDING then
+			if (V.R.Start or stamina ~= base_value) and V.P.splyTeam == TEAM_HIDING then
 				MakeBar("STAMINA", stamina, sprintlock)
 			end
-			if taunt != base_value then
+			if taunt ~= base_value then
 				MakeBar("TAUNT", taunt)
 			end
-			if radar != base_value then
+			if radar ~= base_value then
 				MakeBar("RADAR", radar)
 			end
-			if cloak != base_value then
+			if cloak ~= base_value then
 				MakeBar("CLOAK", cloak)
 			end
 		end
@@ -483,13 +483,13 @@ function GM:DrawLegacyHUD()
 		surface.DrawTexturedRect(V.hudoffset_w, ScrH() - base_value - V.hudoffset_h, base_value, base_value)
 		surface.SetDrawColor(Color(0, 0, 0, 255))
 		surface.DrawOutlinedRect(V.hudoffset_w, ScrH() - base_value - V.hudoffset_h, base_value, base_value)
-	elseif V.P.plyTeam != TEAM_UNASSIGNED and V.P.splyTeam != TEAM_SPECTATOR then
+	elseif V.P.plyTeam ~= TEAM_UNASSIGNED and V.P.splyTeam ~= TEAM_SPECTATOR then
 		self:DrawHealthFace(V.P.sply, V.hudoffset_w, ScrH() - base_value - V.hudoffset_h, base_value, base_value)
 		surface.SetDrawColor(Color(0, 0, 0, 255))
 		surface.DrawOutlinedRect(V.hudoffset_w, ScrH() - base_value - V.hudoffset_h, base_value, base_value)
 	end
 
-	if V.P.plyTeam != TEAM_UNASSIGNED and V.P.splyTeam != TEAM_SPECTATOR then
+	if V.P.plyTeam ~= TEAM_UNASSIGNED and V.P.splyTeam ~= TEAM_SPECTATOR then
 		local splynick = self:LimitString(V.P.sply:Nick(), base_value, self:GetScaledFont("spb_HUDname"))
 		local rankname = self:LimitString(V.P.sply:GetNWString("XperidiaRankName", nil) or "", base_value, self:GetScaledFont("spb_HUDname"))
 		local rankcolor = string.ToColor(V.P.sply:GetNWString("XperidiaRankColor", "255 255 255 255"))
@@ -533,7 +533,7 @@ function GM:DrawLegacyHUD()
 					local tend = math.Remap(math.Clamp(v.Offset, 0, oh), 0, oh, 1, 0)
 					surface.DrawTexturedRectUV(ox, oy + v.Offset, ow, oh * tend, 0, 0, 1, tend)
 				end
-				if anim_time - 1 > CurTime() or (anim_time - 1 <= CurTime() and V.P.sply.AnimSetup[V.P.sply:GetPowerUP()].Offset != 0) then
+				if anim_time - 1 > CurTime() or (anim_time - 1 <= CurTime() and V.P.sply.AnimSetup[V.P.sply:GetPowerUP()].Offset ~= 0) then
 					if V.P.sply.AnimSetup[k].Offset > oh * (table.Count(V.P.sply.AnimSetup) - 1) then
 						V.P.sply.AnimSetup[k].Offset = -oh
 					else
@@ -543,7 +543,7 @@ function GM:DrawLegacyHUD()
 			end
 		elseif V.P.sply:HasPowerUP() and anim_progress then
 			local offset = 0
-			if !V.P.sply.AnimSetup then V.P.sply.AnimSetup = {} else table.Empty(V.P.sply.AnimSetup) end
+			if not V.P.sply.AnimSetup then V.P.sply.AnimSetup = {} else table.Empty(V.P.sply.AnimSetup) end
 			--V.P.sply.AnimStart = CurTime()
 			for k, v in RandomPairs(self.PowerUps) do
 				V.P.sply.AnimSetup[k] = {}
@@ -559,7 +559,7 @@ function GM:DrawLegacyHUD()
 				surface.SetDrawColor(Color(52, 190, 236, 255))
 			end
 			surface.SetMaterial(powerup[3])
-			if (V.P.swep == "spb_hiding" or V.P.swep == "spb_seeker") and !V.R.End then
+			if (V.P.swep == "spb_hiding" or V.P.swep == "spb_seeker") and not V.R.End then
 				surface.DrawTexturedRect(ox + BreathEffect(self:ScreenScaleMin(25)) / 2, oy + BreathEffect(self:ScreenScaleMin(25)) / 2, ow - BreathEffect(self:ScreenScaleMin(25)), oh - BreathEffect(self:ScreenScaleMin(25)))
 			else
 				surface.DrawTexturedRect(ox, oy, ow, oh)
@@ -572,9 +572,9 @@ function GM:DrawLegacyHUD()
 		surface.SetDrawColor(Color(0, 0, 0, 255))
 		surface.DrawOutlinedRect(ox, oy, ow, oh)
 
-		if !V.hide_tips then
+		if not V.hide_tips then
 			local usetip
-			if V.P.ply:HasPowerUP() and !anim_progress and (V.P.wep == "spb_hiding" or V.P.wep == "spb_seeker") then
+			if V.P.ply:HasPowerUP() and not anim_progress and (V.P.wep == "spb_hiding" or V.P.wep == "spb_seeker") then
 				usetip = self:FormatLangPhrase("$spb.tips.use", self:CheckBind("+reload"))
 			end
 			if usetip then
@@ -608,7 +608,7 @@ function GM:DrawLegacyHUD()
 
 		local ctitle = self.Vars.CurrentMusicName
 		local rtitle
-		if ctitle and ctitle != "" then
+		if ctitle and ctitle ~= "" then
 			rtitle = ctitle
 		else
 			rtitle = self:PrettyMusicName(string.GetFileFromFilename(self.Vars.Music:GetFileName()))
@@ -661,7 +661,7 @@ function GM:DrawLegacyHUD()
 
 		end
 
-		if !V.hide_tips then
+		if not V.hide_tips then
 			local usetip = self:FormatLangPhrase("$spb.tips.settings", self:CheckBind("gm_showspare2"))
 			if usetip then
 				local tw, th = surface.GetTextSize(usetip)
@@ -707,20 +707,20 @@ end
 
 local function SameBodyGroups(self, ply)
 	for k, v in pairs(self:GetBodyGroups()) do
-		if self:GetBodygroup(v.id) != ply:GetBodygroup(v.id) then return false end
+		if self:GetBodygroup(v.id) ~= ply:GetBodygroup(v.id) then return false end
 	end
 	return true
 end
 
 function GM:DrawHealthFace(ply, x, y, w, h)
 
-	if !IsValid(self.HealthFace) then
+	if not IsValid(self.HealthFace) then
 		self:CreateHealthFace(ply)
 	end
 
 	if IsValid(self.HealthFace) then
 
-		if self.HealthFace:GetModel() != ply:GetModel() or self.HealthFace:GetSkin() != ply:GetSkin() or !SameBodyGroups(self.HealthFace, ply) then
+		if self.HealthFace:GetModel() ~= ply:GetModel() or self.HealthFace:GetSkin() ~= ply:GetSkin() or not SameBodyGroups(self.HealthFace, ply) then
 			self:CreateHealthFace(ply)
 		end
 
@@ -731,14 +731,14 @@ function GM:DrawHealthFace(ply, x, y, w, h)
 			seqname = ply:GetSequenceName(seq)
 		end]]
 
-		if !ply:Alive() and self.LastSeq != 0 then
+		if not ply:Alive() and self.LastSeq ~= 0 then
 			local iSeq = 0
 			self.HealthFace:SetSequence(iSeq)
 			self.HealthFace:ResetSequenceInfo()
 			self.HealthFace:SetCycle(0)
 			self.HealthFace:SetPlaybackRate(1)
 			self.LastSeq = iSeq
-		elseif ply:Alive() and self.LastSeq != seq then
+		elseif ply:Alive() and self.LastSeq ~= seq then
 			local iSeq = seq or 0
 			self.HealthFace:SetSequence(iSeq)
 			self.HealthFace:ResetSequenceInfo()
@@ -749,7 +749,7 @@ function GM:DrawHealthFace(ply, x, y, w, h)
 		--print(ply:GetSequenceList()[ply:GetSequence()])
 		--PrintTable(ply:GetSequenceList())
 
-		if self.HealthFace.PlayerColor != ply:GetPlayerColor() then
+		if self.HealthFace.PlayerColor ~= ply:GetPlayerColor() then
 			self.HealthFace.PlayerColor = ply:GetPlayerColor()
 		end
 
@@ -795,8 +795,8 @@ function GM:HUDDrawTargetID()
 
 	local tr = util.GetPlayerTrace(LocalPlayer())
 	local trace = util.TraceLine(tr)
-	if !trace.Hit then return end
-	if !trace.HitNonWorld then return end
+	if not trace.Hit then return end
+	if not trace.HitNonWorld then return end
 	local ply = LocalPlayer()
 	if ply:GetObserverMode() == OBS_MODE_CHASE then return end
 
@@ -804,7 +804,7 @@ function GM:HUDDrawTargetID()
 	local font = "DermaLarge"
 
 
-	if (trace.Entity:IsPlayer() and !trace.Entity:IsCloaked()) or trace.Entity:GetClass() == "spb_dummy" then
+	if (trace.Entity:IsPlayer() and not trace.Entity:IsCloaked()) or trace.Entity:GetClass() == "spb_dummy" then
 		text = trace.Entity:Nick()
 	end
 

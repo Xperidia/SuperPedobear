@@ -103,7 +103,7 @@ function GM:Initialize()
 		table.insert(self.Sounds.Death, Sound("superpedobear/death/" .. v))
 	end
 
-	if !file.IsDir("superpedobear", "DATA") then
+	if not file.IsDir("superpedobear", "DATA") then
 		file.CreateDir("superpedobear")
 	end
 

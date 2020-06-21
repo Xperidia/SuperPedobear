@@ -18,7 +18,7 @@ function GM:ScreenScaleMin(size)
 	local ratio = scale_ratio_cache[size] or size / 1080
 
 	--Cache the ratio
-	if !scale_ratio_cache[size] then
+	if not scale_ratio_cache[size] then
 		scale_ratio_cache[size] = ratio
 	end
 
@@ -32,7 +32,7 @@ end
 -----------------------------------------------------------]]
 function GM:ScreenScale(width, height)
 
-	if !scale_ratio_cache.last_height then
+	if not scale_ratio_cache.last_height then
 
 		--Save current screen height
 		scale_ratio_cache.last_height = ScrH()

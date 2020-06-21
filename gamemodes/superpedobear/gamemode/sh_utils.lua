@@ -33,13 +33,13 @@ function GM:LogToFile(str)
 end
 
 function GM:GetHost()
-	if GAMEMODE.Vars.Host and IsValid(GAMEMODE.Vars.Host) then
-		return GAMEMODE.Vars.Host
+	if self.Vars.Host and IsValid(self.Vars.Host) then
+		return self.Vars.Host
 	end
 	for _, v in pairs(player.GetAll()) do
 		local host = v:GetNWBool("IsListenServerHost", false)
 		if host then
-			GAMEMODE.Vars.Host = v
+			self.Vars.Host = v
 			return v
 		end
 	end
@@ -83,7 +83,7 @@ function GM.PlayerMeta:IsCloaked()
 end
 
 function GM:SelectRandomPowerUP(ply)
-	for k, v in RandomPairs(GAMEMODE.PowerUps) do
+	for k, v in RandomPairs(self.PowerUps) do
 		if not IsValid(ply) or v[2] == ply:Team() or v[2] == 0 then
 			return k
 		end
@@ -117,8 +117,8 @@ function GM:GetPowerUpPrice(id, ply, ignorereduc)
 		price = price * -1
 		ignoreadd = true
 	end
-	if not ignoreadd and GAMEMODE.PowerUps[id] and GAMEMODE.PowerUps[id][5] then
-		price = price + GAMEMODE.PowerUps[id][5]
+	if not ignoreadd and self.PowerUps[id] and self.PowerUps[id][5] then
+		price = price + self.PowerUps[id][5]
 	end
 	if not ignorereduc and ply:GetNWInt("XperidiaRank", 0) > 0 then
 		price = price / 2
@@ -132,7 +132,7 @@ end
 
 function GM:IsSeasonalEvent(str)
 	local Timestamp = os.time()
-	for _, v in pairs(GAMEMODE.SeasonalEvents) do
+	for _, v in pairs(self.SeasonalEvents) do
 		local i = 0
 		if str == v[1] then
 			while v[3 + i] do
@@ -148,7 +148,7 @@ end
 
 function GM:SeasonalEventStr()
 	local Timestamp = os.time()
-	for _, v in pairs(GAMEMODE.SeasonalEvents) do
+	for _, v in pairs(self.SeasonalEvents) do
 		local i = 0
 		while v[3 + i] do
 			if (os.date("%d/%m", Timestamp) == v[3 + i]) then
@@ -217,12 +217,12 @@ function GM:BuildMusicIndex()
 	local premusiclist = ReadMusicInfo(true)
 
 	if SERVER then
-		GAMEMODE.Musics.musics = musiclist
-		GAMEMODE.Musics.premusics = premusiclist
-		if not game.IsDedicated() then GAMEMODE:SendMusicIndex() end
+		self.Musics.musics = musiclist
+		self.Musics.premusics = premusiclist
+		if not game.IsDedicated() then self:SendMusicIndex() end
 	else
-		GAMEMODE.LocalMusics.musics = musiclist
-		GAMEMODE.LocalMusics.premusics = premusiclist
+		self.LocalMusics.musics = musiclist
+		self.LocalMusics.premusics = premusiclist
 	end
 
 end
@@ -256,8 +256,8 @@ function GM:BuildTauntIndex()
 
 		local tauntlist = ReadTauntInfo()
 
-		GAMEMODE.Taunts = tauntlist
-		if not game.IsDedicated() then GAMEMODE:SendTauntIndex() end
+		self.Taunts = tauntlist
+		if not game.IsDedicated() then self:SendTauntIndex() end
 
 	end
 
@@ -325,7 +325,7 @@ function GM.AutoCompletePowerUP(cmd, args)
 
 	local tbl = {}
 
-	for k, v in pairs(GAMEMODE.PowerUps) do
+	for k, v in pairs(self.PowerUps) do
 
 		if string.find(k, args) then
 

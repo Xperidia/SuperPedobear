@@ -66,7 +66,7 @@ function GM:Initialize()
 		channel = CHAN_STATIC,
 		volume = 1.0,
 		level = 0,
-		sound = GAMEMODE.Sounds.YoureTheBear
+		sound = self.Sounds.YoureTheBear
 	})
 
 	spb_enabledevmode = CreateConVar("spb_enabledevmode", 0, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Dev mode and more logs.")
@@ -94,13 +94,13 @@ function GM:Initialize()
 	local damagesnd = file.Find("sound/superpedobear/damage/*.ogg", "GAME")
 
 	for _, v in pairs(damagesnd) do
-		table.insert(GAMEMODE.Sounds.Damage, Sound("superpedobear/damage/" .. v))
+		table.insert(self.Sounds.Damage, Sound("superpedobear/damage/" .. v))
 	end
 
 	local deathsnd = file.Find("sound/superpedobear/death/*.ogg", "GAME")
 
 	for _, v in pairs(deathsnd) do
-		table.insert(GAMEMODE.Sounds.Death, Sound("superpedobear/death/" .. v))
+		table.insert(self.Sounds.Death, Sound("superpedobear/death/" .. v))
 	end
 
 	if !file.IsDir("superpedobear", "DATA") then
@@ -125,17 +125,17 @@ function GM:Initialize()
 		CreateClientConVar("spb_cl_hud_html_enable", 0, true, false, "Enable the HTML HUD. It will fallback on legacy HUD if it couldn't load.") --TODO: Make it default when ready to use.
 
 		cvars.AddChangeCallback("spb_cl_music_volume", function(convar_name, value_old, value_new)
-			if IsValid(GAMEMODE.Vars.Music) then
-				GAMEMODE.Vars.Music:SetVolume(GetConVar("spb_cl_music_volume"):GetFloat())
+			if IsValid(self.Vars.Music) then
+				self.Vars.Music:SetVolume(GetConVar("spb_cl_music_volume"):GetFloat())
 			end
 		end)
 		cvars.AddChangeCallback("spb_cl_music_enable", function(convar_name, value_old, value_new)
 			value_new = GetConVar("spb_cl_music_enable"):GetBool()
-			if IsValid(GAMEMODE.Vars.Music) and !value_new then
-				GAMEMODE.Vars.Music:Stop()
-				GAMEMODE.Vars.Music = nil
-			elseif value_new and (GAMEMODE.Vars.Round.Start or GAMEMODE.Vars.Round.PreStart) then
-				GAMEMODE:Music(GAMEMODE.Vars.CurrentMusic or "", GAMEMODE.Vars.Round.PreStart)
+			if IsValid(self.Vars.Music) and not value_new then
+				self.Vars.Music:Stop()
+				self.Vars.Music = nil
+			elseif value_new and (self.Vars.Round.Start or self.Vars.Round.PreStart) then
+				self:Music(self.Vars.CurrentMusic or "", self.Vars.Round.PreStart)
 			end
 		end)
 
@@ -143,8 +143,8 @@ function GM:Initialize()
 
 	if SERVER then
 
-		GAMEMODE:BuildDefaultPlayerModelList()
-		GAMEMODE:ListMaps()
+		self:BuildDefaultPlayerModelList()
+		self:ListMaps()
 
 		self:SetAutoLoadingScreen()
 
@@ -152,16 +152,16 @@ function GM:Initialize()
 
 	end
 
-	GAMEMODE:BuildMusicIndex()
-	GAMEMODE:BuildTauntIndex()
+	self:BuildMusicIndex()
+	self:BuildTauntIndex()
 
 	for _, addon in pairs(engine.GetAddons()) do
 		if addon.wsid == "628449407" and addon.mounted then
-			GAMEMODE.MountedfromWorkshop = true
+			self.MountedfromWorkshop = true
 		end
 	end
 
-	GAMEMODE:CheckForNewRelease()
+	self:CheckForNewRelease()
 
 end
 

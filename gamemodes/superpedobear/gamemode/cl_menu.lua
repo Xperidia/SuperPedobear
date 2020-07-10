@@ -158,7 +158,7 @@ function GM:Menu()
 
 	menu.one.text:AppendText("Gamemode made by VictorienXP, with arts from Pho3 and Wubsy...\n\n")
 
-	if self.LatestRelease then
+	if self.LatestRelease.Version then
 		if self.LatestRelease.Newer then
 			menu.one.text:InsertColorChange(192, 0, 0, 255)
 			menu.one.text:AppendText("There is a new release available! ")

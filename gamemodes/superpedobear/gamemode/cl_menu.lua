@@ -159,6 +159,7 @@ function GM:Menu()
 	menu.one.text:AppendText("Gamemode made by VictorienXP, with arts from Pho3 and Wubsy...\n\n")
 
 	if self.LatestRelease.Version then
+
 		if self.LatestRelease.Newer then
 			menu.one.text:InsertColorChange(192, 0, 0, 255)
 			menu.one.text:AppendText("There is a new release available! ")
@@ -173,9 +174,10 @@ function GM:Menu()
 			menu.one.text:InsertColorChange(192, 0, 192, 255)
 		end
 		menu.one.text:InsertClickableTextStart("LatestRelease")
-		menu.one.text:AppendText((self.LatestRelease.Name or ("v" .. (self.LatestRelease.Version and tostring(self.LatestRelease.Version) or "?"))) .. "\n")
+		menu.one.text:AppendText(self.LatestRelease.Name or ("v" .. (self.LatestRelease.Version and tostring(self.LatestRelease.Version) or "?")))
 		menu.one.text:InsertClickableTextEnd()
 		menu.one.text:InsertColorChange(0, 0, 0, 255)
+		menu.one.text:AppendText("\n")
 		if self.LatestRelease.Newer and !self.LatestRelease.prerelease and game.IsDedicated() then
 			menu.one.text:AppendText("Ask the server owner to update the gamemode!\n")
 		elseif self.LatestRelease.Newer and !self.LatestRelease.prerelease and self.MountedfromWorkshop and LocalPlayer():GetNWBool("IsListenServerHost", false) then
@@ -184,6 +186,19 @@ function GM:Menu()
 			menu.one.text:AppendText("Don't forget to update!\n")
 		end
 		menu.one.text:AppendText("\n")
+
+	else
+
+		menu.one.text:AppendText("Couldn't fetch the ")
+		menu.one.text:InsertClickableTextStart("LatestRelease")
+			menu.one.text:AppendText("latest release")
+		menu.one.text:InsertClickableTextEnd()
+		menu.one.text:AppendText(".\t")
+		menu.one.text:InsertClickableTextStart("FetchLatestRelease")
+			menu.one.text:AppendText("Retry")
+		menu.one.text:InsertClickableTextEnd()
+		menu.one.text:AppendText("\n\n")
+
 	end
 
 	menu.one.text:InsertClickableTextStart("SplashScreen")
@@ -240,6 +255,9 @@ function GM:Menu()
 				menu:Close()
 			elseif signalValue == "LatestRelease" then
 				gui.OpenURL(GAMEMODE.LatestRelease.URL or "https://github.com/Xperidia/SuperPedobear/releases/latest")
+				menu:Close()
+			elseif signalValue == "FetchLatestRelease" then
+				GAMEMODE:CheckForNewRelease()
 				menu:Close()
 			end
 		end

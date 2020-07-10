@@ -72,7 +72,7 @@ function SWEP:PrimaryAttack()
 
 		local Phys = trace.Entity:GetPhysicsObjectNum(trace.PhysicsBone)
 
-		if not self.laste then
+		if not self.laste or not IsValid(self.laste[1]) then
 			self.laste = { trace.Entity, trace.HitPos, Phys, trace.PhysicsBone, trace.HitNormal }
 		else
 

@@ -1,6 +1,6 @@
 --[[---------------------------------------------------------
 		Super Pedobear Gamemode for Garry's Mod
-				by VictorienXP (2016)
+				by VictorienXP (2016-2020)
 -----------------------------------------------------------]]
 
 AddCSLuaFile()
@@ -33,23 +33,26 @@ SWEP.SlotPos			= 0
 SWEP.DrawAmmo			= false
 SWEP.BounceWeaponIcon	= false
 
-SWEP.ViewModel			= "models/weapons/c_arms.mdl"
+SWEP.ViewModel			= Model("models/weapons/c_arms.mdl")
 SWEP.WorldModel			= ""
+SWEP.ViewModelFOV		= 54
+SWEP.UseHands			= true
 
 function SWEP:Initialize()
 	self:SetHoldType("duel")
 end
 
 function SWEP:PrimaryAttack()
-	if !self.lasttime or self.lasttime + 1 < CurTime() then
-		local tr = util.GetPlayerTrace(self.Owner)
+	if not self.lasttime or self.lasttime + 1 < CurTime() then
+		local owner = self:GetOwner()
+		local tr = util.GetPlayerTrace(owner)
 		local trace = util.TraceLine(tr)
-		if !trace.Hit then return end
-		if !trace.HitNonWorld then return end
+		if not trace.Hit then return end
+		if not trace.HitNonWorld then return end
 		if IsValid(trace.Entity) and trace.Entity:IsPlayer() then return end
 		if SERVER then
 			constraint.RemoveConstraints(trace.Entity, "Weld")
-			self:GangBang(trace.Entity, self.Owner)
+			self:GangBang(trace.Entity, owner)
 		end
 		self.lasttime = CurTime()
 	end
@@ -71,7 +74,7 @@ end
 
 function SWEP:Reload()
 	if SERVER then
-		self.Owner:UsePowerUP()
+		self:GetOwner():UsePowerUP()
 	end
 end
 
@@ -90,10 +93,10 @@ end
 
 function SWEP:Think()
 	if SERVER and GAMEMODE.Vars.Round.Start then
-		local attacker = self.Owner
-		for k, v in pairs(ents.FindInSphere(self.Owner:GetPos() + Vector(0, 0, 32), 32.2)) do
-			if IsValid(v) and ((v:IsPlayer() and v:Alive() and v:Team() == TEAM_HIDING and self.Owner:IsLineOfSightClear(v)) or v:GetClass() == "spb_dummy") then
-				if !IsValid(attacker) then attacker = self end
+		local attacker = self:GetOwner()
+		for k, v in pairs(ents.FindInSphere(attacker:GetPos() + Vector(0, 0, 32), 32.2)) do
+			if IsValid(v) and ((v:IsPlayer() and v:Alive() and v:Team() == TEAM_HIDING and attacker:IsLineOfSightClear(v)) or v:GetClass() == "spb_dummy") then
+				if not IsValid(attacker) then attacker = self end
 				self:GangBang(v, attacker)
 			end
 		end

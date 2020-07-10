@@ -1,6 +1,6 @@
 --[[---------------------------------------------------------
 		Super Pedobear Gamemode for Garry's Mod
-				by VictorienXP (2016)
+				by VictorienXP (2016-2020)
 -----------------------------------------------------------]]
 
 AddCSLuaFile()
@@ -33,8 +33,10 @@ SWEP.SlotPos			= 0
 SWEP.DrawAmmo			= false
 SWEP.BounceWeaponIcon	= false
 
-SWEP.ViewModel			= "models/weapons/c_arms.mdl"
+SWEP.ViewModel			= Model("models/weapons/c_arms.mdl")
 SWEP.WorldModel			= ""
+SWEP.ViewModelFOV		= 54
+SWEP.UseHands			= true
 
 function SWEP:Initialize()
 	self:SetHoldType("normal")
@@ -44,36 +46,38 @@ function SWEP:PrimaryAttack()
 
 	if SERVER then
 
-		local tr = util.GetPlayerTrace(self.Owner)
+		local owner = self:GetOwner()
+
+		local tr = util.GetPlayerTrace(owner)
 
 		local trace = util.TraceLine(tr)
 
-		if (!trace.Hit) then return end
+		if not trace.Hit then return end
 
-		if (!trace.HitNonWorld) then
+		if not trace.HitNonWorld then
 			self.laste = nil
-			self.Owner:SetNWEntity("spb_Welding", self.Owner)
-			self.Owner:SetNWInt("spb_WeldingState", 0)
+			owner:SetNWEntity("spb_Welding", owner)
+			owner:SetNWInt("spb_WeldingState", 0)
 			return
 		end
 
 		if IsValid(trace.Entity) and trace.Entity:IsPlayer() then return end
 
 		if trace.HitPos:Distance(trace.StartPos) > 100 then
-			self.Owner:SetNWInt("spb_WeldingState", 2)
+			owner:SetNWInt("spb_WeldingState", 2)
 			return
 		end
 
-		if !util.IsValidPhysicsObject( trace.Entity, trace.PhysicsBone ) then return end
+		if not util.IsValidPhysicsObject(trace.Entity, trace.PhysicsBone) then return end
 
-		local Phys = trace.Entity:GetPhysicsObjectNum( trace.PhysicsBone )
+		local Phys = trace.Entity:GetPhysicsObjectNum(trace.PhysicsBone)
 
-		if !self.laste then
+		if not self.laste then
 			self.laste = { trace.Entity, trace.HitPos, Phys, trace.PhysicsBone, trace.HitNormal }
 		else
 
 			if trace.Entity:GetPos():Distance(self.laste[1]:GetPos()) > 100 then
-				self.Owner:SetNWInt("spb_WeldingState", 3)
+				owner:SetNWInt("spb_WeldingState", 3)
 				return
 			end
 
@@ -87,11 +91,11 @@ function SWEP:PrimaryAttack()
 		end
 
 		if self.laste and IsValid(self.laste[1]) then
-			self.Owner:SetNWEntity("spb_Welding", self.laste[1])
-			self.Owner:SetNWInt("spb_WeldingState", 1)
+			owner:SetNWEntity("spb_Welding", self.laste[1])
+			owner:SetNWInt("spb_WeldingState", 1)
 		else
-			self.Owner:SetNWEntity("spb_Welding", self.Owner)
-			self.Owner:SetNWInt("spb_WeldingState", 0)
+			owner:SetNWEntity("spb_Welding", owner)
+			owner:SetNWInt("spb_WeldingState", 0)
 		end
 
 	end
@@ -100,28 +104,30 @@ end
 
 function SWEP:SecondaryAttack()
 	if SERVER then
+		local owner = self:GetOwner()
 		self.laste = nil
-		self.Owner:SetNWEntity("spb_Welding", self.Owner)
-		self.Owner:SetNWInt("spb_WeldingState", 0)
-		local tr = util.GetPlayerTrace(self.Owner)
+		owner:SetNWEntity("spb_Welding", owner)
+		owner:SetNWInt("spb_WeldingState", 0)
+		local tr = util.GetPlayerTrace(owner)
 		local trace = util.TraceLine(tr)
-		if (!trace.Hit) then return end
-		if (!trace.HitNonWorld) then return end
+		if not trace.Hit then return end
+		if not trace.HitNonWorld then return end
 		constraint.RemoveConstraints(trace.Entity, "Weld")
 	end
 end
 
 function SWEP:Reload()
 	if SERVER then
-		self.Owner:UsePowerUP()
+		self:GetOwner():UsePowerUP()
 	end
 end
 
 function SWEP:OnRemove()
 	if SERVER then
+		local owner = self:GetOwner()
 		self.laste = nil
-		self.Owner:SetNWEntity("spb_Welding", self.Owner)
-		self.Owner:SetNWInt("spb_WeldingState", 0)
+		owner:SetNWEntity("spb_Welding", owner)
+		owner:SetNWInt("spb_WeldingState", 0)
 	end
 end
 
@@ -131,9 +137,10 @@ end
 
 function SWEP:OnDrop()
 	if SERVER then
+		local owner = self:GetOwner()
 		self.laste = nil
-		self.Owner:SetNWEntity("spb_Welding", self.Owner)
-		self.Owner:SetNWInt("spb_WeldingState", 0)
+		owner:SetNWEntity("spb_Welding", owner)
+		owner:SetNWInt("spb_WeldingState", 0)
 	end
 	self:Remove()
 end

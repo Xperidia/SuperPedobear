@@ -1223,11 +1223,11 @@ function GM:RetrieveXperidiaAccountRank(ply)
 					end
 				end
 			else
-				self:Log("Error while retriving Xperidia Rank for " .. ply:GetName() .. " (HTTP " .. (statusCode or "?") .. ")")
+				self:DebugLog("Error while retriving Xperidia Rank for " .. ply:GetName() .. " (HTTP " .. (statusCode or "?") .. ")")
 			end
 		end,
 		function(errorMessage)
-			self:Log(errorMessage)
+			self:DebugLog("Error while retriving Xperidia Rank for " .. ply:GetName() .. " (" .. errorMessage .. ")")
 		end)
 	end
 end

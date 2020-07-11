@@ -24,7 +24,7 @@ function PLAYER:Loadout()
 end
 
 function PLAYER:SetModel()
-	self.Player:SetModel(Model("models/player/pbear/pbear.mdl"))
+	self.Player:SetModel(GAMEMODE.Models.Bear)
 end
 
 function PLAYER:Spawn()

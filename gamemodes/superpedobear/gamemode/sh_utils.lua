@@ -3,6 +3,8 @@
 				by VictorienXP (2016-2020)
 -----------------------------------------------------------]]
 
+AddCSLuaFile()
+
 local v = include("semver.lua")
 
 function GM:Log(str, hardcore)

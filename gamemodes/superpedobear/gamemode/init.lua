@@ -4,7 +4,6 @@
 -----------------------------------------------------------]]
 
 AddCSLuaFile("shared.lua")
-AddCSLuaFile("sh_utils.lua")
 AddCSLuaFile("cl_scale.lua")
 AddCSLuaFile("cl_fonts.lua")
 AddCSLuaFile("cl_scoreboard.lua")

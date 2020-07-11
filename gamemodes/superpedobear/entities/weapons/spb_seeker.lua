@@ -35,8 +35,6 @@ SWEP.BounceWeaponIcon	= false
 
 SWEP.ViewModel			= Model("models/weapons/c_arms.mdl")
 SWEP.WorldModel			= ""
-SWEP.ViewModelFOV		= 54
-SWEP.UseHands			= true
 
 function SWEP:Initialize()
 	self:SetHoldType("duel")

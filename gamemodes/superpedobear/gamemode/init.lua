@@ -1595,3 +1595,15 @@ function GM:BuildDefaultPlayerModelList()
 	end
 
 end
+
+function GM:PlayerCanPickupWeapon(ply, entity)
+
+	if entity:GetClass() == "spb_seeker" and ply:Team() == TEAM_SEEKER then
+		return true
+	elseif ply:Team() == TEAM_SEEKER then
+		return false
+	end
+
+	return BaseClass.PlayerCanPickupWeapon(self, ply, entity)
+
+end

@@ -73,23 +73,31 @@ function GM:PlayerInitialSpawn(ply)
 
 end
 
-function GM:PlayerSpawn(ply)
+function GM:PlayerSpawn(ply, transiton)
 
 	local pteam = ply:Team()
 
-	if pteam == TEAM_HIDING or pteam == TEAM_SEEKER then
+	if pteam == TEAM_SPECTATOR or pteam == TEAM_UNASSIGNED then
 
-		local spawnpoints = team.GetSpawnPoints(pteam)
-		local spawnpoint = spawnpoints[math.random(1, #spawnpoints)]
-		if IsValid(spawnpoint) then
-			ply:SetPos(spawnpoint:GetPos())
-		end
-		local classes = team.GetClass(pteam)
-		player_manager.SetPlayerClass(ply, classes[math.random(1, #classes)])
+		self:PlayerSpawnAsSpectator(ply)
+		self:PlayerStats()
+		return
 
 	end
 
-	BaseClass.PlayerSpawn(self, ply)
+	ply:UnSpectate()
+
+	local classes = team.GetClass(pteam)
+	player_manager.SetPlayerClass(ply, classes[math.random(1, #classes)])
+
+	player_manager.OnPlayerSpawn(ply, transiton)
+	player_manager.RunClass(ply, "Spawn")
+
+	hook.Call("PlayerLoadout", self, ply)
+
+	hook.Call("PlayerSetModel", self, ply)
+
+	ply:SetupHands()
 
 	self:PlayerStats()
 

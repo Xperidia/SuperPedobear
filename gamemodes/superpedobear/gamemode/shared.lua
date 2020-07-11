@@ -6,6 +6,7 @@
 DEFINE_BASECLASS("gamemode_base")
 
 include("sh_utils.lua")
+include("player_class/player_spb.lua")
 include("player_class/player_hiding.lua")
 include("player_class/player_seeker.lua")
 local v = include("semver.lua")

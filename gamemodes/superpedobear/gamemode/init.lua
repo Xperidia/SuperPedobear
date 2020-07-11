@@ -1200,7 +1200,7 @@ function GM:PlayerUse(ply, ent)
 
 	end
 
-	return true
+	return BaseClass.PlayerUse(self, ply, ent)
 
 end
 

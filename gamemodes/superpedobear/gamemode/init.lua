@@ -1607,3 +1607,20 @@ function GM:PlayerCanPickupWeapon(ply, entity)
 	return BaseClass.PlayerCanPickupWeapon(self, ply, entity)
 
 end
+
+local forbidden_items = {
+	item_battery = true,
+	item_suit = true,
+}
+
+function GM:PlayerCanPickupItem(ply, entity)
+
+	if ply:Team() == TEAM_SEEKER then
+		return false
+	elseif forbidden_items[entity:GetClass()] then
+		return false
+	end
+
+	return BaseClass.PlayerCanPickupItem(self, ply, entity)
+
+end

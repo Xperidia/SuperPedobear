@@ -1628,3 +1628,30 @@ function GM:PlayerCanPickupItem(ply, entity)
 	return BaseClass.PlayerCanPickupItem(self, ply, entity)
 
 end
+
+function GM:SetupPlayerVisibility(pPlayer, pViewEntity)
+
+	if IsValid(pViewEntity) then
+
+		AddOriginToPVS(pViewEntity:GetPos())
+
+	end
+
+	local radartime = pPlayer:GetNWFloat("spb_RadarTime", 0)
+	local showvictims = radartime ~= 0 and radartime > CurTime()
+
+	if showvictims then
+
+		for k, v in pairs(player.GetAll()) do
+
+			if v:Team() == TEAM_HIDING and v:Alive() then
+
+				AddOriginToPVS(v:GetPos())
+
+			end
+
+		end
+
+	end
+
+end

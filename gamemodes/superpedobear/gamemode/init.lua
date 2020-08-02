@@ -450,6 +450,8 @@ function GM:Think()
 
 	local daplayers = player.GetAll()
 
+	local time = CurTime()
+
 	for k, v in pairs(daplayers) do
 
 		if v:Team() == TEAM_SEEKER then
@@ -467,9 +469,11 @@ function GM:Think()
 			if spb_rainbow_effect:GetBool() then --Rainbow effect~
 				local a = math.Clamp(v:Health(), 0, 100) / 100
 				local doffset = v:EntIndex()
-				v:SetPlayerColor(Vector(	(0.5 * (math.sin((CurTime() * a + doffset) - 1) + 1)) * a,
-											(0.5 * (math.sin(CurTime() * a + doffset) + 1)) * a,
-											(0.5 * (math.sin((CurTime() * a + doffset) + 1) + 1)) * a))
+				local x = time + doffset
+				local r = ( 0.5 * (math.sin(x - 2) + 1) ) * a
+				local g = ( 0.5 * (math.sin(x + 2) + 1) ) * a
+				local b = ( 0.5 * (math.sin(x) + 1) ) * a
+				v:SetPlayerColor(Vector(r, g, b))
 			end
 
 		end

@@ -1654,4 +1654,18 @@ function GM:SetupPlayerVisibility(pPlayer, pViewEntity)
 
 	end
 
+	if not pPlayer:Alive() or pPlayer:Team() == TEAM_SPECTATOR then
+
+		for k, v in pairs(player.GetAll()) do
+
+			if v:Team() == TEAM_HIDING or v:Team() == TEAM_SEEKER and v:Alive() then
+
+				AddOriginToPVS(v:GetPos())
+
+			end
+
+		end
+
+	end
+
 end

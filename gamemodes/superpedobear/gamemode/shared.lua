@@ -117,7 +117,7 @@ function GM:Initialize()
 		self:CreateScaledFonts()
 
 		CreateClientConVar("spb_cl_disabletauntmenuclose", 0, true, false, "Don't close the taunt menu after taunting")
-		CreateClientConVar("spb_cl_disablehalos", 0, true, false, "Disable halos (Improve performance)")
+		CreateClientConVar("spb_cl_disablehalos", 0, true, true, "Disable halos (Improve performance)")
 		CreateClientConVar("spb_cl_music_enable", 1, true, false, "Enable music")
 		CreateClientConVar("spb_cl_music_volume", 0.5, true, false, "Music volume")
 		CreateClientConVar("spb_cl_music_allowexternal", 1, true, false, "Allow external musics (Loaded from url)")

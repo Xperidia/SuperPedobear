@@ -1637,6 +1637,8 @@ function GM:SetupPlayerVisibility(pPlayer, pViewEntity)
 
 	end
 
+	if pPlayer:GetInfoNum("spb_cl_disablehalos", 0) == 1 then return end
+
 	local radartime = pPlayer:GetNWFloat("spb_RadarTime", 0)
 	local showvictims = radartime ~= 0 and radartime > CurTime()
 

@@ -19,6 +19,9 @@ GM.VersionDate 	= 200803
 GM.TeamBased 	= true
 GM.IsSPBDerived	= true
 
+GM.HidingPlayerClass	= { "player_hiding" }
+GM.SeekerPlayerClass	= { "player_seeker" }
+
 TEAM_HIDING	= 1
 TEAM_SEEKER	= 2
 
@@ -180,11 +183,11 @@ function GM:CreateTeams()
 
 	team.SetUp(TEAM_HIDING, "Hiding", Color(247, 127, 190))
 	team.SetSpawnPoint(TEAM_HIDING, {"info_player_start", "info_player_terrorist"})
-	team.SetClass(TEAM_HIDING, {"player_hiding"})
+	team.SetClass(TEAM_HIDING, self.HidingPlayerClass)
 
 	team.SetUp(TEAM_SEEKER, "Seekers", Color(139, 85, 46), false)
 	team.SetSpawnPoint(TEAM_SEEKER, {"info_player_seekers", "info_player_counterterrorist"})
-	team.SetClass(TEAM_SEEKER, {"player_seeker"})
+	team.SetClass(TEAM_SEEKER, self.SeekerPlayerClass)
 
 	team.SetSpawnPoint(TEAM_SPECTATOR, "worldspawn")
 	team.SetSpawnPoint(TEAM_UNASSIGNED, "worldspawn")

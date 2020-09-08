@@ -1,4 +1,19 @@
-![Super Pedobear](https://github.com/Xperidia/SuperPedobear/raw/master/gamemodes/superpedobear/logo.png)
+# ![Super Pedobear](gamemodes/superpedobear/logo.png)
+
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/Xperidia/SuperPedobear?logo=github)](https://github.com/Xperidia/SuperPedobear/releases/latest)
+[![GitHub Release Date](https://img.shields.io/github/release-date/Xperidia/SuperPedobear?logo=github)](https://github.com/Xperidia/SuperPedobear/releases/latest)
+![GitHub commits since latest release (by date)](https://img.shields.io/github/commits-since/Xperidia/SuperPedobear/latest?logo=github)
+![GitHub last commit](https://img.shields.io/github/last-commit/Xperidia/SuperPedobear?logo=github)
+[![GitHub contributors](https://img.shields.io/github/contributors/Xperidia/SuperPedobear?logo=github)](https://github.com/Xperidia/SuperPedobear/graphs/contributors)
+
+[![Steam Update Date](https://img.shields.io/steam/update-date/628449407?logo=steam)](https://steamcommunity.com/sharedfiles/filedetails/?id=628449407)
+[![Steam Views](https://img.shields.io/steam/views/628449407?logo=steam)](https://steamcommunity.com/sharedfiles/filedetails/?id=628449407)
+[![Steam Subscriptions](https://img.shields.io/steam/subscriptions/628449407?logo=steam)](https://steamcommunity.com/sharedfiles/filedetails/?id=628449407)
+[![Steam Downloads](https://img.shields.io/steam/downloads/628449407?logo=steam)](https://steamcommunity.com/sharedfiles/filedetails/?id=628449407)
+[![Steam Favorites](https://img.shields.io/steam/favorites/628449407?logo=steam)](https://steamcommunity.com/sharedfiles/filedetails/?id=628449407)
+[![Steam File Size](https://img.shields.io/steam/size/628449407?logo=steam)](https://steamcommunity.com/sharedfiles/filedetails/?id=628449407)
+
+[![Discord](https://img.shields.io/discord/140113271809245184?logo=discord)](https://discord.com/invite/jtUtYDa)
 
 Meme flavoured hide and seek gamemode!
 _Or also like Escape Pedobear but pvp with power-ups..._

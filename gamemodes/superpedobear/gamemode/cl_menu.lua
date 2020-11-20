@@ -49,6 +49,9 @@ local cl_cvars = {
 	cl_drawhud = "Draw HUD (Caution! This is a Garry's Mod convar)",
 	spb_cl_disablehalos = "Disable halos (Improve performance)",
 	spb_cl_hide_tips = "Hide all tips",
+	--spb_cl_music_enable = "Enable music/jukebox",
+	--spb_cl_music_allowexternal = "Allow external musics (from Internet)",
+	--spb_cl_music_visualizer = "Enable visualizer (Downgrade performance)",
 	spb_cl_quickstuff_enable = "Enable quick taunt and quick buy",
 	spb_cl_quickstuff_numpad = "Use numpad as well for quick stuff",
 	spb_cl_hud_html_enable = "Enable the HTML HUD (WIP)"
@@ -129,6 +132,9 @@ function GM:Menu()
 	menu:SetDraggable(true)
 	menu:ShowCloseButton(true)
 	menu:SetScreenLock(true)
+	menu:SetSizable(true)
+	--menu.btnMaxim:SetDisabled(false)
+	--menu.btnMaxim.DoClick = function(btn) btnMaximDoClick(btn) end
 	menu.btnMinim:SetDisabled(false)
 	menu.btnMinim.DoClick = function(btn) menu:ToggleVisible() end
 	menu.Paint = function(self, w, h)

@@ -93,7 +93,7 @@ function GM:Initialize()
 	spb_shop_enabled = CreateConVar("spb_shop_enabled", 1, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Enable the power-up shop.")
 	spb_shop_base_price = CreateConVar("spb_shop_base_price", 4, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Power-ups base price. Negative values will be converted to positive and will ignore power-ups price addition. 0 will set everything to free.")
 	spb_weapons = CreateConVar("spb_weapons", 0, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Give some weapons at spawn.")
-	spb_votemap_engine = CreateConVar("spb_votemap_engine", 1, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "0: Disabled. 1: Built-in. 2: Legacy.")
+	spb_votemap_engine = CreateConVar("spb_votemap_engine", 1, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "0: Disabled. 1: Built-in. 2: Legacy.") --TODO
 	spb_votemap_prefixes = CreateConVar("spb_votemap_prefixes", "spb_|ph_|md_|mu_|ttt_", {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Map prefixes to use for votemap. Prefixes are separated with pipes.")
 	spb_jukebox_enable_input = CreateConVar("spb_jukebox_enable_input", 1, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Enable player input on the jukebox queue.")
 	spb_restrict_playermodels = CreateConVar("spb_restrict_playermodels", 0, {FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Restrict playermodels to the default list.")

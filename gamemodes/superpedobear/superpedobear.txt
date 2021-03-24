@@ -3,6 +3,7 @@
 	"base"		"base"
 	"title"		"Super Pedobear"
 	"maps"		"^spb_"
+	"category"	"pvp"
 	"menusystem"	"1"
 	"workshopid"	"628449407"
 }

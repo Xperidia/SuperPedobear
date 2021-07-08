@@ -79,7 +79,7 @@ local PLAYER_LINE = {
 
 		self.Player = pl
 
-		if self.Player and !self.Player.Nick then
+		if self.Player and not self.Player.Nick then
 			self.Player.Nick = function() return self.Player.name end
 			self.Player.Team = function() return TEAM_CONNECTING end
 			self.Player.EntIndex = function() return self.Player.userid end
@@ -100,7 +100,7 @@ local PLAYER_LINE = {
 
 	Think = function(self)
 
-		if !IsValid(self.Player) and !istable(self.Player) then
+		if not IsValid(self.Player) and not istable(self.Player) then
 			self:SetZPos(9999) -- Causes a rebuild
 			self:Remove()
 			return
@@ -136,31 +136,31 @@ local PLAYER_LINE = {
 
 		end
 
-		if self.PName == nil or self.PName != self.Player:Nick() then
+		if self.PName == nil or self.PName ~= self.Player:Nick() then
 			self.PName = self.Player:Nick()
 			self.Name:SetText(self.PName)
 		end
 
-		if self.Player:Team() == TEAM_SEEKER and (self.PColor == nil or self.PColor != team.GetColor(self.Player:Team())) then
+		if self.Player:Team() == TEAM_SEEKER and (self.PColor == nil or self.PColor ~= team.GetColor(self.Player:Team())) then
 			self.PColor = team.GetColor(self.Player:Team())
 			self.Name:SetTextColor(self.PColor)
-		elseif self.Player:Team() != TEAM_SEEKER and (self.PColor == nil or self.PColor != Color(255, 255, 255)) then
+		elseif self.Player:Team() ~= TEAM_SEEKER and (self.PColor == nil or self.PColor ~= Color(255, 255, 255)) then
 			self.PColor = Color(255, 255, 255)
 			self.Name:SetTextColor(self.PColor)
 		end
 
-		if self.NumKills == nil or self.NumKills != self.Player:Frags() then
+		if self.NumKills == nil or self.NumKills ~= self.Player:Frags() then
 			self.NumKills = self.Player:Frags()
 			self.Kills:SetText(self.NumKills)
 		end
 
-		if self.NumDeaths == nil or self.NumDeaths != self.Player:Deaths() then
+		if self.NumDeaths == nil or self.NumDeaths ~= self.Player:Deaths() then
 			self.NumDeaths = self.Player:Deaths()
 			self.Deaths:SetText(self.NumDeaths)
 		end
 
-		if self.NumPing == nil or (self.NumPing != self.Player:Ping() and self.NumPing != "BOT" and self.NumPing != "HOST" and self.NumPing != "...") then
-			if !IsValid(self.Player) then
+		if self.NumPing == nil or (self.NumPing ~= self.Player:Ping() and self.NumPing ~= "BOT" and self.NumPing ~= "HOST" and self.NumPing ~= "...") then
+			if not IsValid(self.Player) then
 				self.NumPing = "..."
 				self.Ping:SetText(self.NumPing)
 			elseif self.Player:IsBot() then
@@ -175,7 +175,7 @@ local PLAYER_LINE = {
 			end
 		end
 
-		if (self.LGroup == nil or self.LGroup != self.Player:GetUserGroup()) and self.Player:GetUserGroup() != "user" then
+		if (self.LGroup == nil or self.LGroup ~= self.Player:GetUserGroup()) and self.Player:GetUserGroup() ~= "user" then
 			self.LGroup = self.Player:GetUserGroup()
 			self.Group:SetText(self.LGroup)
 		end
@@ -183,7 +183,7 @@ local PLAYER_LINE = {
 		--
 		-- Change the icon of the mute button based on state
 		--
-		if IsValid(self.Player) and (self.Muted == nil or self.Muted != self.Player:IsMuted()) then
+		if IsValid(self.Player) and (self.Muted == nil or self.Muted ~= self.Player:IsMuted()) then
 
 			self.Muted = self.Player:IsMuted()
 			if self.Muted then
@@ -192,7 +192,7 @@ local PLAYER_LINE = {
 				self.Mute:SetImage("icon32/unmuted.png")
 			end
 
-			self.Mute.DoClick = function() self.Player:SetMuted(!self.Muted) end
+			self.Mute.DoClick = function() self.Player:SetMuted(not self.Muted) end
 			self.Mute.OnMouseWheeled = function(s, delta)
 				self.Player:SetVoiceVolumeScale(self.Player:GetVoiceVolumeScale() + (delta / 100 * 5))
 				s.LastTick = CurTime()
@@ -206,7 +206,7 @@ local PLAYER_LINE = {
 
 		end
 
-		if IsValid(self.Player) and (self.FriendStatus == nil or self.FriendStatus != self.Player:GetFriendStatus()) then
+		if IsValid(self.Player) and (self.FriendStatus == nil or self.FriendStatus ~= self.Player:GetFriendStatus()) then
 
 			self.FriendStatus = self.Player:GetFriendStatus()
 			if self.FriendStatus == "friend" then
@@ -239,7 +239,7 @@ local PLAYER_LINE = {
 			return
 		end
 
-		if !self.Player:Alive() then
+		if not self.Player:Alive() then
 			self:SetZPos(1000 + self.Player:EntIndex())
 			return
 		end
@@ -250,7 +250,7 @@ local PLAYER_LINE = {
 
 	Paint = function( self, w, h )
 
-		if !IsValid(self.Player) and !istable(self.Player) then
+		if not IsValid(self.Player) and not istable(self.Player) then
 			return
 		end
 
@@ -267,7 +267,7 @@ local PLAYER_LINE = {
 			return
 		end
 
-		if !self.Player:Alive() then
+		if not self.Player:Alive() then
 			draw.RoundedBox(4, 0, 0, w, h, Color(85, 45, 45, 255))
 			return
 		end
@@ -382,7 +382,7 @@ PEDO_SCORE_BOARD = vgui.RegisterTable(SCORE_BOARD, "EditablePanel")
 -----------------------------------------------------------]]
 function GM:ScoreboardShow()
 
-	if !IsValid(g_Scoreboard) then
+	if not IsValid(g_Scoreboard) then
 		g_Scoreboard = vgui.CreateFromTable(PEDO_SCORE_BOARD)
 	end
 

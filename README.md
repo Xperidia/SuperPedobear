@@ -21,7 +21,8 @@ _Or also like Escape Pedobear but pvp with power-ups..._
 By default you're playing as a hiding which need to escape from the seeker(s)
 The seekers are automatically chosen by the gamemode and it should be fair enough so everyone can play as a seeker
 
-# Features
+## Features
+
 * More seekers will spawn when there are more players!
 * Can be played on any map! (Best with PropHunt or dedicated `spb_` maps)
 * Power-UPs!
@@ -35,20 +36,23 @@ The seekers are automatically chosen by the gamemode and it should be fair enoug
 * Server owners can use the cvars and .json files to quickly configure/customize aspects of the gamemode!
 * Map makers can use and place gamemode entities! [Check out the FGD](gamemodes/superpedobear/superpedobear.fgd)
 
-# Power-UPs
+## Power-UPs
+
 * [Hiding] **Clone**: Clone yourself to bait the seekers or hide your clone somewhere to respawn on it later!
 * [Hiding] **Boost**: Gives 200% stamina!
 * [Hiding] **Invisibility**: Makes you invisible and invulnerable to the seekers!
 * [Seeker] **Radar**: Highlights all hidings for a limited time!
 * [Seeker] **False Power-UP**: It's a trap!
 
-# Some useful links
+## Some useful links
+
 * [Steam Workshop page](https://steamcommunity.com/sharedfiles/filedetails/?id=628449407)
 * [Installation on a dedicated server](https://github.com/Xperidia/SuperPedobear/wiki/Installation-on-a-Dedicated-Server-(official))
 * [Proxy for the server category](https://github.com/VictorienXP/SuperPedobear-Proxy)
 * [Installation from Git](https://github.com/Xperidia/SuperPedobear/wiki/Installation-from-Git) (for developers)
 
-# Credits
+## Credits
+
 * [VictorienXP](https://github.com/VictorienXP): The gamemode
 * [Wubsy](https://github.com/Wubushii): spb_school, gamemode logos and van art
 * [Pho3](https://github.com/TheRainbowPhoenix): Power-UPs icons, Xperidia's website design and logos

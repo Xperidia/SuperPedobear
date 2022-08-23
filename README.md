@@ -18,7 +18,7 @@
 Meme flavoured hide and seek gamemode!
 _Or also like Escape Pedobear but pvp with power-ups..._
 
-By default you're playing as a hiding which need to escape from the seeker(s)  
+By default you're playing as a hiding which need to escape from the seeker(s)
 The seekers are automatically chosen by the gamemode and it should be fair enough so everyone can play as a seeker
 
 # Features

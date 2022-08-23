@@ -13,8 +13,6 @@
 [![Steam Favorites](https://img.shields.io/steam/favorites/628449407?logo=steam)](https://steamcommunity.com/sharedfiles/filedetails/?id=628449407)
 [![Steam File Size](https://img.shields.io/steam/size/628449407?logo=steam)](https://steamcommunity.com/sharedfiles/filedetails/?id=628449407)
 
-[![Discord](https://img.shields.io/discord/140113271809245184?logo=discord)](https://discord.com/invite/jtUtYDa)
-
 Meme flavoured hide and seek gamemode!
 _Or also like Escape Pedobear but pvp with power-ups..._
 
@@ -56,6 +54,3 @@ The seekers are automatically chosen by the gamemode and it should be fair enoug
 * [VictorienXP](https://github.com/VictorienXP): The gamemode
 * [Wubsy](https://github.com/Wubushii): spb_school, gamemode logos and van art
 * [Pho3](https://github.com/TheRainbowPhoenix): Power-UPs icons, Xperidia's website design and logos
-
-If you are in need of support or want to give feedback you can join the [Xperidia Discord server](https://discord.gg/jtUtYDa)!
-[![Xperidia Discord server](https://discordapp.com/api/guilds/140113271809245184/widget.png?style=banner3)](https://discord.gg/jtUtYDa)
